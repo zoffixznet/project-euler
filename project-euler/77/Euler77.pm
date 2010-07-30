@@ -30,7 +30,7 @@ sub get_combinations
 
             get_combinations(
                 [$max_prime], 
-                $max_prime, 
+                $max_prime_idx, 
                 $sum-$max_prime, 
                 \@combinations
             );

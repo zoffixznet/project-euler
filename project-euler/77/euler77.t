@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 4;
+use Test::More tests => 5;
 
 use Euler77;
 
@@ -23,5 +23,10 @@ is (get_num_primes_combinations(4), 1,
 # TEST
 is (get_num_primes_combinations(5), 2,
     "4 == { [2,3], [5] }",
+);
+
+# TEST
+is (get_num_primes_combinations(10), 5,
+    "10 == {[7,3], [5, 5], [5, 3, 2], [3, 3, 2, 2], [2, 2, 2, 2, 2]}",
 );
 
