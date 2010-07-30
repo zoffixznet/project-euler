@@ -6,15 +6,21 @@ use warnings;
 my @primes = `primes 2 10000`;
 chomp(@primes);
 
+my @cache;
+
 sub get_combinations
 {
     my ($prefix, $start_from_max_prime_idx, $sum, $out_combinations_ref) = @_;
 
-    my @combinations;
+    my $combinations = [];
     
     if ($sum == 0)
     {
-        @combinations = ([]);
+        push @$combinations, [];
+    }
+    elsif (defined($cache[$sum][$start_from_max_prime_idx]))
+    {
+        $combinations = $cache[$sum][$start_from_max_prime_idx];
     }
     else
     {
@@ -32,12 +38,15 @@ sub get_combinations
                 [$max_prime], 
                 $max_prime_idx, 
                 $sum-$max_prime, 
-                \@combinations
+                $combinations
             );
         }
+
+        $cache[$sum][$start_from_max_prime_idx] = $combinations;
     }
 
-    push @$out_combinations_ref, (map { [@$prefix, @$_] } @combinations);
+
+    push @$out_combinations_ref, (map { [@$prefix, @$_] } @$combinations);
 
     return;
 }
