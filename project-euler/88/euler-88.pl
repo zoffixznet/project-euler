@@ -6,33 +6,39 @@ use warnings;
 use integer;
 use IO::Handle;
 
-use List::Util qw(sum);
+use List::Util qw(sum min max);
 
 no warnings 'recursion';
 
 sub find_for_num_product_and_sum
 {
-    my ($min_i, $num_left, $product_left, $sum_left) = @_;
+    my ($max_i, $num_left, $product_left, $sum_left) = @_;
 
-    if ($product_left < 1) 
-    {
-        return;
-    }
     # print "(num_left=$num_left, min_i=$min_i, prod_so_far=$prod_so_far, sum_left=$sum_left) Sum=$sum\n";
 
     if ($num_left == 1)
     {
         return ($product_left == $sum_left);
     }
+    # Pad with 1's
+    elsif ($product_left == 1)
+    {
+        return ($sum_left == $num_left);
+    }
     else
     {
-        I_LOOP:
-        for my $i ($min_i .. $sum_left)
+        # 1*1*1*1*1*$product_left
+        if ($product_left+$num_left-1 == $sum_left)
         {
-            if ($sum_left < $i * ($num_left-1))
-            {
-                last I_LOOP;
-            }
+            return 1;
+        }
+
+        my $loop_max = min($max_i, ($product_left>>1));
+        my $loop_min = max(2, $sum_left / $num_left);
+
+        I_LOOP:
+        for my $i (reverse($loop_min .. $loop_max))
+        {
             if ($product_left % $i)
             {
                 next I_LOOP;
@@ -56,7 +62,7 @@ sub smallest_product_n
 
     while (1)
     {
-        if (find_for_num_product_and_sum(1, $n, $sum, $sum))
+        if (find_for_num_product_and_sum(($sum >> 1), $n, $sum, $sum))
         {
             return $sum;
         }
