@@ -10,6 +10,44 @@ use List::Util qw(sum);
 
 no warnings 'recursion';
 
+sub find_for_num_product_and_sum
+{
+    my ($num_left, $min_i, $product_left, $sum_left) = @_;
+
+    if ($product_left < 1) 
+    {
+        return;
+    }
+    # print "(num_left=$num_left, min_i=$min_i, prod_so_far=$prod_so_far, sum_left=$sum_left) Sum=$sum\n";
+
+    if ($num_left == 1)
+    {
+        return ($product_left == $sum_left);
+    }
+    else
+    {
+        I_LOOP:
+        for my $i ($min_i .. $sum_left)
+        {
+            if ($sum_left < $i * ($num_left-1))
+            {
+                last I_LOOP;
+            }
+            if ($product_left % $i)
+            {
+                next I_LOOP;
+            }
+            if (find_for_num_product_and_sum(
+                    $num_left-1, $i, $product_left / $i, $sum_left-$i
+                ))
+            {
+                return 1;
+            }
+        }
+        return;
+    }
+}
+
 sub smallest_product_n
 {
     my ($n) = @_;
@@ -18,46 +56,7 @@ sub smallest_product_n
 
     while (1)
     {
-        my $recurse;
-
-        $recurse = sub {
-            my ($num_left, $min_i, $product_left, $sum_left) = @_;
-
-            if ($product_left < 1) 
-            {
-                return;
-            }
-            # print "(num_left=$num_left, min_i=$min_i, prod_so_far=$prod_so_far, sum_left=$sum_left) Sum=$sum\n";
-
-            if ($num_left == 1)
-            {
-                return ($product_left == $sum_left);
-            }
-            else
-            {
-                I_LOOP:
-                for my $i ($min_i .. $sum_left)
-                {
-                    if ($sum_left < $i * ($num_left-1))
-                    {
-                        last I_LOOP;
-                    }
-                    if ($product_left % $i)
-                    {
-                        next I_LOOP;
-                    }
-                    if ($recurse->(
-                        $num_left-1, $i, $product_left / $i, $sum_left-$i
-                    ))
-                    {
-                        return 1;
-                    }
-                }
-                return;
-            }
-        };
-
-        if ($recurse->($n, 1, $sum, $sum))
+        if (find_for_num_product_and_sum($n, 1, $sum, $sum))
         {
             return $sum;
         }
