@@ -21,9 +21,9 @@ sub smallest_product_n
         my $recurse;
 
         $recurse = sub {
-            my ($num_left, $min_i, $prod_so_far, $sum_left) = @_;
+            my ($num_left, $min_i, $product_left, $sum_left) = @_;
 
-            if ($prod_so_far > $sum)
+            if ($product_left < 1) 
             {
                 return;
             }
@@ -31,7 +31,7 @@ sub smallest_product_n
 
             if ($num_left == 1)
             {
-                return ($prod_so_far * $sum_left == $sum);
+                return ($product_left == $sum_left);
             }
             else
             {
@@ -42,8 +42,12 @@ sub smallest_product_n
                     {
                         last I_LOOP;
                     }
+                    if ($product_left % $i)
+                    {
+                        next I_LOOP;
+                    }
                     if ($recurse->(
-                        $num_left-1, $i, $prod_so_far*$i, $sum_left-$i
+                        $num_left-1, $i, $product_left / $i, $sum_left-$i
                     ))
                     {
                         return 1;
@@ -53,7 +57,7 @@ sub smallest_product_n
             }
         };
 
-        if ($recurse->($n, 1, 1, $sum))
+        if ($recurse->($n, 1, $sum, $sum))
         {
             return $sum;
         }
