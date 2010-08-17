@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use integer;
+use IO::Handle;
 
 use List::Util qw(sum);
 
@@ -63,12 +64,15 @@ sub smallest_product_n
     }
 }
 
-my %numbers = 0;
+my %numbers;
+
+STDOUT->autoflush(1);
 
 for my $n (2 .. 12_000)
 {
-    print "Reached $n\n";
-    $numbers{smallest_product_n($n)}++;
+    my $val = smallest_product_n($n);
+    print "Reached $n = $val\n";
+    $numbers{$val}++;
 }
 
 print "Sum = ", sum(keys(%numbers)), "\n";
