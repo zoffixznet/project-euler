@@ -12,7 +12,7 @@ no warnings 'recursion';
 
 sub find_for_num_product_and_sum
 {
-    my ($num_left, $min_i, $product_left, $sum_left) = @_;
+    my ($min_i, $num_left, $product_left, $sum_left) = @_;
 
     if ($product_left < 1) 
     {
@@ -38,7 +38,7 @@ sub find_for_num_product_and_sum
                 next I_LOOP;
             }
             if (find_for_num_product_and_sum(
-                    $num_left-1, $i, $product_left / $i, $sum_left-$i
+                    $i, $num_left-1, $product_left / $i, $sum_left-$i
                 ))
             {
                 return 1;
@@ -56,7 +56,7 @@ sub smallest_product_n
 
     while (1)
     {
-        if (find_for_num_product_and_sum($n, 1, $sum, $sum))
+        if (find_for_num_product_and_sum(1, $n, $sum, $sum))
         {
             return $sum;
         }
