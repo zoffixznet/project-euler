@@ -83,9 +83,10 @@ my @first_three_digits_list =
 
 my $max_n = 0;
 
-foreach my $list (grep { @{$_} >= 2 } values(%by_code))
+foreach my $list (grep { (@{$_} >= 2) && (length($_->[0]) >= 3) } 
+    values(%by_code))
 {
-    print "Doing " . $list->[0] . "\n";
+    print "Doing " . join(",", @$list) . "\n";
     my @keys = (map { [reverse split//,$_] } @$list);
     my %letters_to_indices;
     my $next_index = 0;
@@ -99,7 +100,7 @@ foreach my $list (grep { @{$_} >= 2 } values(%by_code))
 
     foreach my $key_idx (0 .. 1)
     {
-        foreach my $letter_idx (0 .. @{$index_keys[$key_idx]})
+        foreach my $letter_idx (0 .. $#{$index_keys[$key_idx]})
         {
             push @{$reverse[$index_keys[$key_idx][$letter_idx]]},
                 [$key_idx, $letter_idx];
@@ -112,7 +113,7 @@ foreach my $list (grep { @{$_} >= 2 } values(%by_code))
         foreach my $anagram_first_three (@first_three_digits_list)
         {
             my @assignment = ([@$first_three], [@$anagram_first_three]);
-            
+
 =begin commented
 
             if (notall { 1 == uniq
@@ -150,19 +151,24 @@ foreach my $list (grep { @{$_} >= 2 } values(%by_code))
                 }
             }
 
+            if (scalar(uniq values(%m)) != scalar(keys(%m)))
+            {
+                next ANAGRAM;
+            }
+
             my $iterate;
             
             $iterate = sub {
                 my $map = shift;
 
                 my $next_n = first
-                    { scalar(@{$reverse[$_]}) && !exists($map->{$_}) }
+                    { !exists($map->{$_}) }
                     (0 .. $next_index-1);
 
-                if ($next_n)
+                if (defined($next_n))
                 {
                     my %r = reverse(%$map);
-                    foreach my $digit (grep { !$r{$_} } (0 .. 9))
+                    foreach my $digit (grep { !exists($r{$_}) } (0 .. 9))
                     {
                         $iterate->({%$map, $next_n => $digit, });
                     }
