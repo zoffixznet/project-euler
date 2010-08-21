@@ -75,13 +75,20 @@ my $found_chain_len = 0;
 N_LOOP:
 for my $n (2 .. 1_000_000)
 {
+    if ($n % 10_000 == 0)
+    {
+        print "Reached $n\n";
+    }
+    # print "Checking $n\n";
     my $chain_len = 1;
     my $m = $n;
 
-    while (($m = next_amicable($n)) != 1)
+    my %found = ($n => 1);
+
+    while (($m = next_amicable($m)) != 1)
     {
         $chain_len++;
-        if ($m > 1_000_000)
+        if (($m > 1_000_000) || ($m < $n))
         {
             next N_LOOP;
         }
@@ -95,6 +102,15 @@ for my $n (2 .. 1_000_000)
             }
             next N_LOOP;
         }
+        elsif ($found{$m})
+        {
+            next N_LOOP;
+        }
     }
+    continue
+    {
+        $found{$m} = 1;
+    }
+   
 }
 
