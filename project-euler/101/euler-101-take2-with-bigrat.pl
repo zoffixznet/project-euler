@@ -48,6 +48,11 @@ c_0 + c_1 * 3 + c_2 * 3 ** 2 ... + c_n-1 * 3 ** n-1 = a_3
 
 So we can find c_0 ... c_n-1 by solving the co-efficients problem.
 
+/1 1 1 1 1 1 1 ......\           (c_0)
+|1 2 3 4 5 6 7                   (c_1)
+|1 4 9 16 25                     (c_2)
+|                                (c_3)
+\
 =cut
 
 package Row;
@@ -276,6 +281,7 @@ sub _row
     return Row->new({ elems => [ map { Math::BigRat->new($_) } @{$elems}]});
 }
 
+=begin Foo
 my $mat = Matrix->new(
     {
     rows =>
@@ -289,17 +295,62 @@ my $mat = Matrix->new(
 
 print $mat->inv->as_string();
 
+=end Foo
+
+=cut
+
 foreach my $idx (1 .. 10)
 {
-    my $mat = Matrix->new(
+    my $gen_mat = sub { return Matrix->new(
         {
             rows =>
             [
-                map { my $n = $_; _row([map { $_ ** $n } (1 .. $idx)]) } 
-                (1 .. $idx)
+                map { my $power = $_; _row([
+                    map { my $base = $_; Math::BigRat->new($base) ** $power } 
+                    (1 .. $idx)]
+                    )
+                } 
+                (0 .. $idx-1)
             ],
         }
-    );
+    ) };
 
+    my $mat = $gen_mat->();
     print $mat->as_string();
+
+    my $inv = $mat->inv();
+
+    my @coeffs;
+
+    foreach my $c_idx (0 .. $idx-1)
+    {
+        my $sum = Math::BigRat->new(0);
+
+        foreach my $x (0 .. $idx-1)
+        {
+            $sum += $inv->_elem($c_idx, $x) * $u_results[$x];
+        }
+
+        push @coeffs, $sum;
+    }
+
+    foreach my $prev_idx (1 .. $idx)
+    {
+        my $bop = Math::BigRat->new(0);
+        foreach my $x (0 .. $idx-1)
+        {
+            $bop += $coeffs[$x] * ($prev_idx ** $x);
+        }
+        if ($bop != $u_results[$prev_idx-1])
+        {
+            die "Foo ($idx, $prev_idx)!" ;
+        }
+    }
+
+    my $bop = Math::BigRat->new(0);
+    foreach my $x (0 .. $idx-1)
+    {
+        $bop += $coeffs[$x] * ($idx ** $x);
+    }
+    print "$bop\n";
 }
