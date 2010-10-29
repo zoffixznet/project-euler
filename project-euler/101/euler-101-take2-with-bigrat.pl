@@ -91,6 +91,13 @@ sub _multiply_row_by
     return;
 }
 
+sub _elem
+{
+    my ($self, $r, $c) = @_;
+
+    return $self->rows->[$r]->elems->[$c];
+}
+
 sub inv
 {
     my ($self) = @_;
@@ -102,7 +109,7 @@ sub inv
         my $found_row_idx =
             List::Util::first 
             {
-                ! $self->rows->[$_]->elems->[$col_to_stair]->is_zero()
+                ! $self->_elem($_, $col_to_stair)->is_zero()
             }
             ($col_to_stair .. $self->size() - 1)
             ;
@@ -114,7 +121,7 @@ sub inv
         }
 
         {
-            my $n = $self->rows->[$col_to_stair]->elems->[$col_to_stair];
+            my $n = $self->_elem($col_to_stair, $col_to_stair);
             if (!$n->is_one())
             {
                 $self->_multiply_row_by($col_to_stair, 1/$n);
