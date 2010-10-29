@@ -91,6 +91,17 @@ sub _multiply_row_by
     return;
 }
 
+sub _add_row_product_to_row
+{
+    my ($self, $row_idx, $other_row, $multiplier) = @_;
+    
+    foreach my $i (0 .. $self->size()-1)
+    {
+        $self->_elem($row_idx, $i) +=
+            ($multiplier * $self->_elem($other_row, $i));
+    }
+}
+
 sub _elem
 {
     my ($self, $r, $c) = @_;
@@ -104,6 +115,15 @@ sub inv
 
     my $inverted = Matrix->eye($self->size());
 
+    my $simultaneous = sub {
+        my $callback = shift;
+
+        foreach ($self, $inverted)
+        {
+            $callback->($_);
+        }
+    };
+
     foreach my $col_to_stair (0 .. $self->size()-1)
     {
         my $found_row_idx =
@@ -116,18 +136,50 @@ sub inv
 
         if ($found_row_idx != $col_to_stair)
         {
-            $self->_swap_rows($col_to_stair, $found_row_idx);
-            $inverted->_swap_rows($col_to_stair, $found_row_idx);
+            $simultaneous->(sub {
+                $_->_swap_rows($col_to_stair, $found_row_idx);
+                }
+            );
         }
 
         {
             my $n = $self->_elem($col_to_stair, $col_to_stair);
             if (!$n->is_one())
             {
-                $self->_multiply_row_by($col_to_stair, 1/$n);
-                $inverted->_multiply_row_by($col_to_stair, 1/$n);
+                $simultaneous->(
+                    sub {
+                        $_->_multiply_row_by($col_to_stair, 1/$n);    
+                    }
+                );
+            }
+        }
+
+        ROW_IDX:
+        foreach my $row_idx (0 .. $self->size()-1)
+        {
+            if ($row_idx == $col_to_stair)
+            {
+                next ROW_IDX;
+            }
+
+            my $x = $self->_elem($row_idx, $col_to_stair);
+
+            if (! $x->is_zero())
+            {
+                $simultaneous->(
+                    sub {
+                        $_->_add_row_product_to_row(
+                            $row_idx, $col_to_stair, -$x
+                        );
+                    }
+                );
             }
         }
     }
+
+    return $inverted;
 }
+
+package main;
+
 
