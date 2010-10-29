@@ -25,6 +25,13 @@ sub multiply_by
     return;
 }
 
+sub as_string
+{
+    my $self = shift;
+
+    return join(", ", map { $_ . "" } @{$self->elems()});
+}
+
 package Matrix;
 
 use Moose;
@@ -97,8 +104,9 @@ sub _add_row_product_to_row
     
     foreach my $i (0 .. $self->size()-1)
     {
-        $self->_elem($row_idx, $i) +=
-            ($multiplier * $self->_elem($other_row, $i));
+        my $e = $self->_elem($row_idx, $i);
+        
+        $e += ($multiplier * $self->_elem($other_row, $i));
     }
 }
 
@@ -180,6 +188,33 @@ sub inv
     return $inverted;
 }
 
+sub as_string
+{
+    my $self = shift;
+
+    return join( "", map { $_->as_string() . "\n" } @{$self->rows()});
+}
+
 package main;
 
+use Data::Dumper;
 
+sub _row
+{
+    my $elems = shift;
+
+    return Row->new({ elems => [ map { Math::BigRat->new($_) } @{$elems}]});
+}
+
+my $mat = Matrix->new(
+    {
+    rows =>
+    [
+        _row([2,3,0]),
+        _row([0,1,0]),
+        _row([0,0,5]),
+    ]
+    }
+);
+
+print $mat->inv->as_string();
