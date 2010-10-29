@@ -3,6 +3,8 @@
 use strict;
 use warnings;
 
+use List::Util qw(sum);
+
 =head1 DESCRIPTION
 
 Let S(A) represent the sum of elements in set A of size n. We shall call it a
@@ -48,7 +50,7 @@ NOTE: This problem is related to problems 105 and 106.
 * * a1+a2+a3+a4 > a5+a6+a7
 
 * 20, 20+11, 20+18, 20+19, 20+20,  20+22, 20+25 = 
-= 20, 31, 38, 39, 40, 42, 45
+= 20, 31, 38, 39, 40, 42, 45 is a special sum set.
 
 =cut
 
@@ -105,3 +107,43 @@ sub is_special_sum_set
 print is_special_sum_set([20, 31, 38, 39, 40, 42, 45]), "\n";
 # print is_special_sum_set([6, 9, 11, 12, 13]), "\n";
 # print is_special_sum_set([1,2,3]), "\n";
+
+my $min_sum = sum(20, 31, 38, 39, 40, 42, 45);
+
+sub check_A
+{
+    my ($A_so_far) = @_;
+
+    if (!is_special_sum_set($A_so_far))
+    {
+        return;
+    }
+    
+    if (@$A_so_far == 7)
+    {
+        print "@$A_so_far\n";
+        my $s = sum(@$A_so_far);
+        if ($s < $min_sum)
+        {
+            $min_sum = $s;
+            print "min_sum = $min_sum\n";
+            print "\@A = ", join(",",@$A_so_far), "[", @$A_so_far, "]\n"
+        }
+
+        return;
+    }
+    else
+    {
+        for my $next_item ($A_so_far->[-1]+1 .. 45-(6-@$A_so_far))
+        {
+            check_A([@$A_so_far, $next_item]);
+        }
+        return;
+    }
+}
+
+for my $a1 (reverse(1 .. 20))
+{
+    print "A[0] = $a1\n";
+    check_A([$a1]);
+}
