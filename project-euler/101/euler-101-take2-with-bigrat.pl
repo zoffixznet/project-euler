@@ -49,10 +49,15 @@ c_0 + c_1 * 3 + c_2 * 3 ** 2 ... + c_n-1 * 3 ** n-1 = a_3
 So we can find c_0 ... c_n-1 by solving the co-efficients problem.
 
 /1 1 1 1 1 1 1 ......\           (c_0)
-|1 2 3 4 5 6 7                   (c_1)
-|1 4 9 16 25                     (c_2)
-|                                (c_3)
+|1 2 4 8 16 32                   (c_1)
+|1 3 9 27                      (c_2)
+|1 4                                (c_3)
 \
+
+A_mat * C_vec = a_vec
+
+C_vec = A_mat^-1 * a_vec
+
 =cut
 
 package Row;
@@ -158,6 +163,8 @@ sub _add_row_product_to_row
                 + ($multiplier * $self->_elem($other_row, $i))
         );
     }
+
+    return;
 }
 
 sub _elem
@@ -171,7 +178,9 @@ sub _set_elem
 {
     my ($self, $r, $c, $v) = @_;
 
-    return $self->rows->[$r]->elems->[$c] = $v;
+    $self->rows->[$r]->elems->[$c] = $v;
+
+    return;
 }
 
 sub inv
@@ -263,7 +272,19 @@ sub calc_u_result_vec
 {
     my $x = shift;
 
-    return [map { $x ** $_ * $u_coeffs[$_] } (0 .. $#u_coeffs)];
+    return [map { (Math::BigRat->new($x) ** $_) * $u_coeffs[$_] } (0 .. $#u_coeffs)];
+}
+
+sub mysum
+{
+    my $s = Math::BigRat->new(0);
+
+    foreach my $i (@_)
+    {
+        $s += $i;
+    }
+
+    return $s;
 }
 
 sub calc_u_result
@@ -299,18 +320,24 @@ print $mat->inv->as_string();
 
 =cut
 
+my $total_sum = 0;
 foreach my $idx (1 .. 10)
 {
     my $gen_mat = sub { return Matrix->new(
         {
             rows =>
             [
-                map { my $power = $_; _row([
-                    map { my $base = $_; Math::BigRat->new($base) ** $power } 
-                    (1 .. $idx)]
-                    )
+                map { 
+                    my $base = $_; 
+                    _row([
+                        map { 
+                            my $power = $_; 
+                            Math::BigRat->new($base) ** $power 
+                        } 
+                        (0 .. $idx-1)
+                    ]);
                 } 
-                (0 .. $idx-1)
+                (1 .. $idx)
             ],
         }
     ) };
@@ -334,23 +361,42 @@ foreach my $idx (1 .. 10)
         push @coeffs, $sum;
     }
 
+    my $get_coeff_val = sub {
+        my $x = shift;
+
+        my $bop = Math::BigRat->new(0);
+        foreach my $exp (0 .. $idx-1)
+        {
+            $bop += $coeffs[$exp] * ($x ** $exp);
+        }
+        
+        return $bop;
+    };
+
     foreach my $prev_idx (1 .. $idx)
     {
-        my $bop = Math::BigRat->new(0);
-        foreach my $x (0 .. $idx-1)
-        {
-            $bop += $coeffs[$x] * ($prev_idx ** $x);
-        }
-        if ($bop != $u_results[$prev_idx-1])
+        if ($get_coeff_val->($prev_idx) != $u_results[$prev_idx-1])
         {
             die "Foo ($idx, $prev_idx)!" ;
         }
     }
 
-    my $bop = Math::BigRat->new(0);
-    foreach my $x (0 .. $idx-1)
+    my $check = $idx;
+    CHECK_LOOP:
+    while (1)
     {
-        $bop += $coeffs[$x] * ($idx ** $x);
+        my $val_of_idx = $get_coeff_val->($check);
+        print "$val_of_idx\n";
+        if ($val_of_idx != calc_u_result($check))
+        {
+            $total_sum += $val_of_idx;
+            last CHECK_LOOP;
+        }
     }
-    print "$bop\n";
+    continue
+    {
+        $check++;
+    }
 }
+
+print "Total Sum = $total_sum\n";
