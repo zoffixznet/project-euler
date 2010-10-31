@@ -77,6 +77,7 @@ for (my $n = 1_000; ;$n++)
 use Math::GMP;
 
 use List::Util qw(reduce first);
+use List::MoreUtils qw(any);
 
 sub calc_rank
 {
@@ -106,7 +107,7 @@ my $continue = 1;
 
 sub get_best_n
 {
-    return (first { $_->{rank} > $num_divisors } @best);
+    return (first { $_->{rank} > $num_divisors } sort { $a->{n} <=> $b->{n} } @best);
 }
 
 my $last_best_n;
@@ -136,8 +137,9 @@ sub best_n_improved
     }
 }
 
-while (best_n_improved)
+while (best_n_improved())
 {
+    print "Reached ", scalar(@best), "\n";
     my @new_best;
 
     foreach my $n_rec (@best)
@@ -162,26 +164,18 @@ while (best_n_improved)
                 reduce { $a * $b } 1, 
                 map { Math::GMP->new(vec($primes_list, $_, 32)) ** $new[$_] } (0 .. $#new) 
                 ;
-                push @new_best, { n => $new_n, factors => \@new, rank => calc_rank(\@new)};
+                my $new_rank  = calc_rank(\@new);
+                if (! any { $_->{n} <= $new_n && $_->{rank} >= $new_rank } @new_best)
+                {
+                    push @new_best, 
+                        {n => $new_n, factors => \@new, rank => $new_rank }
+                    ;
+                }
             }
         }
     }
+    # print "<<<<\n", (map { "[$_->{n}, $_->{rank}]\n" } @new_best), ">>>>\n";
 
-    if (@new_best > 1)
-    {
-        # Filter the sub-optimals from @new_best.
-        @new_best = sort {
-            ($a->{n} <=> $b->{n})
-                ||
-            ($a->{rank} <=> $b->{rank})
-        } @new_best;
-        my @best_indexes = grep { 
-            ($new_best[$_]->{rank} > $new_best[$_-1]->{rank})
-            } (1 .. $#new_best);
-        
-        @new_best = (@new_best[0,@best_indexes]);
-        # print "<<<<\n", (map { "[$_->{n}, $_->{rank}]\n" } @new_best), ">>>>>\n";
-    }
     @best = @new_best;
 }
 
