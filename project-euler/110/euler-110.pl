@@ -76,65 +76,113 @@ for (my $n = 1_000; ;$n++)
 
 use Math::GMP;
 
-use Heap::Fibonacci;
-use Heap::Elem::Num qw(NumElem);
+use List::Util qw(reduce first);
 
-use List::Util qw(reduce);
-
-my $heap = Heap::Fibonacci->new;
+sub calc_rank
+{
+    my $factors = shift;
+    return reduce { $a * $b } 1, map { Math::GMP->new($_ * 2 + 1) } @$factors;
+}
 
 my $limit = 4_000_000;
 my $num_divisors = ($limit * 2 -1);
 
 my $primes_list = '';
+my $num_primes = 0;
 
 {
-    open my $fh, "primes 2 |";
-    for my $i (0 .. $limit)
+    open my $fh, "primes 2 43 |";
+    while (my $p = <$fh>)
     {
-        my $p = <$fh>;
         chomp($p);
-        vec($primes_list, $i, 32) = $p;
+        vec($primes_list, $num_primes++, 32) = $p;
     }
     close($fh);
 }
 
-my %decomposition = ('1' => []);
+my @best = ({n => 1, factors => [], rank => calc_rank([]),});
 
-$heap->add(NumElem(1));
+my $continue = 1;
 
-while (my $elem = $heap->extract_top) {
-    my $n = $elem->val;
+sub get_best_n
+{
+    return (first { $_->{rank} > $num_divisors } @best);
+}
 
-    my $composition = $decomposition{"$n"};
-    if ((reduce { $a * $b } 1, map { Math::GMP->new($_ * 2 + 1) } @$composition) > $num_divisors
-        )
+my $last_best_n;
+
+sub best_n_improved
+{
+    my $best_n = get_best_n();
+    if (!defined($best_n))
     {
-        print "Found $n\n";
-        exit(0);
+        return 1;
+    }
+
+    $best_n = $best_n->{n};
+    if (!defined($last_best_n))
+    {
+        $last_best_n = $best_n;
+        return 1;
+    }
+    elsif ($last_best_n > $best_n)
+    {
+        $last_best_n = $best_n;
+        return 1;
     }
     else
     {
-        foreach my $idx (
-            0 
-                .. 
-            ((@$composition == $limit)
-                ? ($#$composition)
-                : ($#$composition+1)
-            )
-        )
+        return;
+    }
+}
+
+while (best_n_improved)
+{
+    my @new_best;
+
+    foreach my $n_rec (@best)
+    {
+        my $n = $n_rec->{n};
+        my $factors = $n_rec->{factors};
+        my $rank = $n_rec->{rank};
+
         {
-            my @new = @$composition;
-            $new[$idx]++;
-            my $new_n = 
+            foreach my $idx (
+                0
+                .. 
+                ((@$factors == $num_primes)
+                    ? ($#$factors)
+                    : ($#$factors+1)
+                )
+            )
+            {
+                my @new = @$factors;
+                $new[$idx]++;
+                my $new_n = 
                 reduce { $a * $b } 1, 
                 map { Math::GMP->new(vec($primes_list, $_, 32)) ** $new[$_] } (0 .. $#new) 
                 ;
-            if (! exists($decomposition{"$new_n"}))
-            {
-                $decomposition{"$new_n"} = \@new;
-                $heap->add( NumElem($new_n) );
+                push @new_best, { n => $new_n, factors => \@new, rank => calc_rank(\@new)};
             }
         }
     }
+
+    if (@new_best > 1)
+    {
+        # Filter the sub-optimals from @new_best.
+        @new_best = sort {
+            ($a->{n} <=> $b->{n})
+                ||
+            ($a->{rank} <=> $b->{rank})
+        } @new_best;
+        my @best_indexes = grep { 
+            ($new_best[$_]->{rank} > $new_best[$_-1]->{rank})
+            } (1 .. $#new_best);
+        
+        @new_best = (@new_best[0,@best_indexes]);
+        # print "<<<<\n", (map { "[$_->{n}, $_->{rank}]\n" } @new_best), ">>>>>\n";
+    }
+    @best = @new_best;
 }
+
+print $last_best_n, "\n";
