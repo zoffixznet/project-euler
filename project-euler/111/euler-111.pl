@@ -21,11 +21,12 @@ my @non_zero_digits = (1 .. 9);
 
 my @S_10_d;
 MAIN_D_LOOP:
-foreach my $main_d (0 .. 9)
+foreach my $main_d (@digits)
 {
     foreach my $num_other_digits (1 .. $count_digits-1)
     {
         my $sum = 0;
+        my $N_d = 0;
 
         my $iter;
 
@@ -38,7 +39,9 @@ foreach my $main_d (0 .. 9)
                 # print "Checking $num_so_far\n";
                 if (is_prime($num_so_far))
                 {
+                    # print "Added $num_so_far\n";
                     $sum += $num_so_far;
+                    $N_d++;
                 }
                 return;
             }
@@ -83,8 +86,9 @@ foreach my $main_d (0 .. 9)
 
         if ($sum > 0)
         {
-            print "Found $sum\n";
-            print "M_$main_d = ", 10 - $num_other_digits, "\n";
+            print "M_$main_d = ", $count_digits - $num_other_digits, "\n";
+            print "N_$main_d = $N_d\n";
+            print "S_$main_d = $sum\n";
             push @S_10_d, $sum;
             next MAIN_D_LOOP;
         }
