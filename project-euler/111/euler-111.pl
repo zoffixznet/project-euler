@@ -4,7 +4,6 @@ use strict;
 use warnings;
 
 use List::Util qw(sum);
-use Math::GMP;
 
 sub is_prime
 {
