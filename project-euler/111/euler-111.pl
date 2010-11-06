@@ -5,11 +5,45 @@ use warnings;
 
 use List::Util qw(sum);
 
-sub is_prime
+use List::MoreUtils qw(all);
+
+sub is_prime1
 {
     my $n = shift;
     return (length(scalar(`primes $n @{[$n+1]}`)) > 0);
 }
+
+sub is_prime2
+{
+    my $n = shift;
+
+    return all { $n % $_ } (2 .. int(sqrt($n))+1);
+}
+
+=begin verification
+
+This function throws an exception due to a bug in bsg-games' primes. 
+
+sub is_prime
+{
+    my $n = shift;
+
+    my $v1 = is_prime1($n);
+    my $v2 = is_prime2($n);
+
+    if ($v1 xor $v2)
+    {
+        die "Results don't match for $n!";    
+    }
+
+    return $v1;
+}
+
+=end verification
+
+=cut
+
+*is_prime = \&is_prime2;
 
 # print is_prime(5), "\n";
 # print is_prime(10), "\n";
