@@ -42,5 +42,56 @@ push @sets_by_rank,
 
 foreach my $rank (2 .. 8)
 {
-    # Configure 
+    my $sets = {};
+    # Make out sets of sub sets.
+    foreach my $sub_rank (1 .. int($rank/2))
+    {
+        my $other_sub_rank = $rank-$sub_rank;
+
+        my $sub_sets = $sets[$sub_rank];
+        my $other_sub_sets = $sets[$other_sub_rank];
+
+        my $compose = sub {
+            my ($sub_vec, $other_sub_vec) = @_;
+            # Check if the sets are mutually exclusive so they can be
+            # composed.
+            if (($sub_vec & $other_sub_vec) eq '')
+            {
+                my $total_vec = ($sub_vec|$other_sub_vec);
+
+                my $record = ($sets{$total_vec} ||= {c => 0, m => []});
+
+                $record->{c} += 
+                    ($sub_sets{$sub_vec}->{c} * 
+                        $other_sub_sets{$other_sub_vec}->{c}
+                    );
+
+                push @{ $record->{'m'} }, +{s => [$sub_vec, $other_sub_vec]};
+            }
+
+            return;
+        };
+
+        if ($sub_rank == $other_sub_rank)
+        {
+            my @sub_keys = keys(%$sub_sets);
+            foreach my $idx (0 .. $#sub_keys-1)
+            {
+                foreach my $other_idx ($idx+1 .. $#sub_keys)
+                {
+                    $compose->(@sub_keys[$idx,$other_idx]);
+                }
+            }
+        }
+        else
+        {
+            foreach my $sub_vec (keys(%$sub_sets)
+            {
+                foreach my $other_sub_vec (keys (%$other_sub_sets))
+                {
+                    $compose->($sub_vec, $other_sub_vec);
+                }
+            }
+        }
+    }
 }
