@@ -48,8 +48,8 @@ foreach my $rank (2 .. 8)
     {
         my $other_sub_rank = $rank-$sub_rank;
 
-        my $sub_sets = $sets[$sub_rank];
-        my $other_sub_sets = $sets[$other_sub_rank];
+        my $sub_sets = $sets_by_rank[$sub_rank];
+        my $other_sub_sets = $sets_by_rank[$other_sub_rank];
 
         my $compose = sub {
             my ($sub_vec, $other_sub_vec) = @_;
@@ -59,11 +59,11 @@ foreach my $rank (2 .. 8)
             {
                 my $total_vec = ($sub_vec|$other_sub_vec);
 
-                my $record = ($sets{$total_vec} ||= {c => 0, m => []});
+                my $record = ($sets->{$total_vec} ||= {c => 0, m => []});
 
                 $record->{c} += 
-                    ($sub_sets{$sub_vec}->{c} * 
-                        $other_sub_sets{$other_sub_vec}->{c}
+                    ($sub_sets->{$sub_vec}->{c}
+                        * $other_sub_sets->{$other_sub_vec}->{c}
                     );
 
                 push @{ $record->{'m'} }, +{s => [$sub_vec, $other_sub_vec]};
@@ -85,7 +85,7 @@ foreach my $rank (2 .. 8)
         }
         else
         {
-            foreach my $sub_vec (keys(%$sub_sets)
+            foreach my $sub_vec (keys(%$sub_sets))
             {
                 foreach my $other_sub_vec (keys (%$other_sub_sets))
                 {
