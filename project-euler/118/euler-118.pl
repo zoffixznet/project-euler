@@ -46,7 +46,10 @@ RANK_LOOP:
 foreach my $rank (2 .. 9)
 {
     print "Reached rank $rank\n";
+
     my $sets = {};
+    push @sets_by_rank, $sets;
+
     # Make out sets of sub sets.
     foreach my $sub_rank (1 .. int($rank/2))
     {
@@ -153,7 +156,6 @@ foreach my $rank (2 .. 9)
         $recurse->($ending_digit, $init_vec); 
     }
 
-    push @sets_by_rank, $sets;
 }
 
 print "Num sets == ",
