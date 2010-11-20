@@ -3,7 +3,10 @@
 use strict;
 use warnings;
 
+use bytes;
+
 use List::MoreUtils qw(all);
+use List::Util qw(sum);
 
 =head1 DESCRIPTION
 
@@ -42,6 +45,7 @@ push @sets_by_rank,
 RANK_LOOP:
 foreach my $rank (2 .. 9)
 {
+    print "Reached rank $rank\n";
     my $sets = {};
     # Make out sets of sub sets.
     foreach my $sub_rank (1 .. int($rank/2))
@@ -55,7 +59,7 @@ foreach my $rank (2 .. 9)
             my ($sub_vec, $other_sub_vec) = @_;
             # Check if the sets are mutually exclusive so they can be
             # composed.
-            if (($sub_vec & $other_sub_vec) eq '')
+            if (($sub_vec & $other_sub_vec) !~ m{[^\0]})
             {
                 my $total_vec = ($sub_vec|$other_sub_vec);
 
@@ -66,7 +70,7 @@ foreach my $rank (2 .. 9)
                     foreach my $o_k (keys(%{$other_sub_sets->{$other_sub_vec}}))
                     {
                         my $signature =
-                            join(",", sort {$a <=> $b } 
+                            join(",", sort { $a <=> $b } 
                                 split(",", "$sub_k,$o_k")
                             );
                         $record->{$signature} = 1;
@@ -108,5 +112,50 @@ foreach my $rank (2 .. 9)
         next RANK_LOOP;
     }
 
-    
+    # Now let's find the complete numbers with $rank digits out of [1..9].
+ 
+    # The ending digit cannot be even or 5 because then the number won't
+    # be prime.
+    foreach my $ending_digit (qw(1 3 7 9))
+    {
+        
+        my $recurse;
+        
+        $recurse = sub {
+            my ($num_so_far, $vec) = @_;
+            
+            if (length($num_so_far) == $rank)
+            {
+                if (is_prime($num_so_far))
+                {
+                    $sets->{$vec}->{$num_so_far} = 1;
+                }
+            }
+            else
+            {
+                foreach my $digit (1 .. 9)
+                {
+                    if (! vec($vec, $digit, 1))
+                    {
+                        my $new_vec = $vec;
+                        vec($new_vec, $digit, 1) = 1;
+                        $recurse->( $digit.$num_so_far, $new_vec );
+                    }
+                }
+            }
+
+            return;
+        };
+
+        my $init_vec = '';
+        vec($init_vec, $ending_digit, 1) = 1;
+     
+        $recurse->($ending_digit, $init_vec); 
+    }
+
+    push @sets_by_rank, $sets;
 }
+
+print "Num sets == ",
+    sum (map { scalar keys(%$_) } values(%{$sets_by_rank[-1]})),
+    "\n";
