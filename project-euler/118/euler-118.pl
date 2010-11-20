@@ -35,12 +35,12 @@ push @sets_by_rank,
             my $p = $_;
             my $s = '';
             vec($s, $p, 1) = 1;
-            # count and made of.
-            $s => { c => 1, m => [{ n => $p },],};
+            $s => { $p => 1 };
         } qw(2 3 5 7),
     };
 
-foreach my $rank (2 .. 8)
+RANK_LOOP:
+foreach my $rank (2 .. 9)
 {
     my $sets = {};
     # Make out sets of sub sets.
@@ -59,14 +59,19 @@ foreach my $rank (2 .. 8)
             {
                 my $total_vec = ($sub_vec|$other_sub_vec);
 
-                my $record = ($sets->{$total_vec} ||= {c => 0, m => []});
+                my $record = ($sets->{$total_vec} ||= {});
 
-                $record->{c} += 
-                    ($sub_sets->{$sub_vec}->{c}
-                        * $other_sub_sets->{$other_sub_vec}->{c}
-                    );
-
-                push @{ $record->{'m'} }, +{s => [$sub_vec, $other_sub_vec]};
+                foreach my $sub_k (keys(%{$sub_sets->{$sub_vec}}))
+                {
+                    foreach my $o_k (keys(%{$other_sub_sets->{$other_sub_vec}}))
+                    {
+                        my $signature =
+                            join(",", sort {$a <=> $b } 
+                                split(",", "$sub_k,$o_k")
+                            );
+                        $record->{$signature} = 1;
+                    }
+                }
             }
 
             return;
@@ -94,4 +99,14 @@ foreach my $rank (2 .. 8)
             }
         }
     }
+
+    # 1+2+3+4+5+6+7+8+9 is evenly divisible by 3 and so numbers which are
+    # composed of them as digits can never be prime, so there's no reason
+    # to check.
+    if ($rank == 9)
+    {
+        next RANK_LOOP;
+    }
+
+    
 }
