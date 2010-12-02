@@ -38,12 +38,28 @@ For 1 ≤ k ≤ 200, find ∑ m(k).
 
 =cut
 
-my @combinations = (undef, ['']);
+my @combinations = (undef, [{}]);
 
+sub is_superset
+{
+    my ($super, $sub);
+
+    foreach my $key (keys(%$sub))
+    {
+        if (!exists($super->{$key}))
+        {
+            return;
+        }
+    }
+
+    return 1;
+}
+
+my $sum = 0;
 foreach my $n (2 .. 200)
 {
     print "Reached $n\n";
-    my %sets;
+    my $sets = [];
 
     foreach my $lower (1 .. ($n>>1))
     {
@@ -53,20 +69,51 @@ foreach my $n (2 .. 200)
         {
             foreach my $u_set (@{$combinations[$upper]})
             {
-                my $s = join(",", uniq(sort { $a <=> $b } (split(/,/,$l_set),split(/,/,$u_set), $n)));
-                $sets{$s}++;
+                my @new_s = uniq(sort { $a <=> $b } (keys(%$l_set), keys(%$u_set), $n));
+
+                my %new_set_hash = (map { $_ => 1 } @new_s);
+
+                CALC_NEW_SETS:
+                {
+                    my @new_sets;
+
+                    SUPERSETS:
+                    foreach my $exist_idx (0 .. $#$sets)
+                    {
+                        my $s = $sets->[$exist_idx];
+                        if (is_superset($s, (\%new_set_hash)))
+                        {
+                            next SUPERSETS;
+                        }
+                        # If the new set is a superset of an existing set,
+                        # then we don't want it here. Put all the existing sets in 
+                        # place and skip this loop.
+                        elsif (is_superset((\%new_set_hash), $s))
+                        {
+                            last CALC_NEW_SETS;
+                        }
+                        else
+                        {
+                            push @new_sets, $s
+                        }
+                    }
+
+                    push @new_sets, (\%new_set_hash);
+                    $sets = \@new_sets;
+                }
             }
         }
     }
 
-    $combinations[$n] = [sort { $a cmp $b } keys(%sets)];
+    # $combinations[$n] = [sort { $a cmp $b } keys(%sets)];
+    $combinations[$n] = $sets;
+
+    my $result = min (map { scalar( keys(%$_)) } @{$combinations[$n]});
+
+    print "Found $result\n";
+
+    $sum += $result;
 }
 
-my $sum = 0;
-
-foreach my $n (2 .. 200)
-{
-    $sum += min (map { scalar( my @x = split(/,/, $_)) } @{$combinations[15]});
-}
 print "Sum = $sum\n";
 
