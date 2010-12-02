@@ -42,7 +42,7 @@ my @combinations = (undef, [{}]);
 
 sub is_superset
 {
-    my ($super, $sub);
+    my ($super, $sub, $true_superset) = @_;
 
     foreach my $key (keys(%$sub))
     {
@@ -52,7 +52,7 @@ sub is_superset
         }
     }
 
-    return 1;
+    return ((!$true_superset) || (keys(%$super) > keys(%$sub)));
 }
 
 my $sum = 0;
@@ -81,14 +81,14 @@ foreach my $n (2 .. 200)
                     foreach my $exist_idx (0 .. $#$sets)
                     {
                         my $s = $sets->[$exist_idx];
-                        if (is_superset($s, (\%new_set_hash)))
+                        if (is_superset($s, (\%new_set_hash), 1))
                         {
                             next SUPERSETS;
                         }
                         # If the new set is a superset of an existing set,
                         # then we don't want it here. Put all the existing sets in 
                         # place and skip this loop.
-                        elsif (is_superset((\%new_set_hash), $s))
+                        elsif (is_superset((\%new_set_hash), $s, 0))
                         {
                             last CALC_NEW_SETS;
                         }
