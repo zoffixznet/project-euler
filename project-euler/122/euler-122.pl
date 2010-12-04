@@ -38,7 +38,7 @@ For 1 ≤ k ≤ 200, find ∑ m(k).
 
 =cut
 
-my @combinations = (undef, [{}]);
+my @combinations = (undef, [{1 => 1}]);
 
 sub is_superset
 {
@@ -64,43 +64,45 @@ foreach my $n (2 .. 200)
     foreach my $lower (1 .. ($n>>1))
     {
         my $upper = $n - $lower;
-        
-        foreach my $l_set (@{$combinations[$lower]})
+
+        U_SET:
+        foreach my $u_set (@{$combinations[$upper]})
         {
-            foreach my $u_set (@{$combinations[$upper]})
+            if (!exists($u_set->{$lower}))
             {
-                my @new_s = uniq(sort { $a <=> $b } (keys(%$l_set), keys(%$u_set), $n));
+                next U_SET;
+            }
 
-                my %new_set_hash = (map { $_ => 1 } @new_s);
+            my %new_set_hash = %$u_set;
+            $new_set_hash{$n} = 1;
 
-                CALC_NEW_SETS:
+            CALC_NEW_SETS:
+            {
+                my @new_sets;
+
+                SUPERSETS:
+                foreach my $exist_idx (0 .. $#$sets)
                 {
-                    my @new_sets;
-
-                    SUPERSETS:
-                    foreach my $exist_idx (0 .. $#$sets)
+                    my $s = $sets->[$exist_idx];
+                    if (is_superset($s, (\%new_set_hash), 1))
                     {
-                        my $s = $sets->[$exist_idx];
-                        if (is_superset($s, (\%new_set_hash), 1))
-                        {
-                            next SUPERSETS;
-                        }
-                        # If the new set is a superset of an existing set,
-                        # then we don't want it here. Put all the existing sets in 
-                        # place and skip this loop.
-                        elsif (is_superset((\%new_set_hash), $s, 0))
-                        {
-                            last CALC_NEW_SETS;
-                        }
-                        else
-                        {
-                            push @new_sets, $s
-                        }
+                        next SUPERSETS;
                     }
-
-                    push @new_sets, (\%new_set_hash);
-                    $sets = \@new_sets;
+                    # If the new set is a superset of an existing set,
+                    # then we don't want it here. Put all the existing sets in 
+                    # place and skip this loop.
+                    elsif (is_superset((\%new_set_hash), $s, 0))
+                    {
+                        last CALC_NEW_SETS;
+                    }
+                    else
+                    {
+                        push @new_sets, $s;
+                    }
                 }
+
+                push @new_sets, (\%new_set_hash);
+                $sets = \@new_sets;
             }
         }
     }
@@ -108,7 +110,7 @@ foreach my $n (2 .. 200)
     # $combinations[$n] = [sort { $a cmp $b } keys(%sets)];
     $combinations[$n] = $sets;
 
-    my $result = min (map { scalar( keys(%$_)) } @{$combinations[$n]});
+    my $result = -1 + min (map { scalar( keys(%$_)) } @{$combinations[$n]});
 
     print "Found $result\n";
 
