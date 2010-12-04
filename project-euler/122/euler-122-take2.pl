@@ -7,6 +7,10 @@ use integer;
 
 use List::MoreUtils qw(uniq);
 use List::Util qw(min);
+use List::UtilsBy qw(min_by);
+use IO::Handle;
+
+STDOUT->autoflush(1);
 
 =head1 DESCRIPTION
 
@@ -126,12 +130,12 @@ foreach my $n (2 .. 200)
     # $combinations[$n] = [sort { $a cmp $b } keys(%sets)];
     $combinations[$n] = $sets;
 
-    my $result = -1 + min
-    (
-        map { unpack("b*", $_) =~ tr/1/1/ } @{$combinations[$n]}
-    );
+    my $optimal_comb = min_by { unpack("b*", $_) =~ tr/1/1/ } @{$combinations[$n]};
 
-    print "${n}: $result\n";
+    my $comb = unpack("b*", $optimal_comb);
+    my $result = -1 + $comb =~ tr/1/1/;
+
+    print "${n}: $result ($comb)\n";
 
     $sum += $result;
 }
