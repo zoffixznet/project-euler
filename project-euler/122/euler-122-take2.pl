@@ -59,9 +59,11 @@ sub is_superset
 }
 
 my $sum = 0;
+print "1: 0\n";
+
 foreach my $n (2 .. 200)
 {
-    print "Reached $n\n";
+    # print "Reached $n\n";
     my $sets = [];
 
     foreach my $lower (1 .. ($n>>1))
@@ -129,7 +131,7 @@ foreach my $n (2 .. 200)
         map { unpack("b*", $_) =~ tr/1/1/ } @{$combinations[$n]}
     );
 
-    print "Found $result\n";
+    print "${n}: $result\n";
 
     $sum += $result;
 }
