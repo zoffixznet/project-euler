@@ -94,28 +94,11 @@ Lemma 3:
 
 It's impossible to have @ranks = [... r , r-1 , r-1,] - it must be [ r, r-1, r].
 
-Proof 3:
---------
+Disproved!
+----------
 
-Since ranks[x+1] = r-1 < ranks[x] = r then (x + 1) mod 2 == 0 or else
-it will be impossible according to lemma . 
-
-If ranks[x+2] = r-1 then we can construct a ranks[x] = r-1 in a similar way
-to that in Lemma 1:
-
-1. [x+2] = {1,2,....i,j}
-
-2. [x] = {1,2....i,j-2}
-
-
-
-
-
-
-
-
-
-
+Set(31) = 1,2,3,5,10,20,30,31 --> rank(31) = 7
+Set(33) = 1,2,4,8,16,32,33 --> rank(33) = 6
 
 
 Removed:
