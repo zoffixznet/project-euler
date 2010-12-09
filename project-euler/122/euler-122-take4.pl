@@ -47,6 +47,29 @@ continue
     $power_of_2 *= 2;
 }
 
+{
+    my $n = 7;
+
+    my $v = '';
+    vec($v, 1, 1) = 1;
+    vec($v, 2, 1) = 1;
+    vec($v, 4, 1) = 1;
+    vec($v, 6, 1) = 1;
+    vec($v, 7, 1) = 1;
+
+    push @{$compositions[$n]}, (my $s = $v);
+
+    $n *= 2;
+    while ($n < $limit)
+    {
+        vec($v, $n, 1) = 1;
+        push @{$compositions[$n]}, (my $s = $v);
+    }
+    continue
+    {
+        $n *= 2;
+    }
+}
 my $sum = 0;
 
 N_LOOP:
