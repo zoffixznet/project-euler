@@ -69,10 +69,10 @@ sub add_layer
 
     $cuboids{$key} = {array => $new_array, dims => \@new_dims, n => $new_layer_count};
 
-    if ((++$C[$new_layer_count]) == 1_000)
+    if ((++$C[$new_layer_count]) >= 10)
     {
-        print "Found C[$new_layer_count] == 1,000\n";
-        exit(0);
+        print "Found C[$new_layer_count] == $C[$new_layer_count]\n";
+        # exit(0);
     }
 }
 
@@ -96,7 +96,11 @@ while (1)
 
             # print "$x,$y,$z\n";
             my $initial_cuboid =
-                [ map { map { [(1)x$z] } (1 .. $y) } (1 .. $x)];
+                [ map { 
+                    [ map { [(1)x$z] } (1 .. $y) ]
+                    } 
+                    (1 .. $x)
+                ];
 
             $cuboids{"$x,$y,$z"} = 
                 { array => $initial_cuboid, dims => [$x,$y,$z], n => $max_layer_size };
