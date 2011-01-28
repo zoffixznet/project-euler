@@ -5,6 +5,8 @@ use warnings;
 
 use integer;
 
+use List::MoreUtils qw(any);
+
 my @C;
 
 # Matches $X,$Y,$Z (where $X >= $Y >= $Z) to the cuboid array and maximal 
@@ -51,10 +53,10 @@ sub add_layer
                     $new_array->[$xx]->[$yy]->[$zz] = 1;
                 }
                 elsif (any {
-                        $new_array
-                        ->[$coords[0]+$_->[0]]
-                        ->[$coords[1]+$_->[1]]
-                        ->[$coords[2]+$_->[2]]
+                        $array
+                        ->[$coords[0]+1+$_->[0]]
+                        ->[$coords[1]+1+$_->[1]]
+                        ->[$coords[2]+1+$_->[2]]
                     } ([0,0,1],[0,0,-1],[0,1,0],[0,-1,0],[1,0,0],[-1,0,0])
                 )
                 {
