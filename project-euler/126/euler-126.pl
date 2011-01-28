@@ -5,13 +5,15 @@ use warnings;
 
 use integer;
 
-use List::MoreUtils qw(any);
+use List::MoreUtils qw(any all);
 
 my @C;
 
 # Matches $X,$Y,$Z (where $X >= $Y >= $Z) to the cuboid array and maximal 
 # reached layer.
 my %cuboids;
+
+my $max_C_n = 0;
 
 sub add_layer
 {
@@ -48,15 +50,20 @@ sub add_layer
             {
                 @coords = ($xx, $yy, $zz);
 
-                if ($array->[$xx+1]->[$yy+1]->[$zz+1])
+                if ($xx and $yy and $zz and $array->[$xx-1]->[$yy-1]->[$zz-1])
                 {
                     $new_array->[$xx]->[$yy]->[$zz] = 1;
                 }
                 elsif (any {
+                        my $deltas = $_;
+                        my @nc = (map { $coords[$_]-1+$deltas->[$_] } (0 .. 2));
+
+                        ((all { $_ >= 0 } @nc) and
                         $array
-                        ->[$coords[0]+1+$_->[0]]
-                        ->[$coords[1]+1+$_->[1]]
-                        ->[$coords[2]+1+$_->[2]]
+                        ->[$nc[0]]
+                        ->[$nc[1]]
+                        ->[$nc[2]]
+                        )
                     } ([0,0,1],[0,0,-1],[0,1,0],[0,-1,0],[1,0,0],[-1,0,0])
                 )
                 {
@@ -69,10 +76,15 @@ sub add_layer
 
     $cuboids{$key} = {array => $new_array, dims => \@new_dims, n => $new_layer_count};
 
-    if ((++$C[$new_layer_count]) >= 10)
+    if ((++$C[$new_layer_count]) > $max_C_n)
     {
         print "Found C[$new_layer_count] == $C[$new_layer_count]\n";
-        # exit(0);
+        $max_C_n = $C[$new_layer_count];
+
+        if ($max_C_n == 1000)
+        {
+            exit(0);
+        }
     }
 }
 
