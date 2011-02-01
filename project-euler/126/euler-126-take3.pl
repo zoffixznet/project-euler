@@ -24,12 +24,13 @@ sub add_layer
     my $depth = $cuboids{$key}->{d};
     my $old_n = $cuboids{$key}->{n};
 
-    my $expected_new_layer_count =
-       (($depth == 1)
+    my $new_layer_count =
+    (($depth == 1)
         ? (($x_lim*$y_lim+$x_lim*$z_lim+$z_lim*$y_lim)*2)
         : ($old_n+($x_lim+$y_lim+$z_lim)*4 + (($depth > 1) ? 8*($depth-2) : 0))
-        );
+    );
 
+=begin foo
     my $new_layer_count = 0;
 
     my $calc_dist = sub {
@@ -66,6 +67,10 @@ sub add_layer
             and ($x_lim,$y_lim,$z_lim).";
     }
 
+=end foo
+
+=cut
+
     $cuboids{$key} = {d => ($depth+1), n => $new_layer_count};
 
     if ((++$C[$new_layer_count]) > $max_C_n)
@@ -78,6 +83,8 @@ sub add_layer
             exit(0);
         }
     }
+
+    return;
 }
 
 my $max_layer_size = 1;
