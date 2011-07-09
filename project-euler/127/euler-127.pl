@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use List::Util qw(min reduce);
+use List::Util qw(max min reduce);
 use List::MoreUtils qw(uniq);
 
 use integer;
@@ -35,10 +35,21 @@ sub radical
 
 my %C_s = ();
 
-for my $B (3 .. 120_000-1)
+for my $B (3 .. 1_000-1)
 {
+    print "B = $B\n";
     my $rad_B = radical($B);
-    for my $A (2 .. min($B-1, (120_000-1)-$B, (2 * $B/$rad_B)))
+
+    # rad(A) is at the minimum 2 and since a,b,c are stranger numbers,
+    # then C > rad(abc) >= rad(ab) >= 2*rad_B
+    # A = C-B >= 2 * rad_B - B
+    for my $A
+    (
+        max(2*$rad_B-$B, 2) 
+        ..
+        min($B-1, (120_000-1)-$B)
+    )
+    # for my $A (2 .. min($B-1, (120_000-1)-$B))
     {
         if (gcd($B, $A) == 1)
         {
