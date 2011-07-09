@@ -107,9 +107,11 @@ package main;
 
 package Max;
 
+# s = so far
+# e = ending here.
 sub new
 {
-    return bless { _so_far => 0, _ending_here => 0 }, shift;
+    return bless { s => 0, e => 0 }, shift;
 }
 
 sub _max
@@ -123,8 +125,7 @@ sub add
 {
     my ($self, $n) = @_;
  
-    $self->{_ending_here} = _max($self->{_ending_here} + $n, 0);
-    $self->{_so_far} = _max($self->{_so_far}, $self->{_ending_here});
+    $self->{'s'} = _max($self->{'s'}, ($self->{e} = _max($self->{e} + $n, 0)));
 
     return;
 }
@@ -133,7 +134,7 @@ sub get_max
 {
     my ($self) = @_;
 
-    return $self->{_so_far};
+    return $self->{'s'};
 }
 
 package main;
