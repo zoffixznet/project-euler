@@ -150,12 +150,10 @@ sub max
 
 my $SIZE = 2_000;
 
-my $horiz_max_max = 0;
+my $max_max = 0;
 my @vert_max = map { Max->new } (1 .. $SIZE);
 my @diag_max = map { Max->new } (1 .. $SIZE);
 my @anti_diag_max = map { Max->new } (1 .. $SIZE);
-my $diag_max_max = 0;
-my $anti_diag_max_max = 0;
 
 my $diag_offset = 0;
 my $anti_diag_offset = 0;
@@ -174,13 +172,13 @@ sub handle_row
         $anti_diag_max[($x+$anti_diag_offset) % $SIZE]->add($s);
     }
 
-    $horiz_max_max = max($horiz_max_max, $horiz->get_max());
+    $max_max = multi_max(
+        [$max_max, $horiz->get_max(), $diag_max[0]->get_max(), $anti_diag_max[-1]->get_max()]
+    );
 
-    $diag_max_max = max($diag_max_max, $diag_max[0]->get_max());
     $diag_max[0] = Max->new;
     $diag_offset++;
 
-    $anti_diag_max_max = max($anti_diag_max_max, $anti_diag_max[-1]->get_max());
     $anti_diag_max[-1] = Max->new;
     $anti_diag_offset--;
 
@@ -214,7 +212,7 @@ sub multi_max
 
 print "Result = ", multi_max(
     [
-    $horiz_max_max, $anti_diag_max_max, $diag_max_max, (map { $_->get_max() } @vert_max, @diag_max, @anti_diag_max
+    $max_max, (map { $_->get_max() } @vert_max, @diag_max, @anti_diag_max
     )
     ]
 ), "\n";
