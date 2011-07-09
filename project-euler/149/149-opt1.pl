@@ -107,6 +107,8 @@ package main;
 
 package Max;
 
+use List::Util qw(max);
+
 # s = so far
 # e = ending here.
 sub new
@@ -114,23 +116,17 @@ sub new
     return bless { s => 0, e => 0 }, shift;
 }
 
-sub _max
-{
-    my ($x, $y) = @_;
-
-    return ($x > $y) ? $x : $y;
-}
-
 sub add
 {
     my ($self, $n) = @_;
  
-    $self->{'s'} = _max($self->{'s'}, ($self->{e} = _max($self->{e} + $n, 0)));
+    $self->{'s'} = max($self->{'s'}, ($self->{e} = max($self->{e} + $n, 0)));
 
     return;
 }
 
-sub get_max
+# g = get()
+sub g
 {
     my ($self) = @_;
 
@@ -139,14 +135,9 @@ sub get_max
 
 package main;
 
+use List::Util qw(max);
+
 my $rand = FiboRand->new;
-
-sub max
-{
-    my ($x, $y) = @_;
-
-    return ($x > $y) ? $x : $y;
-}
 
 my $SIZE = 2_000;
 
@@ -172,8 +163,8 @@ sub handle_row
         $anti_diag_max[($x+$anti_diag_offset) % $SIZE]->add($s);
     }
 
-    $max_max = multi_max(
-        [$max_max, $horiz->get_max(), $diag_max[0]->get_max(), $anti_diag_max[-1]->get_max()]
+    $max_max = max(
+        $max_max, $horiz->g(), $diag_max[0]->g(), $anti_diag_max[-1]->g()
     );
 
     $diag_max[0] = Max->new;
@@ -194,25 +185,8 @@ foreach my $y (1 .. $SIZE)
     handle_row();
 }
 
-sub multi_max
-{
-    my $aref = shift;
 
-    my $max = 0;
-
-    foreach my $n (@$aref)
-    {
-        if ($n > $max)
-        {
-            $max = $n;
-        }
-    }
-    return $max;
-}
-
-print "Result = ", multi_max(
-    [
-    $max_max, (map { $_->get_max() } @vert_max, @diag_max, @anti_diag_max
+print "Result = ", max(
+    $max_max, (map { $_->g() } @vert_max, @diag_max, @anti_diag_max
     )
-    ]
 ), "\n";
