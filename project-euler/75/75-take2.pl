@@ -24,37 +24,66 @@ Note: This problem has been changed recently, please check that you are using th
 
 =cut
 
+sub gcd
+{
+    my ($n, $m) = @_;
+
+    if ($m == 0)
+    {
+        return $n;
+    }
+
+    return gcd($m,$n % $m);
+}
+
 my $limit = 1_500_000;
 
 my $verdicts = "";
 
 my $hypotenuse_lim = int($limit/2);
 
-HYPO:
-for my $hypotenuse_length (5 .. $hypotenuse_lim)
-{
-    print "$hypotenuse_length\n" if (not $hypotenuse_length % 1_000);
-    my $hypot_sq = $hypotenuse_length ** 2;
-    
-    my $side1_lim = int($hypotenuse_length / 2);
-    
-    for my $side1_len (1 .. $side1_lim)
-    {
-        my $side2_len = sqrt($hypot_sq - ($side1_len ** 2));
+my $major_side_limit = int($limit/2);
 
-        if ($side2_len == int($side2_len))
+MAJOR_SIDE:
+for my $major_side (4 .. $major_side_limit)
+{
+    if ($major_side % 100 == 0)
+    {
+        print "Maj=$major_side\n";
+    }
+    MINOR_SIDE:
+    for my $minor_side (3 .. ($major_side - 1))
+    {
+        if (gcd( $major_side , $minor_side ) != 1)
         {
-            my $sum = int($side2_len+$side1_len+$hypotenuse_length);
-            if ($sum <= $limit)
+            next MINOR_SIDE;
+        }
+
+        my $hypot_sq = $major_side * $major_side + $minor_side * $minor_side;
+
+        my $hypot = sqrt($hypot_sq);
+        if ($hypot == int($hypot))
+        {
+            my $sum = $major_side + $minor_side + $hypot;
+            
+            if ($sum > $limit)
+            {
+                last MINOR_SIDE;
+            }
+
+            my $sum_product = $sum;
+
+            while ($sum_product < $limit)
             {
                 # Only even numbers can be sums, so we can divide the index
                 # by 2.
                 # See 75-analysis.txt
-                my $idx = ($sum>>1);
+                my $idx = ($sum_product>>1);
                 if (vec($verdicts, $idx, 2) != 2)
                 {
                     vec($verdicts, $idx, 2)++;
                 }
+                $sum_product += $sum;
             }
         }
     }
