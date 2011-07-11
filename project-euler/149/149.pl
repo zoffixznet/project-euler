@@ -29,6 +29,10 @@ direction (horizontal, vertical, diagonal or anti-diagonal).
 use strict;
 use warnings;
 
+use IO::Handle;
+
+STDOUT->autoflush(1);
+
 # use integer;
 
 # use Math::BigInt "lib" => "GMP";
