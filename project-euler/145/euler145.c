@@ -40,6 +40,11 @@ int main(int argc, char * argv[])
 
     for (n = 21 ; n < limit ; )
     {
+
+        if (n % 1000000 == 1)
+        {
+            printf ("Reached %i\n", n);
+        }
         int reverse = 0;
         int temp_n = n;
 
