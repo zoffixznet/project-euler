@@ -47,8 +47,10 @@ int main(int argc, char * argv[])
         while (temp_n)
         {
             reverse = reverse * 10 + (temp_n % 10);
-            temp_n /= 10;
-            power_of_ten *= 10;
+            if (temp_n /= 10)
+            {
+                power_of_ten *= 10;
+            }
         }
 
         /*
