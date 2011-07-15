@@ -71,7 +71,8 @@ my $LAST_SIDE = 5;
 
 my $ring_len = 6;
 my $ring_start = 2;
-my ($prev_ring_len, $prev_ring_start);
+my $prev_ring_len = 0;
+my $prev_ring_start = 1;
 my $next_ring_len = 12;
 my $next_ring_start = 8;
 
@@ -119,15 +120,48 @@ for my $ring (1 .. 10_000)
                     push @vicinity, $x, $x+1;
                 }
             }
-            print "$n ; Neighbours = ", 
-                join(",", sort { $a <=> $b } @vicinity), 
-                "\n";
+            else
+            {
+                {
+                    my $x = $n + 1;
+                    if ($x < $next_ring_start)
+                    {
+                        push @vicinity, $x;
+                    }
+                    else
+                    {
+                        push @vicinity, $ring_start;
+                    }
+                }
+                if ($side == 0)
+                {
+                    # Up and down.
+                    push @vicinity, ($prev_ring_start, $next_ring_start);
+                    push @vicinity, ($next_ring_start-1);
+                    push @vicinity, ($next_ring_start+1);
+                    push @vicinity, ($next_ring_start+$next_ring_len-1);
+                }
+                else
+                {
+                    push @vicinity, $n-1;
+                    push @vicinity, ($prev_ring_start + ($ring-1) * $side);
+                    my $x = $next_ring_start + ($ring+1) * $side;
+                    push @vicinity, ($x-1 .. $x+1);
+                }
+            }
+            # print "$n ; Neighbours = ", 
+            #    join(",", sort { $a <=> $b } @vicinity), 
+            #    "\n";
+        }
+        continue
+        {
             $n++;
         }
     }
 }
 continue
 {
+    
     if ($n != $next_ring_start)
     {
         die "Mismatched $n <=> $next_ring_start";
