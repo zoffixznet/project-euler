@@ -82,7 +82,6 @@ for my $ring (1 .. 10_000)
     {
         for my $cell (0 .. ($ring-1))
         {
-            print "$n ; Neighbours = ", 
 
             my @vicinity;
 
@@ -119,10 +118,10 @@ for my $ring (1 .. 10_000)
                     # item.
                     push @vicinity, $x, $x+1;
                 }
-
-                print join(",", sort { $a <=> $b } @vicinity);
             }
-            print "\n";
+            print "$n ; Neighbours = ", 
+                join(",", sort { $a <=> $b } @vicinity), 
+                "\n";
             $n++;
         }
     }
