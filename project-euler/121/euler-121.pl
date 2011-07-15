@@ -1,7 +1,10 @@
-Problem:
---------
+#!/usr/bin/perl
 
-{{{
+use strict;
+use warnings;
+
+=head1 DESCRIPTION
+
 A bag contains one red disc and one blue disc. In a game of chance a player
 takes a disc at random and its colour is noted. After each turn the disc is
 returned to the bag, an extra red disc is added, and another disc is taken at
@@ -19,39 +22,37 @@ wins £9.
 
 Find the maximum prize fund that should be allocated to a single game in which
 fifteen turns are played.
-}}}
 
-There are two possible states:
+=cut
 
-S1) 1 B + 1 R .
+use Math::BigRat;
 
-S2) 2 R.
+my $num_turns = shift(@ARGV);
 
-The state machine is:
+my @B_nums_probs = (1);
 
-S1 -> S1 = 2/3
+foreach my $turn_idx (1 .. $num_turns)
+{
+    my $this_B_prob = Math::BigRat->new('1/'.($turn_idx+1));
 
-S1 -> S2 = 1/3
+    push @B_nums_probs, (0);
 
-S2 -> S1 = 0
+    my @new_B_probs = map { 
+        my $i = $_; 
+        $B_nums_probs[$i] * (1-$this_B_prob) + 
+            (($i == 0) ? 0 : ($B_nums_probs[$i-1] * $this_B_prob))
+        } (0 .. $turn_idx);
 
-S2 -> S2 = 1/1
+    @B_nums_probs = @new_B_probs;
+}
 
-The output is:
+my $s = Math::BigRat->new('0');
 
-Out[S1] = B -> 1/2
-Out[S1] = R -> 1/2
-Out[S2] = B -> 0
-Out[S2] = R -> 1/1
+foreach my $idx ( int($num_turns/2)+1 .. $num_turns)
+{
+    $s += $B_nums_probs[$idx];
+}
 
-1 Turn:
--------
-
-1/2 : N[B] = 0
-1/2 : N[B] = 1
-
-2 Turns:
---------
-
-For the second turn,
+print "S = $s\n";
+print "Int[1/S] = ", int(1/$s), "\n";
 
