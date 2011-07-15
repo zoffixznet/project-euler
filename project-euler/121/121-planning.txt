@@ -1,3 +1,6 @@
+***NOTE*** : the analysis here is wrong because the existing disks are kept
+in the bag (including the blue disk) and they are not removed.
+
 Problem:
 --------
 
