@@ -90,7 +90,8 @@ for my $ring (1 .. 10_000)
             {
                 push @vicinity, $n-1;
 
-                if (($cell == $ring) && ($side == $LAST_SIDE))
+                my $is_last = (($cell == $ring-1) && ($side == $LAST_SIDE));
+                if ($is_last)
                 {
                     push @vicinity, 6 * (($ring * ($ring + 1)) >> 1);
                 }
@@ -99,11 +100,25 @@ for my $ring (1 .. 10_000)
                     push @vicinity, $n+1;
                 }
 
-                push @vicinity, ($n - $prev_ring_len - $side * $ring);
-                push @vicinity, ($n - $prev_ring_len - $side * $ring + 1);
+                {
+                    my $x = $prev_ring_start + $side * ($ring-1) + ($cell-1);
+                    push @vicinity, $x;
+                    if ($is_last)
+                    {
+                        push @vicinity, $prev_ring_start;
+                    }
+                    else
+                    {
+                        push @vicinity, $x+1;
+                    }
+                }
 
-                push @vicinity, ($n + $next_ring_len + $side * ($ring+1));
-                push @vicinity, ($n + $next_ring_len + $side * ($ring+1) + 1);
+                {
+                    my $x = $next_ring_start + $side * ($ring+1) + $cell;
+                    # TODO : This is wrong for the cell == 0 ; side == 0
+                    # item.
+                    push @vicinity, $x, $x+1;
+                }
 
                 print join(",", sort { $a <=> $b } @vicinity);
             }
