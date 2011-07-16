@@ -60,7 +60,41 @@ distance out of each pair must be even (and so non-prime).
 As a result, only corner cells (where Cell_Idx == 0) and the last cells
 in the ring (where Side == LAST_SIDE && Cell_Idx == Ring - 1) can be PD(n) = 3.
 
-=head2 
+=head2 Corner cells (Cell_Idx == 0) with Side != 0 cannot be PD(n) = 3
+
+=head3 If they are on an even chain.
+
+=head4 If they are in an even place.
+
+Then for 12, both 4 and 26 will be even, leaving only a max PD(n) = 2.
+
+=head4 If they are in an odd place.
+
+Then for 10 , the neighbours of 23 - 22 and 24 will be even.
+
+=head3 If they are on an odd chain.
+
+=head4 If they are in an even place.
+
+Then, for 26, both 12 and 46 will be even, giving a max PD(n) of 2.
+
+=head4 If they are in an odd place.
+
+Then the radial outer ring neighbour will be even, and both of their mutual
+numbers will be odd. Therefore, their distances to C<n> will be even and
+non-prime.
+
+=head2 Conclusion:
+
+The only possible PD(n) = 3 cells are either:
+
+=over 4
+
+=item * Cell_Idx == 0 && Side == 0
+
+=item * Cell_Idx == Ring-1 && Side == LAST_SIDE
+
+=back
 
 =cut
 
@@ -163,10 +197,10 @@ for my $ring (1 .. 10_000)
                 }
             }
 
-            if (0)
+            if (1)
             {
-                print "$n ; Neighbours = ", 
-                join(",", sort { $a <=> $b } @vicinity), 
+                print "$n [Ring=$ring,Side=$side,Cell=$cell] ; Neighbours = ", 
+                join(",", sort { $a <=> $b } map { abs($n-$_) } @vicinity), 
                 "\n";
             }
             if (scalar(grep { is_prime(abs($n-$_)) } @vicinity) == 3)
