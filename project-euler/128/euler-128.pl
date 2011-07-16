@@ -93,7 +93,7 @@ for my $ring (1 .. 10_000)
                 my $is_last = (($cell == $ring-1) && ($side == $LAST_SIDE));
                 if ($is_last)
                 {
-                    push @vicinity, 6 * (($ring * ($ring + 1)) >> 1);
+                    push @vicinity, $ring_start;
                 }
                 else
                 {
@@ -149,9 +149,18 @@ for my $ring (1 .. 10_000)
                     push @vicinity, ($x-1 .. $x+1);
                 }
             }
-            # print "$n ; Neighbours = ", 
-            #    join(",", sort { $a <=> $b } @vicinity), 
-            #    "\n";
+
+            if (0)
+            {
+                print "$n ; Neighbours = ", 
+                join(",", sort { $a <=> $b } @vicinity), 
+                "\n";
+            }
+            if (scalar(grep { is_prime(abs($n-$_)) } @vicinity) == 3)
+            {
+                $count++;
+                print "Found $count: $n\n";
+            }
         }
         continue
         {
