@@ -49,6 +49,19 @@ Find the 2000th tile in this sequence.
 
 So the formula is 1 + 
 
+=head2 Middle cells cannot be PD(n) = 3
+
+For (Side != LAST_SIDE ) and (Cell_Idx != Ring-1) and (Cell_Idx != 0)
+the PD(n) cannot be 3 because
+two of its distances are 1, which leaves only 4 possible prime distances, and
+it is adjacent to two pairs of consecutive integers on both sides where one
+distance out of each pair must be even (and so non-prime).
+
+As a result, only corner cells (where Cell_Idx == 0) and the last cells
+in the ring (where Side == LAST_SIDE && Cell_Idx == Ring - 1) can be PD(n) = 3.
+
+=head2 
+
 =cut
 
 sub get_cell_n
@@ -159,7 +172,7 @@ for my $ring (1 .. 10_000)
             if (scalar(grep { is_prime(abs($n-$_)) } @vicinity) == 3)
             {
                 $count++;
-                print "Found $count: $n\n";
+                print "Found $count: $n [Ring=$ring,Side=$side,Cell=$cell]\n";
             }
         }
         continue
