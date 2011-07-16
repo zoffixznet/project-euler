@@ -123,7 +123,8 @@ my $prev_ring_start = 1;
 my $next_ring_len = 12;
 my $next_ring_start = 8;
 
-for my $ring (1 .. 10_000)
+my $ring = 1;
+while ($count < 2_000)
 {
     my $check_side_and_cell =
     sub {
@@ -212,6 +213,7 @@ for my $ring (1 .. 10_000)
 }
 continue
 {
+    $ring++;
     ( $prev_ring_len, $prev_ring_start, $ring_len, $ring_start ) =
     ($ring_len, $ring_start, $next_ring_len, $next_ring_start);
     
