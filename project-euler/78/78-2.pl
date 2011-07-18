@@ -9,7 +9,8 @@ no warnings 'recursion';
 use 5.010;
 
 use List::Util qw(sum min);
-use Math::BigInt (":constant", lib => 'GMP');
+# use Math::BigInt (":constant", lib => 'GMP');
+use integer;
 
 STDOUT->autoflush(1);
 
@@ -29,7 +30,7 @@ sub p_k_n
     }
     else
     {
-        return ($p[$n][$k] ||= (p_k_n($k+1, $n) + p_k_n($k,$n-$k)));
+        return ($p[$n][$k] ||= ((p_k_n($k+1, $n) + p_k_n($k,$n-$k)) % 1_000_000));
     }
 }
 
@@ -39,7 +40,7 @@ while (1)
 {
     my $p = p_k_n(1, $n);
     print "N = $n ; V = $p\n";
-    if ($p % 1_000_000 == 0)
+    if ($p % 10000 == 0)
     {
         last N_LOOP;
     }
@@ -48,3 +49,7 @@ continue
 {
     $n++;
 }
+
+# For % 1,000 == 449
+# For % 100 = 74
+# For % 10 = 9
