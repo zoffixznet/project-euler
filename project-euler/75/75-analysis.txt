@@ -15,6 +15,11 @@ Now, here is the modulo 2 of the results:
 Ergo, the sum is always even.
 
 (2a+1)*(2a+1) = 4a^2+4a+1
+(2b+1)*(2b+1) = 4b^2+4b+1
+
+[4a^2+4a+1+4b^2+4b+1] mod 4 = 2, and a square number cannot have a modulo
+of 2 when divided by 4. As a result, either one of 'a' or 'b' or both should
+be even.
 
 Now for mod 4:
 

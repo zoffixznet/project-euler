@@ -45,6 +45,7 @@ my $hypotenuse_lim = int($limit/2);
 
 my $major_side_limit = int($limit/2);
 
+my $evenness = 1;
 MAJOR_SIDE:
 for my $major_side (4 .. $major_side_limit)
 {
@@ -52,9 +53,12 @@ for my $major_side (4 .. $major_side_limit)
     {
         print "Maj=$major_side\n";
     }
+    # If the major side is odd, then the minor side cannot be odd.
+    # If they are both even, then we've already inspected ($major/2,$minor/2).
     MINOR_SIDE:
-    for my $minor_side (3 .. ($major_side - 1))
+    for my $half_minor_side (2 .. (($major_side) >> 1))
     {
+        my $minor_side = ($half_minor_side << 1)-$evenness;
         if (gcd( $major_side , $minor_side ) != 1)
         {
             next MINOR_SIDE;
@@ -89,6 +93,10 @@ for my $major_side (4 .. $major_side_limit)
             }
         }
     }
+}
+continue
+{
+    $evenness ^= 0b1;
 }
 
 my $count = 0;
