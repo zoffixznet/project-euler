@@ -37,6 +37,7 @@ sub gcd
 }
 
 my $limit = 1_500_000;
+my $half_limit = ($limit >> 1);
 
 my $verdicts = "";
 
@@ -64,26 +65,27 @@ for my $major_side (4 .. $major_side_limit)
         my $hypot = sqrt($hypot_sq);
         if ($hypot == int($hypot))
         {
-            my $sum = $major_side + $minor_side + $hypot;
+            # Only even numbers can be sums, so we can divide the index
+            # by 2.
+            # See 75-analysis.txt
+            my $sum = (($major_side + $minor_side + $hypot) >> 1);
             
-            if ($sum > $limit)
+            if ($sum > $half_limit)
             {
                 last MINOR_SIDE;
             }
 
-            my $sum_product = $sum;
-
-            while ($sum_product < $limit)
+            if (vec($verdicts, $sum, 2) != 2)
             {
-                # Only even numbers can be sums, so we can divide the index
-                # by 2.
-                # See 75-analysis.txt
-                my $idx = ($sum_product>>1);
-                if (vec($verdicts, $idx, 2) != 2)
+                my $sum_product = 0;
+
+                while (($sum_product += $sum) < $half_limit)
                 {
-                    vec($verdicts, $idx, 2)++;
+                    if (vec($verdicts, $sum_product, 2) != 2)
+                    {
+                        vec($verdicts, $sum_product, 2)++;
+                    }
                 }
-                $sum_product += $sum;
             }
         }
     }
