@@ -35,14 +35,16 @@ while (1)
     {
         for my $L (1 .. $N)
         {
-            my @arr = ($M,$N,$L);
-            my $get_dist = sub {
-                my $idx = shift;
-                my $x = $arr[$idx];
-                my $t = $arr[($idx+1)%3] + $arr[($idx+2)%3];
-                return ($x*$x+$t*$t);
-            };
-            my $dist_sq = min(map { $get_dist->($_) } (0 .. $#arr));
+            # my @arr = ($M,$N,$L);
+            # my $get_dist = sub {
+            #     my $idx = shift;
+            #     my $x = $arr[$idx];
+            #     my $t = $arr[($idx+1)%3] + $arr[($idx+2)%3];
+            #     return ($x*$x+$t*$t);
+            # };
+            # print join(',',map { $get_dist->($_) } (0 .. $#arr)), "\n";
+            # my $dist_sq = min(map { $get_dist->($_) } (0 .. $#arr));
+            my $dist_sq = $M * $M + ($N+$L) ** 2;
             my $dist = sqrt($dist_sq);
             if (int($dist) == $dist)
             {
