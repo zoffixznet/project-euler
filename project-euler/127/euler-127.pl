@@ -41,6 +41,8 @@ sub radical
 
 my %C_s = ();
 
+my %C_blacklist = ();
+
 B_loop:
 for my $B (3 .. 1_000-1)
 {
@@ -65,11 +67,23 @@ for my $B (3 .. 1_000-1)
         if (gcd($B, $A) == 1)
         {
             my $C = $A + $B;
-            if (gcd($C, $A) == 1 and gcd($C, $B) == 1 and 
-                radical($A*$B*$C) < $C)
+
+            if (!exists($C_blacklist{$C}))
             {
-                print "Found $C\n";
-                $C_s{$C} = 1;
+                my $rad_C = radical($C);
+
+                if ($rad_C * 6 >= $C)
+                {
+                    $C_blacklist{$C} = 1;
+                }
+                # Since gcd(A,B) = 1 then gcd(A+B,A) and gcd(A+B,B) must be one
+                # as well.
+                elsif ( # gcd($C, $A) == 1 and gcd($C, $B) == 1 and 
+                    radical($A*$B*$C) < $C)
+                {
+                    print "Found $C\n";
+                    $C_s{$C} = $C_blacklist{$C} = 1;
+                }
             }
         }
     }
