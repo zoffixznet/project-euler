@@ -49,25 +49,25 @@ my $limit = 1_000;
 
 my $below_limit = $limit-1;
 B_loop:
-for my $B (3 .. $below_limit)
+for my $B (2 .. $below_limit)
 {
     print "B = $B\n";
     my $rad_B = radical($B);
 
-    # rad(abc) >= 6*rad(B).
-    # B = C-A > rad(abc)-A > 6*rad(B)-A
-    # B+A > 6*rad(B)
-    # 2 * B > B+A > 6 * rad(B)
-    if ($rad_B * 3 >= $B)
+    # rad(abc) >= 2*rad(B).
+    # B = C-A > rad(abc)-A > 2*rad(B)-A
+    # B+A > 2*rad(B)
+    # 2 * B > B+A > 2 * rad(B)
+    if ($rad_B == $B)
     {
         next B_loop;
     }
-    # rad(A) is at the minimum 2 and since a,b,c are stranger numbers,
-    # then C > rad(abc) >= 2*rad(ab) >= 6*rad_B
-    # A = C-B >= 6 * rad_B - B
+    # rad(A) is at the minimum 1 and since a,b,c are stranger numbers,
+    # then C > rad(abc) >= 2*rad(ab) >= 2*rad_B
+    # A = C-B >= 2 * rad_B - B
     for my $A
     (
-        max(6*$rad_B-$B, 2)
+        max(2*$rad_B-$B, 1)
         ..
         min($B-1, $below_limit-$B)
     )
@@ -78,7 +78,7 @@ for my $B (3 .. $below_limit)
 
             if (!exists($C_blacklist{$C}))
             {
-                $C_blacklist{$C} = (radical($C) * 6 >= $C);
+                $C_blacklist{$C} = (radical($C) * 2 >= $C);
             }
 
             if (!$C_blacklist{$C})
