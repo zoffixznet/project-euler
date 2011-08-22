@@ -14,6 +14,7 @@ use List::MoreUtils qw(uniq);
 
 use integer;
 
+# $n must be > $m
 sub gcd
 {
     my ($n, $m) = @_;
