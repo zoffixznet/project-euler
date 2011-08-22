@@ -18,11 +18,6 @@ sub gcd
 {
     my ($n, $m) = @_;
 
-    if ($n < $m)
-    {
-        return gcd($m,$n);
-    }
-
     if ($m == 0)
     {
         return $n;
