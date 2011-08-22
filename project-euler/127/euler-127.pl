@@ -33,12 +33,17 @@ sub gcd
 
 $a = $b = 0;
 
+my %rad_cache = ();
 sub radical
 {
     my $n = shift;
-    my $factors = `factor $n`;
-    $factors =~ s{\A[^:]+:}{};
-    return reduce { $a * $b } 1, uniq($factors =~ m/(\d+)/g);
+    if (!exists($rad_cache{$n}))
+    {
+        my $factors = `factor $n`;
+        $factors =~ s{\A[^:]+:}{};
+        $rad_cache{$n} = reduce { $a * $b } 1, uniq($factors =~ m/(\d+)/g);
+    }
+    return $rad_cache{$n};
 }
 
 my %C_s = ();
@@ -86,7 +91,7 @@ for my $B (2 .. $below_limit)
                 # Since gcd(A,B) = 1 then gcd(A+B,A) and gcd(A+B,B) must be 1
                 # as well.
                 if ( # gcd($C, $A) == 1 and gcd($C, $B) == 1 and 
-                    radical($A*$B*$C) < $C)
+                    (radical($A)*$rad_B*radical($C)) < $C)
                 {
                     print "Found $C\n";
                     $C_s{$C} = 1; # $C_blacklist{$C} = 1;
