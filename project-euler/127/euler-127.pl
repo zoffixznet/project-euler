@@ -27,33 +27,28 @@ sub gcd
     return gcd($m,$n % $m);
 }
 
-$a = $b = 0;
-
-my %rad_cache = ();
-sub radical
+my $cache_fn = 'rad-cache.txt';
+if (! -e $cache_fn)
 {
-    my $n = shift;
-    if (!exists($rad_cache{$n}))
-    {
-        my $factors = `factor $n`;
-        $factors =~ s{\A[^:]+:}{};
-        $rad_cache{$n} = reduce { $a * $b } 1, uniq($factors =~ m/(\d+)/g);
-    }
-    return $rad_cache{$n};
+    system("$^X gen-cache.pl > $cache_fn");
 }
 
-my %C_s = ();
+open my $fh, '<', $cache_fn;
+my @rad_cache = map { int($_) } <$fh>;
+close($fh);
 
-my %C_blacklist = ();
+# my %C_blacklist = ();
 
-my $limit = 1_000;
+my $limit = 120_000;
 
 my $below_limit = $limit-1;
+
+my $sum_C = 0;
 B_loop:
 for my $B (2 .. $below_limit)
 {
-    print "B = $B\n";
-    my $rad_B = radical($B);
+    # print "B = $B\n";
+    my $rad_B = $rad_cache[$B];
 
     # rad(abc) >= 2*rad(B).
     # B = C-A > rad(abc)-A > 2*rad(B)-A
@@ -77,22 +72,23 @@ for my $B (2 .. $below_limit)
         {
             my $C = $A + $B;
 
-            if (!exists($C_blacklist{$C}))
-            {
-                $C_blacklist{$C} = (radical($C) * 2 >= $C);
-            }
+            #if (!exists($C_blacklist{$C}))
+            #{
+            #    $C_blacklist{$C} = (radical($C) * 2 >= $C);
+            #}
 
-            if (!$C_blacklist{$C})
+            #if (!$C_blacklist{$C})
             {
                 # Since gcd(A,B) = 1 then gcd(A+B,A) and gcd(A+B,B) must be 1
                 # as well.
                 if ( # gcd($C, $A) == 1 and gcd($C, $B) == 1 and 
-                    (radical($A)*$rad_B*radical($C)) < $C)
+                    ($rad_cache[$A]*$rad_B*$rad_cache[$C]) < $C)
                 {
                     print "Found $C\n";
-                    $C_s{$C} = 1; # $C_blacklist{$C} = 1;
+                    $sum_C += $C;
                 }
             }
         }
     }
 }
+print "Sum = $sum_C\n";
