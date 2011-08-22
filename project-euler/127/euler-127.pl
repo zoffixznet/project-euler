@@ -83,13 +83,13 @@ for my $B (3 .. $below_limit)
 
             if (!$C_blacklist{$C})
             {
-                # Since gcd(A,B) = 1 then gcd(A+B,A) and gcd(A+B,B) must be one
+                # Since gcd(A,B) = 1 then gcd(A+B,A) and gcd(A+B,B) must be 1
                 # as well.
                 if ( # gcd($C, $A) == 1 and gcd($C, $B) == 1 and 
                     radical($A*$B*$C) < $C)
                 {
                     print "Found $C\n";
-                    $C_s{$C} = $C_blacklist{$C} = 1;
+                    $C_s{$C} = 1; # $C_blacklist{$C} = 1;
                 }
             }
         }
