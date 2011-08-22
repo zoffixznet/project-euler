@@ -54,7 +54,10 @@ for my $B (3 .. $below_limit)
     print "B = $B\n";
     my $rad_B = radical($B);
 
-    # 
+    # rad(abc) >= 6*rad(B).
+    # B = C-A > rad(abc)-A > 6*rad(B)-A
+    # B+A > 6*rad(B)
+    # 2 * B > B+A > 6 * rad(B)
     if ($rad_B * 3 >= $B)
     {
         next B_loop;
@@ -64,7 +67,7 @@ for my $B (3 .. $below_limit)
     # A = C-B >= 6 * rad_B - B
     for my $A
     (
-        max(6*$rad_B-$B, 2) 
+        max(6*$rad_B-$B, 2)
         ..
         min($B-1, $below_limit-$B)
     )
