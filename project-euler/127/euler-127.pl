@@ -31,6 +31,8 @@ sub gcd
     return gcd($m,$n % $m);
 }
 
+$a = $b = 0;
+
 sub radical
 {
     my $n = shift;
@@ -43,26 +45,29 @@ my %C_s = ();
 
 my %C_blacklist = ();
 
+my $limit = 1_000;
+
+my $below_limit = $limit-1;
 B_loop:
-for my $B (3 .. 1_000-1)
+for my $B (3 .. $below_limit)
 {
     print "B = $B\n";
     my $rad_B = radical($B);
 
-    if ($rad_B == $B)
+    # 
+    if ($rad_B * 3 >= $B)
     {
         next B_loop;
     }
     # rad(A) is at the minimum 2 and since a,b,c are stranger numbers,
-    # then C > rad(abc) >= rad(ab) >= 2*rad_B
-    # A = C-B >= 2 * rad_B - B
+    # then C > rad(abc) >= 2*rad(ab) >= 6*rad_B
+    # A = C-B >= 6 * rad_B - B
     for my $A
     (
-        max(2*$rad_B-$B, 2) 
+        max(6*$rad_B-$B, 2) 
         ..
-        min($B-1, (120_000-1)-$B)
+        min($B-1, $below_limit-$B)
     )
-    # for my $A (2 .. min($B-1, (120_000-1)-$B))
     {
         if (gcd($B, $A) == 1)
         {
@@ -70,15 +75,14 @@ for my $B (3 .. 1_000-1)
 
             if (!exists($C_blacklist{$C}))
             {
-                my $rad_C = radical($C);
+                $C_blacklist{$C} = (radical($C) * 6 >= $C);
+            }
 
-                if ($rad_C * 6 >= $C)
-                {
-                    $C_blacklist{$C} = 1;
-                }
+            if (!$C_blacklist{$C})
+            {
                 # Since gcd(A,B) = 1 then gcd(A+B,A) and gcd(A+B,B) must be one
                 # as well.
-                elsif ( # gcd($C, $A) == 1 and gcd($C, $B) == 1 and 
+                if ( # gcd($C, $A) == 1 and gcd($C, $B) == 1 and 
                     radical($A*$B*$C) < $C)
                 {
                     print "Found $C\n";
