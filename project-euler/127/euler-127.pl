@@ -3,6 +3,12 @@
 use strict;
 use warnings;
 
+=head1 ANALYSIS
+
+If C< rad(c) = c > then C< rad(abc) > c >. As a result C< rad(c) < c >.
+Likewise for C< rad(b) < b >.
+=cut
+
 use List::Util qw(max min reduce);
 use List::MoreUtils qw(uniq);
 
@@ -35,11 +41,16 @@ sub radical
 
 my %C_s = ();
 
+B_loop:
 for my $B (3 .. 1_000-1)
 {
     print "B = $B\n";
     my $rad_B = radical($B);
 
+    if ($rad_B == $B)
+    {
+        next B_loop;
+    }
     # rad(A) is at the minimum 2 and since a,b,c are stranger numbers,
     # then C > rad(abc) >= rad(ab) >= 2*rad_B
     # A = C-B >= 2 * rad_B - B
