@@ -55,7 +55,7 @@ my $sum_C = 0;
 C_loop:
 for my $C (2 .. $below_limit)
 {
-    print "C = $C\n";
+    # print "C = $C\n";
     my $half_C = ($C >> 1);
     my $rad_C = $rad_cache[$C];
 
@@ -82,7 +82,7 @@ for my $C (2 .. $below_limit)
             if (gcd($B, $A) == 1)
             {
                 if ( # gcd($C, $A) == 1 and gcd($C, $B) == 1 and 
-                    ($rad_A*$rad_cache[$B]*$rad_C) < $C)
+                    ($rad_A*$rad_cache[$B]) < $div)
                 {
                     print "Found $C\n";
                     $sum_C += $C;
