@@ -18,4 +18,4 @@ billion (109) rows of Pascal's triangle.
 -------------------------------
 
 For row n and position k the entry in the pascal triangle is C(n,k) = 
-n! / (k! * (n-k)!) ==> 
+n! / (k! * (n-k)!) ==> [(n-k+1) * (n-k+2) * (n-k+3) ... n)]/[1 * 2 * 3 ... k]
