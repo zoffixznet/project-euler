@@ -37,52 +37,52 @@ open my $fh, '<', $cache_fn;
 my @rad_cache = map { int($_) } <$fh>;
 close($fh);
 
+my @reverse_rad;
+
+foreach my $n (1 .. $#rad_cache)
+{
+    push @{$reverse_rad[$rad_cache[$n]]}, $n;
+}
+
 # my %C_blacklist = ();
 
 my $limit = 120_000;
+# my $limit = 1_000;
 
 my $below_limit = $limit-1;
 
 my $sum_C = 0;
-B_loop:
-for my $B (2 .. $below_limit)
+C_loop:
+for my $C (2 .. $below_limit)
 {
-    # print "B = $B\n";
-    my $rad_B = $rad_cache[$B];
+    print "C = $C\n";
+    my $half_C = ($C >> 1);
+    my $rad_C = $rad_cache[$C];
 
     # rad(abc) >= 2*rad(B).
     # B = C-A > rad(abc)-A > 2*rad(B)-A
     # B+A > 2*rad(B)
     # 2 * B > B+A > 2 * rad(B)
-    if ($rad_B == $B)
+    if ($rad_C >= $half_C)
     {
-        next B_loop;
+        next C_loop;
     }
-    # rad(A) is at the minimum 1 and since a,b,c are stranger numbers,
-    # then C > rad(abc) >= 2*rad(ab) >= 2*rad_B
-    # A = C-B >= 2 * rad_B - B
-    for my $A
-    (
-        max(2*$rad_B-$B, 1)
-        ..
-        min($B-1, $below_limit-$B)
-    )
+    my $div = $C/$rad_C;
+    for my $rad_A (1 .. $div)
     {
-        if (gcd($B, $A) == 1)
+        A_loop:
+        for my $A (@{$reverse_rad[$rad_A]})
         {
-            my $C = $A + $B;
-
-            #if (!exists($C_blacklist{$C}))
-            #{
-            #    $C_blacklist{$C} = (radical($C) * 2 >= $C);
-            #}
-
-            #if (!$C_blacklist{$C})
+            if ($A >= $half_C)
             {
-                # Since gcd(A,B) = 1 then gcd(A+B,A) and gcd(A+B,B) must be 1
-                # as well.
+                last A_loop;
+            }
+            my $B = $C - $A;
+
+            if (gcd($B, $A) == 1)
+            {
                 if ( # gcd($C, $A) == 1 and gcd($C, $B) == 1 and 
-                    ($rad_cache[$A]*$rad_B*$rad_cache[$C]) < $C)
+                    ($rad_A*$rad_cache[$B]*$rad_C) < $C)
                 {
                     print "Found $C\n";
                     $sum_C += $C;
