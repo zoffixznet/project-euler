@@ -69,12 +69,12 @@ while (1)
             }
 
             # print "$x,$y,$z\n";
-            my $initial_cuboid =
-                [ map { 
-                    [ map { [(1)x$z] } (1 .. $y) ]
-                    } 
-                    (1 .. $x)
-                ];
+            # my $initial_cuboid =
+            # [ map { 
+            # [ map { [(1)x$z] } (1 .. $y) ]
+            # } 
+            # (1 .. $x)
+            # ];
 
             $cuboids{"$x,$y,$z"} = 
                 { d => 1, n => $max_layer_size };
