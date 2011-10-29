@@ -25,21 +25,19 @@ sub add_layer
 
     my $key = "$x_lim,$y_lim,$z_lim";
 
-    my $depth = $cuboids{$key}->{d};
-    my $old_n = $cuboids{$key}->{n};
+    my $rec = $cuboids{$key};
 
-    my $new_layer_count =
-    (($depth == 1)
-        ? (($x_lim*$y_lim+$x_lim*$z_lim+$z_lim*$y_lim)*2)
-        : ($old_n+($x_lim+$y_lim+$z_lim)*4 + (8*($depth-2)))
-    );
+    return add_count($rec->{n} += ((($x_lim+$y_lim+$z_lim)<<2) + ($rec->{d} += 8)));
+}
 
-    $cuboids{$key} = {d => ($depth+1), n => $new_layer_count};
+sub add_count
+{
+    my ($count) = @_;
 
-    if ((++$C[$new_layer_count]) > $max_C_n)
+    if ((++$C[$count]) > $max_C_n)
     {
-        print "Found C[$new_layer_count] == $C[$new_layer_count]\n";
-        $max_C_n = $C[$new_layer_count];
+        print "Found C[$count] == $C[$count]\n";
+        $max_C_n = $C[$count];
 
         if ($max_C_n == 1000)
         {
@@ -75,11 +73,15 @@ while (1)
             # } 
             # (1 .. $x)
             # ];
+            #
+            my $new_layer_count = 
+                (($x*$y+$x*$z+$z*$y)<<1);
 
-            $cuboids{"$x,$y,$z"} = 
-                { d => 1, n => $max_layer_size };
+            # We increase the depth by 8 each time.
+            $cuboids{"$x,$y,$z"} =
+                { d => -8, n => $new_layer_count};
 
-            add_layer($x, $y, $z);
+            add_count($new_layer_count);
         }
     }
 
