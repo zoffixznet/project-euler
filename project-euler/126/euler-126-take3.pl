@@ -11,6 +11,9 @@ use List::MoreUtils qw(any all);
 
 STDOUT->autoflush(1);
 
+use constant DELTA => 0;
+use constant COUNT => 1;
+
 my @C;
 
 # Used to be:
@@ -74,7 +77,7 @@ while (1)
                 ($x*($y+$z)+$z*$y);
 
             # We increase the depth's delta by 8 each time.
-            push @cuboids, { d => ((($x+$y+$z)<<1)-4), n => $new_layer_count};
+            push @cuboids, [((($x+$y+$z)<<1)-4), $new_layer_count];
 
             add_count($new_layer_count);
         }
@@ -83,9 +86,9 @@ while (1)
     # Now add extra layers to the existing cuboids.
     foreach my $rec (@cuboids)
     {
-        while ($rec->{n} < $max_layer_size)
+        while ($rec->[COUNT] < $max_layer_size)
         {
-            add_count($rec->{n} += ($rec->{d} += 4));
+            add_count($rec->[COUNT] += ($rec->[DELTA] += 4));
         }
     }
 }
