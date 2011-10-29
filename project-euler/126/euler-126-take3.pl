@@ -21,13 +21,11 @@ my $max_C_n = 0;
 
 sub add_layer
 {
-    my ($x_lim, $y_lim, $z_lim) = @_;
-
-    my $key = "$x_lim,$y_lim,$z_lim";
+    my ($key) = @_;
 
     my $rec = $cuboids{$key};
 
-    return add_count($rec->{n} += ((($x_lim+$y_lim+$z_lim)<<2) + ($rec->{d} += 8)));
+    return add_count($rec->{n} += ($rec->{d} += 8));
 }
 
 sub add_count
@@ -77,9 +75,9 @@ while (1)
             my $new_layer_count = 
                 (($x*$y+$x*$z+$z*$y)<<1);
 
-            # We increase the depth by 8 each time.
+            # We increase the depth's delta by 8 each time.
             $cuboids{"$x,$y,$z"} =
-                { d => -8, n => $new_layer_count};
+                { d => ((($x+$y+$z)<<2)-8), n => $new_layer_count};
 
             add_count($new_layer_count);
         }
@@ -100,7 +98,7 @@ while (1)
 
     foreach my $dims (@to_update)
     {
-        add_layer (split(/,/, $dims));
+        add_layer ($dims);
     }
 }
 continue
