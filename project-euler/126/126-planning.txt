@@ -39,3 +39,11 @@ In depth 3 and above we also have the corners:
 Total[3] - Total[2] = 4 * [w_x+w_y+w_z] + 8 * 1
 Total[4] - Total[3] = 4 * [w_x+w_y+w_z] + 8 * 2
 
+Sum of Series:
+==============
+
+If we have a series a[0], a[1], a[2], a[3], where a[n+1]-a[n] = b[0]+d*n,
+then a[n]-a[0] = Sum(b[0], b[0]+d, b[0]+d*2...,b[0]+d*(n-1)) =
+(b[0]+b[0]+d*(n-1))*n)/2 = n*b[0] + d * n * (n-1) / 2
+
+Therefore: a[n] = a[0] + n*b[0] + d * n * (n-1) / 2

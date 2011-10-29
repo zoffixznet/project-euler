@@ -13,20 +13,18 @@ STDOUT->autoflush(1);
 
 my @C;
 
+# Used to be:
+# <<<
 # Matches $X,$Y,$Z (where $X >= $Y >= $Z) to the cuboid array and maximal 
 # reached layer.
-my %cuboids;
+# >>>
+# Now we no longer need the $X,$Y,$Z.
+#
+# Since the counts are divisible by 2 and are kept multiplied by 2, we
+# keep their halfs.
+my @cuboids;
 
 my $max_C_n = 0;
-
-sub add_layer
-{
-    my ($key) = @_;
-
-    my $rec = $cuboids{$key};
-
-    return add_count($rec->{n} += ($rec->{d} += 8));
-}
 
 sub add_count
 {
@@ -34,7 +32,7 @@ sub add_count
 
     if ((++$C[$count]) > $max_C_n)
     {
-        print "Found C[$count] == $C[$count]\n";
+        print "Found C[@{[$count*2]}] == $C[$count]\n";
         $max_C_n = $C[$count];
 
         if ($max_C_n == 1000)
@@ -73,32 +71,22 @@ while (1)
             # ];
             #
             my $new_layer_count = 
-                (($x*$y+$x*$z+$z*$y)<<1);
+                ($x*($y+$z)+$z*$y);
 
             # We increase the depth's delta by 8 each time.
-            $cuboids{"$x,$y,$z"} =
-                { d => ((($x+$y+$z)<<2)-8), n => $new_layer_count};
+            push @cuboids, { d => ((($x+$y+$z)<<1)-4), n => $new_layer_count};
 
             add_count($new_layer_count);
         }
     }
 
     # Now add extra layers to the existing cuboids.
-
-    # So we won't update the hash in place.
-    my @to_update;
-
-    while (my ($initial_dims, $data) = each (%cuboids))
+    foreach my $rec (@cuboids)
     {
-        if ($data->{n} < $max_layer_size)
+        while ($rec->{n} < $max_layer_size)
         {
-            push @to_update, $initial_dims;
+            add_count($rec->{n} += ($rec->{d} += 4));
         }
-    }
-
-    foreach my $dims (@to_update)
-    {
-        add_layer ($dims);
     }
 }
 continue
