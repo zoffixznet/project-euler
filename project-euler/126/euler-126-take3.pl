@@ -31,7 +31,7 @@ sub add_layer
     my $new_layer_count =
     (($depth == 1)
         ? (($x_lim*$y_lim+$x_lim*$z_lim+$z_lim*$y_lim)*2)
-        : ($old_n+($x_lim+$y_lim+$z_lim)*4 + (($depth > 1) ? 8*($depth-2) : 0))
+        : ($old_n+($x_lim+$y_lim+$z_lim)*4 + (8*($depth-2)))
     );
 
     $cuboids{$key} = {d => ($depth+1), n => $new_layer_count};
