@@ -26,11 +26,10 @@ my $max_C_n = 0;
 my $LIMIT = 50_000;
 
 my $z = 1;
-my $z_count = 1;
 
-while ($z_count)
+Z_LOOP:
+while (1)
 {
-    $z_count = 0;
     print "Checking z=$z\n";
     Y_LOOP:
     for my $y (1 .. $z)
@@ -47,7 +46,15 @@ while ($z_count)
             {
                 if ($x == 1)
                 {
-                    last Y_LOOP;
+                    if ($y == 1)
+                    {
+                        last Z_LOOP;
+                    }
+                    else
+                    {
+
+                        last Y_LOOP;
+                    }
                 }
                 else
                 {
@@ -56,7 +63,6 @@ while ($z_count)
             }
             while ($new_layer_count < $LIMIT)
             {
-                $z_count++;
                 $C[$new_layer_count]++;
                 $new_layer_count += ($delta += 4);
             }
