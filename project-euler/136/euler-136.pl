@@ -7,15 +7,16 @@ use integer;
 
 =head1 DESCRIPTION
 
-Given the positive integers, x, y, and z, are consecutive terms of an
-arithmetic progression, the least value of the positive integer, n, for which
-the equation, x2 − y2 − z2 = n, has exactly two solutions is n = 27:
+The positive integers, x, y, and z, are consecutive terms of an arithmetic
+progression. Given that n is a positive integer, the equation, x2 − y2 − z2 =
+n, has exactly one solution when n = 20:
 
-342 − 272 − 202 = 122 − 92 − 62 = 27
+132 − 102 − 72 = 20
 
-It turns out that n = 1155 is the least value which has exactly ten solutions.
+In fact there are twenty-five values of n below one hundred for which the
+equation has a unique solution.
 
-How many values of n less than one million have exactly ten distinct solutions?
+How many values of n less than fifty million have exactly one solution?
 
 =head1 ANALYSIS
 
@@ -26,13 +27,11 @@ How many values of n less than one million have exactly ten distinct solutions?
 my $solution_counts_vec = '';
 my $ten_counts = 0;
 
-my $z = 2;
+my $LIMIT = 50_000_000;
 
-my $LIMIT = 1_000_000;
-
-for $z (1 .. $LIMIT)
+foreach my $z (1 .. ($LIMIT-1))
 {
-    print "Z = $z ; Ten Counts = $ten_counts\n" if ($z % 10_000 == 0);
+    print "Z = $z ; Ten Counts = $ten_counts\n"; # if ($z % 10_000 == 0);
     my $d = (int($z/3)+1);
 
     D_LOOP:
@@ -46,22 +45,22 @@ for $z (1 .. $LIMIT)
         }
         elsif ($n > 0)
         {
-            my $c = vec($solution_counts_vec, $n, 4);
+            my $c = vec($solution_counts_vec, $n, 2);
             $c++;
-            if ($c == 11)
+            if ($c == 2)
             {
                 $ten_counts--;
             }
-            elsif ($c == 12)
+            elsif ($c == 3)
             {
                 # Make sure it doesn't overflow.
                 $c--;
             }
-            elsif ($c == 10)
+            elsif ($c == 1)
             {
                 $ten_counts++;
             }
-            vec($solution_counts_vec, $n, 4) = $c;
+            vec($solution_counts_vec, $n, 2) = $c;
         }
     }
     continue
