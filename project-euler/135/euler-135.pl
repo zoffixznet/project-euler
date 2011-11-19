@@ -17,60 +17,57 @@ It turns out that n = 1155 is the least value which has exactly ten solutions.
 
 How many values of n less than one million have exactly ten distinct solutions?
 
+=head1 ANALYSIS
+
+(z+2d)^2 - (z+d)^2 - z^2 = z^2+4dz+4d^2 - z^2 - 2dz - d^2 - z^2 = 
+-z^2 + 2dz +3d^2 = (-z + 3d)(z + d)
 =cut
 
 my $solution_counts_vec = '';
 my $ten_counts = 0;
 
-my $z_plus_d = 2;
+my $z = 2;
 
 my $LIMIT = 1_000_000;
 
-my $all_are_over_a_million = 0;
-while (! $all_are_over_a_million)
+for $z (1 .. $LIMIT)
 {
-    $all_are_over_a_million = 1;
-    print "Y = $z_plus_d ; Ten Counts = $ten_counts\n";
-    D_LOOP:
-    foreach my $d (1 .. $z_plus_d-1)
-    {
-        my $z = $z_plus_d - $d;
-        my $y = $z_plus_d;
-        my $x = $y + $d;
+    print "Z = $z ; Ten Counts = $ten_counts\n" if ($z % 10_000 == 0);
+    my $d = (int($z/3)+1);
 
-        my $n = $x*$x-$y*$y-$z*$z;
-        if ($n < $LIMIT)
+    D_LOOP:
+    while (1)
+    {
+        my $n = (3*$d-$z)*($z+$d);
+
+        if ($n >= $LIMIT)
         {
-            $all_are_over_a_million = 0;
-            if ($n > 0)
-            {
-                my $c = vec($solution_counts_vec, $n, 4);
-                $c++;
-                if ($c == 11)
-                {
-                    $ten_counts--;
-                }
-                elsif ($c == 12)
-                {
-                    # Make sure it doesn't overflow.
-                    $c--;
-                }
-                elsif ($c == 10)
-                {
-                    $ten_counts++;
-                }
-                vec($solution_counts_vec, $n, 4) = $c;
-            }
-        }
-        else
-        {
-            # n is monotonically increasing as a function of $d with constant
-            # $y.
             last D_LOOP;
         }
+        elsif ($n > 0)
+        {
+            my $c = vec($solution_counts_vec, $n, 4);
+            $c++;
+            if ($c == 11)
+            {
+                $ten_counts--;
+            }
+            elsif ($c == 12)
+            {
+                # Make sure it doesn't overflow.
+                $c--;
+            }
+            elsif ($c == 10)
+            {
+                $ten_counts++;
+            }
+            vec($solution_counts_vec, $n, 4) = $c;
+        }
+    }
+    continue
+    {
+        $d++;
     }
 }
-continue
-{
-    $z_plus_d++;
-}
+
+print "Ten counts = $ten_counts\n";
