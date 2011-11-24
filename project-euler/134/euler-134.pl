@@ -19,39 +19,21 @@ Find ∑ S for every pair of consecutive primes with 5 ≤ p1 ≤ 1000000.
 
 =cut
 
-sub calc_A
+# Extended gcd.
+sub xgcd
 {
-    my ($n) = @_;
-
-    my $mod = 1;
-    my $len = 1;
-
-    while ($mod)
+    my ($aa, $bb) = @_;
+    if ($bb == 0)
     {
-        $mod = (($mod * 10 + 1) % $n);
-        $len++;
+        return (1,0);
     }
-
-    return $len;
-}
-
-sub is_div
-{
-    my ($n) = @_;
-
-    my $A = calc_A($n);
-
-    while (($A & 0x1) == 0)
+    else
     {
-        $A >>= 1;
+        my $q = $aa / $bb;
+        my $r = $aa % $bb;
+        my ($s, $t) = xgcd($bb, $r);
+        return ($t, $s- $q*$t);
     }
-
-    while ($A % 5 == 0)
-    {
-        $A /= 5;
-    }
-
-    return ($A == 1);
 }
 
 open my $primes_fh, "(primes 5 1100000)|";
@@ -67,19 +49,27 @@ while ($p2 = int(<$primes_fh>))
     {
         last PRIMES_LOOP;
     }
-    my $mod = $p1;
+
+    my $mod = $p2-$p1;
     my $mod_delta = ((1 . ('0' x length($p1))) % $p2);
 
-    my $i = 0;
-    while (($mod % $p2) != 0)
+    # See:
+    # http://en.wikipedia.org/wiki/Linear_congruence_theorem
+    # $mod_delta * $x = $p2-$p1 (mod $p2)
+    my ($r, $s) = xgcd($mod_delta, $p2);
+    my $x = $r * $mod / ($r*$mod_delta + $s * $p2);
+    if ($x <= 0)
     {
-        $mod += $mod_delta;
-        $i++;
+        $x += ((-$x)/$p2+1)*$p2;
     }
-    my $S = ($i . $p1);
+    else
+    {
+        $x %= $p2;
+    }
+    my $S = ($x . $p1);
     $sum += $S;
 
-    if ((++$count) % 100 == 0)
+    # if ((++$count) % 100 == 0)
     {
         print "For (p1=$p1,p2=$p2) found $S (sum=$sum)\n";
     }
