@@ -59,6 +59,7 @@ open my $primes_fh, "(primes 5 1100000)|";
 my $p1 = int(<$primes_fh>);
 my $p2;
 my $sum = 0;
+my $count = 0;
 PRIMES_LOOP:
 while ($p2 = int(<$primes_fh>))
 {
@@ -70,14 +71,18 @@ while ($p2 = int(<$primes_fh>))
     my $mod_delta = ((1 . ('0' x length($p1))) % $p2);
 
     my $i = 0;
-    while ($mod != 0)
+    while (($mod % $p2) != 0)
     {
-        ($mod += $mod_delta) %= $p2;
+        $mod += $mod_delta;
         $i++;
     }
     my $S = ($i . $p1);
     $sum += $S;
-    print "For (p1=$p1,p2=$p2) found $S (sum=$sum)\n";
+
+    if ((++$count) % 100 == 0)
+    {
+        print "For (p1=$p1,p2=$p2) found $S (sum=$sum)\n";
+    }
 }
 continue
 {
