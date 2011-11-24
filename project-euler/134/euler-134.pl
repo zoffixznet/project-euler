@@ -69,10 +69,10 @@ while ($p2 = int(<$primes_fh>))
     my $S = ($x . $p1);
     $sum += $S;
 
-    # if ((++$count) % 100 == 0)
-    {
-        print "For (p1=$p1,p2=$p2) found $S (sum=$sum)\n";
-    }
+    #if ((++$count) % 100 == 0)
+    #{
+    #    print "For (p1=$p1,p2=$p2) found $S (sum=$sum)\n";
+    #}
 }
 continue
 {
