@@ -5,6 +5,10 @@ use warnings;
 
 use integer;
 
+use IO::Handle;
+
+STDOUT->autoflush(1);
+
 =head1 DESCRIPTION
 
 The positive integers, x, y, and z, are consecutive terms of an arithmetic
@@ -31,7 +35,7 @@ my $LIMIT = 50_000_000;
 
 foreach my $z (1 .. ($LIMIT-1))
 {
-    print "Z = $z ; Ten Counts = $ten_counts\n"; # if ($z % 10_000 == 0);
+    print "Z = $z ; Ten Counts = $ten_counts\n" if ($z % 10_000 == 0);
     my $d = (int($z/3)+1);
 
     D_LOOP:
