@@ -57,7 +57,7 @@ sub recurse
 {
     my ($start_from, $so_far, $sum) = @_;
 
-    print "Checking: Start=$start_from ; $sum+[@$so_far]\n";
+    # print "Checking: Start=$start_from ; $sum+[@$so_far]\n";
 
     if ($sum == $target)
     {
@@ -69,6 +69,7 @@ sub recurse
 
     if ($sum + $remaining_sums[$start_from] < $target)
     {
+        # print "Remaining sum prune\n";
         return;
     }
 
