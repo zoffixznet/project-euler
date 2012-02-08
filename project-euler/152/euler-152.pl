@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use Math::BigRat only => 'GMP';
+use List::MoreUtils qw(any);
 
 sub sq_frac
 {
@@ -34,6 +35,27 @@ sub is_prime
     return 1;
 }
 
+sub factorize
+{
+    my ($n) = @_;
+    my @ret;
+
+    my $factor = 2;
+    while ($n > 1)
+    {
+        if ($n % $factor == 0)
+        {
+            push @ret, $factor;
+            $n /= $factor;
+        }
+        else
+        {
+            $factor++;
+        }
+    }
+    return \@ret;
+}
+
 my $target = Math::BigRat->new('1/2');
 my $limit = 80;
 
@@ -46,11 +68,18 @@ my %primes_lookup = (map { $_ => 1 } @primes);
 
 my @remaining_sums;
 
-$remaining_sums[81] = 0;
+$remaining_sums[$limit+1] = 0;
 
-for my $n (reverse(2 .. 80))
+for my $n (reverse(2 .. $limit))
 {
     $remaining_sums[$n] = $remaining_sums[$n+1] + sq_frac($n);
+}
+
+my @end_at;
+$end_at[2] = $limit+1;
+for my $p (@primes)
+{
+    $end_at[$p] = int($limit/$p) * $p + 1;
 }
 
 sub recurse
@@ -73,10 +102,17 @@ sub recurse
         return;
     }
 
+    my $factors = factorize($sum->denominator());
+
+    if (any { $end_at[$_] <= $start_from } @$factors)
+    {
+        return;
+    }
+
     FIRST_LOOP:
     foreach my $first ($start_from .. $limit)
     {
-        my $new_sum = $sum + sq_frac($first);
+        my $new_sum = ($sum + sq_frac($first))->bnorm();
         if ($new_sum > $target)
         {
             return;
@@ -121,6 +157,6 @@ sub recurse
     return;
 }
 
-recurse(2, [], 0);
+recurse(2, [], Math::BigRat->new('0/1'));
 
 
