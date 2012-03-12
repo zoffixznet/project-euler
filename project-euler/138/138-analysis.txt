@@ -19,3 +19,6 @@ L = sqrt [ h^2 + (h/2 +/- 1/2)^2 ] = sqrt [ 5/4h^2 + 1/4 +/- h/2 ]
 a = h/2
 
 L = sqrt[ 5a^2 + 1/4 ± a ]
+
+If $a$ is whole, then L^2 will have a residue of 1/4 which means L cannot be
+whole. Therefore $h$ is odd.

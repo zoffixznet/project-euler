@@ -5,7 +5,7 @@ use warnings;
 
 use Math::BigRat lib => 'GMP';
 
-my $h = 2;
+my $h = 1;
 
 my $c2 = Math::BigRat->new('5/4');
 my $c0 = Math::BigRat->new('1/4');
