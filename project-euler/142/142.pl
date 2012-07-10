@@ -19,17 +19,22 @@ sub is_square
 
 foreach my $x (1 .. 1_000_000)
 {
+    my $limit = int(sqrt($x));
     Y_LOOP:
-    foreach my $y (1 .. $x-1)
+    foreach my $diff_root (1 .. $limit)
     {
-        if (!is_square($x+$y) or !is_square($x-$y))
+        my $y = $x - $diff_root * $diff_root;
+        if (!is_square($x+$y))
         {
             next Y_LOOP;
         }
         print "Reached X=$x Y=$y\n";
-        foreach my $z (1 .. $y-1)
+
+        my $y_limit = int(sqrt($y));
+        foreach my $y_diff_root (1 .. $y_limit)
         {
-            if (is_square($y+$z) and is_square($y-$z) and is_square($x-$z)
+            my $z = $y - $y_diff_root * $y_diff_root;
+            if (is_square($y+$z) and is_square($x-$z)
                     and is_square($x+$z))
             {
                 print "Found X=$x Y=$y Z=$z S=@{[$x+$y+$z]}\n";
