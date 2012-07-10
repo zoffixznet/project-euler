@@ -24,11 +24,10 @@ my $next_milestone = $milestone_step;
 
 foreach my $x (1 .. 1_000_000)
 {
-    my $limit = int(sqrt($x));
+    my $x_diff = 1;
     Y_LOOP:
-    foreach my $diff_root (1 .. $limit)
+    for (my $y = $x-1 ; $y > 0 ; $y -= ($x_diff += 2))
     {
-        my $y = $x - $diff_root * $diff_root;
         if (!is_square($x+$y))
         {
             next Y_LOOP;
@@ -39,10 +38,9 @@ foreach my $x (1 .. 1_000_000)
             $next_milestone += $milestone_step;
         }
 
-        my $y_limit = int(sqrt($y));
-        foreach my $y_diff_root (1 .. $y_limit)
+        my $y_diff = 1;
+        for (my $z = $y-1 ; $z > 0 ; $z -= ($y_diff += 2))
         {
-            my $z = $y - $y_diff_root * $y_diff_root;
             if (is_square($y+$z) and is_square($x-$z)
                     and is_square($x+$z))
             {
