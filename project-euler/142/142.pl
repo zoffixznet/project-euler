@@ -3,6 +3,8 @@
 use strict;
 use warnings;
 
+use integer;
+
 use IO::All;
 
 # use Math::BigInt lib => 'GMP';
@@ -17,6 +19,9 @@ sub is_square
     return ($root * $root == $n);
 }
 
+my $milestone_step = 10_000;
+my $next_milestone = $milestone_step;
+
 foreach my $x (1 .. 1_000_000)
 {
     my $limit = int(sqrt($x));
@@ -28,7 +33,11 @@ foreach my $x (1 .. 1_000_000)
         {
             next Y_LOOP;
         }
-        print "Reached X=$x Y=$y\n";
+        if ($x >= $next_milestone)
+        {
+            print "Reached X=$x Y=$y\n";
+            $next_milestone += $milestone_step;
+        }
 
         my $y_limit = int(sqrt($y));
         foreach my $y_diff_root (1 .. $y_limit)
