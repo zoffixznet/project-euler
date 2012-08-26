@@ -1,0 +1,8 @@
+The vertical/horizontal number of rectangles is trivial:
+
+If the rectangle dimensions are  s[x],s[y] and the board dimensions are
+b[x], b[y] then there are ( b[x] - (s[x] - 1) ) * ( b[y] - (s[y] - 1) )
+squares there of that size.
+
+Now for the diagonal squares:
+
