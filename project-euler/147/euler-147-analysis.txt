@@ -4,5 +4,35 @@ If the rectangle dimensions are  s[x],s[y] and the board dimensions are
 b[x], b[y] then there are ( b[x] - (s[x] - 1) ) * ( b[y] - (s[y] - 1) )
 squares there of that size.
 
-Now for the diagonal squares:
+Now for the diagonal rectangles:
+
+1 * 1 rectangles:
+-----------------
+
+If the diagonal rectangle is 1*1 then for C ( b = (1,1) ) = 0, and
+C(b(2,1)) = 1 , C(b(3,1)) = 2 and so C(b(n+1,1)) = n;
+
+    (C == count of 1*1 diagonals rectangles)
+
+C(b(2,2)) = 4 , C(b(2,3)) = 7 , C(b(2,4)) = 10 , C(b(2,n+2)) = 4+n*3
+
+C(b(3,3)) = 12 , C(b(3,4)) = 12+5 = 17  C(b(3,n+3)) = 12 + n*5
+
+C(b(4,4)) = C(b(3,4)) + 7 ; C(b(4,5)) = C(b(4,4)) + 7
+
+And in general:
+
+* C(b(1,1)) = 0 C(b(n+1,1)) = C(b(n,1)) + 1
+* C(b(n+1,n+1)) = C(b(n+1,n)) + 2*n+1
+* C(b(m+1>n+1,n+1)) = C(b(m, n+1)) + 2*n+1
+
+2 * 1 diagonal rectangles:
+
+C(1,1) = 0 ; C(2,1) = 0 ; C(2,2) = 2 (but there are two possible directions in
+which the 2 * 1 block can be aligned so it's twice that and 4).
+
+C(2,3) = 4 ; C(2,4) = 6 ; C(2,step) = 2
+
+C(3,3) = C(2,3) + 4 ; C(3,4) = C(3,3) + 4 ; C(3,step) = 4
+
 
