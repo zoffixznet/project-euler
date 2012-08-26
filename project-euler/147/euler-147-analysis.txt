@@ -27,6 +27,7 @@ And in general:
 * C(b(m+1>n+1,n+1)) = C(b(m, n+1)) + 2*n+1
 
 2 * 1 diagonal rectangles:
+--------------------------
 
 C(1,1) = 0 ; C(2,1) = 0 ; C(2,2) = 2 (but there are two possible directions in
 which the 2 * 1 block can be aligned so it's twice that and 4).
@@ -34,5 +35,13 @@ which the 2 * 1 block can be aligned so it's twice that and 4).
 C(2,3) = 4 ; C(2,4) = 6 ; C(2,step) = 2
 
 C(3,3) = C(2,3) + 4 ; C(3,4) = C(3,3) + 4 ; C(3,step) = 4
+
+C(4,4) = C(3,4) + 6 ; C(4,5) = C(3,4) + 6 ; C(4,step) = 6
+
+C(5,step) = 8
+
+C(6,step) = 10
+
+C(n,step) = n-1 * 2
 
 
