@@ -24,6 +24,11 @@ How many different rectangles could be situated within 47x43 and smaller grids?
 
 =cut
 
+# A 2-dimensional cache.
+# $Rects_Coefficients_Cache[$rect_x][$rect_y] = { min => $min, offset => $offset};
+# Formula for step is calculated at 2*$board_dim + $offset
+my @Rects_Coefficients_Cache;
+
 # A 4-dimensional cache:
 # 0 - board large dim.
 # 1 - board small dim.
@@ -31,23 +36,28 @@ How many different rectangles could be situated within 47x43 and smaller grids?
 # 3 - rect large dim.
 # Each value is:
 # {
-my @Cache;
+#
+
+# Cache for the boards:
+# $Boards_Cache[$board_x][$board_y] = { 'num_unique' => , 'rects' => \@rects, }
+# rects is:
+# $rects[$rect_x][$rect_y]
+my @Boards_Cache;
 
 sub get_unique_rects
 {
     # $x >= $y >= $rect_x , $rect_y
     my ($x, $y, $rect_x, $rect_y) = @_;
 
-    my $struct = ($Cache[$x][$y][$rect_x][$rect_y] //= {});
+    my $board_struct = ($Boards_Cache[$x][$y] //= +{});
 
-    # No longer needed because calculated directly in get_total_rects()
-    # my $unique_num_straight = ($x-$rect_x+1) * ($y-$rect_y+1);
-    # $struct->{unique_num_straight} = $unique_num_straight;
-    #
+    if (! defined($board_struct->{num_unique}))
+    {
+        # Calculate the unique rectangles.
+        $board_struct->{rects} //= [];
+    }
 
-
-
-    return $struct;
+    return $board_struct;
 }
 
 sub get_total_rects
