@@ -60,6 +60,12 @@ sub get_unique_rects
     return $board_struct;
 }
 
+sub round_two_up
+{
+    my ($n) = @_;
+    return (($n&0x1) ? $n+1 : $n);
+}
+
 sub get_total_rects
 {
     my ($x, $y) = @_;
@@ -74,14 +80,53 @@ sub get_total_rects
         }
     }
 
-    return {num_straight_rects => $sum};
+    my $diag_sum = 0;
+
+    foreach my $xx (1 .. $x)
+    {
+        foreach my $yy (1 .. $y)
+        {
+            foreach my $rect_x (1 .. ($xx<<1))
+            {
+                foreach my $rect_y (1 .. ($yy<<1))
+                {
+                    my $x_even_start = $rect_x;
+                    my $x_even_end = (($xx<<1) - $rect_y);
+
+                    my $y_even_end = (($yy<<1) - ($rect_x+$rect_y));
+
+                    # For the even diagonals.
+                    if ($x_even_end > $x_even_start and $y_even_end > 0)
+                    {
+                        $diag_sum +=
+                        (((($x_even_end&(~0x1)) - round_two_up($x_even_start)
+                        >> 1 ) * ($y_even_end >> 1)) <<
+                            ($rect_x == $rect_y ? 0 : 1)
+                        );
+                        $diag_sum +=
+                        (((((($x_even_end&0x1)?$x_even_end:$x_even_end-1) - ($x_even_start|0x1))
+                        >> 1 ) * (($y_even_end >> 1) - 1)) <<
+                            ($rect_x == $rect_y ? 0 : 1)
+                        );
+                    }
+
+                }
+            }
+        }
+    }
+
+    return {num_straight_rects => $sum, num_diag_rects => $diag_sum};
 }
 
 my ($x, $y) = @ARGV;
 
 # my $num_rects = get_rects(47, 43, 47, 43);
-my $num_straight_rects = get_total_rects($x, $y)->{num_straight_rects};
+my $rects_struct = get_total_rects($x, $y);
+my $num_straight_rects = $rects_struct->{num_straight_rects};
+my $num_diag_rects = $rects_struct->{num_diag_rects};
 
 print "Straight Rects = $num_straight_rects\n";
+print "Diag Rects = $num_diag_rects\n";
+print "Total sum = " , $num_straight_rects + $num_diag_rects, "\n";
 
 

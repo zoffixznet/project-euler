@@ -76,4 +76,32 @@ C(4,4) = C(3,4) + 5 ; C(4,step) = 5
 
 C(n,step) = n*2-3
 
+General diagonal rectangles analysis:
+-------------------------------------
 
+Since the rectangles stop at midpoint, we can treat the board as having
+units of 2. The points can be either (2x, 2y) or (2x+1, 2y+1). If the origin
+is point (Ox,Oy), then the dimensions of a w*h diagonal rectangle are:
+
+( Ox , Oy )
+( Ox - w , Oy + w )
+( Ox - w + h , Oy + w + h )
+( Ox + h , Oy + h )
+
+The complete span is (w+h) * (w+h) (but the origin of the span is not at
+a lattice point).
+
+So we need the straight square with dimensions x==[-w, h] * y==[0, w+h]
+
+Without loss of generality, let's assume that w >= h.
+
+For b[x] = 2x' ; b[y] = 2y' (board dimensions), the points for such a span
+are:
+
+1. For even points:   x==[w , 2x' - h] * y==[0, 2y'-(w+h)]
+(divided by 2 and rounded down and while ignoring values beyond the board
+dimensions.)
+
+2. For the +(1,1) points: there are (x'-1) * (y'-1) points like that.
+    and they follow the same rules:
+    (1, 3, 5...) * (1, 3, 5...)
