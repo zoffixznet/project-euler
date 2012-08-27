@@ -5,6 +5,8 @@ use warnings;
 
 use 5.014;
 
+use Test::More;
+
 =head1 DESCRIPTION
 
 In a 3x2 cross-hatched grid, a total of 37 different rectangles could be
@@ -66,6 +68,54 @@ sub round_two_up
     return (($n&0x1) ? ($n+1 ): $n);
 }
 
+sub diag_rects
+{
+    my ($xx, $yy, $rect_x, $rect_y) = @_;
+
+    my $x_even_start = $rect_x;
+    my $x_even_end = (($xx<<1) - $rect_y);
+
+    if ($x_even_end < 0)
+    {
+        return;
+    }
+
+    my $y_even_end = (($yy<<1) - ($rect_x+$rect_y));
+
+    my $x_even_end_norm = ($x_even_end & (~0x1));
+    my $x_even_start_norm = round_two_up($x_even_start);
+
+    my $even_count = 0;
+    # For the even diagonals.
+    if ($x_even_end_norm >= $x_even_start_norm and $y_even_end >= 0)
+    {
+        $even_count =
+        (
+            ((($x_even_end_norm - $x_even_start_norm) >> 1) + 1)
+            * (($y_even_end >> 1)+ 1)
+        );
+    }
+
+    my $x_odd_end =
+    (($x_even_end&0x1)?$x_even_end:($x_even_end-1));
+    my $x_odd_start = ($x_even_start|0x1);
+    my $y_odd_end = ($y_even_end - 2);
+
+    my $odd_count = 0;
+    if ($x_odd_end >= $x_odd_start and $y_odd_end >= 0)
+    {
+        $odd_count =
+        ((
+                ( (($x_odd_end - $x_odd_start) >> 1) + 1)
+                * ((($y_odd_end>>1)+1))
+            ) <<
+            ($rect_x == $rect_y ? 0 : 1)
+        );
+    }
+
+    return ($even_count, $odd_count);
+}
+
 sub get_total_rects
 {
     my ($x, $y) = @_;
@@ -91,52 +141,49 @@ sub get_total_rects
                 RECT_Y:
                 foreach my $rect_y (1 .. ($yy<<1))
                 {
-                    my $x_even_start = $rect_x;
-                    my $x_even_end = (($xx<<1) - $rect_y);
-
-                    if ($x_even_end < 0)
+                    if (my ($even_count, $odd_count) = diag_rects($xx, $yy, $rect_x, $rect_y))
+                    {
+                        $diag_sum += $even_count + $odd_count;
+                    }
+                    else
                     {
                         last RECT_Y;
                     }
-
-                    my $y_even_end = (($yy<<1) - ($rect_x+$rect_y));
-
-                    my $x_even_end_norm = ($x_even_end & (~0x1));
-                    my $x_even_start_norm = round_two_up($x_even_start);
-
-                    # For the even diagonals.
-                    if ($x_even_end_norm >= $x_even_start_norm and $y_even_end >= 0)
-                    {
-                        my $count =
-                        (
-                         ($x_even_end_norm - $x_even_start_norm + 1)
-                            * ($y_even_end + 1)
-                        );
-                        $diag_sum += ($count << ($rect_x == $rect_y ? 0 : 1));
-                    }
-
-                    my $x_odd_end =
-                        (($x_even_end&0x1)?$x_even_end:($x_even_end-1));
-                    my $x_odd_start = ($x_even_start|0x1);
-                    my $y_odd_end = ($y_even_end - 2);
-
-                    if ($x_odd_end >= $x_odd_start and $y_odd_end >= 0)
-                    {
-                        $diag_sum +=
-                        ((
-                                ( ($x_odd_end - $x_odd_start + 1))
-                           * (($y_odd_end+1) >> 0)
-                         ) <<
-                            ($rect_x == $rect_y ? 0 : 1)
-                        );
-                    }
-
                 }
             }
         }
     }
 
     return {num_straight_rects => $sum, num_diag_rects => $diag_sum};
+}
+
+sub test_diag
+{
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+
+    my ($xx, $yy, $diag_x, $diag_y, $want_ret_aref, $blurb) = @_;
+
+    my @have_ret = diag_rects($xx, $yy, $diag_x, $diag_y);
+
+    is_deeply(
+        \@have_ret,
+        $want_ret_aref,
+        $blurb
+    );
+}
+
+if (1)
+{
+    test_diag(1,1,1,1, [0, 0], "1,1,1,1");
+    test_diag(2,1,1,1, [1, 0], "1,2,1,1");
+    test_diag(1,2,1,1, [0, 1], "1,2,1,1");
+    test_diag(3,1,1,1, [2, 0], "3,1,1,1");
+    test_diag(1,3,1,1, [0, 2], "1,2,1,1");
+    test_diag(4,1,1,1, [3, 0], "3,1,1,1");
+    test_diag(1,4,1,1, [0, 3], "1,2,1,1");
+    test_diag(2,2,1,1, [2, 2],  "2,2,1,1");
+
+    done_testing();
 }
 
 my ($x, $y) = @ARGV;
