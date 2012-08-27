@@ -63,7 +63,7 @@ sub get_unique_rects
 sub round_two_up
 {
     my ($n) = @_;
-    return (($n&0x1) ? $n+1 : $n);
+    return (($n&0x1) ? ($n+1 ): $n);
 }
 
 sub get_total_rects
@@ -100,21 +100,21 @@ sub get_total_rects
                     {
                         $diag_sum +=
                         (((($x_even_end&(~0x1)) - round_two_up($x_even_start)
-                        >> 1 ) * ($y_even_end >> 1)) <<
+                        ) * ($y_even_end)) <<
                             ($rect_x == $rect_y ? 0 : 1)
                         );
                     }
 
                     my $x_odd_end = (($x_even_end&0x1)?$x_even_end:$x_even_end-1);
                     my $x_odd_start = ($x_even_start|0x1);
-                    my $y_odd_end = ($y_even_end - 2);
+                    my $y_odd_end = ($y_even_end - 1);
 
-                    if ($x_odd_end > $x_odd_start and $y_odd_end > 2)
+                    if ($x_odd_end > $x_odd_start and $y_odd_end > 0)
                     {
                         $diag_sum +=
                         ((
-                                ( ($x_odd_end - $x_odd_start) >> 1 )
-                           * ($y_odd_end >> 1)
+                                ( ($x_odd_end - $x_odd_start) >> 0 )
+                           * ($y_odd_end >> 0)
                          ) <<
                             ($rect_x == $rect_y ? 0 : 1)
                         );
