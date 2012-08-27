@@ -88,33 +88,44 @@ sub get_total_rects
         {
             foreach my $rect_x (1 .. ($xx<<1))
             {
+                RECT_Y:
                 foreach my $rect_y (1 .. ($yy<<1))
                 {
                     my $x_even_start = $rect_x;
                     my $x_even_end = (($xx<<1) - $rect_y);
 
-                    my $y_even_end = (($yy<<1) - ($rect_x+$rect_y));
-
-                    # For the even diagonals.
-                    if ($x_even_end > $x_even_start and $y_even_end > 0)
+                    if ($x_even_end < 0)
                     {
-                        $diag_sum +=
-                        (((($x_even_end&(~0x1)) - round_two_up($x_even_start)
-                        ) * ($y_even_end)) <<
-                            ($rect_x == $rect_y ? 0 : 1)
-                        );
+                        last RECT_Y;
                     }
 
-                    my $x_odd_end = (($x_even_end&0x1)?$x_even_end:$x_even_end-1);
-                    my $x_odd_start = ($x_even_start|0x1);
-                    my $y_odd_end = ($y_even_end - 1);
+                    my $y_even_end = (($yy<<1) - ($rect_x+$rect_y));
 
-                    if ($x_odd_end > $x_odd_start and $y_odd_end > 0)
+                    my $x_even_end_norm = ($x_even_end & (~0x1));
+                    my $x_even_start_norm = round_two_up($x_even_start);
+
+                    # For the even diagonals.
+                    if ($x_even_end_norm >= $x_even_start_norm and $y_even_end >= 0)
+                    {
+                        my $count =
+                        (
+                         ($x_even_end_norm - $x_even_start_norm + 1)
+                            * ($y_even_end + 1)
+                        );
+                        $diag_sum += ($count << ($rect_x == $rect_y ? 0 : 1));
+                    }
+
+                    my $x_odd_end =
+                        (($x_even_end&0x1)?$x_even_end:($x_even_end-1));
+                    my $x_odd_start = ($x_even_start|0x1);
+                    my $y_odd_end = ($y_even_end - 2);
+
+                    if ($x_odd_end >= $x_odd_start and $y_odd_end >= 0)
                     {
                         $diag_sum +=
                         ((
-                                ( ($x_odd_end - $x_odd_start) >> 0 )
-                           * ($y_odd_end >> 0)
+                                ( ($x_odd_end - $x_odd_start + 1))
+                           * (($y_odd_end+1) >> 0)
                          ) <<
                             ($rect_x == $rect_y ? 0 : 1)
                         );
