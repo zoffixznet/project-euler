@@ -99,17 +99,18 @@ sub diag_rects
     my $x_odd_end =
     (($x_even_end&0x1)?$x_even_end:($x_even_end-1));
     my $x_odd_start = ($x_even_start|0x1);
-    my $y_odd_end = ($y_even_end - 2);
+    my $y_odd_start = 1;
+    my $y_odd_end = $y_even_end;
 
     my $odd_count = 0;
-    if ($x_odd_end >= $x_odd_start and $y_odd_end >= 0)
+    if ($x_odd_end >= $x_odd_start and $y_odd_end >= $y_odd_start)
     {
         $odd_count =
         ((
                 ( (($x_odd_end - $x_odd_start) >> 1) + 1)
-                * ((($y_odd_end>>1)+1))
+                * (((($y_odd_end - $y_odd_start)>>1)+1))
             ) <<
-            ($rect_x == $rect_y ? 0 : 1)
+            0 # ($rect_x == $rect_y ? 0 : 1)
         );
     }
 
@@ -182,6 +183,7 @@ if (1)
     test_diag(4,1,1,1, [3, 0], "3,1,1,1");
     test_diag(1,4,1,1, [0, 3], "1,2,1,1");
     test_diag(2,2,1,1, [2, 2],  "2,2,1,1");
+    test_diag(2,2,1,2, [1, 1],  "2,2,1,2");
 
     done_testing();
 }
