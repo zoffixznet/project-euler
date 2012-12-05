@@ -119,7 +119,7 @@ sub new
 sub add
 {
     my ($self, $n) = @_;
- 
+
     $self->{'s'} = max($self->{'s'}, ($self->{e} = max($self->{e} + $n, 0)));
 
     return;
