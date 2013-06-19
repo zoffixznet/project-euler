@@ -18,4 +18,31 @@ billion (109) rows of Pascal's triangle.
 -------------------------------
 
 For row n and position k the entry in the pascal triangle is C(n,k) =
-n! / (k! * (n-k)!) ==> [(n-k+1) * (n-k+2) * (n-k+3) ... n)]/[1 * 2 * 3 ... k]
+n! / (k! * (n-k)!) ==> [(n-k+1) * (n-k+2) * (n-k+3) ... n] / [1 * 2 * 3 ... k]
+
+To count the number of factors of 7 in the C(n,k) we can use the following
+formula:
+
+(PI == multiplication)
+
+* T[PI[1..k]] = Int[k/7] + Int[k/49] + Int[k/7**3] + Int[k/7**4]...
+
+* T[PI[n-k+1..n]] = [How many times multiples of 7 appear in (n-k+1 .. n)]
+    + [How many times multiples of 49 appear in (n-k+1 .. n)]
+    + [How many times multiples of 7**3 appear in (n-k+1 .. n)]
+
+
+
+TPI_7[7-1+1..7] = TPI_7[7..7] = 1
+TPI_7[7-2+1..7] = TPI_7[6..7] = 1
+TPI_7[7-3+1..7] = TPI_7[5..7] = 1
+
+TPI_7[8-1+1..8] = TPI_7[8..8] = 0
+TPI_7[8-2+1..8] = TPI_7[7..8] = 1
+TPI_7[8-3+1..8] = TPI_7[6..8] = 1
+
+* T[PI[n-k+1..n]] = [How many times multiples of 7 appear in (n-k+1 .. n)]
+    = Int[ (k + (7-1) - n%7) / 7]
+    + Int[ (k + (7**2-1) - n%(7**2)) / 7**2]
+    + Int[ (k + (7**3-1) - n%(7**3)) / 7**3]
+
