@@ -5,7 +5,7 @@ use warnings;
 
 use integer;
 
-# use Math::BigInt lib => 'GMP', ':constant';
+use Math::BigInt lib => 'GMP', ':constant';
 
 sub get_valid_n_mods_for_base
 {
