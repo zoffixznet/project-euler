@@ -36,10 +36,10 @@ sub calc_num_Y_in_row_n
         {
             return 0;
         }
-        elsif (@digits == 2)
-        {
-            return ($BASE-1-$digits[0]->{d}) * $digits[1]->{d};
-        }
+        #elsif (@digits == 2)
+        #{
+        #    return ($BASE-1-$digits[0]->{d}) * $digits[1]->{d};
+        #}
         else # elsif (@digits == 3)
         {
             my $big_Y_num = ($digits[-1]->{power}-1-$digits[-2]->{total_mod});
