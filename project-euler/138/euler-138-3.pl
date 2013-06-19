@@ -46,29 +46,16 @@ while (1)
     {
         my $n = $base_n + $delta;
 
-        my ($prev_L, $prev_L_sq, $prev_L_sq_delta);
         foreach my $result (1+$n*(4+5*$n))
         {
-            while ($L_sq < $result)
-            {
-                ($prev_L, $prev_L_sq, $prev_L_sq_delta)
-                    = ($L, $L_sq, $L_sq_delta);
-                $L++;
-                $L_sq += ($L_sq_delta += 2);
-            }
-
+            $L = int(sqrt($result));
+            $L_sq = $L*$L;
             if ($L_sq == $result)
             {
                 $sum_L += $L;
                 $count++;
                 print "Found $L [$n] ; Sum = $sum_L ; Count = $count\n";
             }
-            else
-            {
-                ($L, $L_sq, $L_sq_delta) =
-                    ($prev_L, $prev_L_sq, $prev_L_sq_delta);
-            }
-
         }
     }
 }
