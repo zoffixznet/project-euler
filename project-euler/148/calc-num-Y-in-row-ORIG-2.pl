@@ -5,6 +5,7 @@ use warnings;
 
 use 5.016;
 
+use List::Util qw(sum);
 use integer;
 # use Math::BigInt lib => 'GMP', ':constant';
 
@@ -49,7 +50,7 @@ sub calc_num_Y_in_row_n
     return $recurse->($#D);
 }
 
-sub calc_num_Y_in_7_rows
+sub calc_num_Y_in_7_consecutive_rows
 {
     my $n_proto = shift;
     my $n = $n_proto - 1;
@@ -83,7 +84,10 @@ sub calc_num_Y_in_7_rows
         }
         else
         {
-            my $big_Y_num = ($D[$d_len]->{power}-1-$D[$d_len-1]->{total_mod});
+            my $big_Y_num = $BASE *
+                ($D[$d_len]->{power} - 1 - $D[$d_len-1]->{total_mod} - ($BASE-1))
+                + (($BASE *($BASE-1))>>1);
+
             my $big_Y_total = $big_Y_num * $D[$d_len]->{d};
 
             return $big_Y_total + ($D[$d_len]->{d}+1) * __SUB__->($d_len-1);
@@ -95,25 +99,49 @@ sub calc_num_Y_in_7_rows
 
 if ($ENV{RUN})
 {
-    my $n = 1_000_000_000;
-
+    my $LIMIT = 1_000_000_000;
+    my $limit = $LIMIT / $BASE;
     my $sum = 0;
 
-    for (; $n >= 6; $n--)
+    my $n;
+    foreach my $d (1 .. $limit)
     {
-        $sum += calc_num_Y_in_row_n($n);
+        $n = $d * $BASE + 1;
+        $sum += calc_num_Y_in_7_consecutive_rows($n);
 
-        if ($n % 10_000 == 0)
+        if ($d % 10_000 == 0)
         {
             print "Reached $n [Sum == $sum]\n";
         }
     }
+
+    $sum += sum(map { calc_num_Y_in_row_n($_) } ($n .. $LIMIT));
     print "Final Sum == $sum\n";
+}
+elsif ($ENV{TEST})
+{
+
+    foreach my $x (1 .. 10_000)
+    {
+        my $n = $x * 7 + 1;
+        my $exp = sum(map { calc_num_Y_in_row_n($_) } $n .. $n+6);
+        my $got = calc_num_Y_in_7_consecutive_rows($n);
+        print "Expected: $exp\nGot: $got\n";
+        if ($got != $exp)
+        {
+            die "Failure at $n.";
+        }
+    }
 }
 else
 {
     foreach my $n (@ARGV)
     {
-        print "${n}: ", calc_num_Y_in_row_n($n), "\n";
+        print "${n}: ",
+        ($ENV{OPT7} ?
+            calc_num_Y_in_7_consecutive_rows($n)
+            : calc_num_Y_in_row_n($n)
+        ),
+        "\n";
     }
 }
