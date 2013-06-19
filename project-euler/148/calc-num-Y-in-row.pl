@@ -25,7 +25,7 @@ sub calc_num_Y_in_row_n
         {
             my $big_Y_total = ($D[$d_len]->{power}-1-$D[$d_len-1]->{total_mod}) * $D[$d_len]->{d};
 
-            return $big_Y_total + $D[$d_len]->{d}+1 * __SUB__->($d_len-1);
+            return $big_Y_total + ($D[$d_len]->{d}+1) * __SUB__->($d_len-1);
         }
     };
 
