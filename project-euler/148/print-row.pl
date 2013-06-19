@@ -20,4 +20,4 @@ sub nCr
 
 my $n = shift(@ARGV);
 
-print join(' ', map { +(nCr($n, $_) % 7 == 0 ) ? 'Y' : 'N' } (1 .. $n-1)), "\n";
+print join(' ', map { +(nCr($n-1, $_) % 7 == 0 ) ? 'Y' : 'N' } (1 .. $n-2)), "\n";
