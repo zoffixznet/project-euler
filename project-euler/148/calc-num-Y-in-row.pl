@@ -49,7 +49,21 @@ sub calc_num_Y_in_row_n
     return $recurse->($#digits);
 }
 
-foreach my $n (@ARGV)
+my $n = 1_000_000_000;
+
+my $sum = 0;
+
+for (; $n >= 6; $n--)
 {
-    print "${n}: ", calc_num_Y_in_row_n($n), "\n";
+    $sum += calc_num_Y_in_row_n($n);
+
+    if ($n % 10_000 == 0)
+    {
+        print "Reached $n [Sum == $sum]\n";
+    }
 }
+# foreach my $n (@ARGV)
+# {
+#     print "${n}: ", calc_num_Y_in_row_n($n), "\n";
+# }
+print "Final Sum == $sum\n";
