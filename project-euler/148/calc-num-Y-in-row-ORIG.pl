@@ -3,34 +3,18 @@
 use strict;
 use warnings;
 
+use 5.016;
+
 use integer;
 # use Math::BigInt lib => 'GMP', ':constant';
 
 my $BASE = 7;
 
+my @digits;
+
 sub calc_num_Y_in_row_n
 {
-    my $n_proto = shift;
-    my $n = $n_proto - 1;
-
-    my @digits;
-
-    # my $digit_n = $n->copy();
-    my $digit_n = $n;
-    my $power = 1;
-    my $total_mod = 0;
-    while ($digit_n)
-    {
-        my $digit = ($digit_n % $BASE);
-        $total_mod = $total_mod + $digit * $power;
-        push @digits, { d => $digit, power => $power, total_mod => $total_mod };
-        $digit_n /= $BASE;
-        $power *= $BASE;
-    }
-
-    my $recurse;
-
-    $recurse = sub {
+    my $recurse = sub {
         my ($d_len) = @_;
 
         if ($d_len <= 0)
@@ -39,31 +23,60 @@ sub calc_num_Y_in_row_n
         }
         else
         {
-            my $big_Y_num = ($digits[$d_len]->{power}-1-$digits[$d_len-1]->{total_mod});
-            my $big_Y_total = $big_Y_num * $digits[$d_len]->{d};
+            my $big_Y_total = ($digits[$d_len]->{power}-1-$digits[$d_len-1]->{total_mod}) * $digits[$d_len]->{d};
 
-            return $big_Y_total + ($digits[$d_len]->{d}+1) * $recurse->($d_len-1);
+            return $big_Y_total + ($digits[$d_len]->{d}+1) * __SUB__->($d_len-1);
         }
     };
 
     return $recurse->($#digits);
 }
 
-my $n = 1_000_000_000;
-
 my $sum = 0;
 
-for (; $n >= 6; $n--)
+push @digits, {d => 1, power => 1, total_mod => 1};
+for my $n (1 .. 999_999_999)
 {
-    $sum += calc_num_Y_in_row_n($n);
+    $sum += calc_num_Y_in_row_n();
 
     if ($n % 10_000 == 0)
     {
         print "Reached $n [Sum == $sum]\n";
     }
 }
+continue
+{
+    my $l = 0;
+    while ($l < @digits && $digits[$l]{d} == $BASE-1)
+    {
+        $digits[$l]{d} = 0;
+        $digits[$l]{total_mod} = 0;
+    }
+    continue
+    {
+        $l++;
+    }
+
+    if ($l == @digits)
+    {
+        my $power = $digits[-1]{power}*$BASE;
+        push @digits, {d => 1,
+            power => $power,
+            total_mod => $digits[-1]{total_mod} + $power,
+        };
+    }
+    else
+    {
+        $digits[$l]{d}++;
+        foreach my $digit (@digits[$l..$#digits])
+        {
+            $digit->{total_mod}++;
+        }
+    }
+}
+
 # foreach my $n (@ARGV)
 # {
-#     print "${n}: ", calc_num_Y_in_row_n($n), "\n";
+#     print "${n}: ", calc_num_Y_in_row_n($n+1), "\n";
 # }
 print "Final Sum == $sum\n";
