@@ -10,7 +10,7 @@ use integer;
 
 my $BASE = 7;
 
-my @digits;
+my @D;
 
 sub calc_num_Y_in_row_n
 {
@@ -23,18 +23,18 @@ sub calc_num_Y_in_row_n
         }
         else
         {
-            my $big_Y_total = ($digits[$d_len]->{power}-1-$digits[$d_len-1]->{total_mod}) * $digits[$d_len]->{d};
+            my $big_Y_total = ($D[$d_len]->{power}-1-$D[$d_len-1]->{total_mod}) * $D[$d_len]->{d};
 
-            return $big_Y_total + $digits[$d_len]->{d}+1 * __SUB__->($d_len-1);
+            return $big_Y_total + $D[$d_len]->{d}+1 * __SUB__->($d_len-1);
         }
     };
 
-    return $recurse->($#digits);
+    return $recurse->($#D);
 }
 
 my $sum = 0;
 
-push @digits, {d => 1, power => 1, total_mod => 1};
+push @D, {d => 1, power => 1, total_mod => 1};
 for my $n (1 .. 999_999_999)
 {
     $sum += calc_num_Y_in_row_n();
@@ -47,28 +47,28 @@ for my $n (1 .. 999_999_999)
 continue
 {
     my $l = 0;
-    while ($l < @digits && $digits[$l]{d} == $BASE-1)
+    while ($l < @D && $D[$l]{d} == $BASE-1)
     {
-        $digits[$l]{d} = 0;
-        $digits[$l]{total_mod} = 0;
+        $D[$l]{d} = 0;
+        $D[$l]{total_mod} = 0;
     }
     continue
     {
         $l++;
     }
 
-    if ($l == @digits)
+    if ($l == @D)
     {
-        my $power = $digits[-1]{power}*$BASE;
-        push @digits, {d => 1,
+        my $power = $D[-1]{power}*$BASE;
+        push @D, {d => 1,
             power => $power,
-            total_mod => $digits[-1]{total_mod} + $power,
+            total_mod => $D[-1]{total_mod} + $power,
         };
     }
     else
     {
-        $digits[$l]{d}++;
-        foreach my $digit (@digits[$l..$#digits])
+        $D[$l]{d}++;
+        foreach my $digit (@D[$l..$#D])
         {
             $digit->{total_mod}++;
         }
