@@ -21,6 +21,11 @@ while ($power < 1_000_000_000)
     my $right_tri_id = qq#\\|Triangle[$start .. $end]#;
     print qq#$right_tri_id = $start*($start+1)/2 Ys ==> $right_tri_sum\n\n#;
 
+    for my $h (2 .. $B-1)
+    {
+        print qq#  ==> ImproperTriangle[1 .. @{[$power]}*$h] == ImproperTriangle[1 .. @{[$power*$h]}] = $old_tri_id * (@{[join('+',1..$h)]}) + $right_tri_id * (@{[join('+',1..$h-1)]}) = @{[$old_tri_sum*$h*($h+1)/2 + $right_tri_sum*$h*($h-1)/2]}\n\n#
+    }
+
     my $tri_id = qq#Triangle[1 .. $next_power]#;
     my $tri_sum = $B*($B-1)/2*$right_tri_sum + $B*($B+1)/2*$old_tri_sum;
     print qq#$tri_id = (1+2+3+4+5+6) * $right_tri_id + (1+2+3+4+5+6+7) * $old_tri_id = $tri_sum\n\n#;
