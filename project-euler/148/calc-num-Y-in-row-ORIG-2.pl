@@ -167,7 +167,7 @@ Digit[d_len] * B * [ 3(B-1)/2 - x] + (Digit[d_len]+1) * x * B * (B-1)/2 =
 
 For d_len >= 2
 
-big_Y_num[n+x*B] = B * ( Power[d_len] - B - total_mod[d_len-1] - x*B ) + (B*(B-1))/2 = 
+big_Y_num[n+x*B] = B * ( Power[d_len] - B - total_mod[d_len-1] - x*B ) + (B*(B-1))/2 =
 big_Y_total
 
 =head1 Old Analysis
@@ -226,7 +226,7 @@ if ($ENV{RUN})
     my $sum = 0;
 
     my $n;
-    foreach my $d (1 .. $limit)
+    foreach my $d (847_425_747/7 .. $limit)
     {
         $n = $d * $B + 1;
         $sum += calc_num_Y_in_7_consecutive_rows($n);
