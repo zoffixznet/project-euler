@@ -18,6 +18,7 @@ sub nCr
     return fact($n) / (fact($n-$k) * fact($k));
 }
 
-my $n = shift(@ARGV);
-
-print join(' ', map { +(nCr($n-1, $_) % 7 == 0 ) ? 'Y' : 'N' } (1 .. $n-2)), "\n";
+foreach my $n (@ARGV)
+{
+    print join(' ', map { +(nCr($n-1, $_) % 7 == 0 ) ? 'Y' : 'N' } (1 .. $n-2)), "\n";
+}
