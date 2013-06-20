@@ -14,7 +14,9 @@ my $old_tri_sum = 0;
 
 my @stack = ();
 
-my $LIMIT = 1_000_000_000;
+# my $LIMIT = 1_000_000_000;
+my $LIMIT = 100;
+
 while ($power < $LIMIT)
 {
     my $next_power = $power * $B;
@@ -47,7 +49,7 @@ while ($power < $LIMIT)
                         $num_sub_tris_per_tri * $stack[-1]{tri_sum}
                     )
                     +
-                    $num_right_tris * (($p_1 + ($p_1-$height))*$height/2)
+                    $num_right_tris * (($p_1 + ($power-$height))*$height/2)
                     ;
                 print qq#       ==> ImproperImproperTriangle[1 .. @{[$power * $h + $height]}] = @{[$improper_tri_sum + $added_diff]}\n\n#;
 
