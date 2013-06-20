@@ -221,23 +221,39 @@ B*B*[  (p - total_mod - B) - (B-1)**2/2] =
 
 if ($ENV{RUN})
 {
-    my $LIMIT = 1_000_000_000;
+    my $START = 1_000_000_001;
+    my $LIMIT = 1_008_840_175;
     my $limit = $LIMIT / $B;
     my $sum = 0;
 
     my $n;
-    foreach my $d (847_425_747/7 .. $limit)
+
+    my $i = $START;
+    while (($i % $B) != 1)
     {
-        $n = $d * $B + 1;
-        $sum += calc_num_Y_in_7_consecutive_rows($n);
-
-        if ($d % 10_000 == 0)
-        {
-            print "Reached $n [Sum == $sum]\n";
-        }
+        $sum += calc_num_Y_in_row_n($i);
+        $i++;
     }
+    my $e = $LIMIT;
+    while (($e % $B) != 1)
+    {
+        $sum += calc_num_Y_in_row_n($e);
+        $e--;
+    }
+    # We don't calculate that in the 7 step loop.
+    $sum += calc_num_Y_in_row_n($e);
 
-    $sum += sum(map { calc_num_Y_in_row_n($_) } ($n .. $LIMIT));
+    my $next_i = $i + 10_000;
+    while ($i < $e)
+    {
+        $sum += calc_num_Y_in_7_consecutive_rows($i);
+        if ($i >= $next_i)
+        {
+            print "Reached $i [Sum == $sum]\n";
+            $next_i += 10_000;
+        }
+        $i += 7;
+    }
     print "Final Sum == $sum\n";
 }
 elsif ($ENV{TEST})

@@ -14,8 +14,8 @@ my $old_tri_sum = 0;
 
 my @stack = ();
 
-# my $LIMIT = 1_000_000_000;
-my $LIMIT = 100;
+my $LIMIT = 1_000_000_000;
+# my $LIMIT = 100;
 
 while ($power < $LIMIT)
 {
