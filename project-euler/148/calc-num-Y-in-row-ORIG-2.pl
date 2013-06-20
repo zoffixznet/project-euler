@@ -50,6 +50,8 @@ sub calc_num_Y_in_row_n
     return $recurse->($#D);
 }
 
+my $DEBUG = 0;
+
 sub calc_num_Y_in_7_consecutive_rows
 {
     my $n_proto = shift;
@@ -73,6 +75,14 @@ sub calc_num_Y_in_7_consecutive_rows
     if ($D[0]{d} != 0)
     {
         die "Cannot proceeed with '$n'.";
+    }
+
+    if ($DEBUG)
+    {
+        foreach my $l (keys(@D))
+        {
+            print "D[$l] = { p => $D[$l]{power} , d => $D[$l]{d} , total_mod => $D[$l]{total_mod} }\n"
+        }
     }
 
     my $recurse = sub {
@@ -125,7 +135,37 @@ sub calc_num_Y_in_7x7_consecutive_rows
     my $recurse = sub {
         my ($d_len) = @_;
 
-=head1 Analysis
+=head1 New Analysis
+
+For d_len == 1 :
+
+big_Y_num[n+0*B] = B * ( B**d_len - B) + B*(B-1)/2 = B*(B-1)/2
+big_Y_total[0] = 0
+big_Y_num[n+1*B] = B * ( Power[d_len] - B) + B*(B-1)/2 = B*(B-1)/2
+big_Y_total[1] = 1 * big_Y_num[n+1*B]
+big_Y_num[n+2*B] = B * ( Power[d_len] - B) + B*(B-1)/2
+big_Y_total[1] = 2 * big_Y_num[n+2*B]
+big_Y_total[x] = 2 * big_Y_num[n+x*B]
+
+big_Y_total[n+x*B] = x * B * (B-1)/2
+
+Ret[x for d_len == 1] = big_Y_total[x for d_len == 1]
+Sigma[Big_Y_Total] = B*(B-1)/2* [ B * ( Power[d_len] - B) + B*(B-1)/2 ]
+
+For d_len == 2
+
+big_Y_num[n+0*B] = B * ( B**d_len - B ) + B*(B-1)/2
+big_Y_total[0] = 0
+big_Y_num[n+1*B] = B * ( B**d_len - B - 1*B) + B*(B-1)/2
+big_Y_total[1] = Digit[d_len]*big_Y_num[n+1*B]
+
+big_Y_num[n+x*B] = B * ( B**2 - B - x*B ) + (B*(B-1))/2 = B [ B - x - 1 + (B - 1) / 2] = B [ 3(B-1)/2 - x ]
+big_Y_total[n+x*B] = Digit[d_len] * big_Y_num[n+x*B]
+Ret[n+x*B] = big_Y_total[n+x*B] + (Digit[d_len]+1) * big_Y_total[x for d_len == 1] =
+Digit[d_len] * big_Y_num[n+x*B] + (Digit[d_len]+1) * x * B * (B-1)/2 =
+Digit[d_len] * B * [ 3(B-1)/2 - x] + (Digit[d_len]+1) * x * B * (B-1)/2 =
+
+=head1 Old Analysis
 
 S(d) = B * (p - total_mod - B - B*d) + B*(B-1)/2
 
@@ -141,7 +181,7 @@ B*B*[  (p - total_mod - B) - (B-1)**2/2] =
 
 =cut
 
-        if ($d_len <= 1)
+        if ($d_len <= 0)
         {
             return 0;
         }
@@ -157,7 +197,21 @@ B*B*[  (p - total_mod - B) - (B-1)**2/2] =
         }
     };
 
-    return $recurse->($#D);
+    my $ret = $recurse->($#D);
+
+    if (1)
+    {
+        $DEBUG = 1;
+        my $exp = sum(map { calc_num_Y_in_7_consecutive_rows($n_proto+$_*$B) } 0 .. $B-1);
+        $DEBUG = 0;
+
+        if ($exp != $ret)
+        {
+            die "Calculation failure.";
+        }
+    }
+
+    return $ret;
 }
 
 if ($ENV{RUN})
@@ -183,15 +237,18 @@ if ($ENV{RUN})
 }
 elsif ($ENV{TEST})
 {
-    foreach my $x (1 .. 10_000)
+    if (1)
     {
-        my $n = $x * 49 + 1;
-        my $exp = sum(map { calc_num_Y_in_7_consecutive_rows($n+$_*7) } 0 .. $B-1);
-        my $got = calc_num_Y_in_7x7_consecutive_rows($n);
-        print "Expected: $exp\nGot: $got\n";
-        if ($got != $exp)
+        foreach my $x (1 .. 10_000)
         {
-            die "Failure at $n.";
+            my $n = $x * 49 + 1;
+            my $exp = sum(map { calc_num_Y_in_7_consecutive_rows($n+$_*7) } 0 .. $B-1);
+            my $got = calc_num_Y_in_7x7_consecutive_rows($n);
+            print "Expected: $exp\nGot: $got\n";
+            if ($got != $exp)
+            {
+                die "Failure at $n.";
+            }
         }
     }
     foreach my $x (1 .. 10_000)
