@@ -172,7 +172,7 @@ sub recurse
             {
                 my @factors = sort {$a <=> $b } uniq (map {
                     my $i = $_;
-                    grep { (($masks->[$i]>>$_)&0x1) } @{$new_factors_contains[$i]}
+                    @{$new_factors_contains[$i]}[grep { (($masks->[$i]>>$_)&0x1) } keys(@{$new_factors_contains[$i]})]
                     } (0 .. $#$masks));
 
                 my $new_new_sum = $new_sum;
