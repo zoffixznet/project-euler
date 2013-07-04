@@ -129,7 +129,7 @@ sub recurse
 =begin removed
             my $test_sum = $new_sum->copy();
             my $first_product = $first*2;
-            
+
             while(
                 ($test_sum->denominator() % $first == 0)
             )
@@ -137,7 +137,7 @@ sub recurse
                 $test_sum += Math::BigRat->new(
                     '1/' . ($first_product * $first_product)
                 );
-                
+
                 if ($test_sum > $target)
                 {
                     next FIRST_LOOP;

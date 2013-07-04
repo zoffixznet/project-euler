@@ -1,5 +1,5 @@
 If we have a/b + c/p*d where gcd(a,b) = 1 and gcd(c, p*d) = 1 and b is not
-divisible by p. So it is equal to 
+divisible by p. So it is equal to
 
 a*p*d+b*c
 ---------
