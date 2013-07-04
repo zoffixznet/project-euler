@@ -91,7 +91,7 @@ sub recurse
 {
     my ($to_check, $so_far, $sum) = @_;
 
-    print "Checking: Start=@$to_check ; $sum+[@$so_far]\n";
+    # print "Checking: Start=@$to_check ; $sum+[@$so_far]\n";
 
     if ($sum == $target)
     {
@@ -133,7 +133,7 @@ sub recurse
             return;
         }
 
-        my @new_factors = grep { $_ > 2 } uniq(grep { !exists($factors_lookup{$_})} @{ factorize($new_sum->denominator()) });
+        my @new_factors = grep { $_ > 2 } uniq(@{ factorize($new_sum->denominator()) });
         my $new_to_check = [@$to_check[$first_idx+1..$#$to_check]];
 
         if (! @new_factors)
@@ -183,7 +183,7 @@ sub recurse
                 }
 
                 recurse([@$new_to_check[@factors_not_contains]],
-                    [@$so_far, @$new_to_check[@factors]],
+                    [sort { $a <=> $b} @$so_far, $first, @$new_to_check[@factors]],
                     $new_new_sum->bnorm(),
                 );
                 return;
