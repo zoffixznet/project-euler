@@ -134,8 +134,18 @@ sub recurse
         }
 
         my @new_factors = grep { $_ > 2 } uniq(grep { !exists($factors_lookup{$_})} @{ factorize($new_sum->denominator()) });
-
         my $new_to_check = [@$to_check[$first_idx+1..$#$to_check]];
+
+        if (! @new_factors)
+        {
+            recurse(
+                $new_to_check,
+                [@$so_far, $first],
+                $new_sum,
+            );
+            next FIRST_LOOP;
+        }
+
         my @new_factors_contains = (map {
             my $new_factor = $_;
             [
@@ -157,6 +167,7 @@ sub recurse
         my $iter_factors_recurse = sub {
             my ($masks) = @_;
             my $idx = @$masks;
+
             if ($idx == @new_factors)
             {
                 my @factors = sort {$a <=> $b } uniq (map {
@@ -177,6 +188,7 @@ sub recurse
                 );
                 return;
             }
+
             foreach my $new_mask (1 .. ((1 << @{$new_factors_contains[$idx]})-1))
             {
                 __SUB__->([@$masks, $new_mask]);
