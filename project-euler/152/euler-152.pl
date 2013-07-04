@@ -3,10 +3,13 @@
 use strict;
 use warnings;
 
-use Math::BigRat only => 'GMP';
-use List::MoreUtils qw(any);
+use v5.16;
 
-sub sq_frac
+use Math::BigRat only => 'GMP';
+use List::MoreUtils qw(any uniq);
+
+
+sub slow_sq_frac
 {
     my ($n) = @_;
 
@@ -57,12 +60,14 @@ sub factorize
 }
 
 my $target = Math::BigRat->new('1/2');
-my $limit = 80;
+my $limit = 35;
 
 my $found_count = 0;
 
 # We exclude 2 because the target is divided by it.
 my @primes = (grep { is_prime($_) } (3 .. $limit));
+
+my @sq_fracs = (map { $_ ? slow_sq_frac($_) : $_ } (0 .. $limit));
 
 my %primes_lookup = (map { $_ => 1 } @primes);
 
@@ -72,7 +77,7 @@ $remaining_sums[$limit+1] = 0;
 
 for my $n (reverse(2 .. $limit))
 {
-    $remaining_sums[$n] = $remaining_sums[$n+1] + sq_frac($n);
+    $remaining_sums[$n] = $remaining_sums[$n+1] + $sq_fracs[$n];
 }
 
 my @end_at;
@@ -84,9 +89,9 @@ for my $p (@primes)
 
 sub recurse
 {
-    my ($start_from, $so_far, $sum) = @_;
+    my ($to_check, $so_far, $sum) = @_;
 
-    # print "Checking: Start=$start_from ; $sum+[@$so_far]\n";
+    print "Checking: Start=@$to_check ; $sum+[@$so_far]\n";
 
     if ($sum == $target)
     {
@@ -96,6 +101,13 @@ sub recurse
         return;
     }
 
+    if (! @$to_check)
+    {
+        return;
+    }
+
+    my $start_from = $to_check->[0];
+
     if ($sum + $remaining_sums[$start_from] < $target)
     {
         # print "Remaining sum prune\n";
@@ -104,59 +116,85 @@ sub recurse
 
     my $factors = factorize($sum->denominator());
 
-    if (any { $end_at[$_] <= $start_from } @$factors)
+    if (any { $_ > 2 && $end_at[$_] <= $start_from } @$factors)
     {
         return;
     }
 
+    my %factors_lookup = (map { $_ => 1 } @$factors);
+
     FIRST_LOOP:
-    foreach my $first ($start_from .. $limit)
+    foreach my $first_idx (keys(@$to_check))
     {
-        my $new_sum = ($sum + sq_frac($first))->bnorm();
+        my $first = $to_check->[$first_idx];
+        my $new_sum = ($sum + $sq_fracs[$first])->bnorm();
         if ($new_sum > $target)
         {
             return;
         }
 
-        if ($primes_lookup{$first})
-        {
-            # It can never be balanced.
-            if ($first > $limit/2)
-            {
-                next FIRST_LOOP;
+        my @new_factors = uniq(grep { !exists($factors_lookup{$_})} @{ factorize($new_sum->denominator()) });
+
+        my $new_to_check = [@$to_check[$first_idx+1..$#$to_check]];
+        my @new_factors_contains = (map {
+            my $new_factor = $_;
+            [
+                grep
+                { $new_to_check->[$_] % $new_factor == 0 }
+                keys @$new_to_check
+            ]
             }
+            @new_factors
+        );
+        my %new_factors_contains_lookup =
+            (map { map { $_ => 1 } @$_ } @new_factors_contains);
 
-=begin removed
-            my $test_sum = $new_sum->copy();
-            my $first_product = $first*2;
+        my @factors_not_contains = (grep
+            { !exists($new_factors_contains_lookup{$_}) }
+            keys @$new_to_check
+        );
 
-            while(
-                ($test_sum->denominator() % $first == 0)
-            )
+        my $iter_factors_recurse = sub {
+            my ($masks) = @_;
+            my $idx = @$masks;
+            if ($idx == @new_factors)
             {
-                $test_sum += Math::BigRat->new(
-                    '1/' . ($first_product * $first_product)
+                my @factors = sort {$a <=> $b } uniq (map {
+                    my $i = $_;
+                    grep { (($masks->[$i]>>$_)&0x1) } @{$new_factors_contains[$i]}
+                    } (0 .. $#$masks));
+
+                my $new_new_sum = $new_sum;
+
+                foreach my $f (@factors)
+                {
+                    $new_new_sum += $sq_fracs[$new_to_check->[$f]];
+                }
+                recurse([@$new_to_check[@factors_not_contains]],
+                    [@$so_far, @$new_to_check[@factors]],
+                    $new_new_sum->bnorm(),
                 );
-
-                if ($test_sum > $target)
-                {
-                    next FIRST_LOOP;
-                }
-                if (($first_product += $first) > $limit)
-                {
-                    next FIRST_LOOP;
-                }
+                return;
             }
-=end removed
+            foreach my $new_mask (1 .. ((1 << @{$new_factors_contains[$idx]})-1))
+            {
+                __SUB__->([@$masks, $new_mask]);
+            }
 
-=cut
-        }
-        recurse($first+1, [@$so_far, $first], $new_sum);
+            return;
+        };
+
+        $iter_factors_recurse->([]);
+
+        # recurse($first+1, [@$so_far, $first], $new_sum);
     }
 
     return;
 }
 
-recurse(2, [], Math::BigRat->new('0/1'));
+# Filter out the large primes.
+my @init_to_check = (grep { !exists($primes_lookup{$_}) || $_ < $limit/2 } (2 .. $limit));
+
+recurse([@init_to_check], [], Math::BigRat->new('0/1'));
 
 
