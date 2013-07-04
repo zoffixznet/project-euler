@@ -133,7 +133,7 @@ sub recurse
             return;
         }
 
-        my @new_factors = uniq(grep { !exists($factors_lookup{$_})} @{ factorize($new_sum->denominator()) });
+        my @new_factors = grep { $_ > 2 } uniq(grep { !exists($factors_lookup{$_})} @{ factorize($new_sum->denominator()) });
 
         my $new_to_check = [@$to_check[$first_idx+1..$#$to_check]];
         my @new_factors_contains = (map {
@@ -170,6 +170,7 @@ sub recurse
                 {
                     $new_new_sum += $sq_fracs[$new_to_check->[$f]];
                 }
+
                 recurse([@$new_to_check[@factors_not_contains]],
                     [@$so_far, @$new_to_check[@factors]],
                     $new_new_sum->bnorm(),
