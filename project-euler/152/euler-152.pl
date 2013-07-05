@@ -6,7 +6,7 @@ use warnings;
 use v5.16;
 
 use Math::BigRat only => 'GMP';
-use List::MoreUtils qw(any uniq);
+use List::MoreUtils qw(any all uniq);
 
 
 sub slow_sq_frac
@@ -91,7 +91,7 @@ sub recurse
 {
     my ($to_check, $so_far, $sum) = @_;
 
-    # print "Checking: Start=@$to_check ; $sum+[@$so_far]\n";
+    print "Checking: Start=@$to_check ; $sum+[@$so_far]\n";
 
     if ($sum == $target)
     {
@@ -156,48 +156,52 @@ sub recurse
             }
             @new_factors
         );
-        my %new_factors_contains_lookup =
+
+        if (all { scalar(@$_) } @new_factors_contains)
+        {
+            my %new_factors_contains_lookup =
             (map { map { $_ => 1 } @$_ } @new_factors_contains);
 
-        my @factors_not_contains = (grep
-            { !exists($new_factors_contains_lookup{$_}) }
-            keys @$new_to_check
-        );
+            my @factors_not_contains = (grep
+                { !exists($new_factors_contains_lookup{$_}) }
+                keys @$new_to_check
+            );
 
-        my $iter_factors_recurse = sub {
-            my ($masks) = @_;
-            my $idx = @$masks;
+            my $iter_factors_recurse = sub {
+                my ($masks) = @_;
+                my $idx = @$masks;
 
-            if ($idx == @new_factors)
-            {
-                my @factors = sort {$a <=> $b } uniq (map {
-                    my $i = $_;
-                    @{$new_factors_contains[$i]}[grep { (($masks->[$i]>>$_)&0x1) } keys(@{$new_factors_contains[$i]})]
-                    } (0 .. $#$masks));
-
-                my $new_new_sum = $new_sum;
-
-                foreach my $f (@factors)
+                if ($idx == @new_factors)
                 {
-                    $new_new_sum += $sq_fracs[$new_to_check->[$f]];
+                    my @factors = sort {$a <=> $b } uniq (map {
+                        my $i = $_;
+                        @{$new_factors_contains[$i]}[grep { (($masks->[$i]>>$_)&0x1) } keys(@{$new_factors_contains[$i]})]
+                        } (0 .. $#$masks));
+
+                    my $new_new_sum = $new_sum;
+
+                    foreach my $f (@factors)
+                    {
+                        $new_new_sum += $sq_fracs[$new_to_check->[$f]];
+                    }
+
+                    recurse([@$new_to_check[@factors_not_contains]],
+                        [sort { $a <=> $b} @$so_far, $first, @$new_to_check[@factors]],
+                        $new_new_sum->bnorm(),
+                    );
+                    return;
                 }
 
-                recurse([@$new_to_check[@factors_not_contains]],
-                    [sort { $a <=> $b} @$so_far, $first, @$new_to_check[@factors]],
-                    $new_new_sum->bnorm(),
-                );
+                foreach my $new_mask (1 .. ((1 << @{$new_factors_contains[$idx]})-1))
+                {
+                    __SUB__->([@$masks, $new_mask]);
+                }
+
                 return;
-            }
+            };
 
-            foreach my $new_mask (1 .. ((1 << @{$new_factors_contains[$idx]})-1))
-            {
-                __SUB__->([@$masks, $new_mask]);
-            }
-
-            return;
-        };
-
-        $iter_factors_recurse->([]);
+            $iter_factors_recurse->([]);
+        }
 
         # recurse($first+1, [@$so_far, $first], $new_sum);
     }
