@@ -91,7 +91,7 @@ sub recurse
 {
     my ($to_check, $so_far, $sum) = @_;
 
-    print "Checking: Start=@$to_check ; $sum+[@$so_far]\n";
+    # print "Checking: ToCheck=@$to_check ; $sum+[@$so_far]\n";
 
     if ($sum == $target)
     {
@@ -167,6 +167,8 @@ sub recurse
                 keys @$new_to_check
             );
 
+            my %encountered_factors;
+
             my $iter_factors_recurse = sub {
                 my ($masks) = @_;
                 my $idx = @$masks;
@@ -178,17 +180,20 @@ sub recurse
                         @{$new_factors_contains[$i]}[grep { (($masks->[$i]>>$_)&0x1) } keys(@{$new_factors_contains[$i]})]
                         } (0 .. $#$masks));
 
-                    my $new_new_sum = $new_sum;
-
-                    foreach my $f (@factors)
+                    if (! $encountered_factors{join(',',@factors)}++)
                     {
-                        $new_new_sum += $sq_fracs[$new_to_check->[$f]];
-                    }
+                        my $new_new_sum = $new_sum;
 
-                    recurse([@$new_to_check[@factors_not_contains]],
-                        [sort { $a <=> $b} @$so_far, $first, @$new_to_check[@factors]],
-                        $new_new_sum->bnorm(),
-                    );
+                        foreach my $f (@factors)
+                        {
+                            $new_new_sum += $sq_fracs[$new_to_check->[$f]];
+                        }
+
+                        recurse([@$new_to_check[@factors_not_contains]],
+                            [sort { $a <=> $b} @$so_far, $first, @$new_to_check[@factors]],
+                            $new_new_sum->bnorm(),
+                        );
+                    }
                     return;
                 }
 
