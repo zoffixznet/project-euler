@@ -114,14 +114,10 @@ sub recurse
         return;
     }
 
-    my $factors = factorize($sum->denominator());
-
-    if (any { $_ > 2 && $end_at[$_] <= $start_from } @$factors)
+    if (any { $_ > 2 && $end_at[$_] <= $start_from } @{factorize($sum->denominator())})
     {
         return;
     }
-
-    my %factors_lookup = (map { $_ => 1 } @$factors);
 
     FIRST_LOOP:
     foreach my $first_idx (keys(@$to_check))
@@ -130,7 +126,7 @@ sub recurse
         my $new_sum = ($sum + $sq_fracs[$first])->bnorm();
         if ($new_sum > $target)
         {
-            return;
+            next FIRST_LOOP;
         }
 
         my @new_factors = grep { $_ > 2 } uniq(@{ factorize($new_sum->denominator()) });
@@ -140,7 +136,7 @@ sub recurse
         {
             recurse(
                 $new_to_check,
-                [@$so_far, $first],
+                [sort { $a <=> $b } (@$so_far, $first)],
                 $new_sum,
             );
             next FIRST_LOOP;
@@ -169,43 +165,53 @@ sub recurse
 
             my %encountered_factors;
 
-            my $iter_factors_recurse = sub {
-                my ($masks) = @_;
-                my $idx = @$masks;
+            # my $sum_threshold = $target - $remaining_sums[$new_to_check->[0]];
+            my $sum_threshold = $target;
 
+            my $iter_factors_recurse = sub {
+                my ($idx, $factor_idx, $factors_href, $new_new_sum) = @_;
+
+                if ($new_new_sum > $sum_threshold)
+                {
+                    return;
+                }
                 if ($idx == @new_factors)
                 {
-                    my @factors = sort {$a <=> $b } uniq (map {
-                        my $i = $_;
-                        @{$new_factors_contains[$i]}[grep { (($masks->[$i]>>$_)&0x1) } keys(@{$new_factors_contains[$i]})]
-                        } (0 .. $#$masks));
-
+                    my @factors = sort {$a <=> $b } keys(%$factors_href);
                     if (! $encountered_factors{join(',',@factors)}++)
                     {
-                        my $new_new_sum = $new_sum;
-
-                        foreach my $f (@factors)
-                        {
-                            $new_new_sum += $sq_fracs[$new_to_check->[$f]];
-                        }
-
                         recurse([@$new_to_check[@factors_not_contains]],
-                            [sort { $a <=> $b} @$so_far, $first, @$new_to_check[@factors]],
+                            [sort { $a <=> $b } (@$so_far, $first, @factors)],
                             $new_new_sum->bnorm(),
                         );
                     }
                     return;
                 }
 
-                foreach my $new_mask (1 .. ((1 << @{$new_factors_contains[$idx]})-1))
+                if ($factor_idx == @{$new_factors_contains[$idx]})
                 {
-                    __SUB__->([@$masks, $new_mask]);
+                    if ($new_new_sum->bnorm->denominator() % $new_factors[$idx] == 0)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        return __SUB__->($idx+1, 0, $factors_href, $new_new_sum);
+                    }
                 }
+
+                my $factor = $new_to_check->[$new_factors_contains[$idx][$factor_idx]];
+
+                if (!exists($factors_href->{$factor}))
+                {
+                    __SUB__->($idx, $factor_idx+1, {%$factors_href, $factor => 1}, $new_new_sum + $sq_fracs[$factor]);
+                }
+                __SUB__->($idx, $factor_idx+1, $factors_href, $new_new_sum);
 
                 return;
             };
 
-            $iter_factors_recurse->([]);
+            $iter_factors_recurse->(0, 0, +{}, $new_sum);
         }
 
         # recurse($first+1, [@$so_far, $first], $new_sum);
@@ -214,8 +220,9 @@ sub recurse
     return;
 }
 
-# Filter out the large primes.
-my @init_to_check = (grep { !exists($primes_lookup{$_}) || $_ < $limit/2 } (2 .. $limit));
+# Filter out the large primes and the primes which only have 2*p in the limit
+# and their product.
+my @init_to_check = (grep { (!(exists($primes_lookup{$_}) || ((($_&0x1) == 0) && exists($primes_lookup{$_>>1})))) || $_ < $limit/3 } (2 .. $limit));
 
 recurse([@init_to_check], [], Math::BigRat->new('0/1'));
 
