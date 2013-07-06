@@ -60,7 +60,7 @@ sub factorize
 }
 
 my $target = Math::BigRat->new('1/2');
-my $limit = 35;
+my $limit = 80;
 
 my $found_count = 0;
 
@@ -89,7 +89,7 @@ for my $p (@primes)
 
 sub recurse
 {
-    my ($to_check, $so_far, $sum) = @_;
+    my ($to_check, $so_far, $sum, $denom_factors_so_far) = @_;
 
     # print "Checking: ToCheck=@$to_check ; $sum+[@$so_far]\n";
 
@@ -138,6 +138,7 @@ sub recurse
                 $new_to_check,
                 [sort { $a <=> $b } (@$so_far, $first)],
                 $new_sum,
+                $denom_factors_so_far,
             );
             next FIRST_LOOP;
         }
@@ -169,7 +170,7 @@ sub recurse
             my $sum_threshold = $target;
 
             my $iter_factors_recurse = sub {
-                my ($idx, $factor_idx, $factors_href, $new_new_sum) = @_;
+                my ($idx, $factor_idx, $factors_href, $new_new_sum, $new_denom_factors_so_far) = @_;
 
                 if ($new_new_sum > $sum_threshold)
                 {
@@ -183,20 +184,30 @@ sub recurse
                         recurse([@$new_to_check[@factors_not_contains]],
                             [sort { $a <=> $b } (@$so_far, $first, @factors)],
                             $new_new_sum->bnorm(),
+                            $new_denom_factors_so_far
                         );
                     }
                     return;
                 }
 
+
                 if ($factor_idx == @{$new_factors_contains[$idx]})
                 {
-                    if ($new_new_sum->bnorm->denominator() % $new_factors[$idx] == 0)
+                    my $denom = $new_new_sum->bnorm->denominator();
+                    my $next_factors_so_far = {
+                        %$new_denom_factors_so_far, $new_factors[$idx] => 1
+                    };
+
+                    # if (any { exists($next_factors_so_far->{$_}) } @{factorize($denom)})
+                    if (any { $denom % $_ == 0 } keys(%$next_factors_so_far))
                     {
                         return;
                     }
                     else
                     {
-                        return __SUB__->($idx+1, 0, $factors_href, $new_new_sum);
+                        return __SUB__->(
+                            $idx+1, 0, $factors_href, $new_new_sum, $next_factors_so_far,
+                        );
                     }
                 }
 
@@ -204,14 +215,14 @@ sub recurse
 
                 if (!exists($factors_href->{$factor}))
                 {
-                    __SUB__->($idx, $factor_idx+1, {%$factors_href, $factor => 1}, $new_new_sum + $sq_fracs[$factor]);
+                    __SUB__->($idx, $factor_idx+1, {%$factors_href, $factor => 1}, $new_new_sum + $sq_fracs[$factor], $new_denom_factors_so_far);
                 }
-                __SUB__->($idx, $factor_idx+1, $factors_href, $new_new_sum);
+                __SUB__->($idx, $factor_idx+1, $factors_href, $new_new_sum, $new_denom_factors_so_far);
 
                 return;
             };
 
-            $iter_factors_recurse->(0, 0, +{}, $new_sum);
+            $iter_factors_recurse->(0, 0, +{}, $new_sum, $denom_factors_so_far);
         }
 
         # recurse($first+1, [@$so_far, $first], $new_sum);
@@ -224,6 +235,6 @@ sub recurse
 # and their product.
 my @init_to_check = (grep { (!(exists($primes_lookup{$_}) || ((($_&0x1) == 0) && exists($primes_lookup{$_>>1})))) || $_ < $limit/3 } (2 .. $limit));
 
-recurse([@init_to_check], [], Math::BigRat->new('0/1'));
+recurse([@init_to_check], [], Math::BigRat->new('0/1'), +{});
 
 
