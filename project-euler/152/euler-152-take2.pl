@@ -251,6 +251,16 @@ foreach my $p (@init_to_check)
         my @numers = map { $lcm / $_ } @products;
         my @combos;
 
+        my @rev_sums;
+        {
+            my $s = 0;
+            foreach my $n (reverse @numers)
+            {
+                $s += $n;
+                unshift(@rev_sums, $s);
+            }
+        }
+
         my $recurse = sub {
             my ($i, $sum, $combo_so_far) = @_;
             # print "Combo=@$combo_so_far\n";
@@ -258,11 +268,17 @@ foreach my $p (@init_to_check)
             {
                 return;
             }
-            if ($sum and $sum % $mod == 0)
+            my $m = $sum % $mod;
+            if ($sum and $m == 0)
             {
                 print "Found [@$combo_so_far]\n for $p\n";
                 # We can combine distinct combos later.
                 push @combos, $combo_so_far;
+                return;
+            }
+            if ($rev_sums[$i+1] < $mod-$m)
+            {
+                # print "Flavoo = {$i}\n";
                 return;
             }
             __SUB__->($i+1, $sum, $combo_so_far);
