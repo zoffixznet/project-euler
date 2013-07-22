@@ -243,12 +243,19 @@ foreach my $p (@init_to_check)
     {
         print "Processing $p\n";
         my @products = (map { $p * $_ } (1 .. int($limit/$p)));
+        my @sq = (map { $_ * $_ } @products);
 
-        my $lcm = Math::BigInt::blcm(map { $_ * $_ } @products);
+        my $lcm = Math::BigInt::blcm(@sq);
         print "LCM=$lcm\n";
-        my $mod = $lcm / $p;
+        my $bef_mod = $lcm;
+        while ($bef_mod % $p == 0)
+        {
+            $bef_mod /= $p;
+        }
 
-        my @numers = map { $lcm / $_ } @products;
+        my $mod = $lcm / $bef_mod;
+
+        my @numers = map { $lcm / $_ } @sq;
         my @combos;
 
         my @rev_sums;
@@ -261,10 +268,12 @@ foreach my $p (@init_to_check)
             }
         }
 
+        my $half_lcmed_limit = ($lcm>>1);
+
         my $recurse = sub {
             my ($i, $sum, $combo_so_far) = @_;
             # print "Combo=@$combo_so_far\n";
-            if ($i == @products)
+            if ($i == @sq)
             {
                 return;
             }
@@ -276,7 +285,7 @@ foreach my $p (@init_to_check)
                 push @combos, $combo_so_far;
                 return;
             }
-            if ($rev_sums[$i+1] < $mod-$m)
+            if ($rev_sums[$i+1] < $mod-$m or $sum >= $half_lcmed_limit)
             {
                 # print "Flavoo = {$i}\n";
                 return;
