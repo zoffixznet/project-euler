@@ -72,5 +72,10 @@ calc_stuff();
 @keys = @keys[grep { $ints[$_] % 15 != 1 } keys(@keys)];
 calc_stuff();
 
+# Deduced by semi-manual deduction.
+@keys = @keys[grep { $ints[$_] % 4 == 0 } keys(@keys)];
+calc_stuff();
+
 print join("\n", @ints), "\n";
+
 print "TARGET ==\n$target\n";
