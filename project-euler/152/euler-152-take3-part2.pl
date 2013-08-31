@@ -122,7 +122,7 @@ my @must_have = (4,5,6,7,9,10,12,15,20,28,30,35,36,45);
 
 my %must_have_lookup = (map { $_ => 1 } @must_have);
 
-my $found = 1;
+my $found = 0;
 
 MAIN_TRIM:
 while ($found)
@@ -228,6 +228,39 @@ while ($found)
     }
 }
 
-print join("\n", map { "$keys[$_] => $ints[$_]" } keys(@keys)), "\n";
+my @remaining_sums = (0);
 
-print "TARGET ==\n$target\n";
+foreach my $n (reverse(@ints))
+{
+    push @remaining_sums, $remaining_sums[-1]+$n;
+}
+@remaining_sums = reverse(@remaining_sums);
+
+sub recurse
+{
+    my ($start, $sum, $n_s) = @_;
+
+    if ($sum == 0)
+    {
+        print "Found [", join(",", @keys[@$n_s]), "]\n";
+        return;
+    }
+    if ($sum > $remaining_sums[$start])
+    {
+        return;
+    }
+    my $new_sum = $sum - $ints[$start];
+    if ($new_sum >= 0)
+    {
+        recurse($start+1, $new_sum, [@$n_s, $start]);
+    }
+    recurse($start+1, $sum, [@$n_s]);
+
+    return;
+}
+
+recurse(0, $target, []);
+
+# print join("\n", map { "$keys[$_] => $ints[$_]" } keys(@keys)), "\n";
+
+# print "TARGET ==\n$target\n";
