@@ -54,6 +54,8 @@ sub calc_stuff
 
 calc_stuff();
 
+=begin Removed
+
 # Deduced by semi-manual deduction.
 @keys = @keys[grep { $ints[$_] % 100 == 0 } keys(@keys)];
 calc_stuff();
@@ -81,6 +83,14 @@ calc_stuff();
 # Deduced by semi-manual deduction.
 @keys = @keys[grep { $ints[$_] % 17 != 15 } keys(@keys)];
 calc_stuff();
+
+=end Removed
+
+=cut
+
+my @must_have = (2,3,4,5,6,7,9,10,12,15,20,28,30,35,36,45);
+
+my %must_have_lookup = (map { $_ => 1 } @must_have);
 
 my $found = 1;
 MAIN_TRIM:
@@ -171,6 +181,12 @@ while ($found)
             @keys = @keys[
                 (grep { !exists($not_mods{($ints[$_] % $n).''}) } keys(@keys))
             ];
+            # Sanity check for keys that must be present.
+            if ((grep { exists($must_have_lookup{$_}) } @keys) !=
+                scalar(keys %must_have_lookup))
+            {
+                die "Some keys are missing.";
+            }
             last TRIM_STUFF;
         }
     }
