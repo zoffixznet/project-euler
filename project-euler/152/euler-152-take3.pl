@@ -104,7 +104,7 @@ while ($found)
     }
 
     TRIM_STUFF:
-    for my $n ($MIN .. 1000)
+    for my $n ($MIN .. 208_000)
     {
         print "N == $n ; NumKeys == ", scalar(@keys), "\n";
 
