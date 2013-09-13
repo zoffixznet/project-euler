@@ -34,9 +34,17 @@ $s * $z * (1+$s-1+$s) = N[z-(1+$s)][z-(1-$s)]
 
     10z = N [ z^2 - 2z - 4 ]
 
-    z^2 - (2+10/N)z -4 = 0
+    z^2 - (2+10/N)z - 4 = 0
 
-    z = [ -2a +/- sqrt(b^2-4ac) ] / (2*a)
+    z = [ -b +/- sqrt(b^2-4ac) ] / (2*a)
+
+    z is rational iff b^2-4ac is a square of a rational number:
+
+    ∆ = (2+10/N)^2+16 = 4[ (1+5/N)^2+4 ] = 4[ (N+5)^2/N^2 + 4 ]
+
+    ∆ = 4[ [ (N+5)^2+4N^2 ] / N^2 ]
+
+        rational iff (N+5)^2+4N^2 is a whole square.
 
 
 
