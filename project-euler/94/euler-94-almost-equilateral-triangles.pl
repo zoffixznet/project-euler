@@ -14,16 +14,16 @@ STDOUT->autoflush(1);
 
 # For No. 1 we need a triangle for whose ($n-1) * sqrt($n^2 - (($n-1)/2)^2) is
 # integral.
-# 
+#
 # For No. 2 we need a triangle for whose ($n+1) * sqrt($n^2 - (($n+1)/2)^2) is
 # integral.
-# 
+#
 
-# For No. 1, for "n" we need s = (3n-1)/2 
+# For No. 1, for "n" we need s = (3n-1)/2
 # area = sqrt{ (3n-1) / 2 * (n-1) / 2 * (n-1) / 2 * (n+1) / 2 }
 #      = 1/4 * (n-1) * sqrt { (3n-1)(n+1) }
 
-# Let's do m = n+1, then we get 1/4 * (m-2) * sqrt { (3m-4)m } 
+# Let's do m = n+1, then we get 1/4 * (m-2) * sqrt { (3m-4)m }
 
 # For No. 2, for "n" we need s = (3n+1)/2
 # area = sqrt{ (3n+1) /2 * (n+1) / 2 * (n+1) / 2 * (n-1) / 2 }

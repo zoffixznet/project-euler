@@ -1,4 +1,4 @@
-#!/usr/bin/perl 
+#!/usr/bin/perl
 
 use strict;
 use warnings;
@@ -19,7 +19,7 @@ for my $i (1 .. $#lines)
     push @totals_lines,
         [
             map
-            { 
+            {
                 $this->[$_] +
                 max(
                   (($_ > 0) ? ($last->[$_-1]) : ()),
