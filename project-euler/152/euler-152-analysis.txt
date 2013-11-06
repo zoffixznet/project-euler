@@ -1,0 +1,9 @@
+If we have a/b + c/p*d where gcd(a,b) = 1 and gcd(c, p*d) = 1 and b is not
+divisible by p. So it is equal to
+
+a*p*d+b*c
+---------
+b*p*d
+
+Since a*p*d is divisible by p and b*c are not then the numerator is not
+divisisble by p and so "p" will _not_ be cancelled.

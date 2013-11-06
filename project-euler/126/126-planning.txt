@@ -1,0 +1,60 @@
+The problem:
+============
+
+The minimum number of cubes to cover every visible face on a cuboid measuring 3
+x 2 x 1 is twenty-two.
+
+If we then add a second layer to this solid it would require forty-six cubes to
+cover every visible face, the third layer would require seventy-eight cubes,
+and the fourth layer would require one-hundred and eighteen cubes to cover
+every visible face.
+
+However, the first layer on a cuboid measuring 5 x 1 x 1 also requires
+twenty-two cubes; similarly the first layer on cuboids measuring 5 x 3 x 1, 7 x
+2 x 1, and 11 x 1 x 1 all contain forty-six cubes.
+
+We shall define C(n) to represent the number of cuboids that contain n cubes in
+one of its layers. So C(22) = 2, C(46) = 4, C(78) = 5, and C(118) = 8.
+
+It turns out that 154 is the least value of n for which C(n) = 10.
+
+Find the least value of n for which C(n) = 1000.
+
+Thinking:
+=========
+
+We've realised that in layer of depth 'd', the cells have a delta of 
+d_x+d_y+d_z=d . Now in depth 1, the cells have a count of:
+
+2*[w_x*w_y + w_y*w_z + w_x*w_z]
+
+In depth 2, we add the following offsets - @d = (0,1,1) ; @d = (1,0,1)
+@d = (1,1,0) (as (2,0,0) and friends are already counted in the previous 
+layer). So:
+
+Total[2]-Total[1] = 4 * [ w_x + w_y + w_z ]
+
+In depth 3 and above we also have the corners:
+
+Total[3] - Total[2] = 4 * [w_x+w_y+w_z] + 8 * 1
+Total[4] - Total[3] = 4 * [w_x+w_y+w_z] + 8 * 2
+
+Sum of Series:
+==============
+
+If we have a series a[0], a[1], a[2], a[3], where a[n+1]-a[n] = b[0]+d*n,
+then a[n]-a[0] = Sum(b[0], b[0]+d, b[0]+d*2...,b[0]+d*(n-1)) =
+(b[0]+b[0]+d*(n-1))*n)/2 = n*b[0] + d * n * (n-1) / 2
+
+Therefore: a[n] = a[0] + n*b[0] + d * n * (n-1) / 2
+
+In our case:
+
+a[0] = x*y+y*z+x*z
+b[0] = (x+y+z)*2;
+d = 4;
+
+Therefore:
+
+a[n] = x*y+y*z+x*z + n*(x+y+z)*2 + 4 * n * (n-1) /2 = 
+x*y+y*z+x*z + 2 * n * (x+y+z + n - 1)
