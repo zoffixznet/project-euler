@@ -16,7 +16,7 @@ int main()
         int power = BASE;
         while (power <= LIM)
         {
-            for(int i = power; i <= LIM ; i += power)
+            for (int i = power; i <= LIM ; i += power)
             {
                 c5_counts[i]++;
             }
