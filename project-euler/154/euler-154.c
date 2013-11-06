@@ -5,7 +5,7 @@
 
 #define BASE 5
 
-unsigned char c5_counts[LIM+1];
+signed char c5_counts[LIM+1];
 
 int main()
 {
@@ -29,7 +29,7 @@ int main()
     int x_count = 0;
 
     /* At the beginning of the x loop, x_count is the 5-cardinality
-     * of (200,000! / [ (x!) * (y=0) * (z = 200,000-x) ]
+     * of (200,000! / [ (x!) * (y=0)! * (z = 200,000-y-x)! ]
      *
      * */
     for(int x = 0; x <= LIM; x++)
@@ -42,6 +42,9 @@ int main()
         const int LIM_min_x = LIM - x;
         for (int y = 0; y <= LIM_min_x; y++)
         {
+#if 0
+            printf("y_c=%d\n", y_count);
+#endif
             if (y_count >= 12)
             {
                 result++;
@@ -49,14 +52,14 @@ int main()
 #if 0
             printf("y_count=%d\n", y_count);
 #endif
-            y_count += c5_counts[LIM_min_x-y-1]-c5_counts[y+1];
+            y_count += c5_counts[LIM_min_x-y]-c5_counts[y+1];
         }
 
         /*
          * As x -> x+1
          *
          * */
-        x_count += c5_counts[LIM_min_x-1]-c5_counts[x+1];
+        x_count += c5_counts[LIM_min_x]-c5_counts[x+1];
     }
 
     printf ("Result == %ld\n", result);
