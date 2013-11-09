@@ -34,14 +34,14 @@ int main()
      * */
     for(int x = 0; x <= LIM; x++)
     {
-        if (x % 1000 == 0)
-        {
-            printf("X=%d\n", x);
-        }
+        printf("X=%d\n", x);
         int y_count = x_count;
         const int LIM_min_x = LIM - x;
         for (int y = 0; y <= LIM_min_x; y++)
         {
+#if 0
+            printf("Y=%d\n", y);
+#endif
             if (y_count >= 12)
             {
                 result++;
@@ -49,7 +49,7 @@ int main()
 #if 0
             printf("y_count=%d\n", y_count);
 #endif
-            y_count += c5_counts[LIM_min_x-y-1]-c5_counts[y+1];
+            y_count += c5_counts[LIM_min_x-y]-c5_counts[y+1];
         }
 
         /*
