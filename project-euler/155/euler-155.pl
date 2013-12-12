@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Math::BigRat;
+use Math::BigRat lib => 'GMP';
 
 =begin explation.
 
@@ -23,28 +23,69 @@ whereas when connecting them in series, the overall capacitance is given by:
 =cut
 
 my @c;
+my %found;
 
-$c[1] = ['1/1'];
+my $FIRST = '1/1';
+$found{$FIRST} = undef;
+
+# Last was an addition
+my $ADD = 0;
+# Last was a hyper
+my $HYPER = 1;
+$c[1][$ADD] = $c[1][$HYPER] = [$FIRST];
+
+sub print_cb
+{
+    my $d = shift;
+    print "Reached Depth $d : Got " . scalar(keys(%found)). "\n";
+}
+
+print_cb(1);
 
 for my $d (2 .. 18)
 {
-    my %h;
-    for my $first (1 .. int($d/2))
+    my $d_minus = $d-1;
+    foreach my $op_rec
+    (
+        { idx => $ADD, op => sub { return $_[0] + $_[1]; }, },
+        { idx => $HYPER, op => sub { return (1/(1/$_[0]+1/$_[1])); },}
+    )
     {
-        my $second = $d-$first;
-        for my $f_key (@{$c[$first]})
+        my $idx = $op_rec->{idx};
+        my $op = $op_rec->{op};
+        my $other_idx = (($idx == $ADD) ? $HYPER : $ADD);
+
+        foreach my $key (@{$c[$d_minus][$idx]})
         {
-            my $f = Math::BigRat->new($f_key);
-            for my $s_key (@{$c[$second]})
+            my $result = $op->(Math::BigRat->new($key),1);
+            my $result_s = $result.'';
+            if (! exists($found{$result_s}))
             {
-                my $s = Math::BigRat->new($s_key);
-                for my $t ($f+$s, (1/(1/$f+1/$s)))
+                $found{$result_s} = undef();
+                push @{$c[$d][$idx]}, $result_s;
+            }
+        }
+
+        for my $first (1 .. ($d>>1))
+        {
+            my $second = $d-$first;
+            for my $f_key (@{$c[$first][$other_idx]})
+            {
+                my $f = Math::BigRat->new($f_key);
+                for my $s_key (@{$c[$second][$other_idx]})
                 {
-                    $h{$t.''}++;
+                    my $s = Math::BigRat->new($s_key);
+
+                    my $result = $op->($f, $s);
+                    my $result_s = $result.'';
+                    if (! exists($found{$result_s}))
+                    {
+                        $found{$result_s} = undef();
+                        push @{$c[$d][$idx]}, $result_s;
+                    }
                 }
             }
         }
     }
-    $c[$d] = [keys(%h)];
-    print "Reached Depth $d : Got " . scalar(@{$c[$d]}). "\n";
+    print_cb($d);
 }
