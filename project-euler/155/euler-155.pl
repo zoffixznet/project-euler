@@ -45,6 +45,7 @@ print_cb(1);
 for my $d (2 .. 18)
 {
     my $d_minus = $d-1;
+    my @to_add_total;
     foreach my $op_rec
     (
         { idx => $ADD, op => sub { return $_[0] + $_[1]; }, },
@@ -54,16 +55,25 @@ for my $d (2 .. 18)
         my $idx = $op_rec->{idx};
         my $op = $op_rec->{op};
         my $other_idx = (($idx == $ADD) ? $HYPER : $ADD);
+        my %to_add;
+
+        my $check_key = sub
+        {
+            my ($s) = @_;
+
+            if ((! exists($found{$s})) and (! exists($to_add{$s})))
+            {
+                $to_add{$s} = undef();
+                push @{$c[$d][$idx]}, $s;
+            }
+
+            return;
+        };
 
         foreach my $key (@{$c[$d_minus][$idx]})
         {
             my $result = $op->(Math::BigRat->new($key),1);
-            my $result_s = $result.'';
-            if (! exists($found{$result_s}))
-            {
-                $found{$result_s} = undef();
-                push @{$c[$d][$idx]}, $result_s;
-            }
+            $check_key->($result.'');
         }
 
         for my $first (1 .. ($d>>1))
@@ -76,16 +86,12 @@ for my $d (2 .. 18)
                 {
                     my $s = Math::BigRat->new($s_key);
 
-                    my $result = $op->($f, $s);
-                    my $result_s = $result.'';
-                    if (! exists($found{$result_s}))
-                    {
-                        $found{$result_s} = undef();
-                        push @{$c[$d][$idx]}, $result_s;
-                    }
+                    $check_key->($op->($f, $s).'');
                 }
             }
         }
+        push @to_add_total, \%to_add;
     }
+    %found = (%found, map {%$_} @to_add_total);
     print_cb($d);
 }
