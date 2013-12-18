@@ -57,4 +57,32 @@ sub get_power_modulo
 
 my $FIVE_DIGITS_MOD = 100_000;
 my $powers_2_contribution = get_power_modulo($FIVE_DIGITS_MOD, 2, $sum_diff);
-print "They contribute $powers_2_contribution to the modulo\n"
+print "They contribute $powers_2_contribution to the modulo\n";
+
+my $i = 1;
+my $next_trace_step = my $next_trace = 1_000_000;
+my $mod = 1;
+while ($i < $N)
+{
+    my $j = $i;
+    while (($j & 1) == 0)
+    {
+        $j >>= 1;
+    }
+    while ($j % 5 == 0)
+    {
+        $j /= 5;
+    }
+    ($mod *= $j) %= $FIVE_DIGITS_MOD;
+}
+continue
+{
+    $i++;
+    if ($i == $next_trace)
+    {
+        print "Modulo for $i is $mod\n";
+        $next_trace += $next_trace_step;
+    }
+}
+print "Modulo for $i is $mod\n";
+print "TotalMod == ", (($mod * $powers_2_contribution) % $FIVE_DIGITS_MOD), "\n";
