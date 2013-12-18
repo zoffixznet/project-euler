@@ -25,14 +25,14 @@ whereas when connecting them in series, the overall capacitance is given by:
 my @c;
 my %found;
 
-my $FIRST = '1/1';
-$found{$FIRST} = undef;
+my $FIRST = Math::BigRat->new('1/1');
+$found{$FIRST.''} = undef;
 
 # Last was an addition
 my $ADD = 0;
 # Last was a hyper
 my $HYPER = 1;
-$c[1][$ADD] = $c[1][$HYPER] = [$FIRST];
+$c[1] = [$FIRST];
 
 sub print_cb
 {
@@ -44,54 +44,25 @@ print_cb(1);
 
 for my $d (2 .. 18)
 {
-    my $d_minus = $d-1;
-    my @to_add_total;
-    foreach my $op_rec
-    (
-        { idx => $ADD, op => sub { return $_[0] + $_[1]; }, },
-        { idx => $HYPER, op => sub { return (1/(1/$_[0]+1/$_[1])); },}
-    )
+    my $new = $c[$d] = [];
+    for my $first (1 .. ($d>>1))
     {
-        my $idx = $op_rec->{idx};
-        my $op = $op_rec->{op};
-        my $other_idx = (($idx == $ADD) ? $HYPER : $ADD);
-        my %to_add;
-
-        my $check_key = sub
+        my $second = $d-$first;
+        for my $f (@{$c[$first]})
         {
-            my ($s) = @_;
-
-            if ((! exists($found{$s})) and (! exists($to_add{$s})))
+            for my $s (@{$c[$second]})
             {
-                $to_add{$s} = undef();
-                push @{$c[$d][$idx]}, $s;
-            }
-
-            return;
-        };
-
-        foreach my $key (@{$c[$d_minus][$idx]})
-        {
-            my $result = $op->(Math::BigRat->new($key),1);
-            $check_key->($result.'');
-        }
-
-        for my $first (1 .. ($d>>1))
-        {
-            my $second = $d-$first;
-            for my $f_key (@{$c[$first][$other_idx]})
-            {
-                my $f = Math::BigRat->new($f_key);
-                for my $s_key (@{$c[$second][$other_idx]})
+                foreach my $result (($f+$s), (1/(1/$f+1/$s)))
                 {
-                    my $s = Math::BigRat->new($s_key);
-
-                    $check_key->($op->($f, $s).'');
+                    my $result_s = $result.'';
+                    if (!exists($found{$result_s}))
+                    {
+                        $found{$result_s} = '';
+                        push @$new, $result;
+                    }
                 }
             }
         }
-        push @to_add_total, \%to_add;
     }
-    %found = (%found, map {%$_} @to_add_total);
     print_cb($d);
 }
