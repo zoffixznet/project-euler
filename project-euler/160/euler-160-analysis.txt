@@ -1,0 +1,20 @@
+Let N = 10**12
+
+There ar as many trailing zeroes as components of 5, so we get:
+
+a = |_ N / 5 _| + |_ N / 5**2 _| + |_ N / 5 ** 3 _| ... + 1
+
+<<<
+There are 249999999997 powers of 5.
+There are 999999999987 components of 2.
+>>>
+
+That means that we need to take 999999999987 - 249999999997 components of
+2 into account. That is:
+
+<<<
+There are 249999999997 powers of 5.
+There are 999999999987 components of 2.
+There are 749999999990 components of 2 excluding those for the digits.
+They contribute 20224 to the modulo
+>>>
