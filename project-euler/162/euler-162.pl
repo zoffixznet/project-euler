@@ -30,7 +30,7 @@ Give your answer as a hexadecimal number.
 sub fact
 {
     my $i = shift;
-    return $i->copy->bfac;
+    return Math::BigInt->new($i)->bfac;
 }
 
 my $sum = 0;
@@ -56,7 +56,8 @@ for my $extra_len ((3-1) .. (16-1))
             }
         }
     }
+    print "Intermediate sum == $sum\n";
 }
 
 $sum *= 2;
-print "Sum == $sum \nAs Hex: ", (uc($sum->as_hex) =~ s/\A0x//r), "\n";
+print "Sum == $sum \nAs Hex: ", (uc($sum->as_hex =~ s/\A0x//r)), "\n";
