@@ -5,7 +5,7 @@ use warnings;
 
 use integer;
 
-my $N = 1_000_000_000_000;
+my $N = abs(int($ENV{N} || 1_000_000_000_000));
 
 my $power_of_5 = 5;
 my $sum = 0;
@@ -62,7 +62,7 @@ print "They contribute $powers_2_contribution to the modulo\n";
 my $i = 1;
 my $next_trace_step = my $next_trace = 1_000_000;
 my $mod = 1;
-while ($i < $N)
+while ($i <= $N)
 {
     my $j = $i;
     while (($j & 1) == 0)

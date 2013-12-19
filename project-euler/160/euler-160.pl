@@ -5,7 +5,7 @@ use warnings;
 
 use integer;
 
-my $N = 1_000_000_000_000;
+my $N = abs(int($ENV{N} || 1_000_000_000_000));
 
 my $power_of_5 = 5;
 my $sum = 0;
