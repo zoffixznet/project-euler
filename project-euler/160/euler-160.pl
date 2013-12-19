@@ -104,8 +104,11 @@ my $accum_mod = 1;
             {
                 $mod--;
             }
-            ($accum_mod *= $intermediate_100k_modulos[$mod])
+            if ($mod >= 0)
+            {
+                ($accum_mod *= $intermediate_100k_modulos[$mod])
                 %= $FIVE_DIGITS_MOD;
+            }
             print "With Base=$base2_5 AccumMod[AfterMod] is now $accum_mod.\n";
         }
         continue
