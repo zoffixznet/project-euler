@@ -79,8 +79,11 @@ my $FINAL_100k_MODULO;
         foreach my $add (1,3,7,9)
         {
             my $n = $ten + $add;
-            ($mod *= $n) %= $FIVE_DIGITS_MOD;
-            $intermediate_100k_modulos[$n] = $mod;
+            if ($n <= $FIVE_DIGITS_MOD)
+            {
+               ($mod *= $n) %= $FIVE_DIGITS_MOD;
+                $intermediate_100k_modulos[$n] = $mod;
+            }
         }
     }
     $FINAL_100k_MODULO = $mod;
