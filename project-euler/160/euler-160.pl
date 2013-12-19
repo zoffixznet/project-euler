@@ -56,33 +56,67 @@ sub get_power_modulo
 }
 
 my $FIVE_DIGITS_MOD = 100_000;
-my $powers_2_contribution = get_power_modulo($FIVE_DIGITS_MOD, 2, $sum_diff);
+
+sub get_five_digits_mod
+{
+    my ($base, $exp) = @_;
+    return get_power_modulo($FIVE_DIGITS_MOD, $base, $exp);
+}
+
+my $powers_2_contribution = get_five_digits_mod(2, $sum_diff);
 print "They contribute $powers_2_contribution to the modulo\n";
 
-my $i = 1;
-my $next_trace_step = my $next_trace = 1_000_000;
-my $mod = 1;
-while ($i < $N)
+my @intermediate_100k_modulos;
+my $FINAL_100k_MODULO;
+
 {
-    my $j = $i;
-    while (($j & 1) == 0)
+    my $mod = 1;
+    my $BASE = 10;
+    for my $ten_div (1 .. $FIVE_DIGITS_MOD / $BASE)
     {
-        $j >>= 1;
+        my $ten = $BASE * $ten_div;
+
+        foreach my $add (1,3,7,9)
+        {
+            my $n = $ten + $add;
+            ($mod *= $n) %= $FIVE_DIGITS_MOD;
+            $intermediate_100k_modulos[$n] = $mod;
+        }
     }
-    while ($j % 5 == 0)
-    {
-        $j /= 5;
-    }
-    ($mod *= $j) %= $FIVE_DIGITS_MOD;
+    $FINAL_100k_MODULO = $mod;
 }
-continue
+
+my $accum_mod = 1;
 {
-    $i++;
-    if ($i == $next_trace)
+    my $base2 = 1;
+    while ($base2 < $N)
     {
-        print "Modulo for $i is $mod\n";
-        $next_trace += $next_trace_step;
+        my $base2_5 = $base2;
+        while ($base2_5 < $N)
+        {
+            my $div = $N / $base2_5;
+            my $mod = $N % $base2_5;
+            ($accum_mod *= get_five_digits_mod($FINAL_100k_MODULO, $div))
+                %= $FIVE_DIGITS_MOD;
+            print "With Base=$base2_5 AccumMod is now $accum_mod.\n";
+            while (($mod >= 0) && (!defined($intermediate_100k_modulos[$mod])))
+            {
+                $mod--;
+            }
+            ($accum_mod *= $intermediate_100k_modulos[$mod])
+                %= $FIVE_DIGITS_MOD;
+            print "With Base=$base2_5 AccumMod[AfterMod] is now $accum_mod.\n";
+        }
+        continue
+        {
+            $base2_5 *= 5;
+        }
+    }
+    continue
+    {
+        $base2 *= 2;
     }
 }
-print "Modulo for $i is $mod\n";
-print "TotalMod == ", (($mod * $powers_2_contribution) % $FIVE_DIGITS_MOD), "\n";
+print "Final AccumMod = $accum_mod\n";
+my $final_result = (($powers_2_contribution * $accum_mod) % $FIVE_DIGITS_MOD);
+print "Final Mod = $final_result\n";
