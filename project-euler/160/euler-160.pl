@@ -9,7 +9,7 @@ my $N = abs(int($ENV{N} || 1_000_000_000_000));
 
 my $power_of_5 = 5;
 my $sum = 0;
-while ($power_of_5 < $N)
+while ($power_of_5 <= $N)
 {
     $sum += int($N / $power_of_5);
 }
@@ -21,7 +21,7 @@ print "There are $sum powers of 5.\n";
 
 my $power_of_2 = 2;
 my $sum2 = 0;
-while ($power_of_2 < $N)
+while ($power_of_2 <= $N)
 {
     $sum2 += int($N / $power_of_2);
 }
@@ -89,10 +89,10 @@ my $FINAL_100k_MODULO;
 my $accum_mod = 1;
 {
     my $base2 = 1;
-    while ($base2 < $N)
+    while ($base2 <= $N)
     {
         my $base2_5 = $base2;
-        while ($base2_5 < $N)
+        while ($base2_5 <= $N)
         {
             my $count = $N / $base2_5;
             my $div = $count / $FIVE_DIGITS_MOD;

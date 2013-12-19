@@ -9,7 +9,7 @@ my $N = abs(int($ENV{N} || 1_000_000_000_000));
 
 my $power_of_5 = 5;
 my $sum = 0;
-while ($power_of_5 < $N)
+while ($power_of_5 <= $N)
 {
     $sum += int($N / $power_of_5);
 }
@@ -21,7 +21,7 @@ print "There are $sum powers of 5.\n";
 
 my $power_of_2 = 2;
 my $sum2 = 0;
-while ($power_of_2 < $N)
+while ($power_of_2 <= $N)
 {
     $sum2 += int($N / $power_of_2);
 }
