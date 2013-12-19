@@ -72,7 +72,7 @@ my $FINAL_100k_MODULO;
 {
     my $mod = 1;
     my $BASE = 10;
-    for my $ten_div (1 .. $FIVE_DIGITS_MOD / $BASE)
+    for my $ten_div (0 .. ($FIVE_DIGITS_MOD / $BASE))
     {
         my $ten = $BASE * $ten_div;
 
@@ -94,8 +94,9 @@ my $accum_mod = 1;
         my $base2_5 = $base2;
         while ($base2_5 < $N)
         {
-            my $div = $N / $base2_5;
-            my $mod = $N % $base2_5;
+            my $count = $N / $base2_5;
+            my $div = $count / $FIVE_DIGITS_MOD;
+            my $mod = $count % $FIVE_DIGITS_MOD;
             ($accum_mod *= get_five_digits_mod($FINAL_100k_MODULO, $div))
                 %= $FIVE_DIGITS_MOD;
             print "With Base=$base2_5 AccumMod is now $accum_mod.\n";
