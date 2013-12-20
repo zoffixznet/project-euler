@@ -46,9 +46,9 @@ sub cell_loop
             my $s = $_;
             [
                 scalar(
-               true { defined($_) } @$s
+               true { defined($_) } @$state[@$s]
             ),
-            sum(grep { defined($_) } @$s),
+            (sum(grep { defined($_) } @$state[@$s]) // 0),
             $_
             ]
         }
