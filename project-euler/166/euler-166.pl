@@ -3,8 +3,8 @@
 use strict;
 use warnings;
 
-use List::MoreUtils qw(indexes any true);
-use List::Util qw(sum max min);
+use List::MoreUtils qw(all indexes any true);
+use List::Util qw(first sum max min);
 
 my @sums =
 (
@@ -30,6 +30,12 @@ sub cell_loop
 {
     my ($cell, $state, $callback) = @_;
 
+    if (defined ($state->[$cell]))
+    {
+        $callback->($state);
+        return;
+    }
+
     my $call_v = sub {
         my ($val) = @_;
 
@@ -49,6 +55,7 @@ sub cell_loop
                true { defined($_) } @$state[@$s]
             ),
             (sum(grep { defined($_) } @$state[@$s]) // 0),
+            [grep { !defined($state->[$_]) } @$s],
             $_
             ]
         }
@@ -92,6 +99,7 @@ sub cell_loop
 
     my $min_val = 0;
     my $max_val = 9;
+    my @also_assign;
     while ($idx < @sorted)
     {
         my $remaining_sum = $sum-$sorted[$idx][1];
@@ -100,6 +108,14 @@ sub cell_loop
         if (($remaining_sum < 0) or ($remaining_sum > (9 * $num_remaining)))
         {
             return;
+        }
+
+        if ($num_remaining == 2)
+        {
+            push @also_assign, [
+                (first { $_ != $cell } @{$sorted[$idx][2]}),
+                $remaining_sum,
+            ];
         }
 
         my $new_min_val = $remaining_sum - 9 * ($num_remaining - 1);
@@ -115,7 +131,13 @@ sub cell_loop
 
     foreach my $v ($min_val .. $max_val)
     {
-        $call_v->($v);
+        my @new_state = @$state;
+        $new_state[$cell] = $v;
+        foreach my $x (@also_assign)
+        {
+            $new_state[$x->[0]] = $x->[1]-$v;
+        }
+        $callback->( \@new_state );
     }
 
     return;
@@ -140,7 +162,10 @@ sub wrapper
 
     if ($idx == @$state)
     {
-        $count++;
+        if (all { sum(@$state[@$_]) == $sum } @sums)
+        {
+            $count++;
+        }
         return;
     }
 
