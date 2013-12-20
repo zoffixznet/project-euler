@@ -19,7 +19,7 @@ my @reverse_cell_lookup =
         map
         {
             my $cell = $_;
-            [indexes { any { $_ == $cell } @$_ } @sums]
+            [grep { any { $_ == $cell } @$_ } @sums]
         }
         (0 .. (4*4-1))
     );
@@ -38,8 +38,6 @@ sub cell_loop
         return;
     };
 
-    my @cell_sums = @sums[@{$reverse_cell_lookup[$cell]}];
-
     my @sorted = (reverse sort { ($a->[0] <=> $b->[0]) }
         map
         {
@@ -52,7 +50,7 @@ sub cell_loop
             $_
             ]
         }
-        @cell_sums
+        @{$reverse_cell_lookup[$cell]}
     );
 
     my $val;
