@@ -25,6 +25,7 @@ my @reverse_cell_lookup =
     );
 
 my $sum;
+
 sub cell_loop
 {
     my ($cell, $state, $callback) = @_;
