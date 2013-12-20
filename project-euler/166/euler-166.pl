@@ -24,9 +24,10 @@ my @reverse_cell_lookup =
         (0 .. (4*4-1))
     );
 
+my $sum;
 sub cell_loop
 {
-    my ($sum, $cell, $state, $callback) = @_;
+    my ($cell, $state, $callback) = @_;
 
     my $call_v = sub {
         my ($val) = @_;
@@ -131,7 +132,6 @@ my @cells = (map { $_->[0]*4+$_->[1] }
 );
 
 my $count = 0;
-my $sum;
 
 sub wrapper
 {
@@ -144,7 +144,6 @@ sub wrapper
     }
 
     cell_loop(
-        $sum,
         $cells[$idx],
         $state,
         sub {
