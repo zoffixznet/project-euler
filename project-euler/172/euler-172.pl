@@ -2,6 +2,7 @@
 
 use strict;
 use warnings;
+use integer;
 
 use Math::BigInt lib => 'GMP';
 
