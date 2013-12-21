@@ -20,13 +20,57 @@ func CreateSquare(n int64) Square {
     return Square{n,n*n,n*2-1}
 }
 
-func (s Square) Inc2() {
+func (s * Square) Inc2() {
     s.Increment()
     s.Increment()
 }
 
+type SquareRange struct {
+    bottom Square
+    top Square
+}
+
+func (r SquareRange) SqDiff() int64 {
+    return r.top.value - r.bottom.value;
+}
+
+func (r SquareRange) Diff() int64 {
+    return (r.top.n - r.bottom.n) / 2;
+}
+
 func main() {
-    var s1 Square = CreateSquare(5)
-    s1.Increment()
-    fmt.Println("s1.n = ", s1.n, "\ns1.value = ", s1.value)
+    var this_range[2] SquareRange
+    this_range[0] = SquareRange {CreateSquare(1), CreateSquare(3) }
+    this_range[1] = SquareRange {CreateSquare(2), CreateSquare(4) }
+
+    var count int64 = 0;
+    var mod = 0
+    var max int64 = 100
+    for (this_range[mod].SqDiff() <= max) {
+        count += (this_range[mod].Diff())
+        fmt.Println("this_range.bottom = ", this_range[mod].bottom.n);
+        fmt.Println("this_range.top = ", this_range[mod].top.n);
+        var next_range SquareRange = this_range[mod]
+        next_range.top.Inc2()
+
+        var prev_bottom Square = next_range.bottom;
+
+        // for (next_range.top.value - next_range.bottom.value > 1000000) {
+        for ((next_range.Diff() >= 0) && (next_range.SqDiff() > max)) {
+            fmt.Println("next_range.bottom = ", next_range.bottom.n);
+            fmt.Println("next_range.bottom.value = ", next_range.bottom.value);
+            fmt.Println("next_range.top = ", next_range.top.n);
+            fmt.Println("next_range.top.value = ", next_range.top.value);
+            prev_bottom = next_range.bottom
+            next_range.bottom.Inc2()
+        }
+        next_range.bottom = prev_bottom
+
+        this_range[mod] = next_range
+        fmt.Println("[aft]this_range.bottom = ", this_range[mod].bottom.n);
+        fmt.Println("[aft]this_range.top = ", this_range[mod].top.n);
+        mod = 1 - mod
+    }
+
+    fmt.Println("count = ", count);
 }
