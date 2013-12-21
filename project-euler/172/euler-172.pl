@@ -37,7 +37,7 @@ sub solve_for_n_brute_force
 
     my $count = 0;
 
-    my $i = 10 ** ($NUM_DIGITS-1);
+    my $i = Math::BigInt->new('1' . ('0' x ($NUM_DIGITS-1)));
     my $max = Math::BigInt->new('9' x $NUM_DIGITS);
 
     while ($i <= $max)
@@ -89,7 +89,7 @@ sub solve_using_combinatorics
             for my $count_twos (0 .. $remaining_digits_after_threes)
             {
                 my $remaining_digits_after_twos = $remaining_digits_after_threes - $count_twos;
-                my $remaining_positions_after_twos = $remaining_digits_after_threes - 2 * $count_twos;
+                my $remaining_positions_after_twos = $remaining_positions_after_threes - 2 * $count_twos;
 
                 if ($remaining_positions_after_twos < 0)
                 {
@@ -132,7 +132,7 @@ sub test_N
     my ($N) = @_;
 
     print "N = $N ; BruteForceCount = < ", solve_for_n_brute_force($N), " >\n";
-    print "N = $N ; BruteForceCount = < ", solve_using_combinatorics($N), " >\n";
+    print "N = $N ; CombiForceCount = < ", solve_using_combinatorics($N), " >\n";
 }
 
-test_N(6);
+test_N(4);
