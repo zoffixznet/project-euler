@@ -45,7 +45,7 @@ func main() {
 
     var count int64 = 0;
     var mod = 0
-    var max int64 = 100
+    var max int64 = 1000000
     for ((this_range[mod].Diff() > 0) && (this_range[mod].SqDiff() <= max)) {
         count += (this_range[mod].Diff())
         var next_range SquareRange = this_range[mod]
