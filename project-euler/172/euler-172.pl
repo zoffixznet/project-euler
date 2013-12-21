@@ -127,12 +127,32 @@ sub solve_using_combinatorics
     return ($count_div_9 * 9);
 }
 
+sub display_combi_N
+{
+    my ($N) = @_;
+    print "N = $N ; CombiForceCount = < ", solve_using_combinatorics($N), " >\n";
+
+    return;
+}
 sub test_N
 {
     my ($N) = @_;
 
     print "N = $N ; BruteForceCount = < ", solve_for_n_brute_force($N), " >\n";
-    print "N = $N ; CombiForceCount = < ", solve_using_combinatorics($N), " >\n";
+    display_combi_N($N);
+
+    return;
 }
 
-test_N(4);
+if (0)
+{
+foreach my $N (1 .. 6)
+{
+    test_N($N);
+}
+}
+
+if (1)
+{
+    display_combi_N(18);
+}
