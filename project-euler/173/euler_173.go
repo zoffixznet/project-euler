@@ -46,29 +46,19 @@ func main() {
     var count int64 = 0;
     var mod = 0
     var max int64 = 100
-    for (this_range[mod].SqDiff() <= max) {
+    for ((this_range[mod].Diff() > 0) && (this_range[mod].SqDiff() <= max)) {
         count += (this_range[mod].Diff())
-        fmt.Println("this_range.bottom = ", this_range[mod].bottom.n);
-        fmt.Println("this_range.top = ", this_range[mod].top.n);
         var next_range SquareRange = this_range[mod]
         next_range.top.Inc2()
 
-        var prev_bottom Square = next_range.bottom;
+        // var prev_bottom Square = next_range.bottom;
 
         // for (next_range.top.value - next_range.bottom.value > 1000000) {
         for ((next_range.Diff() >= 0) && (next_range.SqDiff() > max)) {
-            fmt.Println("next_range.bottom = ", next_range.bottom.n);
-            fmt.Println("next_range.bottom.value = ", next_range.bottom.value);
-            fmt.Println("next_range.top = ", next_range.top.n);
-            fmt.Println("next_range.top.value = ", next_range.top.value);
-            prev_bottom = next_range.bottom
             next_range.bottom.Inc2()
         }
-        next_range.bottom = prev_bottom
 
         this_range[mod] = next_range
-        fmt.Println("[aft]this_range.bottom = ", this_range[mod].bottom.n);
-        fmt.Println("[aft]this_range.top = ", this_range[mod].top.n);
         mod = 1 - mod
     }
 
