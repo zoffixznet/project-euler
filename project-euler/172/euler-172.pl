@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Math::BigInt lib => 'GMP', ':constant';
+use Math::BigInt lib => 'GMP';
 
 use List::Util qw(sum);
 use List::MoreUtils qw();
@@ -37,8 +37,8 @@ sub solve_for_n_brute_force
 
     my $count = 0;
 
-    my $i = Math::BigInt->new('1' . ('0' x ($NUM_DIGITS-1)));
-    my $max = Math::BigInt->new('9' x $NUM_DIGITS);
+    my $i = int('1' . ('0' x ($NUM_DIGITS-1)));
+    my $max = int('9' x $NUM_DIGITS);
 
     while ($i <= $max)
     {
@@ -83,7 +83,7 @@ sub solve_using_combinatorics
 
             if ($remaining_positions_after_threes < 0)
             {
-                last THREES;
+                next THREES;
             }
             TWOS:
             for my $count_twos (0 .. $remaining_digits_after_threes)
@@ -93,15 +93,19 @@ sub solve_using_combinatorics
 
                 if ($remaining_positions_after_twos < 0)
                 {
-                    last TWOS;
+                    next TWOS;
                 }
 
                 my $count_ones = $remaining_positions_after_twos;
-                my $count_zeros = $remaining_digits_after_twos - $count_ones;
+                if ($count_ones > 9)
+                {
+                    next TWOS;
+                }
 
+                my $count_zeros = $remaining_digits_after_twos - $count_ones;
                 if ($count_zeros < 0)
                 {
-                    last TWOS;
+                    next TWOS;
                 }
 
                 # OK, now we have the extra_1s, count_threes, count_twos
@@ -146,7 +150,7 @@ sub test_N
 
 if (0)
 {
-foreach my $N (1 .. 6)
+foreach my $N (1 .. 7)
 {
     test_N($N);
 }
