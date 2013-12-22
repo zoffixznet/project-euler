@@ -50,11 +50,11 @@ type SquareRange struct {
 }
 
 func (r SquareRange) SqDiff() int64 {
-    return r.top.value - r.bottom.value;
+    return r.top.value - r.bottom.value
 }
 
 func (r SquareRange) Diff() int64 {
-    return (r.top.n - r.bottom.n) / 2;
+    return (r.top.n - r.bottom.n) / 2
 }
 
 func main() {
@@ -62,7 +62,7 @@ func main() {
     this_range[0] = SquareRange {CreateSquare(1), CreateSquare(3) }
     this_range[1] = SquareRange {CreateSquare(2), CreateSquare(4) }
 
-    var count int64 = 0;
+    var count int64 = 0
     var mod = 0
     var max int64 = 1000000
     for ((this_range[mod].Diff() > 0) && (this_range[mod].SqDiff() <= max)) {
@@ -70,7 +70,7 @@ func main() {
         var next_range SquareRange = this_range[mod]
         next_range.top.Inc2()
 
-        // var prev_bottom Square = next_range.bottom;
+        // var prev_bottom Square = next_range.bottom
 
         // for (next_range.top.value - next_range.bottom.value > 1000000) {
         for ((next_range.Diff() >= 0) && (next_range.SqDiff() > max)) {
@@ -81,5 +81,5 @@ func main() {
         mod = 1 - mod
     }
 
-    fmt.Println("count = ", count);
+    fmt.Println("count = ", count)
 }
