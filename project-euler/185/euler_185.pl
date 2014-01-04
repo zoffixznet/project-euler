@@ -41,7 +41,7 @@ sub go
 
     my $first = shift(@$n);
 
-    if ($first->{correct} < 0 or $first->{remaining} < 0)
+    if (($first->{correct} < 0) or ($first->{correct} > $first->{remaining}))
     {
         # Dead end - cannot be.
         return;
