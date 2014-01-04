@@ -128,16 +128,12 @@ sub go
                         my $found_digit = $num->{contents}->[$i];
                         if ($found_digit =~ /\A[0-9]\z/)
                         {
-                            if ($found_digit != $true_digit)
+                            my $is_right = ($found_digit == $true_digit);
+                            $num->{contents}->[$i] = ($is_right ? 'Y' : 'N');
+                            $num->{remaining}--;
+                            if ($is_right)
                             {
-                                $num->{contents}->[$i] = 'N';
-                                $num->{remaining}--;
-                            }
-                            elsif ($found_digit == $true_digit)
-                            {
-                                $num->{contents}->[$i] = 'Y';
                                 $num->{correct}--;
-                                $num->{remaining}--;
                             }
                         }
 
