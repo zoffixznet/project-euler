@@ -138,7 +138,7 @@ sub go
             $d = dclone($orig_d);
             $n = dclone($orig_n);
 
-            for my $i (@set)
+            foreach my $i (@set)
             {
                 my $digit = $v->[$i];
 
@@ -195,7 +195,7 @@ sub go
                 }
             }
 
-            # print "Depth $depth ; Count=@{[$count++]}\n";
+            print "Depth $depth ; Count=@{[$count++]}\n";
             State->new({ n => $n, digits => $d, depth => ($depth+1)})->go;
         }
     }
