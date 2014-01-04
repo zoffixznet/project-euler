@@ -47,6 +47,7 @@ sub go
         return;
     }
 
+=begin foo
     if ($first->{correct} == 0)
     {
         I_LOOP1:
@@ -97,7 +98,13 @@ sub go
         }
         return State->new({ n => $n, digits => $d})->go;
     }
+
     else
+
+=end foo
+
+=cut
+
     {
         my @set = (grep { $first->{contents}->[$_] =~ /\A\d\z/ } (0 .. $COUNT_DIGITS - 1));
         my $iter = Algorithm::ChooseSubsets->new(
@@ -139,7 +146,7 @@ sub go
 
                     }
                 }
-                else
+                elsif ($digit =~ /\A[0-9]\z/)
                 {
                     delete ($d->[$i]{$digit});
                     foreach my $num (@$n)
