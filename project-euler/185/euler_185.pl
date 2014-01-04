@@ -19,6 +19,7 @@ use Storable qw(dclone);
 
 has 'n' => (isa => 'ArrayRef[HashRef]', is => 'ro', required => 1);
 has 'digits' => (isa => 'ArrayRef[HashRef]', is => 'ro', required => 1);
+has 'depth' => (isa => 'Int', is => 'ro', required => 1);
 
 use Algorithm::ChooseSubsets;
 
@@ -26,10 +27,11 @@ sub go
 {
     my ($self) = @_;
 
+    my $depth = $self->depth;
 
     my $n = [sort { $a->{correct} <=> $b->{correct}
             or
-        $a->{remaining} <=> $b->{remaining}
+        ($a->{remaining} <=> $b->{remaining})
         } @{ dclone($self->n()) }];
 
     my $d = dclone($self->digits());
@@ -116,6 +118,7 @@ sub go
 =cut
 
     {
+        my $count = 0;
         my @set = (grep { $first->{contents}->[$_] =~ /\A\d\z/ } (0 .. $COUNT_DIGITS - 1));
         my $iter = Algorithm::ChooseSubsets->new(
             set => \@set,
@@ -153,7 +156,10 @@ sub go
                                 $num->{correct}--;
                             }
                         }
-
+                        elsif ($found_digit eq 'Y')
+                        {
+                            next SUBSETS;
+                        }
                     }
                 }
                 elsif ($digit =~ /\A[0-9]\z/)
@@ -165,13 +171,17 @@ sub go
                         if ($found_digit eq $digit)
                         {
                             $num->{contents}->[$i] = 'N';
-                            $num->{remaining}--;
+                            if ((--$num->{remaining}) < $num->{correct})
+                            {
+                                next SUBSETS;
+                            }
                         }
                     }
                 }
             }
 
-            State->new({ n => $n, digits => $d})->go;
+            # print "Depth $depth ; Count=@{[$count++]}\n";
+            State->new({ n => $n, digits => $d, depth => ($depth+1)})->go;
         }
     }
 
@@ -224,6 +234,7 @@ my $init_state = State->new(
     {
         n => \@init_n,
         digits => \@digits,
+        depth => 0,
     }
 );
 
