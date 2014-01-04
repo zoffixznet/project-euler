@@ -50,7 +50,7 @@ sub go
     my $first = shift(@$n);
 
     if (($first->{correct} < 0) or
-        (any { $first->{correct} > $first->{remaining} } (@$n, $first))
+        (any { $_->{correct} > $_->{remaining} } (@$n, $first))
     )
     {
         # Dead end - cannot be.
