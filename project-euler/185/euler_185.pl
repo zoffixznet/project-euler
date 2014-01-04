@@ -6,24 +6,36 @@ use warnings;
 use integer;
 
 my $COUNT_DIGITS = 16;
+# Contents.
+my $C = 0;
+# Correct/True
+my $T = 1;
+# Remaining.
+my $R = 2;
 
 package State;
 
 use Moo;
-use MooX qw(late);
 
 use List::Util qw(sum);
 use List::MoreUtils qw(all any);
+use List::UtilsBy qw(nsort_by);
 
 use Storable qw(dclone);
 
-has 'n' => (isa => 'ArrayRef[HashRef]', is => 'ro', required => 1);
-has 'digits' => (isa => 'ArrayRef[HashRef]', is => 'ro', required => 1);
-has 'depth' => (isa => 'Int', is => 'ro', required => 1);
+has 'n' => (is => 'ro', required => 1);
+has 'digits' => (is => 'ro', required => 1);
+has 'depth' => (is => 'ro', required => 1);
 
 use Algorithm::ChooseSubsets;
 
 my %is_d = (map { $_ => 1 } (0 .. 9));
+
+my @_fact = (1,1);
+foreach my $n (2 .. 16)
+{
+    push @_fact, $_fact[-1] * $n;
+}
 
 sub go
 {
@@ -31,9 +43,8 @@ sub go
 
     my $depth = $self->depth;
 
-    my $n = [sort { $a->{correct} <=> $b->{correct}
-            or
-        ($a->{remaining} <=> $b->{remaining})
+    my $n = [nsort_by { my $r = $_->[$R]; my $c = $_->[$T];
+            ($_fact[$r] / ($_fact[$c] * $_fact[$r-$c]))
         } @{ dclone($self->n()) }];
 
     my $d = dclone($self->digits());
@@ -53,8 +64,8 @@ sub go
 
     my $first = shift(@$n);
 
-    if (($first->{correct} < 0) or
-        (any { $_->{correct} > $_->{remaining} } (@$n, $first))
+    if (($first->[$T] < 0) or
+        (any { $_->[$T] > $_->[$R] } (@$n, $first))
     )
     {
         # Dead end - cannot be.
@@ -121,11 +132,11 @@ sub go
 
     {
         my $count = 0;
-        my $v = $first->{contents};
+        my $v = $first->[$C];
         my @set = (grep { exists($is_d{$v->[$_]}) } (0 .. $COUNT_DIGITS - 1));
         my $iter = Algorithm::ChooseSubsets->new(
             set => \@set,
-            size => $first->{correct}
+            size => $first->[$T],
         );
 
         my $orig_d = $d;
@@ -147,15 +158,15 @@ sub go
                     $d->[$i] = {$true_digit => 1};
                     foreach my $num (@$n)
                     {
-                        my $found_digit = $num->{contents}->[$i];
+                        my $found_digit = $num->[$C]->[$i];
                         if (exists($is_d{$found_digit}))
                         {
                             my $is_right = ($found_digit == $true_digit);
-                            $num->{contents}->[$i] = ($is_right ? 'Y' : 'N');
-                            $num->{remaining}--;
+                            $num->[$C]->[$i] = ($is_right ? 'Y' : 'N');
+                            $num->[$R]--;
                             if ($is_right)
                             {
-                                $num->{correct}--;
+                                $num->[$T]--;
                             }
                         }
                         elsif ($found_digit eq 'Y')
@@ -181,11 +192,11 @@ sub go
                     {
                         foreach my $num (@$n)
                         {
-                            my $found_digit = $num->{contents}->[$i];
+                            my $found_digit = $num->[$C]->[$i];
                             if ($found_digit eq $digit)
                             {
-                                $num->{contents}->[$i] = 'N';
-                                if ((--$num->{remaining}) < $num->{correct})
+                                $num->[$C]->[$i] = 'N';
+                                if ((--$num->[$R]) < $num->[$T])
                                 {
                                     next SUBSETS;
                                 }
@@ -195,7 +206,7 @@ sub go
                 }
             }
 
-            print "Depth $depth ; Count=@{[$count++]}\n";
+            # print "Depth $depth ; Count=@{[$count++]}\n";
             State->new({ n => $n, digits => $d, depth => ($depth+1)})->go;
         }
     }
@@ -233,14 +244,11 @@ EOF
 my @init_n = (map {
     my $l = $_;
     $l =~ /\A(\d+)/ or die "Foo";
-    my @row = split//, $1;
+    my $row = [split//, $1];
     my ($count_correct) = $l =~ /;(\d)/ or die "Bar";
-    +{
-        contents => [@row],
-        correct => $count_correct,
-        remaining => $COUNT_DIGITS,
-    },
-    } split(/\n/, $string)
+    [$row, $count_correct, $COUNT_DIGITS,];
+    }
+    split(/\n/, $string)
 );
 
 my @digits = (map { +{ map { $_ => 1 } 0 .. 9 } } 0 .. $COUNT_DIGITS - 1);
