@@ -13,7 +13,7 @@ use Moo;
 use MooX qw(late);
 
 use List::Util qw(sum);
-use List::MoreUtils qw(all);
+use List::MoreUtils qw(all any);
 
 use Storable qw(dclone);
 
@@ -26,11 +26,6 @@ sub go
 {
     my ($self) = @_;
 
-    if (all { keys(%$_) == 1 } @{$self->digits()})
-    {
-        print "Number == ", (map { (keys%$_)[0] } @{$self->digits()}), "\n";
-        exit(0);
-    }
 
     my $n = [sort { $a->{correct} <=> $b->{correct}
             or
@@ -39,9 +34,24 @@ sub go
 
     my $d = dclone($self->digits());
 
+    if (! @$n)
+    {
+        if (all { keys(%$_) == 1 } @{$self->digits()})
+        {
+            print "Number == ", (map { (keys%$_)[0] } @{$self->digits()}), "\n";
+            exit(0);
+        }
+        else
+        {
+            die "Foobar.";
+        }
+    }
+
     my $first = shift(@$n);
 
-    if (($first->{correct} < 0) or ($first->{correct} > $first->{remaining}))
+    if (($first->{correct} < 0) or
+        (any { $first->{correct} > $first->{remaining} } (@$n, $first))
+    )
     {
         # Dead end - cannot be.
         return;
@@ -169,7 +179,6 @@ sub go
 }
 
 package main;
-
 
 my $string = <<'EOF';
 5616185650518293 ;2 correct
