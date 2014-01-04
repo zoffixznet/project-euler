@@ -64,8 +64,12 @@ use MooX qw(late);
 use List::Util qw(sum);
 use List::MoreUtils qw(all);
 
+use Storable qw(dclone);
+
 has 'n' => (isa => 'ArrayRef[HashRef]', is => 'ro');
 has 'digits' => (isa => 'ArrayRef[HashRef]', is => 'ro');
+
+use Algorithm::ChooseSubsets;
 
 sub go
 {
@@ -77,16 +81,132 @@ sub go
         exit(0);
     }
 
-    my @n = (sort { $a->{correct} <=> $b->{correct}
+    my $n = [sort { $a->{correct} <=> $b->{correct}
             or
         $a->{remaining} <=> $b->{remaining}
-        } @{$self->n};
+        } @{ dclone($self->n()) }];
+
+    my $d = dclone($self->digits());
 
     my $first = shift(@n);
+
+    if ($first->{correct} < 0 or $first->{remaining} < 0)
+    {
+        # Dead end - cannot be.
+        return;
+    }
+
     if ($first->{correct} == 0)
     {
+        I_LOOP1:
+        for my $i (0 .. $COUNT_DIGITS - 1)
+        {
+            my $digit = $first->{contents}[$i];
 
+            if ($digit eq 'Y')
+            {
+                # Cannot be.
+                next I_LOOP1;
+            }
+            elsif ($digit ne 'N')
+            {
+                if (! exists($d->[$i]{$digit}))
+                {
+                    # Cannot be.
+                    return;
+                }
+                else
+                {
+                    delete ($d->[$i]{$digit});
+                    my $true_digit;
+                    if (keys(%{$d->[$i]}) == 1)
+                    {
+                        ($true_digit) = keys(%{$d->[$i]});
+                    }
+                    foreach my $num (@$n)
+                    {
+                        my $found_digit = $num->{contents}->[$i];
+                        if (defined($true_digit) ? ($found_digit != $true_digit) : ($found_digit == $digit))
+                        {
+                            $num->{contents}->[$i] = 'N';
+                            $num->{remaining}--;
+                        }
+                        elsif (defined($true_digit) && ($found_digit == $true_digit))
+                        {
+                            $num->{contents}->[$i] = 'Y';
+                            $num->{correct}--;
+                            $num->{remaining}--;
+                        }
+
+                    }
+                }
+            }
+        }
+        return State->new({ n => $n, digits => $d})->go;
     }
+    else
+    {
+        my @set = (grep { $first->{contents}->[$_] =~ /\A\d\z/ } (0 .. $COUNT_DIGITS - 1));
+        my $iter = Algorithm::ChooseSubsets->new(
+            set => \@set,
+            size => $first->{correct}
+        );
+
+        my $orig_d = $d;
+        my $orig_n = $n;
+
+        SUBSETS:
+        while (my $correct = $iter->next())
+        {
+            my %corr = (map { $_ => 1 } @$correct);
+            $d = dclone($orig_d);
+            $n = dclone($orig_n);
+
+            for my $i (0 .. $COUNT_DIGITS - 1)
+            {
+                my $digit = $first->{contents}[$i];
+
+                if (exists($corr{$i}))
+                {
+                    $d->[$i] = {$digit => 1};
+                    my $true_digit = $digit;
+                    foreach my $num (@$n)
+                    {
+                        my $found_digit = $num->{contents}->[$i];
+                        if ($found_digit != $true_digit)
+                        {
+                            $num->{contents}->[$i] = 'N';
+                            $num->{remaining}--;
+                        }
+                        elsif ($found_digit == $true_digit)
+                        {
+                            $num->{contents}->[$i] = 'Y';
+                            $num->{correct}--;
+                            $num->{remaining}--;
+                        }
+
+                    }
+                }
+                else
+                {
+                    delete ($d->[$i]{$digit});
+                    foreach my $num (@$n)
+                    {
+                        my $found_digit = $num->{contents}->[$i];
+                        if ($found_digit eq $digit)
+                        {
+                            $num->{contents}->[$i] = 'N';
+                            $num->{remaining}--;
+                        }
+                    }
+                }
+            }
+
+            State->new({ n => $n, digits => $d})->go;
+        }
+    }
+
+    return;
 }
 
 1;
