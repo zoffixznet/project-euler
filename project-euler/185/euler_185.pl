@@ -102,8 +102,11 @@ sub go
                     my $c = $num->[$C];
                     # found digit
                     my $fd = $c->[$i];
-
-                    if (exists($is_d{$fd}))
+                    if ($fd eq 'Y')
+                    {
+                        return 1;
+                    }
+                    elsif ($fd ne 'N')
                     {
                         my $is_right = ($fd eq $td);
                         $c->[$i] = ($is_right ? 'Y' : 'N');
@@ -118,10 +121,6 @@ sub go
                         {
                             return 1;
                         }
-                    }
-                    elsif ($fd eq 'Y')
-                    {
-                        return 1;
                     }
                 }
 
