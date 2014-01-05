@@ -32,9 +32,19 @@ use Algorithm::ChooseSubsets;
 my %is_d = (map { $_ => 1 } (0 .. 9));
 
 my @_fact = (1,1);
-foreach my $n (2 .. 16)
+foreach my $n (2 .. $COUNT_DIGITS)
 {
     push @_fact, $_fact[-1] * $n;
+}
+
+my @_nCr;
+
+foreach my $sum (0 .. $COUNT_DIGITS)
+{
+    foreach my $x (0 .. $sum)
+    {
+        $_nCr[$sum][$x] = ($_fact[$sum] / ($_fact[$x] * $_fact[$sum-$x]));
+    }
 }
 
 sub go
@@ -43,9 +53,7 @@ sub go
 
     my $depth = $self->depth;
 
-    my $n = [nsort_by { my $r = $_->[$R]; my $c = $_->[$T];
-            ($_fact[$r] / ($_fact[$c] * $_fact[$r-$c]))
-        } @{ dclone($self->n()) }];
+    my $n = [nsort_by { $_nCr[ $_->[$R] ][ $_->[$T] ] } @{ dclone($self->n()) }];
 
     my $d = dclone($self->digits());
 
@@ -64,151 +72,99 @@ sub go
 
     my $first = shift(@$n);
 
-    if (($first->[$T] < 0) or
-        (any { $_->[$T] > $_->[$R] } (@$n, $first))
-    )
-    {
-        # Dead end - cannot be.
-        return;
-    }
+    my $count = 0;
+    my $v = $first->[$C];
+    my @set = (grep { exists($is_d{$v->[$_]}) } (0 .. $COUNT_DIGITS - 1));
+    my $iter = Algorithm::ChooseSubsets->new(
+        set => \@set,
+        size => $first->[$T],
+    );
 
-=begin foo
-    if ($first->{correct} == 0)
+    my $orig_d = $d;
+    my $orig_n = $n;
+
+    SUBSETS:
+    while (my $correct = $iter->next())
     {
-        I_LOOP1:
-        for my $i (0 .. $COUNT_DIGITS - 1)
+        my %corr = (map { $_ => 1 } @$correct);
+        $d = dclone($orig_d);
+        $n = dclone($orig_n);
+
+        foreach my $i (@set)
         {
-            my $digit = $first->{contents}[$i];
+            my $digit = $v->[$i];
 
-            if ($digit eq 'Y')
-            {
-                # Cannot be.
-                next I_LOOP1;
-            }
-            elsif ($digit ne 'N')
-            {
-                if (! exists($d->[$i]{$digit}))
+            my $mark = sub {
+                my ($true_digit) = @_;
+
+                $d->[$i] = {$true_digit => 1};
+
+                foreach my $num (@$n)
                 {
-                    # Cannot be.
-                    return;
+                    my $found_digit = $num->[$C]->[$i];
+                    if (exists($is_d{$found_digit}))
+                    {
+                        my $is_right = ($found_digit eq $true_digit);
+                        $num->[$C]->[$i] = ($is_right ? 'Y' : 'N');
+                        if ($is_right)
+                        {
+                            if ((--($num->[$T])) < 0)
+                            {
+                                return 1;
+                            }
+                        }
+                        if ((--($num->[$R])) < $num->[$T])
+                        {
+                            return 1;
+                        }
+                    }
+                    elsif ($found_digit eq 'Y')
+                    {
+                        return 1;
+                    }
+                }
+
+                return;
+            };
+
+            if (exists($corr{$i}))
+            {
+                if ($mark->($digit))
+                {
+                    next SUBSETS;
+                }
+            }
+            else
+            {
+                delete ($d->[$i]{$digit});
+                my @k = keys(%{$d->[$i]});
+                if (@k == 1)
+                {
+                    if ($mark->($k[0]))
+                    {
+                        next SUBSETS;
+                    }
                 }
                 else
                 {
-                    delete ($d->[$i]{$digit});
-                    my $true_digit;
-                    if (keys(%{$d->[$i]}) == 1)
-                    {
-                        ($true_digit) = keys(%{$d->[$i]});
-                    }
-                    foreach my $num (@$n)
-                    {
-                        my $found_digit = $num->{contents}->[$i];
-                        if ($found_digit =~ /\A[0-9]\z/)
-                        {
-                            if (defined($true_digit) ? ($found_digit != $true_digit) : ($found_digit == $digit))
-                            {
-                                $num->{contents}->[$i] = 'N';
-                                $num->{remaining}--;
-                            }
-                            elsif (defined($true_digit) && ($found_digit == $true_digit))
-                            {
-                                $num->{contents}->[$i] = 'Y';
-                                $num->{correct}--;
-                                $num->{remaining}--;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return State->new({ n => $n, digits => $d})->go;
-    }
-
-    else
-
-=end foo
-
-=cut
-
-    {
-        my $count = 0;
-        my $v = $first->[$C];
-        my @set = (grep { exists($is_d{$v->[$_]}) } (0 .. $COUNT_DIGITS - 1));
-        my $iter = Algorithm::ChooseSubsets->new(
-            set => \@set,
-            size => $first->[$T],
-        );
-
-        my $orig_d = $d;
-        my $orig_n = $n;
-
-        SUBSETS:
-        while (my $correct = $iter->next())
-        {
-            my %corr = (map { $_ => 1 } @$correct);
-            $d = dclone($orig_d);
-            $n = dclone($orig_n);
-
-            foreach my $i (@set)
-            {
-                my $digit = $v->[$i];
-
-                my $mark = sub {
-                    my ($true_digit) = @_;
-                    $d->[$i] = {$true_digit => 1};
                     foreach my $num (@$n)
                     {
                         my $found_digit = $num->[$C]->[$i];
-                        if (exists($is_d{$found_digit}))
+                        if ($found_digit eq $digit)
                         {
-                            my $is_right = ($found_digit == $true_digit);
-                            $num->[$C]->[$i] = ($is_right ? 'Y' : 'N');
-                            $num->[$R]--;
-                            if ($is_right)
+                            $num->[$C]->[$i] = 'N';
+                            if ((--($num->[$R])) < $num->[$T])
                             {
-                                $num->[$T]--;
-                            }
-                        }
-                        elsif ($found_digit eq 'Y')
-                        {
-                            next SUBSETS;
-                        }
-                    }
-                };
-
-                if (exists($corr{$i}))
-                {
-                    $mark->($digit);
-                }
-                else
-                {
-                    delete ($d->[$i]{$digit});
-                    my @k = keys(%{$d->[$i]});
-                    if (@k == 1)
-                    {
-                        $mark->($k[0]);
-                    }
-                    else
-                    {
-                        foreach my $num (@$n)
-                        {
-                            my $found_digit = $num->[$C]->[$i];
-                            if ($found_digit eq $digit)
-                            {
-                                $num->[$C]->[$i] = 'N';
-                                if ((--$num->[$R]) < $num->[$T])
-                                {
-                                    next SUBSETS;
-                                }
+                                next SUBSETS;
                             }
                         }
                     }
                 }
             }
-
-            # print "Depth $depth ; Count=@{[$count++]}\n";
-            State->new({ n => $n, digits => $d, depth => ($depth+1)})->go;
         }
+
+        # print "Depth $depth ; Count=@{[$count++]}\n";
+        State->new({ n => $n, digits => $d, depth => ($depth+1)})->go;
     }
 
     return;
