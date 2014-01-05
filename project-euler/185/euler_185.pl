@@ -23,7 +23,7 @@ use Storable qw(dclone);
 
 use Algorithm::ChooseSubsets;
 
-my %is_d = (map { $_ => undef() } (0 .. 9));
+# my %is_d = (map { $_ => undef() } (0 .. 9));
 
 my @_fact = (1,1);
 foreach my $n (2 .. $COUNT_DIGITS)
@@ -62,7 +62,7 @@ sub go
 
     my $count = 0;
     my $v = $first;
-    my @set = (grep { exists($is_d{vec($v,$_,8)}) } 0 .. $L);
+    my @set = (grep { vec($v,$_,8)<10 } 0 .. $L);
     my $iter = Algorithm::ChooseSubsets->new(
         set => \@set,
         size => vec($first, $T, 8),
