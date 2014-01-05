@@ -1,0 +1,69 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use integer;
+
+package Rand;
+
+use Moo;
+
+has 'k' => (is => 'rw', default => sub { return 1; });
+has 'prev' => (is => 'rw', default => sub { return []; });
+
+sub get
+{
+    my ($self) = @_;
+
+    my $k = $self->k();
+    my $ret;
+    if ($k <= 55)
+    {
+        $ret = (100_003 + $k * (-200_003 + $k * $k * 300_007));
+    }
+    else
+    {
+        $ret = $self->prev->[-55] + $self->prev->[-24];
+        shift(@{$self->prev()});
+    }
+
+    $self->k($k+1);
+
+    $ret %= 1_000_000;
+
+    push @{$self->prev()}, $ret;
+
+    return $ret;
+}
+
+sub get_pair
+{
+    my ($self) = @_;
+
+    my $first = $self->get();
+    my $second = $self->get();
+
+    return ($first, $second);
+}
+
+package main;
+
+use Test::More tests => 6;
+use Test::Differences qw(eq_or_diff);
+
+{
+my $r = Rand->new;
+# TEST
+eq_or_diff ([$r->get()], [200_007], "get 1.");
+# TEST
+eq_or_diff ([$r->get()], [100_053], "get 2.");
+# TEST
+eq_or_diff ([$r->get()], [600_183], "get 3.");
+# TEST
+eq_or_diff ([$r->get()], [500_439], "get 4.");
+# TEST
+eq_or_diff ([$r->get()], [600_863], "get 5.");
+# TEST
+eq_or_diff ([$r->get()], [701_497], "get 6.");
+}
