@@ -3,6 +3,7 @@
 use strict;
 use warnings;
 
+use integer;
 use bytes;
 
 package Rand;
@@ -142,11 +143,16 @@ eq_or_diff ([$r->get_pair()], [600_183, 500_439], "get-pair 2.");
                         $friends[vec($$v0, $idx, 32)] = $v1;
                     }
 
+=begin foo
                     if (length($$v1) > $max_len)
                     {
                         $max_len = length($$v1);
                         print "Reached $max_len Count = $count\n";
                     }
+=end foo
+
+=cut
+
                 }
             }
         }
