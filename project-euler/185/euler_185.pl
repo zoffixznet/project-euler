@@ -53,11 +53,9 @@ sub go
 
     my $depth = $self->depth;
 
-    my $n = [nsort_by { $_nCr[ $_->[$R] ][ $_->[$T] ] } @{ dclone($self->n()) }];
+    my $orig_n = [nsort_by { $_nCr[ $_->[$R] ][ $_->[$T] ] } @{ $self->n() }];
 
-    my $d = dclone($self->digits());
-
-    if (! @$n)
+    if (! @$orig_n)
     {
         if (all { keys(%$_) == 1 } @{$self->digits()})
         {
@@ -70,7 +68,7 @@ sub go
         }
     }
 
-    my $first = shift(@$n);
+    my $first = shift(@$orig_n);
 
     my $count = 0;
     my $v = $first->[$C];
@@ -80,15 +78,14 @@ sub go
         size => $first->[$T],
     );
 
-    my $orig_d = $d;
-    my $orig_n = $n;
+    my $orig_d = $self->digits;
 
     SUBSETS:
     while (my $correct = $iter->next())
     {
         my %corr = (map { $_ => 1 } @$correct);
-        $d = dclone($orig_d);
-        $n = dclone($orig_n);
+        my $d = dclone($orig_d);
+        my $n = dclone($orig_n);
 
         foreach my $i (@set)
         {
