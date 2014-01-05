@@ -45,9 +45,7 @@ sub go
 {
     my ($depth, $_n, $_d) = @_;
 
-    my $orig_n = [nsort_by { $_nCr[ vec($_,$R,8) ][ vec($_,$T,8) ] } @$_n];
-
-    if (! @$orig_n)
+    if (! @$_n)
     {
         if (all { keys(%$_) == 1 } @$_d)
         {
@@ -60,7 +58,7 @@ sub go
         }
     }
 
-    my $first = shift(@$orig_n);
+    my $first = shift(@$_n);
 
     my $count = 0;
     my $v = $first;
@@ -74,7 +72,7 @@ sub go
     while (my $correct = $iter->next())
     {
         my %corr = (map { $_ => undef() } @$correct);
-        my @n = @$orig_n;
+        my @n = @$_n;
         my $d = dclone($_d);
 
         foreach my $i (@set)
@@ -153,7 +151,11 @@ sub go
         }
 
         # print "Depth $depth ; Count=@{[$count++]}\n";
-        go($depth+1, \@n, $d);
+        go(
+            $depth+1,
+            [nsort_by { $_nCr[ vec($_,$R,8) ][ vec($_,$T,8) ] } @n],
+            $d
+        );
     }
 
     return;
