@@ -16,19 +16,11 @@ my $R = $T+1;
 my $Y = 11;
 my $N = 12;
 
-package State;
-
-use Moo;
-
 use List::Util qw(sum);
 use List::MoreUtils qw(all any indexes);
 use List::UtilsBy qw(nsort_by);
 
 use Storable qw(dclone);
-
-has 'n' => (is => 'ro', required => 1);
-has 'digits' => (is => 'ro', required => 1);
-has 'depth' => (is => 'ro', required => 1);
 
 use Algorithm::ChooseSubsets;
 
@@ -52,17 +44,15 @@ foreach my $sum (0 .. $COUNT_DIGITS)
 
 sub go
 {
-    my ($self) = @_;
+    my ($depth, $_n, $_d) = @_;
 
-    my $depth = $self->depth;
-
-    my $orig_n = [nsort_by { $_nCr[ vec($_,$R,8) ][ vec($_,$T,8) ] } @{ $self->n() }];
+    my $orig_n = [nsort_by { $_nCr[ vec($_,$R,8) ][ vec($_,$T,8) ] } @$_n];
 
     if (! @$orig_n)
     {
-        if (all { keys(%$_) == 1 } @{$self->digits()})
+        if (all { keys(%$_) == 1 } @$_d)
         {
-            print "Number == ", (map { (keys%$_)[0] } @{$self->digits()}), "\n";
+            print "Number == ", (map { (keys%$_)[0] } @$_d), "\n";
             exit(0);
         }
         else
@@ -81,13 +71,11 @@ sub go
         size => vec($first, $T, 8),
     );
 
-    my $orig_d = $self->digits;
-
     SUBSETS:
     while (my $correct = $iter->next())
     {
         my %corr = (map { $_ => 1 } @$correct);
-        my $d = dclone($orig_d);
+        my $d = dclone($_d);
         my $n = dclone($orig_n);
 
         foreach my $i (@set)
@@ -166,7 +154,7 @@ sub go
         }
 
         # print "Depth $depth ; Count=@{[$count++]}\n";
-        State->new({ n => $n, digits => $d, depth => ($depth+1)})->go;
+        go($depth+1, $n, $d);
     }
 
     return;
@@ -218,13 +206,5 @@ my @init_n = (map {
 
 my @digits = (map { +{ map { $_ => 1 } 0 .. 9 } } 0 .. $COUNT_DIGITS - 1);
 
-my $init_state = State->new(
-    {
-        n => \@init_n,
-        digits => \@digits,
-        depth => 0,
-    }
-);
-
-$init_state->go();
+go(0, \@init_n, \@digits);
 
