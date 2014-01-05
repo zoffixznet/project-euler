@@ -49,7 +49,7 @@ sub get_pair
 
 package main;
 
-use Test::More tests => 6;
+use Test::More tests => 8;
 use Test::Differences qw(eq_or_diff);
 
 {
@@ -66,4 +66,12 @@ eq_or_diff ([$r->get()], [500_439], "get 4.");
 eq_or_diff ([$r->get()], [600_863], "get 5.");
 # TEST
 eq_or_diff ([$r->get()], [701_497], "get 6.");
+}
+
+{
+my $r = Rand->new;
+# TEST
+eq_or_diff ([$r->get_pair()], [200_007, 100_053,], "get-pair 1.");
+# TEST
+eq_or_diff ([$r->get_pair()], [600_183, 500_439], "get-pair 2.");
 }
