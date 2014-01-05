@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use integer;
+use bytes;
 
 package Rand;
 
@@ -75,3 +76,69 @@ eq_or_diff ([$r->get_pair()], [200_007, 100_053,], "get-pair 1.");
 # TEST
 eq_or_diff ([$r->get_pair()], [600_183, 500_439], "get-pair 2.");
 }
+
+{
+    my @friends;
+
+    my $PM_PHONE = 524_287;
+
+    my $r = Rand->new;
+    my $count = 0;
+    while (not (
+            defined($friends[$PM_PHONE])
+                &&
+            (length(${$friends[$PM_PHONE]}) >= (4*99*1_000_000 / 100))
+        )
+    )
+    {
+        my @p = $r->get_pair();
+
+        if ($p[0] != $p[1])
+        {
+            $count++;
+
+            # Sort them first.
+            if (!defined($friends[$p[0]]))
+            {
+                @p = reverse(@p);
+            }
+
+            if (!defined($friends[$p[0]]))
+            {
+                # If both are undefined
+                my $new_vec = '';
+                vec($new_vec, 0, 32) = $p[0];
+                vec($new_vec, 1, 32) = $p[1];
+                $friends[$p[0]] = $friends[$p[1]] = \$new_vec;
+            }
+            elsif (!defined($friends[$p[1]]))
+            {
+                # If one is undefined
+                my $v = $friends[$p[0]] ;
+                vec ($$v, (length($$v) >> 2), 32) = $p[1];
+                $friends[$p[0]] = $v;
+            }
+            else
+            {
+                # Both are associated.
+                my $v0 = $friends[$p[0]];
+                my $v1 = $friends[$p[1]];
+                if ($v0 ne $v1)
+                {
+                    # Merge them if they are not identical.
+                    my $new_v = $$v0 . $$v1;
+
+                    my $new_v_ref = \$new_v;
+
+                    for my $idx (0 .. ((length($new_v) >> 2)-1))
+                    {
+                        $friends[vec($new_v, $idx, 32)] = $new_v_ref;
+                    }
+                }
+            }
+        }
+    }
+    print "After $count Calls.\n";
+}
+
+
