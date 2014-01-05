@@ -154,7 +154,11 @@ sub go
         # print "Depth $depth ; Count=@{[$count++]}\n";
         go(
             $depth+1,
-            [nsort_by { $_nCr[ vec($_,$R,8) ][ vec($_,$T,8) ] } @n],
+            [sort {
+                $_nCr[ vec($a,$R,8) ][ vec($a,$T,8) ]
+                    <=>
+                $_nCr[ vec($b,$R,8) ][ vec($b,$T,8) ]
+            } @n],
             \@d,
         );
     }
