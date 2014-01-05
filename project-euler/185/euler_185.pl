@@ -207,5 +207,9 @@ my @init_n = (map {
 
 my @digits = (map { +{ map { $_ => undef() } 0 .. 9 } } 0 .. $COUNT_DIGITS - 1);
 
-go(0, \@init_n, \@digits);
+go(
+    0,
+    [nsort_by { $_nCr[ vec($_,$R,8) ][ vec($_,$T,8) ] } @init_n],
+    \@digits,
+);
 
