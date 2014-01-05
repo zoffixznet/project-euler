@@ -73,9 +73,9 @@ sub go
     );
 
     SUBSETS:
-    while (my $correct = $iter->next())
+    while (my $q = $iter->next())
     {
-        my %corr = (map { $_ => undef() } @$correct);
+        my %c = (map { $_ => undef() } @$q);
         my @n = @$_n;
         my @d = @$_d;
 
@@ -119,7 +119,7 @@ sub go
                 return;
             };
 
-            if (exists($corr{$i}))
+            if (exists($c{$i}))
             {
                 if ($mark->($digit))
                 {
