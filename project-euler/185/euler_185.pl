@@ -9,11 +9,11 @@ use bytes;
 my $COUNT_DIGITS = 16;
 my $L = $COUNT_DIGITS - 1;
 # Contents.
-my $C = 0;
+my $CC = 0;
 # Correct/True
-my $T = 1;
+my $TT = $COUNT_DIGITS;
 # Remaining.
-my $R = 2;
+my $RR = $TT+1;
 
 my $Y = 11;
 my $N = 12;
@@ -58,7 +58,7 @@ sub go
 
     my $depth = $self->depth;
 
-    my $orig_n = [nsort_by { $_nCr[ $_->[$R] ][ $_->[$T] ] } @{ $self->n() }];
+    my $orig_n = [nsort_by { $_nCr[ vec($_,$RR,8) ][ vec($_,$TT,8) ] } @{ $self->n() }];
 
     if (! @$orig_n)
     {
@@ -76,11 +76,11 @@ sub go
     my $first = shift(@$orig_n);
 
     my $count = 0;
-    my $v = $first->[$C];
+    my $v = $first;
     my @set = (grep { exists($is_d{vec($v,$_,8)}) } 0 .. $L);
     my $iter = Algorithm::ChooseSubsets->new(
         set => \@set,
-        size => $first->[$T],
+        size => vec($first, $TT, 8),
     );
 
     my $orig_d = $self->digits;
@@ -104,9 +104,8 @@ sub go
 
                 foreach my $num (@$n)
                 {
-                    my $c = \($num->[$C]);
                     # found digit
-                    my $fd = vec($$c, $i, 8);
+                    my $fd = vec($num, $i, 8);
                     if ($fd eq $Y)
                     {
                         return 1;
@@ -114,15 +113,16 @@ sub go
                     elsif ($fd ne $N)
                     {
                         my $is_right = ($fd eq $td);
-                        vec($$c, $i, 8) = ($is_right ? $Y : $N);
+                        vec($num, $i, 8) = ($is_right ? $Y : $N);
                         if ($is_right)
                         {
-                            if ((--($num->[$T])) < 0)
+                            if (vec($num, $TT, 8) == 0)
                             {
                                 return 1;
                             }
+                            vec($num,$TT,8)--;
                         }
-                        if ((--($num->[$R])) < $num->[$T])
+                        if ((--vec($num,$RR,8)) < vec($num,$TT,8))
                         {
                             return 1;
                         }
@@ -154,11 +154,10 @@ sub go
                 {
                     foreach my $num (@$n)
                     {
-                        my $c = \($num->[$C]);
-                        if (vec($$c, $i, 8) eq $digit)
+                        if (vec($num, $i, 8) eq $digit)
                         {
-                            vec($$c, $i, 8) = $N;
-                            if ((--($num->[$R])) < $num->[$T])
+                            vec($num, $i, 8) = $N;
+                            if ((--vec($num,$RR,8)) < vec($num,$TT,8))
                             {
                                 next SUBSETS;
                             }
@@ -212,7 +211,9 @@ my @init_n = (map {
         vec($row_b, $i, 8) = $v;
     }
     my ($count_correct) = $l =~ /;(\d)/ or die "Bar";
-    [$row_b, $count_correct, $COUNT_DIGITS,];
+    vec($row_b, $TT, 8) = $count_correct;
+    vec($row_b, $RR, 8) = $COUNT_DIGITS;
+    $row_b
     }
     split(/\n/, $string)
 );
