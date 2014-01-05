@@ -92,17 +92,21 @@ sub go
             my $digit = $v->[$i];
 
             my $mark = sub {
-                my ($true_digit) = @_;
+                # True digit
+                my ($td) = @_;
 
-                $d->[$i] = {$true_digit => 1};
+                $d->[$i] = {$td => 1};
 
                 foreach my $num (@$n)
                 {
-                    my $found_digit = $num->[$C]->[$i];
-                    if (exists($is_d{$found_digit}))
+                    my $c = $num->[$C];
+                    # found digit
+                    my $fd = $c->[$i];
+
+                    if (exists($is_d{$fd}))
                     {
-                        my $is_right = ($found_digit eq $true_digit);
-                        $num->[$C]->[$i] = ($is_right ? 'Y' : 'N');
+                        my $is_right = ($fd eq $td);
+                        $c->[$i] = ($is_right ? 'Y' : 'N');
                         if ($is_right)
                         {
                             if ((--($num->[$T])) < 0)
@@ -115,7 +119,7 @@ sub go
                             return 1;
                         }
                     }
-                    elsif ($found_digit eq 'Y')
+                    elsif ($fd eq 'Y')
                     {
                         return 1;
                     }
@@ -146,10 +150,10 @@ sub go
                 {
                     foreach my $num (@$n)
                     {
-                        my $found_digit = $num->[$C]->[$i];
-                        if ($found_digit eq $digit)
+                        my $c = $num->[$C];
+                        if ($c->[$i] eq $digit)
                         {
-                            $num->[$C]->[$i] = 'N';
+                            $c->[$i] = 'N';
                             if ((--($num->[$R])) < $num->[$T])
                             {
                                 next SUBSETS;
