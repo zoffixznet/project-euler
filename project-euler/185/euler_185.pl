@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use integer;
+use bytes;
 
 my $COUNT_DIGITS = 16;
 # Contents.
