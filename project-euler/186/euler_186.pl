@@ -3,7 +3,6 @@
 use strict;
 use warnings;
 
-use integer;
 use bytes;
 
 package Rand;
@@ -84,10 +83,12 @@ eq_or_diff ([$r->get_pair()], [600_183, 500_439], "get-pair 2.");
 
     my $r = Rand->new;
     my $count = 0;
+    my $max_len = 0;
+    my $num_users = 0;
     while (not (
             defined($friends[$PM_PHONE])
                 &&
-            (length(${$friends[$PM_PHONE]}) >= (4*99*1_000_000 / 100))
+            (length(${$friends[$PM_PHONE]}) >= ((4*99*1_000_000) / 100))
         )
     )
     {
@@ -110,13 +111,15 @@ eq_or_diff ([$r->get_pair()], [600_183, 500_439], "get-pair 2.");
                 vec($new_vec, 0, 32) = $p[0];
                 vec($new_vec, 1, 32) = $p[1];
                 $friends[$p[0]] = $friends[$p[1]] = \$new_vec;
+                $num_users += 2;
             }
             elsif (!defined($friends[$p[1]]))
             {
                 # If one is undefined
                 my $v = $friends[$p[0]] ;
                 vec ($$v, (length($$v) >> 2), 32) = $p[1];
-                $friends[$p[0]] = $v;
+                $friends[$p[1]] = $v;
+                $num_users++;
             }
             else
             {
@@ -126,13 +129,23 @@ eq_or_diff ([$r->get_pair()], [600_183, 500_439], "get-pair 2.");
                 if ($v0 ne $v1)
                 {
                     # Merge them if they are not identical.
-                    my $new_v = $$v0 . $$v1;
 
-                    my $new_v_ref = \$new_v;
-
-                    for my $idx (0 .. ((length($new_v) >> 2)-1))
+                    # Make sure $v1 is the larger.
+                    if (length($$v0) > length($$v1))
                     {
-                        $friends[vec($new_v, $idx, 32)] = $new_v_ref;
+                        ($v0, $v1) = ($v1, $v0);
+                    }
+                    $$v1 .= $$v0;
+
+                    for my $idx (0 .. ((length($$v0) >> 2)-1))
+                    {
+                        $friends[vec($$v0, $idx, 32)] = $v1;
+                    }
+
+                    if (length($$v1) > $max_len)
+                    {
+                        $max_len = length($$v1);
+                        print "Reached $max_len Count = $count\n";
                     }
                 }
             }
