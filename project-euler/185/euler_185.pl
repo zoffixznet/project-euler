@@ -14,7 +14,9 @@ my $T = $COUNT_DIGITS;
 my $R = $T+1;
 my $TR = ($T >> 1);
 
+# $Y == Yes.
 my $Y = 11;
+# $N == No.
 my $N = 12;
 
 use List::MoreUtils qw(all);
@@ -44,7 +46,7 @@ my %_Ds = (map { $_Ds[$_] => $_ } keys(@_Ds));
 
 sub go
 {
-    my ($depth, $_n, $_d) = @_;
+    my ($_n, $_d) = @_;
 
     if (! @$_n)
     {
@@ -153,7 +155,6 @@ sub go
 
         # print "Depth $depth ; Count=@{[$count++]}\n";
         go(
-            $depth+1,
             [sort {
                 $_nC2[ vec($a, $TR, 16) ]
                     <=>
@@ -227,7 +228,6 @@ my $init_n_sorted =
 ];
 
 go(
-    0,
     # \@init_n,
     $init_n_sorted,
     \@digits,
