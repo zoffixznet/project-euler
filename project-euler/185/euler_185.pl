@@ -75,7 +75,9 @@ sub go
     SUBSETS:
     while (my $q = $iter->next())
     {
-        my %c = (map { $_ => undef() } @$q);
+        my $c = '';
+        vec($c,$_,1) = 1 foreach @$q;
+        # my %c = (map { $_ => undef() } @$q);
         my @n = @$_n;
         my @d = @$_d;
 
@@ -119,7 +121,7 @@ sub go
                 return;
             };
 
-            if (exists($c{$i}))
+            if (vec($c,$i,1))
             {
                 if ($mark->($digit))
                 {
