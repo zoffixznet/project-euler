@@ -18,7 +18,6 @@ my $Y = 11;
 my $N = 12;
 
 use List::MoreUtils qw(all);
-use List::UtilsBy qw(nsort_by);
 
 use Algorithm::ChooseSubsets;
 
@@ -220,7 +219,13 @@ my @digits;
 
 go(
     0,
-    [nsort_by { $_nC2[ vec($_, $TR, 16) ] } @init_n],
+    [sort {
+        $_nC2[ vec($a, $TR, 16) ]
+        <=>
+        $_nC2[ vec($b, $TR, 16) ]
+        }
+        @init_n
+    ],
     \@digits,
 );
 
