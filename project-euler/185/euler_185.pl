@@ -19,8 +19,6 @@ my $N = 12;
 use List::MoreUtils qw(all);
 use List::UtilsBy qw(nsort_by);
 
-use Storable qw(dclone);
-
 use Algorithm::ChooseSubsets;
 
 # my %is_d = (map { $_ => undef() } (0 .. 9));
@@ -41,15 +39,19 @@ foreach my $sum (0 .. $COUNT_DIGITS)
     }
 }
 
+my @_Ds = (map { my $s = ''; vec($s, $_, 1) = 1; $s; } 0 .. 9);
+my %_Ds = (map { $_Ds[$_] => $_ } keys(@_Ds));
+
 sub go
 {
     my ($depth, $_n, $_d) = @_;
 
     if (! @$_n)
     {
-        if (all { keys(%$_) == 1 } @$_d)
+        my @digits = (map { $_Ds{$_} } @$_d);
+        if (all { defined($_) } @digits)
         {
-            print "Number == ", (map { (keys%$_)[0] } @$_d), "\n";
+            print "Number == ", (@digits), "\n";
             exit(0);
         }
         else
@@ -73,7 +75,7 @@ sub go
     {
         my %corr = (map { $_ => undef() } @$correct);
         my @n = @$_n;
-        my $d = dclone($_d);
+        my $d = [@$_d];
 
         foreach my $i (@set)
         {
@@ -83,7 +85,7 @@ sub go
                 # True digit
                 my ($td) = @_;
 
-                $d->[$i] = {$td => undef()};
+                $d->[$i] = $_Ds[$td];
 
                 foreach my $num (@n)
                 {
@@ -124,11 +126,10 @@ sub go
             }
             else
             {
-                delete ($d->[$i]{$digit});
-                my @k = keys(%{$d->[$i]});
-                if (@k == 1)
+                vec($d->[$i], $digit, 1) = 0;
+                if (defined(my $k = $_Ds{$d->[$i]}))
                 {
-                    if ($mark->($k[0]))
+                    if ($mark->($k))
                     {
                         next SUBSETS;
                     }
@@ -205,7 +206,12 @@ my @init_n = (map {
     split(/\n/, $string)
 );
 
-my @digits = (map { +{ map { $_ => undef() } 0 .. 9 } } 0 .. $COUNT_DIGITS - 1);
+my @digits;
+{
+    my $s = '';
+    vec($s, $_, 1) = 1 for 0 .. 9;
+    @digits = map { $s} 0 .. $L;
+}
 
 go(
     0,
