@@ -18,7 +18,7 @@ package State;
 use Moo;
 
 use List::Util qw(sum);
-use List::MoreUtils qw(all any);
+use List::MoreUtils qw(all any indexes);
 use List::UtilsBy qw(nsort_by);
 
 use Storable qw(dclone);
@@ -72,7 +72,7 @@ sub go
 
     my $count = 0;
     my $v = $first->[$C];
-    my @set = (grep { exists($is_d{$v->[$_]}) } (0 .. $COUNT_DIGITS - 1));
+    my @set = (indexes { exists($is_d{$_}) } @$v);
     my $iter = Algorithm::ChooseSubsets->new(
         set => \@set,
         size => $first->[$T],
