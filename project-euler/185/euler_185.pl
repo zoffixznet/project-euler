@@ -74,8 +74,8 @@ sub go
     while (my $correct = $iter->next())
     {
         my %corr = (map { $_ => 1 } @$correct);
+        my @n = @$orig_n;
         my $d = dclone($_d);
-        my $n = dclone($orig_n);
 
         foreach my $i (@set)
         {
@@ -87,7 +87,7 @@ sub go
 
                 $d->[$i] = {$td => 1};
 
-                foreach my $num (@$n)
+                foreach my $num (@n)
                 {
                     # found digit
                     my $fd = vec($num, $i, 8);
@@ -137,7 +137,7 @@ sub go
                 }
                 else
                 {
-                    foreach my $num (@$n)
+                    foreach my $num (@n)
                     {
                         if (vec($num, $i, 8) eq $digit)
                         {
@@ -153,7 +153,7 @@ sub go
         }
 
         # print "Depth $depth ; Count=@{[$count++]}\n";
-        go($depth+1, $n, $d);
+        go($depth+1, \@n, $d);
     }
 
     return;
