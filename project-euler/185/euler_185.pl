@@ -217,15 +217,19 @@ my @digits;
     @digits = map { $s} 0 .. $L;
 }
 
+my $init_n_sorted =
+[sort {
+    $_nC2[ vec($a, $TR, 16) ]
+    <=>
+    $_nC2[ vec($b, $TR, 16) ]
+    }
+    @init_n
+];
+
 go(
     0,
-    [sort {
-        $_nC2[ vec($a, $TR, 16) ]
-        <=>
-        $_nC2[ vec($b, $TR, 16) ]
-        }
-        @init_n
-    ],
+    # \@init_n,
+    $init_n_sorted,
     \@digits,
 );
 
