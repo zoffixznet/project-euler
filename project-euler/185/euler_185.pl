@@ -75,7 +75,7 @@ sub go
     {
         my %corr = (map { $_ => undef() } @$correct);
         my @n = @$_n;
-        my $d = [@$_d];
+        my @d = @$_d;
 
         foreach my $i (@set)
         {
@@ -85,7 +85,7 @@ sub go
                 # True digit
                 my ($td) = @_;
 
-                $d->[$i] = $_Ds[$td];
+                $d[$i] = $_Ds[$td];
 
                 foreach my $num (@n)
                 {
@@ -126,8 +126,8 @@ sub go
             }
             else
             {
-                vec($d->[$i], $digit, 1) = 0;
-                if (defined(my $k = $_Ds{$d->[$i]}))
+                vec($d[$i], $digit, 1) = 0;
+                if (defined(my $k = $_Ds{$d[$i]}))
                 {
                     if ($mark->($k))
                     {
@@ -155,7 +155,7 @@ sub go
         go(
             $depth+1,
             [nsort_by { $_nCr[ vec($_,$R,8) ][ vec($_,$T,8) ] } @n],
-            $d
+            \@d,
         );
     }
 
