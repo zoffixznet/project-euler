@@ -23,7 +23,7 @@ use Storable qw(dclone);
 
 use Algorithm::ChooseSubsets;
 
-my %is_d = (map { $_ => 1 } (0 .. 9));
+my %is_d = (map { $_ => undef() } (0 .. 9));
 
 my @_fact = (1,1);
 foreach my $n (2 .. $COUNT_DIGITS)
@@ -73,7 +73,7 @@ sub go
     SUBSETS:
     while (my $correct = $iter->next())
     {
-        my %corr = (map { $_ => 1 } @$correct);
+        my %corr = (map { $_ => undef() } @$correct);
         my @n = @$orig_n;
         my $d = dclone($_d);
 
@@ -85,7 +85,7 @@ sub go
                 # True digit
                 my ($td) = @_;
 
-                $d->[$i] = {$td => 1};
+                $d->[$i] = {$td => undef()};
 
                 foreach my $num (@n)
                 {
@@ -203,7 +203,7 @@ my @init_n = (map {
     split(/\n/, $string)
 );
 
-my @digits = (map { +{ map { $_ => 1 } 0 .. 9 } } 0 .. $COUNT_DIGITS - 1);
+my @digits = (map { +{ map { $_ => undef() } 0 .. 9 } } 0 .. $COUNT_DIGITS - 1);
 
 go(0, \@init_n, \@digits);
 
