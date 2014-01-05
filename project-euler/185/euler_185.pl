@@ -8,12 +8,10 @@ use bytes;
 
 my $COUNT_DIGITS = 16;
 my $L = $COUNT_DIGITS - 1;
-# Contents.
-my $CC = 0;
 # Correct/True
-my $TT = $COUNT_DIGITS;
+my $T = $COUNT_DIGITS;
 # Remaining.
-my $RR = $TT+1;
+my $R = $T+1;
 
 my $Y = 11;
 my $N = 12;
@@ -58,7 +56,7 @@ sub go
 
     my $depth = $self->depth;
 
-    my $orig_n = [nsort_by { $_nCr[ vec($_,$RR,8) ][ vec($_,$TT,8) ] } @{ $self->n() }];
+    my $orig_n = [nsort_by { $_nCr[ vec($_,$R,8) ][ vec($_,$T,8) ] } @{ $self->n() }];
 
     if (! @$orig_n)
     {
@@ -80,7 +78,7 @@ sub go
     my @set = (grep { exists($is_d{vec($v,$_,8)}) } 0 .. $L);
     my $iter = Algorithm::ChooseSubsets->new(
         set => \@set,
-        size => vec($first, $TT, 8),
+        size => vec($first, $T, 8),
     );
 
     my $orig_d = $self->digits;
@@ -116,13 +114,13 @@ sub go
                         vec($num, $i, 8) = ($is_right ? $Y : $N);
                         if ($is_right)
                         {
-                            if (vec($num, $TT, 8) == 0)
+                            if (vec($num, $T, 8) == 0)
                             {
                                 return 1;
                             }
-                            vec($num,$TT,8)--;
+                            vec($num,$T,8)--;
                         }
-                        if ((--vec($num,$RR,8)) < vec($num,$TT,8))
+                        if ((--vec($num,$R,8)) < vec($num,$T,8))
                         {
                             return 1;
                         }
@@ -157,7 +155,7 @@ sub go
                         if (vec($num, $i, 8) eq $digit)
                         {
                             vec($num, $i, 8) = $N;
-                            if ((--vec($num,$RR,8)) < vec($num,$TT,8))
+                            if ((--vec($num,$R,8)) < vec($num,$T,8))
                             {
                                 next SUBSETS;
                             }
@@ -211,8 +209,8 @@ my @init_n = (map {
         vec($row_b, $i, 8) = $v;
     }
     my ($count_correct) = $l =~ /;(\d)/ or die "Bar";
-    vec($row_b, $TT, 8) = $count_correct;
-    vec($row_b, $RR, 8) = $COUNT_DIGITS;
+    vec($row_b, $T, 8) = $count_correct;
+    vec($row_b, $R, 8) = $COUNT_DIGITS;
     $row_b
     }
     split(/\n/, $string)
