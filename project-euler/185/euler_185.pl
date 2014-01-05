@@ -16,8 +16,7 @@ my $R = $T+1;
 my $Y = 11;
 my $N = 12;
 
-use List::Util qw(sum);
-use List::MoreUtils qw(all any indexes);
+use List::MoreUtils qw(all);
 use List::UtilsBy qw(nsort_by);
 
 use Storable qw(dclone);
