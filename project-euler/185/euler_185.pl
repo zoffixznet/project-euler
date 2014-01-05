@@ -12,6 +12,7 @@ my $L = $COUNT_DIGITS - 1;
 my $T = $COUNT_DIGITS;
 # Remaining.
 my $R = $T+1;
+my $TR = ($T >> 1);
 
 my $Y = 11;
 my $N = 12;
@@ -29,13 +30,13 @@ foreach my $n (2 .. $COUNT_DIGITS)
     push @_fact, $_fact[-1] * $n;
 }
 
-my @_nCr;
+my @_nC2;
 
 foreach my $sum (0 .. $COUNT_DIGITS)
 {
     foreach my $x (0 .. $sum)
     {
-        $_nCr[$sum][$x] = ($_fact[$sum] / ($_fact[$x] * $_fact[$sum-$x]));
+        $_nC2[($x << 8) | $sum ] = ($_fact[$sum] / ($_fact[$x] * $_fact[$sum-$x]));
     }
 }
 
@@ -155,9 +156,9 @@ sub go
         go(
             $depth+1,
             [sort {
-                $_nCr[ vec($a,$R,8) ][ vec($a,$T,8) ]
+                $_nC2[ vec($a, $TR, 16) ]
                     <=>
-                $_nCr[ vec($b,$R,8) ][ vec($b,$T,8) ]
+                $_nC2[ vec($b, $TR, 16) ]
             } @n],
             \@d,
         );
@@ -219,7 +220,7 @@ my @digits;
 
 go(
     0,
-    [nsort_by { $_nCr[ vec($_,$R,8) ][ vec($_,$T,8) ] } @init_n],
+    [nsort_by { $_nC2[ vec($_, $TR, 16) ] } @init_n],
     \@digits,
 );
 
