@@ -1,4 +1,4 @@
-#!/usr/bin/perl 
+#!/usr/bin/perl
 
 use strict;
 use warnings;
@@ -21,9 +21,9 @@ sub find_cycle
     return $count - $states{"$r"};
 }
 
-my $pair = 
-    reduce { $a->[1] > $b->[1] ? $a : $b } 
-    map { [$_,find_cycle($_)] } 
+my $pair =
+    reduce { $a->[1] > $b->[1] ? $a : $b }
+    map { [$_,find_cycle($_)] }
     (2 .. 999)
     ;
 
