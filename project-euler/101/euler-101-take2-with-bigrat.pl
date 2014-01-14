@@ -105,10 +105,10 @@ sub eye
 
     return $package->new(
         {
-            rows => 
+            rows =>
             [
                 map
-                { 
+                {
                     my $r = $_;
                     Row->new(
                         {
@@ -154,7 +154,7 @@ sub _multiply_row_by
 sub _add_row_product_to_row
 {
     my ($self, $row_idx, $other_row, $multiplier) = @_;
-    
+
     foreach my $i (0 .. $self->size()-1)
     {
         $self->_set_elem(
@@ -201,7 +201,7 @@ sub inv
     foreach my $col_to_stair (0 .. $self->size()-1)
     {
         my $found_row_idx =
-            List::Util::first 
+            List::Util::first
             {
                 ! $self->_elem($_, $col_to_stair)->is_zero()
             }
@@ -222,7 +222,7 @@ sub inv
             {
                 $simultaneous->(
                     sub {
-                        $_->_multiply_row_by($col_to_stair, 1/$n);    
+                        $_->_multiply_row_by($col_to_stair, 1/$n);
                     }
                 );
             }
@@ -327,16 +327,16 @@ foreach my $idx (1 .. 10)
         {
             rows =>
             [
-                map { 
-                    my $base = $_; 
+                map {
+                    my $base = $_;
                     _row([
-                        map { 
-                            my $power = $_; 
-                            Math::BigRat->new($base) ** $power 
-                        } 
+                        map {
+                            my $power = $_;
+                            Math::BigRat->new($base) ** $power
+                        }
                         (0 .. $idx-1)
                     ]);
-                } 
+                }
                 (1 .. $idx)
             ],
         }
@@ -369,7 +369,7 @@ foreach my $idx (1 .. 10)
         {
             $bop += $coeffs[$exp] * ($x ** $exp);
         }
-        
+
         return $bop;
     };
 

@@ -86,7 +86,7 @@ while (my $prime = <$primes_fh>)
     for my $n (1 .. $prime*3)
     {
         my $x = Math::BigInt->new($n*$n*($n+$prime));
-        
+
         if ($x->copy->broot(3)->bpow(3) == $x)
         {
             $found_count++;

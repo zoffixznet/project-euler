@@ -22,8 +22,8 @@ sub peek_exp
 {
     my $i = shift;
 
-    my $p_exp = ($prime_exponents[$i] ||= 
-        do { 
+    my $p_exp = ($prime_exponents[$i] ||=
+        do {
             my $p = <$primes_fh>;
             chomp($p);
             { e => $p, b => 2,};
@@ -62,7 +62,7 @@ sub new {
     # set $self->{key} = $value;
     my ($e_idx) = @_;
 
-    my $p_exp = 
+    my $p_exp =
 
     $self->{e} = $e_idx;
     $self->{n} = Exponents::get_exp($e_idx);
@@ -75,7 +75,7 @@ sub cmp {
     my $other = shift;
 
     return (
-            (($self->{n} <=> $other->{n})) 
+            (($self->{n} <=> $other->{n}))
                 ||
             (($self->{e} <=> $other->{e}))
     );
@@ -123,7 +123,7 @@ while (1)
 
     while (Exponents::peek_exp($e_idx) <= $next_exp_i)
     {
-        $heap->add(MyHeapElem->new($e_idx++));    
+        $heap->add(MyHeapElem->new($e_idx++));
     }
 
     if (length($i) == 1)

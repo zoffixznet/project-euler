@@ -25,7 +25,7 @@
                    (setq num (/ num (expt factor e))))))))
 
 (defun num-divisors (num)
-  (apply #'* 
+  (apply #'*
           (mapcar #'(lambda (pair) (1+ (cdr pair))) (factorize num))))
 
 (defun myfind ()

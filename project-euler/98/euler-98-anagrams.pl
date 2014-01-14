@@ -83,7 +83,7 @@ my @first_three_digits_list =
 
 my $max_n = 0;
 
-foreach my $list (grep { (@{$_} >= 2) && (length($_->[0]) >= 3) } 
+foreach my $list (grep { (@{$_} >= 2) && (length($_->[0]) >= 3) }
     values(%by_code))
 {
     print "Doing " . join(",", @$list) . "\n";
@@ -120,7 +120,7 @@ foreach my $list (grep { (@{$_} >= 2) && (length($_->[0]) >= 3) }
                     grep { defined($_) }
                     map { $assignment[$_->[0][$_->[1]] }
                     } @reverse[
-                        @index_keys[0][0 .. $#$first_three ], 
+                        @index_keys[0][0 .. $#$first_three ],
                         @index_keys[1][0 .. $#anagram_first_three ],
                     ]
             )
@@ -139,7 +139,7 @@ foreach my $list (grep { (@{$_} >= 2) && (length($_->[0]) >= 3) }
                 {
                     my $v = $assignment[$word_idx][$letter_idx];
                     my $k = $index_keys[$word_idx][$letter_idx];
-                    
+
                     if (!exists($m{$k}))
                     {
                         $m{$k} = $v;
@@ -157,7 +157,7 @@ foreach my $list (grep { (@{$_} >= 2) && (length($_->[0]) >= 3) }
             }
 
             my $iterate;
-            
+
             $iterate = sub {
                 my $map = shift;
 
@@ -203,7 +203,7 @@ foreach my $list (grep { (@{$_} >= 2) && (length($_->[0]) >= 3) }
                     return;
                 }
             };
-            
+
             $iterate->(\%m);
         }
     }

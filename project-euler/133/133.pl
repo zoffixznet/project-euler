@@ -68,7 +68,7 @@ while (my $line = <$primes_fh>)
     print "Checking $n\n";
     if (! is_div($n))
     {
-        $sum += $n;    
+        $sum += $n;
     }
 }
 

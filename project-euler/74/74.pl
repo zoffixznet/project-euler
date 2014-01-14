@@ -41,7 +41,7 @@ sub find_for_n
                 $pos+1,
                 { %{$c}, $n_str => $pos},
             )};
-       
+
         if (!exists($cache{$n_str}))
         {
             $cache{$n_str} = $ret+1;

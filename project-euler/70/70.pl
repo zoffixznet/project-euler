@@ -32,7 +32,7 @@ foreach my $d (2 .. $l)
     {
         vec($counts, $d*$m, 32) -= $totient;
     }
-    
+
     if (token($totient) eq token($d))
     {
         my $to_check = $d/$totient;
@@ -49,7 +49,7 @@ foreach my $d ($l+1 .. $size)
 {
     print "d=$d\n" if ($d % 1_000 == 0);
     my $totient = vec($counts, $d, 32);
- 
+
     if (token($totient) eq token($d))
     {
         my $to_check = $d/$totient;
@@ -59,7 +59,7 @@ foreach my $d ($l+1 .. $size)
             $min_expr = $to_check;
             print "Min[n] = $min_n ; Min[expr] = $min_expr\n";
         }
-    }    
+    }
 }
 
 print "Min[n] = $min_n ; Min[expr] = $min_expr\n";

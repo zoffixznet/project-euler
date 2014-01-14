@@ -1,4 +1,4 @@
-#!/usr/bin/perl 
+#!/usr/bin/perl
 
 use strict;
 use warnings;
@@ -24,6 +24,6 @@ for my $bb (2 .. 500)
     }
 }
 
-print map { "$_ => $p_counts{$_}\n" } 
+print map { "$_ => $p_counts{$_}\n" }
     sort { $p_counts{$a} <=> $p_counts{$b} } keys(%p_counts)
     ;

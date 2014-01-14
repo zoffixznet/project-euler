@@ -1,4 +1,4 @@
-#!/usr/bin/perl 
+#!/usr/bin/perl
 
 use strict;
 use warnings;
@@ -47,7 +47,7 @@ Find the 2000th tile in this sequence.
 
 0 ; 6 ; 12 ; 18 ;  - keeps increasing by +6.
 
-So the formula is 1 + 
+So the formula is 1 +
 
 =head2 Middle cells cannot be PD(n) = 3
 
@@ -105,10 +105,10 @@ sub get_cell_n
     my $d = int(sqrt($y*$y+$x*$x));
     # $y is the 1,2,8,19 axis
     # $x is the 1,6,16,32... axis.
-    
+
     if (($x > 0) && ($y > $x))
     {
-        
+
     }
 }
 
@@ -198,8 +198,8 @@ while ($count < 2_000)
 
         if (0)
         {
-            print "$n [Ring=$ring,Side=$side,Cell=$cell] ; Neighbours = ", 
-            join(",", sort { $a <=> $b } map { abs($n-$_) } @vicinity), 
+            print "$n [Ring=$ring,Side=$side,Cell=$cell] ; Neighbours = ",
+            join(",", sort { $a <=> $b } map { abs($n-$_) } @vicinity),
             "\n";
         }
         if (scalar(grep { is_prime(abs($n-$_)) } @vicinity) == 3)
@@ -216,7 +216,7 @@ continue
     $ring++;
     ( $prev_ring_len, $prev_ring_start, $ring_len, $ring_start ) =
     ($ring_len, $ring_start, $next_ring_len, $next_ring_start);
-    
+
     $next_ring_start += $ring_len;
     $next_ring_len += 6;
 }

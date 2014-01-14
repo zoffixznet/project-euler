@@ -12,5 +12,3 @@
 (defun form-perm (remaining bit-vec)
   (
   (+ 5 6))
-    
-    

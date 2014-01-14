@@ -59,11 +59,11 @@ for my $s (3 .. 1_000_000_000)
             for my $p (0 .. $q-1)
             {
                 local $n = $n * $primes[$p];
-                
+
                 for my $check ($n-3 .. $n)
                 {
-                    if (all 
-                        { num_distinct_factors($_, 2) == 4} 
+                    if (all
+                        { num_distinct_factors($_, 2) == 4}
                         ($check .. $check+3)
                     )
                     {

@@ -3,7 +3,7 @@ require 'rational'
 class Integer
     def digit_sum
         return self.to_s.split(//s).reduce(0) {|a,b| a + b.to_i}
-    end   
+    end
     def num_digits
         return self.to_s.length
     end

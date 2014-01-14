@@ -30,8 +30,8 @@ sub factorize
 # n = a promise for the number.
 my @factors =
 (
-    +{ l => 2, n => sub { return 11; }}, 
-    (map { 
+    +{ l => 2, n => sub { return 11; }},
+    (map {
         my $e = $_;
         +{
             l => ((2 ** $e)+1),

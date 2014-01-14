@@ -46,7 +46,7 @@ foreach my $d ($l+1 .. $size)
             $sum++;
         }
     }
-    
+
 }
 
 print "tot = ", $sum-2, "\n";

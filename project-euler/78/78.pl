@@ -25,7 +25,7 @@ while (1)
     foreach my $max (1 .. $total_sum)
     {
         my $remains = $total_sum - $max;
-        my $count = 
+        my $count =
             (($remains == 0)
                 ? 1 :
                 sum(@{$sums[$remains]}[0 .. min($max, $remains)])

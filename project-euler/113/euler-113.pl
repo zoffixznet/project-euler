@@ -80,16 +80,16 @@ sub count_decreasing
     my $total_sum = 0;
 
     # Count the decreasing numbers
-    # 
+    #
     # Plan:
     # -----
-    # 
+    #
     # A decreasing number is 00000000000000000000$D[$N]...$D[2]$D[1]$D[0]
     # where for every $I $D[$I+1] > $D[$I].
-    # 
+    #
     # For N = 1 the decreasing numbers are 0-9.
     # For N = 2 the decreasing numbers are 0-9,10,11,20,21,22,30,31,32,33,...
-    # For N = 3 the decreasing numbers are 
+    # For N = 3 the decreasing numbers are
     my @counts;
 
     {
@@ -117,7 +117,7 @@ sub count_decreasing
         push @counts, (\@d_counts);
 
         # print "For $digit_idx : ", join(",", reverse @d_counts ), "\n";
-    
+
         foreach my $d_c (@d_counts[1 .. 9])
         {
             $total_sum += $d_c;
@@ -135,7 +135,7 @@ sub calc_num_non_bouncy
 
     my $total_sum = count_increasing($NUM_DIGITS) + count_decreasing($NUM_DIGITS);
 
-    # Remove one count of the numbers that are both increasing and 
+    # Remove one count of the numbers that are both increasing and
     # decreasing i.e: numbers with all digits the same.
     foreach my $num_digits (0 .. $max_digit)
     {

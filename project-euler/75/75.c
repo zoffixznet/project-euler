@@ -12,10 +12,10 @@ int main(int argc, char * argv[])
 
     memset(verdicts, '\0', sizeof(verdicts));
 
-    for (int hypotenuse_length=5 
+    for (int hypotenuse_length=5
             ;
          hypotenuse_length < hypotenuse_lim
-            ; 
+            ;
          hypotenuse_length++
          )
     {
@@ -37,7 +37,7 @@ int main(int argc, char * argv[])
             side1_sq *= side1_sq;
 
             double side2_len = sqrt(hypot_sq - side1_sq);
-            
+
             int side2_len_i = (int)side2_len;
 
             if (side2_len == side2_len_i)

@@ -42,7 +42,7 @@ sub solve
         {
             foreach my $col (0 .. $r)
             {
-                $min = min($min, 
+                $min = min($min,
                     ($sums[$tri_idx] += $row[$col+$row_idx-$r+1] - $row[$col])
                 );
                 $tri_idx++;

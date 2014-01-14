@@ -14,7 +14,7 @@ sub find_numerator
     {
         return;
     }
-    
+
     my $n = int (($d * 3) / 7);
 
     if (Math::BigInt::bgcd($n, $d) != 1)

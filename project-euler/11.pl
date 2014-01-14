@@ -1,4 +1,4 @@
-#!/usr/bin/perl 
+#!/usr/bin/perl
 
 use strict;
 use warnings;
@@ -61,9 +61,9 @@ foreach my $x (0 .. 19)
 {
     foreach my $y (0 .. 19)
     {
-        $max = 
+        $max =
             max(
-                $max, 
+                $max,
                 map {
                     p_v($x,$y,@$_)
                 } ([0,1],[1,0],[1,1],[1,-1])

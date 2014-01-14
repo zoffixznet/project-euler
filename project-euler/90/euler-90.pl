@@ -31,12 +31,12 @@ sub get_regex
 sub recurse_die1
 {
     my ($indices) = @_;
-    
+
     if (@$indices == 6)
     {
         return recurse_die2(get_regex(1, $indices), [0]);
     }
-    
+
     foreach my $next_idx ($indices->[-1]+1 .. ($loop_limit + @$indices))
     {
         recurse_die1([@$indices, $next_idx]);
@@ -52,7 +52,7 @@ sub recurse_die2
     if (@$indices == 6)
     {
         my $reg_comp2 = get_regex(2, $indices);
-        
+
         my $re = qr/\A(?:$reg_comp1$reg_comp2)|(?:$reg_comp2$reg_comp1)\z/;
 
         if (List::MoreUtils::all { /$re/ } qw(01 04 09 16 25 36 49 64 81))
@@ -61,7 +61,7 @@ sub recurse_die2
         }
         return;
     }
-        
+
     foreach my $next_idx ($indices->[-1]+1 .. ($loop_limit + @$indices))
     {
         recurse_die2($reg_comp1, [@$indices, $next_idx]);

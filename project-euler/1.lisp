@@ -10,6 +10,3 @@
 
 (defun display-result ()
   (format t "Total is ~A~%" (sum1 (1- 1000))))
-          
-
-

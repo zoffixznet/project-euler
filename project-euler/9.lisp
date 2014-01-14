@@ -16,13 +16,13 @@
 (defun mycond (a b)
   (= (+ (mysq a) (mysq b))
      (mysq (- 1000 a b))))
-  
+
 (iter a-iter
       (for a from 1 to 500)
       (iter b-iter
             (for b from (+ a 1) to 500)
             (until (mycond a b))
-            (finally (if (mycond a b) 
-                       (format t 
+            (finally (if (mycond a b)
+                       (format t
                                "a = ~A ; b = ~A ; c = ~A~%"
                                a b (- 1000 a b))))))

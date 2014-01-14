@@ -34,7 +34,7 @@ sub count
         {
             if ($delta <= @counts)
             {
-                $sum += $counts[-$delta]; 
+                $sum += $counts[-$delta];
             }
         }
         push @counts, $sum;

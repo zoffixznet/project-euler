@@ -24,8 +24,9 @@ How many values of n less than fifty million have exactly one solution?
 
 =head1 ANALYSIS
 
-(z+2d)^2 - (z+d)^2 - z^2 = z^2+4dz+4d^2 - z^2 - 2dz - d^2 - z^2 = 
+(z+2d)^2 - (z+d)^2 - z^2 = z^2+4dz+4d^2 - z^2 - 2dz - d^2 - z^2 =
 -z^2 + 2dz +3d^2 = (-z + 3d)(z + d)
+
 =cut
 
 my $solution_counts_vec = '';

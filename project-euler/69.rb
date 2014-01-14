@@ -10,7 +10,7 @@ def distinct_factors_helper(n, start_from)
             start_from += 1
         end
         while d % start_from == 0 do
-            d /= start_from 
+            d /= start_from
         end
         to_add = [start_from]
         Cache[n] = to_add + distinct_factors_helper(d, start_from+1)
@@ -22,12 +22,12 @@ def distinct_factors(n)
     return distinct_factors_helper(n,2)
 end
 
-class Array  
-    # Returns the "power set" for this Array. This means that an array with all  
-    # subsets of the array's elements will be returned.  
-    def power_set  
-        # the power set line is stolen from http://johncarrino.net/blog/2006/08/11/powerset-in-ruby/  
-        inject([[]]) { |c,y| r=[] ; c.each{ |i| r<<i ; r<<i+[y] } ; r }  
+class Array
+    # Returns the "power set" for this Array. This means that an array with all
+    # subsets of the array's elements will be returned.
+    def power_set
+        # the power set line is stolen from http://johncarrino.net/blog/2006/08/11/powerset-in-ruby/
+        inject([[]]) { |c,y| r=[] ; c.each{ |i| r<<i ; r<<i+[y] } ; r }
     end
 
     def product
@@ -35,7 +35,7 @@ class Array
     end
 
     def coprimes_factor
-        return power_set.inject(0) { 
+        return power_set.inject(0) {
             |sum, subset| sum + (1.to_f / subset.product) * \
                         (-1) ** subset.length
         }

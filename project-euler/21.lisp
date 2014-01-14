@@ -25,7 +25,7 @@
                    (setq num (/ num (expt factor e))))))))
 
 (defun num-divisors (num)
-  (reduce #'* 
+  (reduce #'*
           (mapcar #'(lambda (pair) (1+ (cdr pair))) (factorize num))
           :initial-value 1))
 

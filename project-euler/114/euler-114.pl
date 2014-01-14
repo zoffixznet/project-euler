@@ -36,7 +36,7 @@ for my $len (3 .. 50)
     }
     # For $block_len == $len
     $with_block++;
-    push @counts, +{ 
+    push @counts, +{
         start_with_block => $with_block,
         start_with_square => $with_square
     };

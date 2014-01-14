@@ -22,7 +22,7 @@ for my $base (3 .. 100)
         {
             if (!exists(
                     $e{($mods[$m]+$mods[$d])%$base}
-                ) || 
+                ) ||
                 !exists(
                     $e{($mods[$m]*2+$mods[$d])%$base}
                 )

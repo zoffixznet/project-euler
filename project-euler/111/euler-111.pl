@@ -22,7 +22,7 @@ sub is_prime2
 
 =begin verification
 
-This function throws an exception due to a bug in bsg-games' primes. 
+This function throws an exception due to a bug in bsg-games' primes.
 
 sub is_prime
 {
@@ -33,7 +33,7 @@ sub is_prime
 
     if ($v1 xor $v2)
     {
-        die "Results don't match for $n!";    
+        die "Results don't match for $n!";
     }
 
     return $v1;

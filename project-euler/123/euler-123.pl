@@ -22,7 +22,7 @@ Find the least value of n for which the remainder first exceeds 10^(10).
 Since a^2, a^3 , a^4 etc. are evenly divisable by a^2 we get that
 the modulo of the sum is:
 
-1^n + (-1)^n + n * a + (-1)^(n-1) * n * a = 
+1^n + (-1)^n + n * a + (-1)^(n-1) * n * a =
 
 If n mod 2 = 0 we get:
 

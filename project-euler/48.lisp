@@ -12,9 +12,9 @@
 ; We need to find a ** N mod 10**10
 ; step     digit-at-place-(N-&-0x1)    Digit-Product Total-Product
 ; ----------------------------------------------------------------
-; 
+;
 (defun last-ten-digits (num)
-  (iter (for run-num initially num 
+  (iter (for run-num initially num
              then (ash run-num -1))
         (until (= run-num 0))
         (for digit-prod initially num

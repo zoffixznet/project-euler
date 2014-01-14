@@ -61,7 +61,7 @@ sub find_blue_discs_num
     while ($top >= $bottom)
     {
         my $mid = (($bottom + $top) >> 1);
-        
+
         my $product = $mid * ($mid-1);
         if ($product == $wanted_product)
         {

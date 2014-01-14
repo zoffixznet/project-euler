@@ -1,7 +1,7 @@
 #!/usr/bin/ruby
 
 def is_prime(n)
-    if n <= 1 then 
+    if n <= 1 then
         return false
     end
 

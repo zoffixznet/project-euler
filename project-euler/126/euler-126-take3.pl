@@ -18,7 +18,7 @@ my @C;
 
 # Used to be:
 # <<<
-# Matches $X,$Y,$Z (where $X >= $Y >= $Z) to the cuboid array and maximal 
+# Matches $X,$Y,$Z (where $X >= $Y >= $Z) to the cuboid array and maximal
 # reached layer.
 # >>>
 # Now we no longer need the $X,$Y,$Z.
@@ -58,7 +58,7 @@ while (1)
         {
             my $x = $max_layer_size/$z/$y;
 
-            if ($x * $y * $z != $max_layer_size 
+            if ($x * $y * $z != $max_layer_size
                     or
                 $x < $y)
             {
@@ -67,13 +67,13 @@ while (1)
 
             # print "$x,$y,$z\n";
             # my $initial_cuboid =
-            # [ map { 
+            # [ map {
             # [ map { [(1)x$z] } (1 .. $y) ]
-            # } 
+            # }
             # (1 .. $x)
             # ];
             #
-            my $new_layer_count = 
+            my $new_layer_count =
                 ($x*($y+$z)+$z*$y);
 
             # We increase the depth's delta by 8 each time.

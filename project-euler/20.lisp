@@ -5,7 +5,7 @@
 
 (defun digits-sum (num)
   (labels
-    ((helper (n sum) 
+    ((helper (n sum)
         (if (zerop n)
           sum
           (helper (floor (/ n 10)) (+ sum (mod n 10))))))
@@ -16,7 +16,7 @@
     ((helper (n prod)
              (if (= n 0) prod (helper (1- n) (* prod n)))))
     (helper num 1)))
- 
+
 (defun myfind ()
   (digits-sum (factorial 100)))
 

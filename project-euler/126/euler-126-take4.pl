@@ -13,7 +13,7 @@ my @C;
 
 # Used to be:
 # <<<
-# Matches $X,$Y,$Z (where $X >= $Y >= $Z) to the cuboid array and maximal 
+# Matches $X,$Y,$Z (where $X >= $Y >= $Z) to the cuboid array and maximal
 # reached layer.
 # >>>
 # Now we no longer need the $X,$Y,$Z.
@@ -37,7 +37,7 @@ while (1)
         X_LOOP:
         for my $x (1 .. $y)
         {
-            my $new_layer_count = 
+            my $new_layer_count =
                 ($x*($y+$z)+$z*$y);
 
             my $delta = ((($x+$y+$z)<<1)-4);

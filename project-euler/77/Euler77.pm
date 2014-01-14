@@ -13,7 +13,7 @@ sub get_combinations
     my ($prefix, $start_from_max_prime_idx, $sum, $out_combinations_ref) = @_;
 
     my $combinations = [];
-    
+
     if ($sum == 0)
     {
         push @$combinations, [];
@@ -35,9 +35,9 @@ sub get_combinations
             }
 
             get_combinations(
-                [$max_prime], 
-                $max_prime_idx, 
-                $sum-$max_prime, 
+                [$max_prime],
+                $max_prime_idx,
+                $sum-$max_prime,
                 $combinations
             );
         }

@@ -9,7 +9,7 @@ use List::Util qw(min);
 
 =head1 DESCRIPTION
 
-The points P (x_(1), y_(1)) and Q (x_(2), y_(2)) are plotted at integer 
+The points P (x_(1), y_(1)) and Q (x_(2), y_(2)) are plotted at integer
 co-ordinates and are joined to the origin, O(0,0), to form ΔOPQ.
 
 There are exactly fourteen triangles containing a right angle that can be formed when each co-ordinate lies between 0 and 2 inclusive; that is,

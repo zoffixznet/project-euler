@@ -44,8 +44,8 @@ d <= 27
 
 For the step p ** e we get an extra (p-1) * p ** (e-1)
 
-For the step p1 ** e1 * p2 ** e2 we get p1 ** e1 
+For the step p1 ** e1 * p2 ** e2 we get p1 ** e1
 
 -----------------------
 
-d >= 8 = 1 + 2 + 3 + 4 + 5 + 6 + 7 - fl(8/2) - 2 * fl(8 / 3) 
+d >= 8 = 1 + 2 + 3 + 4 + 5 + 6 + 7 - fl(8/2) - 2 * fl(8 / 3)

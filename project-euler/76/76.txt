@@ -11,4 +11,4 @@
 4-max-2 == 2+1+1 , 2+2
 
 Let's suppose We want to calculate S[$N]-max-$M - we can substract
-$M from $N and get $N - $M. Then we need to find : 
+$M from $N and get $N - $M. Then we need to find :

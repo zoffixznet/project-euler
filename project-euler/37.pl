@@ -1,4 +1,4 @@
-#!/usr/bin/perl 
+#!/usr/bin/perl
 
 use strict;
 use warnings;
@@ -28,7 +28,7 @@ sub is_prime
 
 my @trunc_primes = ();
 
-N_LOOP: 
+N_LOOP:
 for(my $n = 11; @trunc_primes < 11 ; $n += 2)
 {
     foreach my $i (1 .. length($n))

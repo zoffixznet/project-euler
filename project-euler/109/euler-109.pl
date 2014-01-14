@@ -34,9 +34,9 @@ When a player is able to finish on their current score it is called a
 
 There are exactly eleven distinct ways to checkout on a score of 6:
 
-D3 	
-  	
- 
+D3
+
+
 D1 	D2 	 S2 	D2 	 D2 	D1 	 S4 	D1 	 S1 	S1 	D2 S1 	T1 	D1 S1 	S3
 D1 D1 	D1 	D1 D1 	S2 	D1 S2 	S2 	D1
 
@@ -48,7 +48,7 @@ example, D3 is the same as 0 D3 and 0 0 D3.
 
 Incredibly there are 42336 distinct ways of checking out in total.
 
-How many distinct ways can a player checkout with a score less than 100?  
+How many distinct ways can a player checkout with a score less than 100?
 
 =cut
 

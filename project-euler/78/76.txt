@@ -10,4 +10,4 @@
 
 4-max-2 == 2+1+1 , 2+2
 
-Let's suppose We want to calculat S[$N]-max-$M - we can 
+Let's suppose We want to calculat S[$N]-max-$M - we can

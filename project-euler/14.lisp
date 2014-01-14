@@ -10,6 +10,6 @@
 
 (defun myfind ()
   (iter (for i from 2 to 999999)
-        (reducing (cons i (calc-seq-rank i)) 
+        (reducing (cons i (calc-seq-rank i))
                   by #'(lambda (m n) (if (> (cdr m) (cdr n)) m n))
                   initial-value (cons 1 0))))

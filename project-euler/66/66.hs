@@ -3,23 +3,23 @@ intSqrt n
     | n < 0 = error "intSqrt: negative n"
     | otherwise = f n
     where
-        f x | y < x = f y 
+        f x | y < x = f y
             | otherwise = x
             where y = (x + (n `quot` x)) `quot` 2
 
-problem_66 = 
-    snd$maximum [ (x,d) | 
+problem_66 =
+    snd$maximum [ (x,d) |
     d <- [1..1000],
     let b = intSqrt d,
     b*b /= d, -- d can't be a perfect square
-    let (x,_) = pell d b b 
+    let (x,_) = pell d b b
     ]
- 
+
 pell d wd b = piter d wd b 0 1 0 1 1 0
-piter d wd b i c l k m n 
+piter d wd b i c l k m n
     | cn == 1 = (x, y)
     | otherwise = piter d wd bn (i+1) cn k u n v
-    where 
+    where
     yb = (wd+b) `div` c
     bn = yb*c-b
     cn = (d-(bn*bn)) `div` c

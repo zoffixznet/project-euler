@@ -13,8 +13,8 @@
   (+ c (* n (+ b (* n a)))))
 
 (defun quadratic-solve (P a b c-mul)
-  (let ((n (floor (/ (+ (- b) 
-                      (sqrt (- (* b b) (* 4 a c-mul P)))) 
+  (let ((n (floor (/ (+ (- b)
+                      (sqrt (- (* b b) (* 4 a c-mul P))))
                    (* 2 a)))))
     (or (= (quadratic-value n a b (* P c-mul)) 0)
         (= (quadratic-value (1+ n) a b (* P c-mul)) 0))))

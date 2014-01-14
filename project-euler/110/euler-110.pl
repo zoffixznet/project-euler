@@ -151,7 +151,7 @@ while (best_n_improved())
         {
             foreach my $idx (
                 0
-                .. 
+                ..
                 ((@$factors == $num_primes)
                     ? ($#$factors)
                     : ($#$factors+1)
@@ -160,14 +160,14 @@ while (best_n_improved())
             {
                 my @new = @$factors;
                 $new[$idx]++;
-                my $new_n = 
-                reduce { $a * $b } 1, 
-                map { Math::GMP->new(vec($primes_list, $_, 32)) ** $new[$_] } (0 .. $#new) 
+                my $new_n =
+                reduce { $a * $b } 1,
+                map { Math::GMP->new(vec($primes_list, $_, 32)) ** $new[$_] } (0 .. $#new)
                 ;
                 my $new_rank  = calc_rank(\@new);
                 if (! any { $_->{n} <= $new_n && $_->{rank} >= $new_rank } @new_best)
                 {
-                    push @new_best, 
+                    push @new_best,
                         {n => $new_n, factors => \@new, rank => $new_rank }
                     ;
                 }

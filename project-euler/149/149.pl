@@ -123,7 +123,7 @@ sub _max
 sub add
 {
     my ($self, $n) = @_;
- 
+
     $self->{_ending_here} = _max($self->{_ending_here} + $n, 0);
     $self->{_so_far} = _max($self->{_so_far}, $self->{_ending_here});
 

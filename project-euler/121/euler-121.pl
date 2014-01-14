@@ -37,9 +37,9 @@ foreach my $turn_idx (1 .. $num_turns)
 
     push @B_nums_probs, (0);
 
-    my @new_B_probs = map { 
-        my $i = $_; 
-        $B_nums_probs[$i] * (1-$this_B_prob) + 
+    my @new_B_probs = map {
+        my $i = $_;
+        $B_nums_probs[$i] * (1-$this_B_prob) +
             (($i == 0) ? 0 : ($B_nums_probs[$i-1] * $this_B_prob))
         } (0 .. $turn_idx);
 

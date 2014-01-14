@@ -49,7 +49,7 @@ NOTE: This problem is related to problems 105 and 106.
 
 * * a1+a2+a3+a4 > a5+a6+a7
 
-* 20, 20+11, 20+18, 20+19, 20+20,  20+22, 20+25 = 
+* 20, 20+11, 20+18, 20+19, 20+20,  20+22, 20+25 =
 = 20, 31, 38, 39, 40, 42, 45 is a special sum set.
 
 =cut
@@ -59,7 +59,7 @@ sub is_special_sum_set
     my $A = shift;
 
     my $recurse;
-    
+
     $recurse = sub {
         my ($i, $B_sum, $B_count, $C_sum, $C_count) = @_;
 
@@ -70,7 +70,7 @@ sub is_special_sum_set
                     ||
             (
                 ($B_sum != $C_sum)
-                    && 
+                    &&
                 (($B_count > $C_count) ? ($B_sum > $C_sum) : 1)
                     &&
                 (($C_count > $B_count) ? ($C_sum > $B_sum) : 1)
@@ -118,7 +118,7 @@ sub check_A
     {
         return;
     }
-    
+
     if (@$A_so_far == 7)
     {
         print "@$A_so_far\n";

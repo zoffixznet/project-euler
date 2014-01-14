@@ -1,4 +1,4 @@
-#!/usr/bin/perl 
+#!/usr/bin/perl
 
 use strict;
 use warnings;
@@ -27,7 +27,7 @@ while ($perm)
 {
     my $f = factorial($place);
     my $p = int ($perm / $f);
-    
+
     push @result, splice(@digits,$p,1);
 
     $perm %= $f;

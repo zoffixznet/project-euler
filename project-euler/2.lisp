@@ -13,6 +13,6 @@
 
 (defun display-result ()
   (format t "Total is ~A~%" (sum1 1e6)))
-          
+
 
 

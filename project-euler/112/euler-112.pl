@@ -34,7 +34,7 @@ for (my $n = 1; ; $n++)
 =end foo
 
 =cut
-    
+
     if ($n % 100_000 == 0)
     {
         print "$n: @counts\n"

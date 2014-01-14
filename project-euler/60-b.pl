@@ -84,13 +84,13 @@ for my $i (1 .. 10_000)
     }
 
     my $new_p = vec($primes_list, $i, 32);
-    
+
     for my $order (reverse(2 .. ($num_to_find-1)))
     {
         foreach my $set (keys(%{$sets[$order]}))
         {
             my @p = split(/,/, $set);
-            if (all { 
+            if (all {
                 (!vec($primes_bitmask, $new_p.$_, 1))
                     &&
                 (!vec($primes_bitmask, $_.$new_p, 1))
@@ -102,11 +102,11 @@ for my $i (1 .. 10_000)
             }
         }
     }
-    
+
     if (keys(%$objective))
     {
         print  map { "$_ => $objective->{$_}\n" }
-              sort { $objective->{$a} <=> $objective->{$b} } 
+              sort { $objective->{$a} <=> $objective->{$b} }
               keys(%$objective)
               ;
     }

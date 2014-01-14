@@ -15,7 +15,7 @@ sub is_special_sum_set
     my $A = shift;
 
     my $recurse;
-    
+
     $recurse = sub {
         my ($i, $B_sum, $B_count, $C_sum, $C_count) = @_;
 
@@ -26,7 +26,7 @@ sub is_special_sum_set
                     ||
             (
                 ($B_sum != $C_sum)
-                    && 
+                    &&
                 (($B_count > $C_count) ? ($B_sum > $C_sum) : 1)
                     &&
                 (($C_count > $B_count) ? ($C_sum > $B_sum) : 1)

@@ -81,7 +81,7 @@ for my $C (2 .. $below_limit)
 
             if (gcd($B, $A) == 1)
             {
-                if ( # gcd($C, $A) == 1 and gcd($C, $B) == 1 and 
+                if ( # gcd($C, $A) == 1 and gcd($C, $B) == 1 and
                     ($rad_A*$rad_cache[$B]) < $div)
                 {
                     print "Found $C\n";

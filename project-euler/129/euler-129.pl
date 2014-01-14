@@ -19,8 +19,8 @@ Find the least value of n for which A(n) first exceeds one-million.
 =head1 ANALYSIS
 
 A(n) < n because otherwise for R(1) .. R(n-1) there will be two identical
-non-zero modulos. Let's say they are 'a' and 'b' where b > a, so 
-R(b) % n = R(a) % n. In that case (R(b)-R(a)) % n = 0, but then 
+non-zero modulos. Let's say they are 'a' and 'b' where b > a, so
+R(b) % n = R(a) % n. In that case (R(b)-R(a)) % n = 0, but then
 (R(b-a) * 10^R(a)) % n = 0, and since the modulo of a power of 10 with n
 cannot be 0 (because GCD(n, 10) = 1), then R(b-a) % n = 0, which demonstrates
 that A(n) < n (reduction ad absurdum.).

@@ -73,7 +73,7 @@ for my $major_side (4 .. $major_side_limit)
             # by 2.
             # See 75-analysis.txt
             my $sum = (($major_side + $minor_side + $hypot) >> 1);
-            
+
             if ($sum > $half_limit)
             {
                 last MINOR_SIDE;

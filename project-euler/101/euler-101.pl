@@ -54,13 +54,13 @@ sub find_coeff
     my ($a_s) = @_;
 
     my $coeffs = Math::MatrixReal->new_from_rows(
-        [ map { my $x = $_; [map { $x ** $_ } (0 .. $#$a_s) ] } 
+        [ map { my $x = $_; [map { $x ** $_ } (0 .. $#$a_s) ] }
             (1 .. scalar(@$a_s))
         ]
     );
-    
+
     $coeffs->transpose($coeffs);
-    
+
     my $a_mat = Math::MatrixReal->new_from_rows([map { [$_] } @$a_s]);
 
     return $coeffs->inverse() * $a_mat;
@@ -70,9 +70,9 @@ sub get_bop
 {
     my ($a_s) = @_;
 
-    return 
+    return
     (
-        Math::MatrixReal->new_from_rows([[map { @$a_s ** $_ } 1 .. scalar(@$a_s) ]]) 
+        Math::MatrixReal->new_from_rows([[map { @$a_s ** $_ } 1 .. scalar(@$a_s) ]])
         * find_coeff($a_s)
     )->element(1,1);
 }

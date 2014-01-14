@@ -35,9 +35,9 @@ for my $hypotenuse_length (5 .. $hypotenuse_lim)
 {
     print "$hypotenuse_length\n" if (not $hypotenuse_length % 1_000);
     my $hypot_sq = $hypotenuse_length ** 2;
-    
+
     my $side1_lim = int($hypotenuse_length / 2);
-    
+
     for my $side1_len (1 .. $side1_lim)
     {
         my $side2_len = sqrt($hypot_sq - ($side1_len ** 2));

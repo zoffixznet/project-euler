@@ -9,7 +9,7 @@ use List::MoreUtils qw(any all);
 
 my @C;
 
-# Matches $X,$Y,$Z (where $X >= $Y >= $Z) to the cuboid array and maximal 
+# Matches $X,$Y,$Z (where $X >= $Y >= $Z) to the cuboid array and maximal
 # reached layer.
 my %cuboids;
 
@@ -28,7 +28,7 @@ sub add_layer
     my @new_dims = (map { $_ + 2 } @dims);
 
     my $new_array =
-        [ map { 
+        [ map {
             [
             map
             { [(0)x($new_dims[2])] }
@@ -99,7 +99,7 @@ while (1)
         {
             my $x = $max_layer_size/$z/$y;
 
-            if ($x * $y * $z != $max_layer_size 
+            if ($x * $y * $z != $max_layer_size
                     or
                 $x < $y)
             {
@@ -108,13 +108,13 @@ while (1)
 
             # print "$x,$y,$z\n";
             my $initial_cuboid =
-                [ map { 
+                [ map {
                     [ map { [(1)x$z] } (1 .. $y) ]
-                    } 
+                    }
                     (1 .. $x)
                 ];
 
-            $cuboids{"$x,$y,$z"} = 
+            $cuboids{"$x,$y,$z"} =
                 { array => $initial_cuboid, dims => [$x,$y,$z], n => $max_layer_size };
 
             add_layer($x, $y, $z);

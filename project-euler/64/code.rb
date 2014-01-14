@@ -1,13 +1,13 @@
 class Integer
     def continued_fraction
-        
+
         states = Hash.new
-        
+
         root = Math.sqrt(self).to_i
         numer = 1
         denom_in_root = self
         denom_out_of_root = -root
-        
+
         make_state = lambda {
             return { 'r' => root, 'numer' => numer, 'di' => denom_in_root,
                 'do' => denom_out_root,
@@ -43,7 +43,7 @@ class Integer
 
             new_denom /= numer;
             new_numer = [denom_in_root, -denom_out_of_root];
-            
+
             root = ((Math.sqrt(new_numer[0]) + new_numer[1]) / new_denom).to_i;
             numer = new_denom
             denom_in_root = new_numer[0]

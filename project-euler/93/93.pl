@@ -29,7 +29,7 @@ STDOUT->autoflush(1);
 
 my %op_funcs = (
     '+' => sub { $_[0]+$_[1] },
-    '-' => sub { $_[0]-$_[1] }, 
+    '-' => sub { $_[0]-$_[1] },
     '*' => sub { $_[0]*$_[1] },
     '/' => sub { return (($_[1]+0 != 0) ? ($_[0]/$_[1]) : undef); },
 );
@@ -58,7 +58,7 @@ sub recurse_op
                     foreach my $k2 (keys(%$s2))
                     {
                         foreach my $v (
-                            $cb->($k1, $k2), 
+                            $cb->($k1, $k2),
                             $cb->($k2, $k1)
                         )
                         {
@@ -79,7 +79,7 @@ sub recurse_op
         foreach my $k (keys(%$calc))
         {
             foreach my $v (
-                $cb->($k, $rest->[$alone]), 
+                $cb->($k, $rest->[$alone]),
                 $cb->($rest->[$alone], $k)
             )
             {
@@ -97,12 +97,12 @@ sub recurse_op
 sub recurse
 {
     my ($rest) = @_;
- 
+
     if (@$rest == 1)
     {
         return { $rest->[0] => 1 };
     }
-    
+
     my %ret;
     foreach my $op (qw(+ - / *))
     {
@@ -126,7 +126,7 @@ foreach my $x (0 .. 6)
             foreach my $t ($z+1 .. 9)
             {
                 my @n = ($x,$y,$z,$t);
-                
+
                 my $ret = recurse(\@n);
 
                 my $seq_len = 1;
@@ -135,7 +135,7 @@ foreach my $x (0 .. 6)
                     $seq_len++;
                 }
                 $seq_len--;
-                
+
                 if ($seq_len > $max_n_seq_len)
                 {
                     @max_n = @n;

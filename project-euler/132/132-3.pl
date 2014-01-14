@@ -30,7 +30,7 @@ sub calc_A
 }
 
 open my $primes_fh, "primes 7|";
-my $last_prime = 
+my $last_prime =
 
 my $count = 0;
 my $sum = 0;

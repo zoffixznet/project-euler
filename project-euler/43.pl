@@ -22,7 +22,7 @@ sub _init
 {
     my ($self, $set) = @_;
 
-    $self->{stack} = 
+    $self->{stack} =
         [ {prefix => [], set => [@$set], elem => undef, prev => []} ];
 
     $self->{lim} = (@$set + 1);
@@ -54,7 +54,7 @@ sub next
 
             if (defined($s->{elem} = shift(@{$s->{set}})))
             {
-                push @$stack, 
+                push @$stack,
                     {
                         prefix => [@{$s->{prefix}}, $s->{elem}],
                         set => [@{$s->{prev}}, @{$s->{set}}],

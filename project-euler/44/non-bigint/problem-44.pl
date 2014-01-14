@@ -1,4 +1,4 @@
-#!/usr/bin/perl 
+#!/usr/bin/perl
 
 use strict;
 use warnings;
@@ -36,7 +36,7 @@ while (1)
         {
             last P_MIN_LOOP;
         }
-        
+
         # print "D == $D->{n}\nP_min == $P_min->{n}\n";
         my $P_max = $D[0]->{n} + $P_min->{n};
 

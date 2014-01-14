@@ -80,7 +80,7 @@ class Figurate
             end
         end
     end
-    
+
     def initialize
         @m = {
             3 => {

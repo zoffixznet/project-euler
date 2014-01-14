@@ -102,8 +102,8 @@ while (my $elem = $heap->extract_top) {
     else
     {
         foreach my $idx (
-            0 
-                .. 
+            0
+                ..
             ((@$composition == @primes)
                 ? ($#$composition)
                 : ($#$composition+1)
@@ -112,9 +112,9 @@ while (my $elem = $heap->extract_top) {
         {
             my @new = @$composition;
             $new[$idx]++;
-            my $new_n = 
-                reduce { $a * $b } 1, 
-                map { $primes[$_] ** $new[$_] } (0 .. $#new) 
+            my $new_n =
+                reduce { $a * $b } 1,
+                map { $primes[$_] ** $new[$_] } (0 .. $#new)
                 ;
             if (! exists($decomposition{"$new_n"}))
             {

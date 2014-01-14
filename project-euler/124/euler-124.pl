@@ -36,7 +36,7 @@ sub cmp {
     my $self = shift;
     my $other = shift;
 
-    return ((($self->{key} <=> $other->{key})) || 
+    return ((($self->{key} <=> $other->{key})) ||
             (($self->{n} <=> $other->{n}))
         );
 }

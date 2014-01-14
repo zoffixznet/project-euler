@@ -41,7 +41,7 @@ sub calc_sum
     {
         push @sums, $matrix[$y][$x+1]->{sum} + $matrix[$y][$x]->{v};
     }
-    
+
     if (!@sums)
     {
         return;

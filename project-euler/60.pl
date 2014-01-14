@@ -64,7 +64,7 @@ sub recurse
 
         my $new_p = vec($primes_list, $idx, 32);
 
-        if (all { 
+        if (all {
                 (!vec($primes_bitmask, $new_p.$_, 1))
                     &&
                 (!vec($primes_bitmask, $_.$new_p, 1))

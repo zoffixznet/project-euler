@@ -3,7 +3,7 @@
  *
  *       Filename:  euler145.c
  *
- *    Description:  
+ *    Description:
  *
 Some positive integers n have the property that the sum [ n + reverse(n) ]
 consists entirely of odd (decimal) digits. For instance, 36 + 63 = 99 and 409 +
@@ -14,14 +14,14 @@ There are 120 reversible numbers below one-thousand.
 
 How many reversible numbers are there below one-billion (109)?
 
-* 
+*
  *        Version:  1.0
  *        Created:  11/07/11 15:35:15
  *       Revision:  none
  *       Compiler:  gcc
  *
- *         Author:  YOUR NAME (), 
- *        Company:  
+ *         Author:  YOUR NAME (),
+ *        Company:
  *
  * =====================================================================================
  */
@@ -35,7 +35,7 @@ int main(int argc, char * argv[])
     int n;
 
     int count = 0;
-    
+
     limit = atoi(argv[1]);
 
     for (n = 21 ; n < limit ; )

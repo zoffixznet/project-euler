@@ -25,9 +25,9 @@ timethese(
     500,
     {
         (
-            map { get_c_prog_kv($_) } 
+            map { get_c_prog_kv($_) }
             (qw(
-                c_mine c_mine_micro_opt c_mine_half 
+                c_mine c_mine_micro_opt c_mine_half
             ))
         ),
     }
@@ -37,7 +37,7 @@ timethese(
     20,
     {
         (
-            map { get_c_prog_kv($_) } 
+            map { get_c_prog_kv($_) }
             qw(haskell_mine haskell_zeroth)
         ),
         (

@@ -16,5 +16,5 @@ for my $n_proto (0 .. 1_000_000)
     if (all { join("", sort split(//, $n*$_)) eq $n_sorted } (2 .. 6))
     {
         print "$n\n";
-    }   
+    }
 }

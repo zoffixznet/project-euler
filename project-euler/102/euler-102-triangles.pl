@@ -17,7 +17,7 @@ open my $in, "<", "triangles.txt";
 while (my $line = <$in>)
 {
     chomp($line);
-    
+
     my @coords = split(/,/, $line);
 
     my $main_area = triangle_area(@coords);
@@ -27,11 +27,11 @@ while (my $line = <$in>)
     for my $point_to_zero (0 .. 2)
     {
         my @new_coords = @coords;
-        # Set the other point to zero. 
+        # Set the other point to zero.
         $new_coords[$point_to_zero*2] = $new_coords[$point_to_zero*2+1] = 0;
         $sub_areas_total += triangle_area(@new_coords);
     }
-    
+
     if ($sub_areas_total == $main_area)
     {
         $count++;

@@ -20,18 +20,18 @@ my %fib_cache = (1 => 1, 2 => 1);
 sub calc_fib
 {
     my ($n) = @_;
-    
+
     return $fib_cache{$n} ||=
         (
               ($n & 0x1)
-            ? do { 
-                my $half = (($n-1)>>1); 
-                my $x = calc_fib($half); 
+            ? do {
+                my $half = (($n-1)>>1);
+                my $x = calc_fib($half);
                 my $y = calc_fib($half+1);
                 $x*$x+$y*$y;
             }
-            : do { 
-                my $half = ($n>>1); 
+            : do {
+                my $half = ($n>>1);
                 my $x = calc_fib($half);
                 my $y = calc_fib($half-1);
                 $x * (($y<<1)+$x);
@@ -47,7 +47,7 @@ my $prev_fib_low = 1;
 my $k = 2;
 while (1)
 {
-    ($prev_fib_low, $this_fib_low) = 
+    ($prev_fib_low, $this_fib_low) =
         ($this_fib_low, (($prev_fib_low+$this_fib_low) % $MOD));
     $k++;
 

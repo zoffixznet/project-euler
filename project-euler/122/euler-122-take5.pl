@@ -57,13 +57,13 @@ for (my $base_rank = 1; ; $base_rank++)
                     last FILL_LOOP;
                 }
             }
-            
+
             push @{$compositions_by_rank[$base_rank+1]}, $new_comp;
         }
     }
 }
 
-print "Sum is " . 
+print "Sum is " .
     sum (
         map { $_->{rank} } @compositions[ 1 .. $#compositions]
     ) . "\n"

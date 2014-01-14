@@ -14,7 +14,7 @@ foreach my $power_of_2 (0 .. 9)
     foreach my $power_of_5 (0 .. 9)
     {
         my $num_digits = 2 ** $power_of_2 * 5 ** $power_of_5;
-        push @divisors, +{ l => $num_digits+1, n => 
+        push @divisors, +{ l => $num_digits+1, n =>
             sub { return ("1" . "0" x ($num_digits-1) . "1") },
         };
 
@@ -30,12 +30,12 @@ my %factors;
 foreach my $div (@divisors)
 {
     my $n = $div->{n}->();
-    
+
     print "Checking $n\n";
     my $factor_string = `factor "$n"`;
-    
+
     $factor_string =~ s{\A[^:]*:\s*}{}ms;
-    
+
     foreach my $f (split(/\s+/, $factor_string))
     {
         $factors{$f}++;

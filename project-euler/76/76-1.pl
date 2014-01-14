@@ -10,7 +10,7 @@ use Math::BigInt lib => 'GMP';
 
 no warnings 'recursion';
 
-# An array of arrays - 
+# An array of arrays -
 # First index is the sum.
 # Second index is the maximal possible element
 my @num_sums;
@@ -42,7 +42,7 @@ sub calc_num_sum
             {
                 my $tail_sum = $sum-$first;
 
-                $count += ($num_sums[$tail_sum][$first] //= 
+                $count += ($num_sums[$tail_sum][$first] //=
                     calc_num_sum($tail_sum, $first)
                 );
             }

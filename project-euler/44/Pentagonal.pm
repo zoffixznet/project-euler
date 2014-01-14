@@ -35,8 +35,8 @@ sub inc
 
     $new->{i} = $self->{i}+1;
 
-    $new->{n} = $self->{n} + $self->{i} * 3 + 1; 
-    
+    $new->{n} = $self->{n} + $self->{i} * 3 + 1;
+
     return $new;
 }
 

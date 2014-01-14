@@ -32,9 +32,9 @@ sub is_prime
 my @sets_by_rank;
 
 push @sets_by_rank, undef();
-push @sets_by_rank, 
-    { 
-        map { 
+push @sets_by_rank,
+    {
+        map {
             my $p = $_;
             my $s = '';
             vec($s, $p, 1) = 1;
@@ -73,7 +73,7 @@ foreach my $rank (2 .. 9)
                     foreach my $o_k (keys(%{$other_sub_sets->{$other_sub_vec}}))
                     {
                         my $signature =
-                            join(",", sort { $a <=> $b } 
+                            join(",", sort { $a <=> $b }
                                 split(",", "$sub_k,$o_k")
                             );
                         $record->{$signature} = 1;
@@ -116,17 +116,17 @@ foreach my $rank (2 .. 9)
     }
 
     # Now let's find the complete numbers with $rank digits out of [1..9].
- 
+
     # The ending digit cannot be even or 5 because then the number won't
     # be prime.
     foreach my $ending_digit (qw(1 3 7 9))
     {
-        
+
         my $recurse;
-        
+
         $recurse = sub {
             my ($num_so_far, $vec) = @_;
-            
+
             if (length($num_so_far) == $rank)
             {
                 if (is_prime($num_so_far))
@@ -152,8 +152,8 @@ foreach my $rank (2 .. 9)
 
         my $init_vec = '';
         vec($init_vec, $ending_digit, 1) = 1;
-     
-        $recurse->($ending_digit, $init_vec); 
+
+        $recurse->($ending_digit, $init_vec);
     }
 
 }

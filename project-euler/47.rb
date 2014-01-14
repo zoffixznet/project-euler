@@ -6,7 +6,7 @@ def num_distinct_factors_helper(n, start_from)
         d = n
         if ((d % start_from) == 0) then
             while d % start_from == 0 do
-                d /= start_from 
+                d /= start_from
             end
             to_add = 1
         end
@@ -26,4 +26,4 @@ for n in 14 .. 100_000 do
         exit
     end
 end
-    
+

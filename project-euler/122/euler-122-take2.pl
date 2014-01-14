@@ -105,7 +105,7 @@ foreach my $n (2 .. 200)
                         next SUPERSETS;
                     }
                     # If the new set is a superset of an existing set,
-                    # then we don't want it here. Put all the existing sets in 
+                    # then we don't want it here. Put all the existing sets in
                     # place and skip this loop.
                     elsif (is_superset((\%new_set_hash), $s, 0))
                     {
