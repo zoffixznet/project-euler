@@ -30,25 +30,22 @@ my %l_colors = ('0' => ['1','2'], '1' => ['0','2'], '2' => ['0','1']);
 sub my_find(Int $wanted_h) returns Int
 {
     # The start_data for $h == 1
-    my %data = (
-        seq => {'0' => 1, '1' => 1, '2' => 1,},
-        derived =>
-        {
-            '' =>
-            {
-                '0' => 1,
-                '1' => 1,
-                '2' => 1,
-            }
-        },
-        count => 3,
-    );
-    for (1 .. $wanted_h - 1) -> $h
+    my $this_seqs = {'0' => 1, '1' => 1, '2' => 1,};
+    my $prev_deriveds =
     {
-        my $this_seqs = %data{'seq'};
-        my $prev_deriveds = %data{'derived'};
+        '' =>
+        {
+            '0' => 1,
+            '1' => 1,
+            '2' => 1,
+        }
+    };
 
-        my $total_count = 0;
+    my $total_count;
+
+    for (1 ..^ $wanted_h) -> $h
+    {
+        $total_count = 0;
         my $next_deriveds = {};
         my $next_seqs = {};
 
@@ -77,16 +74,11 @@ sub my_find(Int $wanted_h) returns Int
         }
 
         # Fill the next data.
-        %data =
-        (
-            seq => $next_seqs,
-            derived => $next_deriveds,
-            count => $total_count,
-        );
+        ($this_seqs, $prev_deriveds) = ($next_seqs, $next_deriveds);
         say "Count[{$h+1}] = $total_count";
     }
 
-    return %data{'count'};
+    return $total_count;
 }
 
 # Test
