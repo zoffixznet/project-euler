@@ -36,7 +36,6 @@ sub my_find
     };
     for my $h (1 .. $wanted_h-1)
     {
-        # Now $by_height[$h-1]{seq} is ready.
         my $this_seqs = $data->{seq};
         my $prev_deriveds = $data->{derived};
 
@@ -60,7 +59,6 @@ sub my_find
 
                         $total_count += $delta;
                         $next_seqs->{$str} += $delta;
-                        # $next_deriveds->{$seq}{$str} += $delta;
                         $next_deriveds->{$seq}{$str} += $left_count;
                     }
                 }
