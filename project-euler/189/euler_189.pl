@@ -79,7 +79,8 @@ sub my_find
 
                         $total_count += $delta;
                         $next_seqs->{$str} += $delta;
-                        $next_deriveds->{$seq}{$str} += $delta;
+                        # $next_deriveds->{$seq}{$str} += $delta;
+                        $next_deriveds->{$seq}{$str} += $left_count;
                     }
                 }
             }
