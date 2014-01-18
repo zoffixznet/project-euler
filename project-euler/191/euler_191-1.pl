@@ -96,4 +96,10 @@ for my $n (1 .. $pivot)
 
 say "Count[$pivot] = ", calc_count($pivot);
 
+my $desired = 30;
+for my $n (($pivot+1) .. $desired)
+{
+    step($n);
+}
 
+say "Count[$desired] = ", calc_count($desired);
