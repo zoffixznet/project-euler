@@ -10,13 +10,15 @@ import (
     "fmt"
 )
 
+type ColorInt int32
+
 type ColorArray struct {
-    n int32
-    colors[2] int32
+    n ColorInt
+    colors[2] ColorInt
 }
 
 func CreateColorArray() ColorArray {
-    return ColorArray{n:0, colors:[2]int32{0,0}}
+    return ColorArray{n:0, colors:[2]ColorInt{0,0}}
 }
 
 /*
@@ -57,15 +59,15 @@ func main() {
     */
 
     const (
-        num_colors int32 = 3
+        num_colors ColorInt = 3
     )
 
     var colors[num_colors][num_colors] ColorArray;
 
-    for i := int32(0); i < num_colors; i++ {
-        for j := int32(0); j < num_colors; j++ {
+    for i := ColorInt(0); i < num_colors; i++ {
+        for j := ColorInt(0); j < num_colors; j++ {
             var arr = CreateColorArray()
-            for c := int32(0); c < num_colors; c++ {
+            for c := ColorInt(0); c < num_colors; c++ {
                 if ((c != i) && (c != j)) {
                     arr.colors[arr.n] = c
                     arr.n++
