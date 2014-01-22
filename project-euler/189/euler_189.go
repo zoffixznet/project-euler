@@ -64,14 +64,14 @@ func main() {
 
     for i := int32(0); i < num_colors; i++ {
         for j := int32(0); j < num_colors; j++ {
-            colors[i][j] = CreateColorArray()
-            var arr = colors[i][j]
+            var arr = CreateColorArray()
             for c := int32(0); c < num_colors; c++ {
                 if ((c != i) && (c != j)) {
                     arr.colors[arr.n] = c
                     arr.n++
                 }
             }
+            colors[i][j] = arr
         }
     }
 
