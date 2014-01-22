@@ -21,48 +21,45 @@ func CreateColorArray() ColorArray {
     return ColorArray{n:0, colors:[2]ColorInt{0,0}}
 }
 
-/*
-func (s * Square) Increment() {
-    s.n++
-    s.delta += 2
-    s.value += s.delta
+
+const (
+    num_colors ColorInt = 3
+)
+
+var colors[num_colors][num_colors] ColorArray
+var l_colors[num_colors] ColorArray
+
+type RowData struct {
+    seq map[string]int
+    derived map[string]map[string]int
+    count int
 }
 
-func CreateSquare(n int64) Square {
-    return Square{n,n*n,n*2-1}
+func my_find(wanted_h int) int {
+
+    var data = RowData{seq:make(map[string]int), derived:make(map[string]map[string]int), count:3}
+
+    data.seq["0"] = 1
+    data.seq["1"] = 1
+    data.seq["2"] = 1
+
+    {
+        var deriv = make(map[string]int);
+        deriv["0"] = 1
+        deriv["1"] = 1
+        deriv["2"] = 1
+        data.derived[""] = deriv
+    }
+
+    return 0
 }
 
-func (s * Square) Inc2() {
-    s.Increment()
-    s.Increment()
-}
-
-type SquareRange struct {
-    bottom Square
-    top Square
-}
-
-func (r SquareRange) SqDiff() int64 {
-    return r.top.value - r.bottom.value
-}
-
-func (r SquareRange) Diff() int64 {
-    return (r.top.n - r.bottom.n) / 2
-}
-
-*/
 func main() {
     /*
     var this_range[2] SquareRange
     this_range[0] = SquareRange {CreateSquare(1), CreateSquare(3) }
     this_range[1] = SquareRange {CreateSquare(2), CreateSquare(4) }
     */
-
-    const (
-        num_colors ColorInt = 3
-    )
-
-    var colors[num_colors][num_colors] ColorArray;
 
     for i := ColorInt(0); i < num_colors; i++ {
         for j := ColorInt(0); j < num_colors; j++ {
@@ -77,7 +74,6 @@ func main() {
         }
     }
 
-    var l_colors[num_colors] ColorArray;
     for i := ColorInt(0); i < num_colors; i++ {
         var arr = CreateColorArray()
         for c := ColorInt(0); c < num_colors; c++ {
