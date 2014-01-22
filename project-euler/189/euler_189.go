@@ -77,6 +77,19 @@ func main() {
         }
     }
 
+    var l_colors[num_colors] ColorArray;
+    for i := ColorInt(0); i < num_colors; i++ {
+        var arr = CreateColorArray()
+        for c := ColorInt(0); c < num_colors; c++ {
+            if (c != i) {
+                arr.colors[arr.n] = c
+                arr.n++
+
+            }
+        }
+        l_colors[i] = arr
+    }
+
     /*
     for ((next_range.Diff() >= 0) && (next_range.SqDiff() > max)) {
 
