@@ -3,6 +3,8 @@
 use strict;
 use warnings;
 
+use List::MoreUtils qw/firstidx/;
+
 =head1 DESCRIPTION
 
 Dice Game
@@ -58,4 +60,23 @@ foreach my $num_sides (4, 6)
 
 use Data::Dumper;
 
-print Dumper(\%running_sums);
+# print Dumper(\%running_sums);
+#
+
+my $PIVOT = 4;
+my $OTHER = 6;
+
+my $pivot_sums = $running_sums{$PIVOT};
+my $other_sums = $running_sums{$OTHER};
+
+my $prob_sum = 0;
+foreach my $score (0 .. ($#$pivot_sums-1))
+{
+    my $prob = $pivot_sums->[$score];
+    if ($score > 0)
+    {
+        $prob_sum += $prob * ($other_sums->[-1] - $other_sums->[$score+1]);
+    }
+}
+print "ProbSum == ", $prob_sum, "\n",
+    "Prob = ", $prob_sum/($totals{$PIVOT}*$totals{$OTHER}), "\n";
