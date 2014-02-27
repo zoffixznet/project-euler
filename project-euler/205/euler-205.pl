@@ -45,27 +45,20 @@ sub recurse
 recurse(4, 0, 9);
 recurse(6, 0, 6);
 
-my %running_sums = (4 => [0], 6 => [0]);
-
-foreach my $num_sides (4, 6)
+my $OTHER = 6;
+my $other_sums = [];
 {
-    my $sum_aref = $running_sums{$num_sides};
-    foreach my $count (@{$counts{$num_sides}})
+    my $s = 0;
+    push @$other_sums, $s;
+    foreach my $count (@{$counts{$OTHER}})
     {
-        push @$sum_aref, ($sum_aref->[-1] + ($count // 0));
+        push @$other_sums, ($s += ($count // 0));
     }
 }
 
-use Data::Dumper;
-
-# print Dumper(\%running_sums);
-#
-
 my $PIVOT = 4;
-my $OTHER = 6;
 
 my $pivot_counts = $counts{$PIVOT};
-my $other_sums = $running_sums{$OTHER};
 
 my $prob_sum = 0;
 foreach my $score (keys(@$pivot_counts))
