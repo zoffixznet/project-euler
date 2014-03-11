@@ -73,13 +73,33 @@ foreach my $letter (0 .. $MAX_LETTER)
 foreach my $len (2 .. $COUNT_LETTERS)
 {
     my $prev_len = $len - 1;
+    my $sum = 0;
     foreach my $next_letter (0 .. $MAX_LETTER)
     {
         foreach my $prev_letter (0 .. $MAX_LETTER)
         {
-            foreach my $count (0 .. 1)
+            my $add_cb = sub {
+                my ($old_count, $new_count) = @_;
+
+                my $delta = lookup( $prev_len, $prev_letter, $old_count);
+                add($len, $next_letter, $new_count, $delta);
+                $sum += $delta;
+
+                return;
+            };
+
+            if ($next_letter > $prev_letter)
             {
+                $add_cb->(0 => 1);
+            }
+            else
+            {
+                foreach my $count (0 .. 1)
+                {
+                    $add_cb->($count => $count);
+                }
             }
         }
     }
+    print "p($len) = $sum\n";
 }
