@@ -82,19 +82,13 @@ sub calc_sum
                     last C_LOOP;
                 }
 
+                my $delta = ($aa + (($cc == $aa) ? 0 : $cc) );
+                if ($bb)
                 {
-                    # my $delta = (($bb == 0 ? 1 : 2) * ($aa+$cc));
-                    # my $delta = ($aa+$cc);
-                    # my $delta = $aa_cc;
-
-                    my $delta = ($aa + (($cc == $aa) ? 0 : $cc) );
-                    if ($bb)
-                    {
-                        $delta <<= 1;
-                    }
-                    # print "Found $aa+i$bb ; $cc+i$dd ; Adding: $delta\n";
-                    $ret += $delta;
+                    $delta <<= 1;
                 }
+                # print "Found $aa+i$bb ; $cc+i$dd ; Adding: $delta\n";
+                $ret += $delta;
             }
             continue
             {
