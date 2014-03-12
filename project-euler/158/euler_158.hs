@@ -1,4 +1,5 @@
 import Data.Array
+import Text.Printf
 
 fact :: Integer -> Integer
 fact n = product [1 .. n]
@@ -21,3 +22,5 @@ before_bump_recurse :: Integer -> [Integer]
 before_bump_recurse n_COUNT = elems arr where
         arr = accumArray (+) 0 (0,n_COUNT) (concat (before_bump_recurse_helper n_COUNT))
 
+before_str :: Integer -> String
+before_str n = concat [(printf "Count[%2d] = %d\n" a b) | (a,b) <- (zip [0::Integer .. ] (before_bump_recurse n))]
