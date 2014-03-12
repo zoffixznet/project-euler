@@ -12,6 +12,11 @@ sub gcd
 {
     my ($n, $m) = @_;
 
+    if ($m > $n)
+    {
+        ($n, $m) = ($m, $n);
+    }
+
     while ($m > 0)
     {
         ($n, $m) = ($m, $n%$m);
@@ -30,18 +35,11 @@ sub calc_sum
     foreach my $aa (1 .. $MAX)
     {
         print "a=$aa\n";
-        my $aa_sq = $aa*$aa;
 
-        B_LOOP:
-        foreach my $bb (0 .. $MAX)
-        {
+        my $s = sub {
+            my ($bb) = @_;
+
             # print "a=$aa b=$bb\n";
-            my $a_b_mag_sq = $aa_sq + $bb*$bb;
-
-            if ($a_b_mag_sq > $MAX_SQ)
-            {
-                last B_LOOP;
-            }
 
             # Question: when is ($cc*$bb/$aa) an integer?
             #
@@ -50,7 +48,6 @@ sub calc_sum
 
             my $cc_step = $aa / gcd($bb, $aa);
 
-            my $cc = $cc_step;
             my $p = (1 + ($bb/$aa)**2);
 
             my $max_cc = min(
@@ -62,22 +59,22 @@ sub calc_sum
             # Sum of $aa+$cc_step + $aa + 2*$cc_step + $aa + 3 * $cc_step
             # up to $aa + $cc_step*($cc_num_steps)
             my $cc_ret = $cc_num_steps *
-                ($aa + (((1+$cc_num_steps)*$cc_step)>>1))
+            ($aa + (((1+$cc_num_steps)*$cc_step)>>1))
             ;
 
             my $cc = $cc_step * ($cc_num_steps+1);
 
 =begin foo
-            while ($cc < $max_cc)
-            {
-                # my $delta = ($aa + $cc);
-                # print "Found $aa+i$bb ; $cc+i$dd ; Adding: $delta\n";
-                $cc_ret += $aa + $cc;
-            }
-            continue
-            {
-                $cc += $cc_step;
-            }
+        while ($cc < $max_cc)
+        {
+            # my $delta = ($aa + $cc);
+            # print "Found $aa+i$bb ; $cc+i$dd ; Adding: $delta\n";
+            $cc_ret += $aa + $cc;
+        }
+        continue
+        {
+            $cc += $cc_step;
+        }
 
 =end foo
 
@@ -88,13 +85,17 @@ sub calc_sum
                 $cc_ret += $aa + (($cc == $aa) ? 0 : $cc);
             }
 
-            if ($bb)
-            {
-                $cc_ret <<= 1;
-            }
+            return $cc_ret;
+        };
 
-            $ret += $cc_ret;
+        $ret += $s->(0);
+
+        my $d = 0;
+        foreach my $bb (1 .. int(sqrt($MAX_SQ - $aa*$aa)))
+        {
+            $d += $s->($bb);
         }
+        $ret += $d << 1;
     }
 
     return $ret;
