@@ -119,26 +119,23 @@ sub before_bump_recurse
 
     foreach my $first_max (1 .. $num_remain)
     {
-        foreach my $num_elems_in_e_series (1 .. $first_max)
+        foreach my $num_elems_in_e_series (1 .. $first_max-1)
         {
             my $num_letters_less_than_first_max_and_not_in_e_series =
-                $first_max - $num_elems_in_e_series;
+            $first_max - $num_elems_in_e_series;
 
-            if ($num_letters_less_than_first_max_and_not_in_e_series > 0)
+            foreach my $count_of_elems_in_second_series_below_first_max (1 .. $num_letters_less_than_first_max_and_not_in_e_series)
             {
-                foreach my $count_of_elems_in_second_series_below_first_max (1 .. $num_letters_less_than_first_max_and_not_in_e_series)
-                {
-                    after_bump_recurse(
-                        $count_of_elems_in_second_series_below_first_max + $num_elems_in_e_series,
-                        $num_remain - $first_max,
-                        (
-                            nCr($first_max-1, $count_of_elems_in_second_series_below_first_max)
-                            * nCr($first_max,$num_elems_in_e_series)
-                        )
-                    );
-                }
-                # after_bump_recurse($num, $num_discarded, nCr($num_remain, $num));
+                after_bump_recurse(
+                    $count_of_elems_in_second_series_below_first_max + $num_elems_in_e_series,
+                    $num_remain - $first_max,
+                    (
+                        nCr($first_max-1, $count_of_elems_in_second_series_below_first_max)
+                        * nCr($first_max,$num_elems_in_e_series)
+                    )
+                );
             }
+            # after_bump_recurse($num, $num_discarded, nCr($num_remain, $num));
         }
     }
 
