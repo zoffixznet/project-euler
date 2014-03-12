@@ -26,7 +26,7 @@ sub calc_sum
 
                 if ($dd == int($dd) and $a_b_mag_sq > $cc*$cc+$dd*$dd)
                 {
-                    $ret += 2 * ($aa*$cc-$bb*$dd);
+                    $ret += (($bb == 0 ? 1 : 2) * ($aa*$cc-$bb*$dd));
                 }
             }
         }
