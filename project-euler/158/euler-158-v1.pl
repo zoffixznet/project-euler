@@ -57,52 +57,58 @@ And also all the a[i]s and b[i]s are different.
 
 my @counts;
 
+sub fact
+{
+    return shift->copy->bfac;
+}
+
+sub nCr
+{
+    my ($n, $k) = @_;
+    $n += 0;
+    $k += 0;
+    return fact($n) / (fact($n-$k) * fact($k));
+}
+
 # TODO : this can be optimised to oblivion and exclude recursion.
 sub after_bump_recurse
 {
     my ($num, $remain) = @_;
 
-    if (! $remain)
+    foreach my $i (0 .. $remain)
     {
-        my $val = $counts[$num]++;
-        print "C[$num] == $val\n";
-        return;
+        my $val = ($counts[$num+$i] += nCr($remain,$i));
+        # print "C[$num] == $val\n";
     }
-
-    my $next = $remain - 1;
-    # Handle the skip:
-    after_bump_recurse ( $num, $next );
-
-    # Handle the assignment.
-    after_bump_recurse ( $num+1, $next );
-
     return;
 }
 
 sub before_bump_recurse
 {
-    my ($num, $remain_letters, $discarded_nums) = @_;
+    my ($num, $remain_letters, $num_discarded) = @_;
 
     if (! @$remain_letters)
     {
-        if ($num && @$discarded_nums)
+        if ($num && $num_discarded)
         {
-            after_bump_recurse($num, scalar@$discarded_nums);
+            after_bump_recurse($num, $num_discarded);
         }
         return;
     }
+
     my @next_remains = @$remain_letters;
-    my $pivot = shift(@next_remains);
+    shift(@next_remains);
+
     # Handle the skip.
-    before_bump_recurse($num, \@next_remains, [$pivot, @$discarded_nums]);
+    before_bump_recurse($num, \@next_remains, $num_discarded+1);
 
     # Handle the assignment.
-    before_bump_recurse($num+1, \@next_remains, $discarded_nums);
+    before_bump_recurse($num+1, \@next_remains, $num_discarded);
 
     return;
 }
 
-before_bump_recurse(0, [1 .. 26], []);
+before_bump_recurse(0, [1 .. 26], 0);
 
 foreach my $i (keys(@counts))
 {
