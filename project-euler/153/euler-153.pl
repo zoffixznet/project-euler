@@ -59,7 +59,7 @@ sub calc_sum
             my $max_cc = min(
                 $MAX,
                 sqrt($MAX_SQ/$a_b_mag_sq),
-                $a_b_mag_sq / $p,
+                $aa,
                 $MAX/($aa*$p),
             );
 
