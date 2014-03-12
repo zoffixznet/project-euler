@@ -85,9 +85,9 @@ sub after_bump_recurse
 
 sub before_bump_recurse
 {
-    my ($num, $remain_letters, $num_discarded) = @_;
+    my ($num, $num_remain, $num_discarded) = @_;
 
-    if (! @$remain_letters)
+    if (! $num_remain)
     {
         if ($num && $num_discarded)
         {
@@ -96,19 +96,18 @@ sub before_bump_recurse
         return;
     }
 
-    my @next_remains = @$remain_letters;
-    shift(@next_remains);
+    my $next_remain = $num_remain - 1;
 
     # Handle the skip.
-    before_bump_recurse($num, \@next_remains, $num_discarded+1);
+    before_bump_recurse($num, $next_remain, $num_discarded+1);
 
     # Handle the assignment.
-    before_bump_recurse($num+1, \@next_remains, $num_discarded);
+    before_bump_recurse($num+1, $next_remain, $num_discarded);
 
     return;
 }
 
-before_bump_recurse(0, [1 .. 26], 0);
+before_bump_recurse(0, 26, 0);
 
 foreach my $i (keys(@counts))
 {
