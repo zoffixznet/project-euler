@@ -15,12 +15,18 @@ sub calc_sum
     my $MAX_SQ = $MAX*$MAX;
     foreach my $aa (1 .. $MAX)
     {
+        print "a=$aa\n";
         my $aa_sq = $aa*$aa;
-        my $max_bb = int( sqrt($MAX_SQ-$aa_sq) );
 
-        foreach my $bb (0 .. $max_bb)
+        B_LOOP:
+        foreach my $bb (0 .. $MAX)
         {
             my $a_b_mag_sq = $aa_sq + $bb*$bb;
+
+            if ($a_b_mag_sq > $MAX_SQ)
+            {
+                last B_LOOP;
+            }
 
             my $max_cc = int (sqrt( $MAX_SQ / $a_b_mag_sq ) );
 
