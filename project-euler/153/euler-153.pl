@@ -43,7 +43,12 @@ sub calc_sum
 
                 my $c_d_mag_sq = $cc_sq+$dd*$dd;
 
-                if ($dd == int($dd) and $a_b_mag_sq >= $c_d_mag_sq
+                if ($c_d_mag_sq > $a_b_mag_sq)
+                {
+                    last C_LOOP;
+                }
+
+                if ($dd == int($dd)
                         and $aa*$cc-$bb*$dd <= $MAX)
                 {
                     # my $delta = (($bb == 0 ? 1 : 2) * ($aa+$cc));
