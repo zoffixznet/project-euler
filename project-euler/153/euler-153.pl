@@ -15,7 +15,7 @@ sub calc_sum
     foreach my $aa (1 .. $MAX)
     {
         my $max_bb = int( sqrt($MAX**2-$aa**2) );
-        foreach my $bb (0 .. $max_bb)
+        foreach my $bb (-$max_bb .. $max_bb)
         {
             my $a_b_mag_sq = $aa*$aa+$bb*$bb;
 
@@ -26,7 +26,8 @@ sub calc_sum
 
                 my $c_d_mag_sq = $cc*$cc+$dd*$dd;
 
-                if ($dd == int($dd) and $a_b_mag_sq > $c_d_mag_sq and $aa*$cc-$bb*$dd <= $MAX)
+                if ($dd == int($dd) and $a_b_mag_sq >= $c_d_mag_sq
+                        and $aa*$cc-$bb*$dd <= $MAX)
                 {
                     my $delta = (($bb == 0 ? 1 : 2) * ($aa+$cc));
                     print "Found $aa+i$bb ; $cc+i$dd ; Adding: $delta\n";
