@@ -30,7 +30,85 @@ For every n, p(n) is the number of strings of length n for which exactly one cha
 
 What is the maximum value of p(n)?
 
+=head1 ANALYSIS
+
+If the string is of the form:
+
+    a[0] a[1] a[2] a[3] ... a[m] b[0] b[1] ... b[n-m]
+
+Then it is clear that:
+
+    a[1] < a[0]
+    a[2] < a[1]
+    a[3] < a[2]
+
+    Foreach x a[x+1] < a[x]
+
+    b[0] > a[m]
+
+    b[1] < b[0]
+    b[2] < b[1]
+
+    Foreach x b[x+1] < b[x]
+
+And also all the a[i]s and b[i]s are different.
+
 =cut
+
+my @counts;
+
+# TODO : this can be optimised to oblivion and exclude recursion.
+sub after_bump_recurse
+{
+    my ($num, $remain_letters) = @_;
+
+    if (! @$remain_letters)
+    {
+        $counts[$num]++;
+        return;
+    }
+
+    my $next_nums = [@$remain_letters[1..$#$remain_letters]];
+    # Handle the skip:
+    after_bump_recurse ( $num, $next_nums );
+
+    # Handle the assignment.
+    after_bump_recurse ( $num+1, $next_nums );
+
+    return;
+}
+
+sub before_bump_recurse
+{
+    my ($num, $remain_letters, $discarded_nums) = @_;
+
+    if (! @$remain_letters)
+    {
+        if ($num && @$discarded_nums)
+        {
+            after_bump_recurse($num, $discarded_nums);
+        }
+        return;
+    }
+    my @next_remains = @$remain_letters;
+    my $pivot = shift(@next_remains);
+    # Handle the skip.
+    before_bump_recurse($num, \@next_remains, [$pivot, @$discarded_nums]);
+
+    # Handle the assignment.
+    before_bump_recurse($num+1, \@next_remains, $discarded_nums);
+
+    return;
+}
+
+before_bump_recurse(0, [1 .. 26], []);
+
+foreach my $i (keys(@counts))
+{
+    print "Count[$i] = $counts[$i]\n";
+}
+
+=begin NOTWORKING
 
 my @_cache;
 
@@ -103,3 +181,7 @@ foreach my $len (2 .. $COUNT_LETTERS)
     }
     print "p($len) = $sum\n";
 }
+
+=end NOTWORKING
+
+=cut
