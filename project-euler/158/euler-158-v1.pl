@@ -60,20 +60,21 @@ my @counts;
 # TODO : this can be optimised to oblivion and exclude recursion.
 sub after_bump_recurse
 {
-    my ($num, $remain_letters) = @_;
+    my ($num, $remain) = @_;
 
-    if (! @$remain_letters)
+    if (! $remain)
     {
-        $counts[$num]++;
+        my $val = $counts[$num]++;
+        print "C[$num] == $val\n";
         return;
     }
 
-    my $next_nums = [@$remain_letters[1..$#$remain_letters]];
+    my $next = $remain - 1;
     # Handle the skip:
-    after_bump_recurse ( $num, $next_nums );
+    after_bump_recurse ( $num, $next );
 
     # Handle the assignment.
-    after_bump_recurse ( $num+1, $next_nums );
+    after_bump_recurse ( $num+1, $next );
 
     return;
 }
@@ -86,7 +87,7 @@ sub before_bump_recurse
     {
         if ($num && @$discarded_nums)
         {
-            after_bump_recurse($num, $discarded_nums);
+            after_bump_recurse($num, scalar@$discarded_nums);
         }
         return;
     }
