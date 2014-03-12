@@ -12,14 +12,18 @@ sub calc_sum
 
     my $ret = 0;
 
+    my $MAX_SQ = $MAX*$MAX;
     foreach my $aa (1 .. $MAX)
     {
-        my $max_bb = int( sqrt($MAX**2-$aa**2) );
+        my $aa_sq = $aa*$aa;
+        my $max_bb = int( sqrt($MAX_SQ-$aa_sq) );
+
         foreach my $bb (0 .. $max_bb)
         {
-            my $a_b_mag_sq = $aa*$aa+$bb*$bb;
+            my $a_b_mag_sq = $aa_sq + $bb*$bb;
 
-            my $max_cc = int (sqrt( $MAX**2 / $a_b_mag_sq ) );
+            my $max_cc = int (sqrt( $MAX_SQ / $a_b_mag_sq ) );
+
             foreach my $cc (1 .. $max_cc)
             {
                 my $dd = -(($bb*$cc)/$aa);
@@ -31,8 +35,14 @@ sub calc_sum
                 {
                     # my $delta = (($bb == 0 ? 1 : 2) * ($aa+$cc));
                     # my $delta = ($aa+$cc);
-                    my $delta = (($aa+$cc) * ($bb ? 2 : 1) / ($aa == $cc ? 2 : 1));
-                    print "Found $aa+i$bb ; $cc+i$dd ; Adding: $delta\n";
+                    # my $delta = $aa_cc;
+
+                    my $delta = ($aa + (($cc == $aa) ? 0 : $cc) );
+                    if ($bb)
+                    {
+                        $delta <<= 1;
+                    }
+                    # print "Found $aa+i$bb ; $cc+i$dd ; Adding: $delta\n";
                     $ret += $delta;
                 }
             }
