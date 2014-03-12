@@ -8,6 +8,18 @@ use bytes;
 use List::Util qw(sum);
 use List::MoreUtils qw();
 
+sub gcd
+{
+    my ($n, $m) = @_;
+
+    if ($m == 0)
+    {
+        return $n;
+    }
+
+    return gcd($m,$n % $m);
+}
+
 sub calc_sum
 {
     my ($MAX) = @_;
@@ -23,6 +35,7 @@ sub calc_sum
         B_LOOP:
         foreach my $bb (0 .. $MAX)
         {
+            # print "a=$aa b=$bb\n";
             my $a_b_mag_sq = $aa_sq + $bb*$bb;
 
             if ($a_b_mag_sq > $MAX_SQ)
@@ -30,10 +43,19 @@ sub calc_sum
                 last B_LOOP;
             }
 
-            my $dd_step = $bb/$aa+1;
-            my $dd = 0;
+            # Question: when is ($cc*$bb/$aa) an integer?
+            #
+            # Answer: when $cc*$bb mod $aa == 0
+            # That happens when $cc is a product of $aa/gcd($aa,$bb)
+
+            my $cc_step = $aa / gcd($bb, $aa);
+            my $dd_step = $cc_step*$bb/$aa;
+
+            my $cc = $cc_step;
+            my $dd = $dd_step;
+
             C_LOOP:
-            foreach my $cc (1 .. $MAX)
+            while ($cc < $MAX)
             {
                 my $cc_sq = $cc*$cc;
                 if ($cc_sq * $a_b_mag_sq > $MAX_SQ)
@@ -41,8 +63,7 @@ sub calc_sum
                     last C_LOOP;
                 }
 
-                my $b_c = $bb*$cc;
-                # my $dd = ($b_c/$aa);
+=begin foo
                 $dd += $dd_step;
 
                 while ($dd * $aa > $b_c)
@@ -50,15 +71,20 @@ sub calc_sum
                     # print "DD=$dd AA=$aa BB*CC = $b_c\n";
                     $dd--;
                 }
+=end foo
+
+=cut
+
                 my $c_d_mag_sq = $cc_sq+$dd*$dd;
 
-                if ($c_d_mag_sq > $a_b_mag_sq)
+                if ($c_d_mag_sq > $a_b_mag_sq
+                        or
+                    $aa*$cc+$bb*$dd > $MAX
+                )
                 {
                     last C_LOOP;
                 }
 
-                if ($dd*$aa == $b_c
-                        and $aa*$cc+$bb*$dd <= $MAX)
                 {
                     # my $delta = (($bb == 0 ? 1 : 2) * ($aa+$cc));
                     # my $delta = ($aa+$cc);
@@ -72,6 +98,11 @@ sub calc_sum
                     # print "Found $aa+i$bb ; $cc+i$dd ; Adding: $delta\n";
                     $ret += $delta;
                 }
+            }
+            continue
+            {
+                $cc += $cc_step;
+                $dd += $dd_step;
             }
         }
     }
