@@ -106,6 +106,7 @@ sub nCr3
     }
     return fact($n) / (fact($n-$k1-$k2) * fact($k1) * fact($k2));
 }
+
 # TODO : this can be optimised to oblivion and exclude recursion.
 sub after_bump_recurse
 {
