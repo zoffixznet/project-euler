@@ -59,33 +59,9 @@ sub calc_sum
             # Sum of $aa+$cc_step + $aa + 2*$cc_step + $aa + 3 * $cc_step
             # up to $aa + $cc_step*($cc_num_steps)
             my $cc = $cc_step * ($cc_num_steps+1);
-            my $cc_ret = $cc_num_steps *
-            ($aa + ($cc>>1))
-            ;
 
-
-=begin foo
-        while ($cc < $max_cc)
-        {
-            # my $delta = ($aa + $cc);
-            # print "Found $aa+i$bb ; $cc+i$dd ; Adding: $delta\n";
-            $cc_ret += $aa + $cc;
-        }
-        continue
-        {
-            $cc += $cc_step;
-        }
-
-=end foo
-
-=cut
-
-            if ($cc == $max_cc)
-            {
-                $cc_ret += $aa + (($cc == $aa) ? 0 : $cc);
-            }
-
-            return $cc_ret;
+            return $cc_num_steps * ($aa + ($cc>>1))
+                + (($cc == $max_cc) ? ($aa + (($cc == $aa) ? 0 : $cc)) : 0);
         };
 
         $ret += $s->(0);
