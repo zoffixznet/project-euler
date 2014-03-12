@@ -54,8 +54,10 @@ sub calc_sum
             my $cc = $cc_step;
             my $dd = $dd_step;
 
+            my $max_cc = $MAX;
+
             C_LOOP:
-            while ($cc < $MAX)
+            while ($cc < $max_cc)
             {
                 my $cc_sq = $cc*$cc;
                 if ($cc_sq * $a_b_mag_sq > $MAX_SQ)
