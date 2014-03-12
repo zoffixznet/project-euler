@@ -58,11 +58,11 @@ sub calc_sum
             my $cc_num_steps = int( ($max_cc-1) / $cc_step );
             # Sum of $aa+$cc_step + $aa + 2*$cc_step + $aa + 3 * $cc_step
             # up to $aa + $cc_step*($cc_num_steps)
+            my $cc = $cc_step * ($cc_num_steps+1);
             my $cc_ret = $cc_num_steps *
-            ($aa + (((1+$cc_num_steps)*$cc_step)>>1))
+            ($aa + ($cc>>1))
             ;
 
-            my $cc = $cc_step * ($cc_num_steps+1);
 
 =begin foo
         while ($cc < $max_cc)
