@@ -78,7 +78,7 @@ sub after_bump_recurse
     foreach my $i (1 .. $remain)
     {
         my $val = ($counts[$num+$i] += (nCr($remain,$i) * $multiplier));
-        print "C[$num] == $val\n";
+        print "C[@{[$num+$i]}] == $val\n";
     }
     return;
 }
