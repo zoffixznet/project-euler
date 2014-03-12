@@ -59,8 +59,16 @@ sub calc_sum
                 $MAX/($aa*$p),
             );
 
-            my $cc_ret = 0;
+            my $cc_num_steps = int( ($max_cc-1) / $cc_step );
+            # Sum of $aa+$cc_step + $aa + 2*$cc_step + $aa + 3 * $cc_step
+            # up to $aa + $cc_step*($cc_num_steps)
+            my $cc_ret = $cc_num_steps *
+                ($aa + (((1+$cc_num_steps)*$cc_step)>>1))
+            ;
 
+            my $cc = $cc_step * ($cc_num_steps+1);
+
+=begin foo
             while ($cc < $max_cc)
             {
                 # my $delta = ($aa + $cc);
@@ -71,6 +79,10 @@ sub calc_sum
             {
                 $cc += $cc_step;
             }
+
+=end foo
+
+=cut
 
             if ($cc == $max_cc)
             {
