@@ -31,7 +31,7 @@ sub calc_sum
                 {
                     # my $delta = (($bb == 0 ? 1 : 2) * ($aa+$cc));
                     # my $delta = ($aa+$cc);
-                    my $delta = (($aa+$cc) / (($bb == 0 && $aa == $cc )? 2 : 1));
+                    my $delta = (($aa+$cc) * ($bb ? 2 : 1) / ($aa == $cc ? 2 : 1));
                     print "Found $aa+i$bb ; $cc+i$dd ; Adding: $delta\n";
                     $ret += $delta;
                 }
