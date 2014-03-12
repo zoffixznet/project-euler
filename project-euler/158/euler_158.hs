@@ -1,4 +1,4 @@
-import Data.Array.Unboxed
+import Data.Array
 
 fact :: Integer -> Integer
 fact n = product [2 .. n]
