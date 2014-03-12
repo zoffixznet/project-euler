@@ -118,14 +118,17 @@ sub before_bump_recurse
             my $num_letters_less_than_first_max_and_not_in_e_series =
             ( $first_max_letter_idx + 1 ) - $num_elems_in_e_series;
 
+            my $multiplier = nCr($first_max_letter_idx, $num_elems_in_e_series);
+
             foreach my $count_of_elems_in_second_series_below_first_max (1 .. $num_letters_less_than_first_max_and_not_in_e_series)
             {
                 after_bump_recurse(
                     $count_of_elems_in_second_series_below_first_max + $num_elems_in_e_series,
                     $COUNT - ($first_max_letter_idx+1),
                     (
-                        nCr($first_max_letter_idx, $count_of_elems_in_second_series_below_first_max)
-                        * nCr($first_max_letter_idx, $num_elems_in_e_series)
+                        $multiplier
+                            *
+                        nCr($num_letters_less_than_first_max_and_not_in_e_series, $count_of_elems_in_second_series_below_first_max)
                     )
                 );
             }
@@ -137,7 +140,7 @@ sub before_bump_recurse
     return;
 }
 
-my $COUNT_LETTERS = 2;
+my $COUNT_LETTERS = shift(@ARGV);
 
 # So we have:
 # [e1] [e2] [e3]...  [first_max] [second_min such that < first_max] [f1] [f2]...
