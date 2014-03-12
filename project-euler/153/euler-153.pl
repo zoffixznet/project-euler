@@ -64,22 +64,28 @@ sub calc_sum
 
             my $cc_ret = 0;
 
-            C_LOOP:
-            while ($cc <= $max_cc)
+            while ($cc < $max_cc)
             {
-                my $delta = ($aa + (($cc == $aa) ? 0 : $cc) );
+                # my $delta = ($aa + $cc);
                 # print "Found $aa+i$bb ; $cc+i$dd ; Adding: $delta\n";
-                $cc_ret += $delta;
+                $cc_ret += $aa + $cc;
             }
             continue
             {
                 $cc += $cc_step;
                 $dd += $dd_step;
             }
+
+            if ($cc == $max_cc)
+            {
+                $cc_ret += $aa + (($cc == $aa) ? 0 : $cc);
+            }
+
             if ($bb)
             {
                 $cc_ret <<= 1;
             }
+
             $ret += $cc_ret;
         }
     }
