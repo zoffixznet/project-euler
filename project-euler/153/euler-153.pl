@@ -12,12 +12,12 @@ sub gcd
 {
     my ($n, $m) = @_;
 
-    if ($m == 0)
+    while ($m > 0)
     {
-        return $n;
+        ($n, $m) = ($m, $n%$m);
     }
 
-    return gcd($m,$n % $m);
+    return $n;
 }
 
 sub calc_sum
