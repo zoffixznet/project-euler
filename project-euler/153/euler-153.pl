@@ -49,11 +49,8 @@ sub calc_sum
             # That happens when $cc is a product of $aa/gcd($aa,$bb)
 
             my $cc_step = $aa / gcd($bb, $aa);
-            my $dd_step = $cc_step*$bb/$aa;
 
             my $cc = $cc_step;
-            my $dd = $dd_step;
-
             my $p = (1 + ($bb/$aa)**2);
 
             my $max_cc = min(
@@ -73,7 +70,6 @@ sub calc_sum
             continue
             {
                 $cc += $cc_step;
-                $dd += $dd_step;
             }
 
             if ($cc == $max_cc)
