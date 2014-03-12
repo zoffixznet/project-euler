@@ -7,7 +7,7 @@ nCr :: Integer -> [Integer] -> Integer
 nCr n k_s = fact(n) `div` (product [fact(x) | x <- ((n-sum(k_s)):k_s)])
 
 after_bump_recurse :: Integer -> Integer -> Integer -> [(Integer,Integer)]
-after_bump_recurse num remain multiplier = [(num+i,(nCr remain [i])) | i <- [0 .. remain]]
+after_bump_recurse num remain multiplier = [(num+i,(multiplier*(nCr remain [i]))) | i <- [0 .. remain]]
 
 before_bump_recurse_helper :: Integer -> [[(Integer,Integer)]]
 before_bump_recurse_helper n_COUNT = [(after_bump_recurse (count_of_elems_in_second_series_below_first_max + num_elems_in_e_series) (n_COUNT-(first_max_letter_idx+1)) (nCr first_max_letter_idx [count_of_elems_in_second_series_below_first_max, (num_elems_in_e_series-1)])) |
