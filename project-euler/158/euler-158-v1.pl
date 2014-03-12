@@ -93,6 +93,19 @@ sub nCr
     return fact($n) / (fact($n-$k) * fact($k));
 }
 
+sub nCr3
+{
+    my ($n, $k1, $k2) = @_;
+    $n += 0;
+    $k1 += 0;
+    $k2 += 0;
+
+    if ($n < $k1+$k2)
+    {
+        die "N=$n K1=$k1 K2=$k2";
+    }
+    return fact($n) / (fact($n-$k1-$k2) * fact($k1) * fact($k2));
+}
 # TODO : this can be optimised to oblivion and exclude recursion.
 sub after_bump_recurse
 {
@@ -118,7 +131,7 @@ sub before_bump_recurse
             my $num_letters_less_than_first_max_and_not_in_e_series =
             ( $first_max_letter_idx + 1 ) - $num_elems_in_e_series;
 
-            my $multiplier = nCr($first_max_letter_idx, $num_elems_in_e_series);
+            # my $multiplier = nCr($first_max_letter_idx, $num_elems_in_e_series);
 
             foreach my $count_of_elems_in_second_series_below_first_max (1 .. $num_letters_less_than_first_max_and_not_in_e_series)
             {
@@ -126,9 +139,7 @@ sub before_bump_recurse
                     $count_of_elems_in_second_series_below_first_max + $num_elems_in_e_series,
                     $COUNT - ($first_max_letter_idx+1),
                     (
-                        $multiplier
-                            *
-                        nCr($num_letters_less_than_first_max_and_not_in_e_series, $count_of_elems_in_second_series_below_first_max)
+                        nCr3($first_max_letter_idx, $count_of_elems_in_second_series_below_first_max, $num_elems_in_e_series-1)
                     )
                 );
             }
