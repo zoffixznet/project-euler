@@ -30,11 +30,18 @@ sub calc_sum
 
             my $max_cc = int (sqrt( $MAX_SQ / $a_b_mag_sq ) );
 
-            foreach my $cc (1 .. $max_cc)
+            C_LOOP:
+            foreach my $cc (1 .. $MAX)
             {
+                my $cc_sq = $cc*$cc;
+                if ($cc_sq * $a_b_mag_sq > $MAX_SQ)
+                {
+                    last C_LOOP;
+                }
+
                 my $dd = -(($bb*$cc)/$aa);
 
-                my $c_d_mag_sq = $cc*$cc+$dd*$dd;
+                my $c_d_mag_sq = $cc_sq+$dd*$dd;
 
                 if ($dd == int($dd) and $a_b_mag_sq >= $c_d_mag_sq
                         and $aa*$cc-$bb*$dd <= $MAX)
