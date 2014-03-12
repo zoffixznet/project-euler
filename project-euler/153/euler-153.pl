@@ -63,6 +63,8 @@ sub calc_sum
                 $MAX/($aa*$p),
             );
 
+            my $cc_ret = 0;
+
             C_LOOP:
             while ($cc <= $max_cc)
             {
@@ -86,18 +88,19 @@ sub calc_sum
 =cut
 
                 my $delta = ($aa + (($cc == $aa) ? 0 : $cc) );
-                if ($bb)
-                {
-                    $delta <<= 1;
-                }
                 # print "Found $aa+i$bb ; $cc+i$dd ; Adding: $delta\n";
-                $ret += $delta;
+                $cc_ret += $delta;
             }
             continue
             {
                 $cc += $cc_step;
                 $dd += $dd_step;
             }
+            if ($bb)
+            {
+                $cc_ret <<= 1;
+            }
+            $ret += $cc_ret;
         }
     }
 
