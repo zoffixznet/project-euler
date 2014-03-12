@@ -30,6 +30,8 @@ sub calc_sum
                 last B_LOOP;
             }
 
+            my $dd_step = $bb/$aa+1;
+            my $dd = 0;
             C_LOOP:
             foreach my $cc (1 .. $MAX)
             {
@@ -40,8 +42,14 @@ sub calc_sum
                 }
 
                 my $b_c = $bb*$cc;
-                my $dd = ($b_c/$aa);
+                # my $dd = ($b_c/$aa);
+                $dd += $dd_step;
 
+                while ($dd * $aa > $b_c)
+                {
+                    # print "DD=$dd AA=$aa BB*CC = $b_c\n";
+                    $dd--;
+                }
                 my $c_d_mag_sq = $cc_sq+$dd*$dd;
 
                 if ($c_d_mag_sq > $a_b_mag_sq)
