@@ -48,17 +48,17 @@ sub calc_sum
 
             my $cc_step = $aa / gcd($bb, $aa);
 
-            my $p = (1 + ($bb/$aa)**2);
-
             my $max_cc = min(
                 $aa,
-                $MAX/($aa*$p),
+                $MAX/($aa*(1 + ($bb/$aa)**2)),
             );
 
             my $cc_num_steps = int( ($max_cc-1) / $cc_step );
             # Sum of $aa+$cc_step + $aa + 2*$cc_step + $aa + 3 * $cc_step
             # up to $aa + $cc_step*($cc_num_steps)
             my $cc = $cc_step * ($cc_num_steps+1);
+
+            # die if ($cc != $max_cc);
 
             return $cc_num_steps * ($aa + ($cc>>1))
                 + (($cc == $max_cc) ? ($aa + (($cc == $aa) ? 0 : $cc)) : 0);
