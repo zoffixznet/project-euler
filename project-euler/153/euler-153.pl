@@ -24,9 +24,13 @@ sub calc_sum
             {
                 my $dd = -(($bb*$cc)/$aa);
 
-                if ($dd == int($dd) and $a_b_mag_sq > $cc*$cc+$dd*$dd)
+                my $c_d_mag_sq = $cc*$cc+$dd*$dd;
+
+                if ($dd == int($dd) and $a_b_mag_sq > $c_d_mag_sq and $aa*$cc-$bb*$dd <= $MAX)
                 {
-                    $ret += (($bb == 0 ? 1 : 2) * ($aa*$cc-$bb*$dd));
+                    my $delta = (($bb == 0 ? 1 : 2) * ($aa+$cc));
+                    print "Found $aa+i$bb ; $cc+i$dd ; Adding: $delta\n";
+                    $ret += $delta;
                 }
             }
         }
