@@ -54,7 +54,6 @@ sub calc_sum
             my $p = (1 + ($bb/$aa)**2);
 
             my $max_cc = min(
-                sqrt($MAX_SQ/$a_b_mag_sq),
                 $aa,
                 $MAX/($aa*$p),
             );
