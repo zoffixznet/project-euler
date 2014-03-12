@@ -46,5 +46,5 @@ foreach my $len (0 .. $COUNT)
             }
         }
     }
-    printf "Count[%2d] == %d\n", $len, $count;
+    printf "Count[%2d] = %d\n", $len, $count;
 }
