@@ -54,10 +54,13 @@ sub calc_sum
             my $cc = $cc_step;
             my $dd = $dd_step;
 
+            my $p = (1 + ($bb/$aa)**2);
+
             my $max_cc = min(
                 $MAX,
                 sqrt($MAX_SQ/$a_b_mag_sq),
-                $a_b_mag_sq / (1 + ($bb/$aa)**2),
+                $a_b_mag_sq / $p,
+                $MAX/($aa*$p),
             );
 
             C_LOOP:
@@ -71,9 +74,6 @@ sub calc_sum
                     # print "DD=$dd AA=$aa BB*CC = $b_c\n";
                     $dd--;
                 }
-=end foo
-
-=cut
 
                 if (
                     $aa*$cc+$bb*$dd > $MAX
@@ -81,6 +81,9 @@ sub calc_sum
                 {
                     last C_LOOP;
                 }
+=end foo
+
+=cut
 
                 my $delta = ($aa + (($cc == $aa) ? 0 : $cc) );
                 if ($bb)
