@@ -1,5 +1,6 @@
 import Data.Array
 import Text.Printf
+import System.Environment
 
 fact :: Integer -> Integer
 fact n = product [1 .. n]
@@ -24,3 +25,7 @@ before_bump_recurse n_COUNT = elems arr where
 
 before_str :: Integer -> String
 before_str n = concat [(printf "Count[%2d] = %d\n" a b) | (a,b) <- (zip [0::Integer .. ] (before_bump_recurse n))]
+
+main = getArgs >>= parse
+
+parse (s:ss) = putStr $ before_str (read s :: Integer)
