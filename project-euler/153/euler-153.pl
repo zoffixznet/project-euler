@@ -62,12 +62,6 @@ sub calc_sum
             C_LOOP:
             while ($cc <= $max_cc)
             {
-                my $cc_sq = $cc*$cc;
-                # if ($cc_sq * $a_b_mag_sq > $MAX_SQ)
-                #{
-                #    last C_LOOP;
-                #}
-
 =begin foo
                 $dd += $dd_step;
 
@@ -80,7 +74,7 @@ sub calc_sum
 
 =cut
 
-                my $c_d_mag_sq = $cc_sq+$dd*$dd;
+                my $c_d_mag_sq = $cc*$cc+$dd*$dd;
 
                 if ($c_d_mag_sq > $a_b_mag_sq
                         or
