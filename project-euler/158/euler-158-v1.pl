@@ -3,10 +3,10 @@
 use strict;
 use warnings;
 
-use Math::BigInt lib => 'GMP', ':constant';
+# use Math::BigInt lib => 'GMP', ':constant';
 
-use List::Util qw(sum);
-use List::MoreUtils qw();
+# use List::Util qw(sum);
+# use List::MoreUtils qw();
 
 =head1 DESCRIPTION
 
@@ -57,9 +57,27 @@ And also all the a[i]s and b[i]s are different.
 
 my @counts;
 
+=head1 FACT
+
 sub fact
 {
     return shift->copy->bfac;
+}
+
+=cut
+
+sub fact
+{
+    my ($n) = @_;
+
+    my $r = 1;
+
+    for my $i (2 .. $n)
+    {
+        $r *= $i;
+    }
+
+    return $r;
 }
 
 sub nCr
@@ -67,6 +85,11 @@ sub nCr
     my ($n, $k) = @_;
     $n += 0;
     $k += 0;
+
+    if ($n < $k)
+    {
+        die "N=$n K=$k";
+    }
     return fact($n) / (fact($n-$k) * fact($k));
 }
 
@@ -75,29 +98,50 @@ sub after_bump_recurse
 {
     my ($num, $remain, $multiplier) = @_;
 
-    foreach my $i (1 .. $remain)
+    foreach my $i (0 .. $remain)
     {
         my $val = ($counts[$num+$i] += (nCr($remain,$i) * $multiplier));
-        print "C[@{[$num+$i]}] == $val\n";
+        # print "C[@{[$num+$i]}] == $val\n";
     }
     return;
 }
 
 my $COUNT_LETTERS = 26;
 
+# So we have:
+# [e1] [e2] [e3]...  [first_max] [second_min such that < first_max] [f1] [f2]...
+#
+#
+
 sub before_bump_recurse
 {
     my ($num_remain) = @_;
 
-    foreach my $num (0 .. $num_remain)
+    foreach my $first_max (1 .. $num_remain)
     {
-        my $num_discarded = $num_remain - $num;
-
-        if ($num && $num_discarded)
+        foreach my $num_elems_in_e_series (1 .. $first_max)
         {
-            after_bump_recurse($num, $num_discarded, nCr($num_remain, $num));
+            my $num_letters_less_than_first_max_and_not_in_e_series =
+                $first_max - $num_elems_in_e_series;
+
+            if ($num_letters_less_than_first_max_and_not_in_e_series > 0)
+            {
+                foreach my $count_of_elems_in_second_series_below_first_max (1 .. $num_letters_less_than_first_max_and_not_in_e_series)
+                {
+                    after_bump_recurse(
+                        $count_of_elems_in_second_series_below_first_max + $num_letters_less_than_first_max_and_not_in_e_series + 1,
+                        $num_remain - $first_max,
+                        (
+                            nCr($first_max-1, $count_of_elems_in_second_series_below_first_max)
+                            * nCr($first_max,$num_elems_in_e_series)
+                        )
+                    );
+                }
+                # after_bump_recurse($num, $num_discarded, nCr($num_remain, $num));
+            }
         }
     }
+
 
     return;
 }
