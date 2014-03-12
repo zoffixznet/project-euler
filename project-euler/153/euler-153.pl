@@ -57,6 +57,7 @@ sub calc_sum
             my $max_cc = min(
                 $MAX,
                 sqrt($MAX_SQ/$a_b_mag_sq),
+                $a_b_mag_sq / (1 + ($bb/$aa)**2),
             );
 
             C_LOOP:
@@ -74,10 +75,7 @@ sub calc_sum
 
 =cut
 
-                my $c_d_mag_sq = $cc*$cc+$dd*$dd;
-
-                if ($c_d_mag_sq > $a_b_mag_sq
-                        or
+                if (
                     $aa*$cc+$bb*$dd > $MAX
                 )
                 {
