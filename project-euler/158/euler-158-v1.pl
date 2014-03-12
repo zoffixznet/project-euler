@@ -106,42 +106,44 @@ sub after_bump_recurse
     return;
 }
 
-my $COUNT_LETTERS = 26;
-
-# So we have:
-# [e1] [e2] [e3]...  [first_max] [second_min such that < first_max] [f1] [f2]...
-#
-#
-
 sub before_bump_recurse
 {
-    my ($num_remain) = @_;
+    my ($COUNT) = @_;
 
-    foreach my $first_max (1 .. $num_remain)
+    # The first_max cannot be 0 because second_min must be less than that.
+    foreach my $first_max_letter_idx (1 .. $COUNT-1)
     {
-        foreach my $num_elems_in_e_series (1 .. $first_max-1)
+        foreach my $num_elems_in_e_series (1 .. $first_max_letter_idx)
         {
             my $num_letters_less_than_first_max_and_not_in_e_series =
-            $first_max - $num_elems_in_e_series;
+            ( $first_max_letter_idx + 1 ) - $num_elems_in_e_series;
 
             foreach my $count_of_elems_in_second_series_below_first_max (1 .. $num_letters_less_than_first_max_and_not_in_e_series)
             {
                 after_bump_recurse(
                     $count_of_elems_in_second_series_below_first_max + $num_elems_in_e_series,
-                    $num_remain - $first_max,
+                    $COUNT - ($first_max_letter_idx+1),
                     (
-                        nCr($first_max-1, $count_of_elems_in_second_series_below_first_max)
-                        * nCr($first_max,$num_elems_in_e_series)
+                        nCr($first_max_letter_idx, $count_of_elems_in_second_series_below_first_max)
+                        * nCr($first_max_letter_idx, $num_elems_in_e_series)
                     )
                 );
             }
-            # after_bump_recurse($num, $num_discarded, nCr($num_remain, $num));
+            # after_bump_recurse($num, $num_discarded, nCr($COUNT, $num));
         }
     }
 
 
     return;
 }
+
+my $COUNT_LETTERS = 2;
+
+# So we have:
+# [e1] [e2] [e3]...  [first_max] [second_min such that < first_max] [f1] [f2]...
+#
+#
+
 
 before_bump_recurse($COUNT_LETTERS);
 
