@@ -2,6 +2,8 @@
 
 use strict;
 use warnings;
+use integer;
+use bytes;
 
 use List::Util qw(sum);
 use List::MoreUtils qw();
@@ -28,8 +30,6 @@ sub calc_sum
                 last B_LOOP;
             }
 
-            my $max_cc = int (sqrt( $MAX_SQ / $a_b_mag_sq ) );
-
             C_LOOP:
             foreach my $cc (1 .. $MAX)
             {
@@ -39,7 +39,8 @@ sub calc_sum
                     last C_LOOP;
                 }
 
-                my $dd = -(($bb*$cc)/$aa);
+                my $b_c = $bb*$cc;
+                my $dd = ($b_c/$aa);
 
                 my $c_d_mag_sq = $cc_sq+$dd*$dd;
 
@@ -48,8 +49,8 @@ sub calc_sum
                     last C_LOOP;
                 }
 
-                if ($dd == int($dd)
-                        and $aa*$cc-$bb*$dd <= $MAX)
+                if ($dd*$aa == $b_c
+                        and $aa*$cc+$bb*$dd <= $MAX)
                 {
                     # my $delta = (($bb == 0 ? 1 : 2) * ($aa+$cc));
                     # my $delta = ($aa+$cc);
