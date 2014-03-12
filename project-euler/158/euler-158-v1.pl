@@ -73,12 +73,12 @@ sub nCr
 # TODO : this can be optimised to oblivion and exclude recursion.
 sub after_bump_recurse
 {
-    my ($num, $remain) = @_;
+    my ($num, $remain, $multiplier) = @_;
 
     foreach my $i (0 .. $remain)
     {
-        my $val = ($counts[$num+$i] += nCr($remain,$i));
-        # print "C[$num] == $val\n";
+        my $val = ($counts[$num+$i] += (nCr($remain,$i) * $multiplier));
+        print "C[$num] == $val\n";
     }
     return;
 }
@@ -87,35 +87,26 @@ my $COUNT_LETTERS = 26;
 
 sub before_bump_recurse
 {
-    my ($num, $num_remain) = @_;
+    my ($num_remain) = @_;
 
-    if (! $num_remain)
+    foreach my $num (0 .. $num_remain)
     {
-        my $num_discarded = $COUNT_LETTERS - $num;
+        my $num_discarded = $num_remain - $num;
 
         if ($num && $num_discarded)
         {
-            after_bump_recurse($num, $num_discarded);
+            after_bump_recurse($num, $num_discarded, nCr($num_remain, $num));
         }
-        return;
     }
-
-    my $next_remain = $num_remain - 1;
-
-    # Handle the skip.
-    before_bump_recurse($num, $next_remain);
-
-    # Handle the assignment.
-    before_bump_recurse($num+1, $next_remain);
 
     return;
 }
 
-before_bump_recurse(0, $COUNT_LETTERS, 0);
+before_bump_recurse($COUNT_LETTERS);
 
 foreach my $i (keys(@counts))
 {
-    print "Count[$i] = $counts[$i]\n";
+    print "Count[", sprintf("%2d", $i), "] = ", ($counts[$i] // 0), "\n";
 }
 
 =begin NOTWORKING
