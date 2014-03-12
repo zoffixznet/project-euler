@@ -5,7 +5,7 @@ use warnings;
 use integer;
 use bytes;
 
-use List::Util qw(sum);
+use List::Util qw(min sum);
 use List::MoreUtils qw();
 
 sub gcd
@@ -54,7 +54,9 @@ sub calc_sum
             my $cc = $cc_step;
             my $dd = $dd_step;
 
-            my $max_cc = $MAX;
+            my $max_cc = min(
+                $MAX
+            );
 
             C_LOOP:
             while ($cc < $max_cc)
