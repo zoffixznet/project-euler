@@ -57,7 +57,6 @@ sub calc_sum
             my $p = (1 + ($bb/$aa)**2);
 
             my $max_cc = min(
-                $MAX,
                 sqrt($MAX_SQ/$a_b_mag_sq),
                 $aa,
                 $MAX/($aa*$p),
@@ -68,25 +67,6 @@ sub calc_sum
             C_LOOP:
             while ($cc <= $max_cc)
             {
-=begin foo
-                $dd += $dd_step;
-
-                while ($dd * $aa > $b_c)
-                {
-                    # print "DD=$dd AA=$aa BB*CC = $b_c\n";
-                    $dd--;
-                }
-
-                if (
-                    $aa*$cc+$bb*$dd > $MAX
-                )
-                {
-                    last C_LOOP;
-                }
-=end foo
-
-=cut
-
                 my $delta = ($aa + (($cc == $aa) ? 0 : $cc) );
                 # print "Found $aa+i$bb ; $cc+i$dd ; Adding: $delta\n";
                 $cc_ret += $delta;
