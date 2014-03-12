@@ -129,7 +129,7 @@ sub before_bump_recurse
                 foreach my $count_of_elems_in_second_series_below_first_max (1 .. $num_letters_less_than_first_max_and_not_in_e_series)
                 {
                     after_bump_recurse(
-                        $count_of_elems_in_second_series_below_first_max + $num_letters_less_than_first_max_and_not_in_e_series + 1,
+                        $count_of_elems_in_second_series_below_first_max + $num_elems_in_e_series,
                         $num_remain - $first_max,
                         (
                             nCr($first_max-1, $count_of_elems_in_second_series_below_first_max)
