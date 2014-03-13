@@ -1,4 +1,7 @@
 #include <stdio.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <math.h>
 
 typedef int64_t myint_t;
 
@@ -41,7 +44,7 @@ static inline myint_t helper(const myint_t MAX, const myint_t aa, const myint_t 
 
     const myint_t max_cc = min(
         aa,
-        MAX/(aa*(1 + (bb/aa)**2))
+        MAX / (aa*(1 + sq(bb/aa)))
     );
 
     const myint_t cc_num_steps = ((max_cc-1) / cc_step );
@@ -66,7 +69,7 @@ static inline myint_t helper(const myint_t MAX, const myint_t aa, const myint_t 
 
 }
 
-static inline calc_sum(const myint_t MAX)
+static inline myint_t calc_sum(const myint_t MAX)
 {
     myint_t ret = 0;
 
@@ -78,7 +81,7 @@ static inline calc_sum(const myint_t MAX)
 
         ret += helper(MAX, aa, 0);
         myint_t d = 0;
-        const myint_t max_bb = (myint_t)(sqrt($MAX_SQ - $aa*$aa));
+        const myint_t max_bb = (myint_t)(sqrt(MAX_SQ - sq(aa)));
         for (myint_t bb = 1; bb <= max_bb; bb++)
         {
             d += helper(MAX, aa, bb);
@@ -91,5 +94,5 @@ static inline calc_sum(const myint_t MAX)
 
 int main(int argc, char * argv[])
 {
-    printf ("%lld\n", ((long long)calc_sum(atol(argv[1])));
+    printf ("%lld\n", (long long)calc_sum(atol(argv[1])));
 }
