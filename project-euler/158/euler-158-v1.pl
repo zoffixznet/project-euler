@@ -125,13 +125,13 @@ sub before_bump_recurse
 
             # my $factor = nCr($first_max, $e_elems_count);
 
-            foreach my $count_of_elems_in_second_series_below_first_max (1 .. $not_in_e_below_first_max)
+            foreach my $num_below_1max_in_2nd (1 .. $not_in_e_below_first_max)
             {
                 after_bump_recurse(
-                    $count_of_elems_in_second_series_below_first_max + $e_elems_count,
+                    $num_below_1max_in_2nd + $e_elems_count,
                     $COUNT - ($first_max+1),
                     (
-                        nCr3($first_max, $count_of_elems_in_second_series_below_first_max, $e_elems_count-1)
+                        nCr3($first_max, $num_below_1max_in_2nd, $e_elems_count-1)
                     )
                 );
             }
