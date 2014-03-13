@@ -99,7 +99,7 @@ sub nCr3
 }
 
 # TODO : this can be optimised to oblivion and exclude recursion.
-sub after_bump_recurse
+sub after_bump
 {
     my ($num, $remain, $factor) = @_;
 
@@ -127,7 +127,7 @@ sub before_bump_recurse
 
             foreach my $num_below_1max_in_2nd (1 .. $not_in_e_below_first_max)
             {
-                after_bump_recurse(
+                after_bump(
                     $num_below_1max_in_2nd + $e_elems_count,
                     $COUNT - ($first_max+1),
                     (
@@ -135,7 +135,6 @@ sub before_bump_recurse
                     )
                 );
             }
-            # after_bump_recurse($num, $num_discarded, nCr($COUNT, $num));
         }
     }
 
