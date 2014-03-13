@@ -111,7 +111,7 @@ sub after_bump
     return;
 }
 
-sub before_bump_recurse
+sub before_bump
 {
     my ($COUNT) = @_;
 
@@ -150,7 +150,7 @@ my $COUNT_LETTERS = shift(@ARGV);
 #
 
 
-before_bump_recurse($COUNT_LETTERS);
+before_bump($COUNT_LETTERS);
 
 foreach my $i (keys(@counts))
 {
