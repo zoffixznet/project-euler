@@ -57,15 +57,6 @@ And also all the a[i]s and b[i]s are different.
 
 my @counts;
 
-=head1 FACT
-
-sub fact
-{
-    return shift->copy->bfac;
-}
-
-=cut
-
 sub fact
 {
     my ($n) = @_;
@@ -110,11 +101,11 @@ sub nCr3
 # TODO : this can be optimised to oblivion and exclude recursion.
 sub after_bump_recurse
 {
-    my ($num, $remain, $multiplier) = @_;
+    my ($num, $remain, $factor) = @_;
 
     foreach my $i (0 .. $remain)
     {
-        my $val = ($counts[$num+$i] += (nCr($remain,$i) * $multiplier));
+        my $val = ($counts[$num+$i] += (nCr($remain,$i) * $factor));
         # print "C[@{[$num+$i]}] == $val\n";
     }
     return;
@@ -125,22 +116,22 @@ sub before_bump_recurse
     my ($COUNT) = @_;
 
     # The first_max cannot be 0 because second_min must be less than that.
-    foreach my $first_max_letter_idx (1 .. $COUNT-1)
+    foreach my $first_max (1 .. $COUNT-1)
     {
-        foreach my $num_elems_in_e_series (1 .. $first_max_letter_idx)
+        foreach my $e_elems_count (1 .. $first_max)
         {
-            my $num_letters_less_than_first_max_and_not_in_e_series =
-            ( $first_max_letter_idx + 1 ) - $num_elems_in_e_series;
+            my $not_in_e_below_first_max =
+            ( $first_max + 1 ) - $e_elems_count;
 
-            # my $multiplier = nCr($first_max_letter_idx, $num_elems_in_e_series);
+            # my $factor = nCr($first_max, $e_elems_count);
 
-            foreach my $count_of_elems_in_second_series_below_first_max (1 .. $num_letters_less_than_first_max_and_not_in_e_series)
+            foreach my $count_of_elems_in_second_series_below_first_max (1 .. $not_in_e_below_first_max)
             {
                 after_bump_recurse(
-                    $count_of_elems_in_second_series_below_first_max + $num_elems_in_e_series,
-                    $COUNT - ($first_max_letter_idx+1),
+                    $count_of_elems_in_second_series_below_first_max + $e_elems_count,
+                    $COUNT - ($first_max+1),
                     (
-                        nCr3($first_max_letter_idx, $count_of_elems_in_second_series_below_first_max, $num_elems_in_e_series-1)
+                        nCr3($first_max, $count_of_elems_in_second_series_below_first_max, $e_elems_count-1)
                     )
                 );
             }
@@ -166,6 +157,8 @@ foreach my $i (keys(@counts))
 {
     print "Count[", sprintf("%2d", $i), "] = ", ($counts[$i] // 0), "\n";
 }
+
+__END__
 
 =begin NOTWORKING
 
