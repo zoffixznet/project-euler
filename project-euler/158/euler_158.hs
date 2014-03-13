@@ -19,7 +19,7 @@ before_bump n_COUNT = elems arr where
         helper n_COUNT = [(after_bump (num_below_1max_in_2nd + e_elems_count) (n_COUNT-(first_max+1)) (nCr first_max [num_below_1max_in_2nd, (e_elems_count-1)])) |
             first_max <- [1 .. (n_COUNT-1)],
             e_elems_count <- [1 .. first_max],
-            not_in_e_below_first_max <- [(( first_max + 1 ) - e_elems_count)],
+            let not_in_e_below_first_max = first_max + 1 - e_elems_count,
             num_below_1max_in_2nd <- [1 .. not_in_e_below_first_max]
             ]
 
