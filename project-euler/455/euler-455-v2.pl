@@ -58,20 +58,6 @@ sub calc_f
 
     my $cache = '';
 
-    my $lookup = sub {
-        my ($power) = @_;
-
-        return vec($cache, $MOD-$power, 32);
-    };
-
-    my $assign = sub {
-        my ($power, $e) = @_;
-
-        vec($cache, $MOD-$power, 32) = $e;
-
-        return;
-    };
-
     my $e = 0;
     my $power = 1;
 
