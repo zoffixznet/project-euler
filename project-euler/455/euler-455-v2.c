@@ -50,7 +50,7 @@ static char cache[(MOD >> 3) + 1];
 
 #define NEXT_POWER() { power = ((power * n) % MOD); }
 
-myint_t calc_f(myint_t n)
+static inline myint_t calc_f(myint_t n)
 {
     myint_t x = 0;
     if (n % 10 != 0)
