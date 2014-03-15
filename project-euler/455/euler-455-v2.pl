@@ -76,7 +76,7 @@ sub calc_f
     # Inspect the largest ones first.
     for my $x (sort { $b <=> $a } keys%cache)
     {
-        if ($x - $cache{$x} % $cycle_len == 0)
+        if (( ($x - $cache{$x}) % $cycle_len) == 0)
         {
             return $x;
         }
