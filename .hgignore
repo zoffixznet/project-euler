@@ -4,4 +4,4 @@ project-euler/145/euler145-debug
 project-euler/148/dump.txt
 project-euler/153/euler_153
 project-euler/75/euler-75
-project-euler/455/RESULTS/\d+.result
+project-euler/455/RESULTS/(?:ten)?\d+.result
