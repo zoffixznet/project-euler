@@ -219,22 +219,28 @@ sub calc_f
         }
 
         # say "N = $n ; divisor_cycle_len = $divisor_cycle_len ; N_dividend = $n_dividend";
-
-        my $cycle_len = 0 + ('' . Math::BigInt::blcm($divisor_cycle_len, $base_cycle_len));
-
-        say "N = $n ; cycle_len = $cycle_len ; N_dividend = $n_dividend";
-
-        for my $i (100+$cycle_len)
-        {
-            if (exp_mod($n, $i) != exp_mod($n, $i+$cycle_len))
-            {
-                die "Wrong cycle in $n";
-            }
-        }
 =end foo
 
 =cut
 
+        my $cycle_len = $CYCLE_LEN;
+
+        say "N = $n ; cycle_len = $cycle_len";
+
+        DELTA:
+        for my $delta (reverse(0 .. 100))
+        {
+            for my $i ($delta)
+            {
+                if (exp_mod($n, $i) != exp_mod($n, $i+$cycle_len))
+                {
+                    print "First wrong delta : $delta\n";
+                    last DELTA;
+                }
+            }
+        }
+
+=begin foo
         my $power = 1;
         for my $e (1 .. ($CYCLE_LEN << 1))
         {
@@ -247,7 +253,6 @@ sub calc_f
             }
         }
 
-=begin foo
 
         my $cache = '';
 

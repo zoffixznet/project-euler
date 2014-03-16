@@ -46,6 +46,11 @@ static inline myint_t exp_mod(myint_t b, myint_t e)
 }
 
 #define CYCLE_LEN 50000000
+/* Found out experimentally for all numbers in the range. */
+#define CYCLE_LEN_DELTA_BASE 8
+/* A safety margin. */
+#define CYCLE_LEN_DELTA_MARGIN 3
+#define CYCLE_LEN_DELTA (CYCLE_LEN_DELTA_BASE + CYCLE_LEN_DELTA_MARGIN)
 #define NEXT_POWER() { power = ((power * n) % MOD); }
 
 static inline myint_t calc_f(myint_t n)
@@ -55,8 +60,7 @@ static inline myint_t calc_f(myint_t n)
     {
         myint_t power = 1;
 
-        int e;
-        for (e = 0; e < (CYCLE_LEN) ; e++)
+        for (int e = 0; e < (CYCLE_LEN) ; e++)
         {
             /* Put the cheaper conditional first. */
             if (( power > x ) && (power % CYCLE_LEN == e))
@@ -65,8 +69,7 @@ static inline myint_t calc_f(myint_t n)
             }
             NEXT_POWER();
         }
-        int cycle_len_mod = 0;
-        for (; e < (CYCLE_LEN << 1) ; e++, cycle_len_mod++)
+        for (int cycle_len_mod = 0 ; cycle_len_mod < CYCLE_LEN_DELTA ; cycle_len_mod++)
         {
             if (( power > x ) && (power % CYCLE_LEN == cycle_len_mod))
             {
