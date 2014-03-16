@@ -1,9 +1,12 @@
-all: 455.exe 455-v2.exe
+all: 455.exe 455-v2.exe 455-v3.exe
 
 455.exe: euler-455-v1.c
 	gcc -std=gnu99 -O3 -Wall -fwhole-program -flto -fvisibility=hidden -fomit-frame-pointer -march=native -o $@ $<
 
 455-v2.exe: euler-455-v2.c
+	gcc -std=gnu99 -O3 -Wall -fwhole-program -flto -fvisibility=hidden -fomit-frame-pointer -march=native -o $@ $<
+
+455-v3.exe: euler-455-v3.c
 	gcc -std=gnu99 -O3 -Wall -fwhole-program -flto -fvisibility=hidden -fomit-frame-pointer -march=native -o $@ $<
 
 N_S = $(shell seq 400 99999)
