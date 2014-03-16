@@ -55,15 +55,24 @@ static inline myint_t calc_f(myint_t n)
     {
         myint_t power = 1;
 
-        for (int e = 1; e < (CYCLE_LEN << 1) ; e++)
+        int e;
+        for (e = 0; e < (CYCLE_LEN) ; e++)
         {
-            NEXT_POWER();
-            if (((power - e) % CYCLE_LEN == 0)
-                && ( power > x )
-            )
+            /* Put the cheaper conditional first. */
+            if (( power > x ) && (power % CYCLE_LEN == e))
             {
                 x = power;
             }
+            NEXT_POWER();
+        }
+        int cycle_len_mod = 0;
+        for (; e < (CYCLE_LEN << 1) ; e++, cycle_len_mod++)
+        {
+            if (( power > x ) && (power % CYCLE_LEN == cycle_len_mod))
+            {
+                x = power;
+            }
+            NEXT_POWER();
         }
     }
 
