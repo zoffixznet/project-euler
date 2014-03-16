@@ -6,7 +6,7 @@ all: 455.exe 455-v2.exe
 455-v2.exe: euler-455-v2.c
 	gcc -std=gnu99 -O3 -Wall -fwhole-program -flto -fvisibility=hidden -fomit-frame-pointer -march=native -o $@ $<
 
-N_S = $(shell seq 400 9999)
+N_S = $(shell seq 400 99999)
 
 N_S_RESULTS = $(patsubst %,RESULTS/ten%.result,$(N_S))
 
