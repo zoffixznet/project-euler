@@ -29,3 +29,7 @@ $(N_S_RESULTS):
 	A="$(patsubst RESULTS/ten%.result,%,$@)"; ./455-v2.exe "$$((A * 10 + 1))" "$$(( (A + 1) * 10 ))" | tee  $@
 
 # A="$(patsubst RESULTS/%.result,%,$@)"; perl euler-455-v2.pl "$$A" "$$A" | tee  $@
+#
+
+clean:
+	rm -f 455*.exe rainbow_table.txt
