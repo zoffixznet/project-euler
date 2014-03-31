@@ -7,7 +7,7 @@ use integer;
 use bytes;
 
 use List::MoreUtils qw(any firstidx);
-use List::Util qw(first max);
+use List::Util qw(first max min);
 
 my @shapes_strings =
 (
@@ -157,7 +157,7 @@ sub find_pos
     {
         for my $y (0 .. $Y_DIM-1)
         {
-            if (vec_get($buf, $x, $y))
+            if (! vec_get($buf, $x, $y))
             {
                 return [$x,$y];
             }
@@ -179,9 +179,7 @@ sub try_to_fit_shape_at_pos
     foreach my $new_offset (@{$shape->{'cells'}})
     {
         my @new_pos = ($pos->[0] + $new_offset->[0], $pos->[1] + $new_offset->[1]);
-        if ($new_pos[0] < 0 or $new_pos[0] > $X_DIM or $new_pos[1] < 0 or
-            $new_pos[1] > $Y_DIM or
-            vec_get($old_buf, @new_pos)
+        if (not_in_dims(@new_pos) or vec_get($old_buf, @new_pos)
         )
         {
             # Cannot fit shape.
@@ -219,7 +217,7 @@ sub try_to_fit_shape_at_pos
                         if (!exists($found{$new_p_token}))
                         {
                             $found{$new_p_token} = 1;
-                            push @queue, @$new_p;
+                            push @queue, $new_p;
                         }
                     }
                 }
