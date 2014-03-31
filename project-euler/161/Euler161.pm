@@ -176,7 +176,7 @@ sub try_to_fit_shape_at_pos
     my $buf = $$old_buf;
 
     my @coords;
-    foreach my $new_offset (@{$shape{'cells'}})
+    foreach my $new_offset (@{$shape->{'cells'}})
     {
         my @new_pos = ($pos->[0] + $new_offset->[0], $pos->[1] + $new_offset->[1]);
         if ($new_pos[0] < 0 or $new_pos[0] > $X_DIM or $new_pos[1] < 0 or
@@ -198,7 +198,7 @@ sub try_to_fit_shape_at_pos
 
     # Now let's see if the empty space in $buf is still contiguous.
     #
-    foreach my $neighbour (map { [$pos->[0]+$_->[0],$pos->[1]+$_->[1]] } @{$shape{'neighbours'}})
+    foreach my $neighbour (map { [$pos->[0]+$_->[0],$pos->[1]+$_->[1]] } @{$shape->{'neighbours'}})
     {
         if ((! vec_get(\$buf, @$neighbour)) and (! not_in_dims(@$neighbour)))
         {
@@ -267,7 +267,7 @@ sub handle_depth
 sub handle_all_depths
 {
     my $MAX_DEPTH = $X_DIM*$Y_DIM/3;
-    foreach my $depth (0 .. $MAX_DEPTH-1);
+    foreach my $depth (0 .. $MAX_DEPTH-1)
     {
         print "Handling depth $depth\n";
         handle_depth($depth);
