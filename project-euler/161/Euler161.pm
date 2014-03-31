@@ -143,5 +143,23 @@ sub get_initial_vec
     return '';
 }
 
+sub find_pos
+{
+    my ($buf) = @_;
+
+    for my $x (0 .. $X_DIM-1)
+    {
+        for my $y (0 .. $Y_DIM-1)
+        {
+            if (vec_get($buf, $x, $y))
+            {
+                return [$x,$y];
+            }
+        }
+    }
+
+    die "No empty spot.";
+}
+
 1;
 
