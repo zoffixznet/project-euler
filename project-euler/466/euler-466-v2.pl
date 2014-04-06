@@ -6,7 +6,7 @@ use warnings;
 use integer;
 use Math::BigInt lib => 'GMP';
 
-use List::Util qw(first sum);
+use List::Util qw(first sum min);
 use List::MoreUtils qw(none);
 
 my $DEBUG = 1;
@@ -92,13 +92,25 @@ sub calc_P
             }
             my $end_i_prod = $MAJ * $row_idx;
             my $end_prod = ($end_i_prod / $step) * $step;
-            for (my $prod = $start_prod ; $prod <= $end_prod ; $prod += $step)
+
+            my $prod = $start_prod;
+
+            for my $maj_factor (2 .. $row_idx)
             {
-                if (
-                    (none { $prod <= $MAJ*$_ and $prod % $_ == 0 } 2 .. $row_idx-1)
-                )
+                my $maj_checkpoint = min($MAJ * $maj_factor, $end_prod);
+
+                while ($prod <= $maj_checkpoint)
                 {
-                    $found_in_next[$next_row][$row_idx]++;
+                    if (
+                        (none { $prod % $_ == 0 } $maj_factor .. $row_idx-1)
+                    )
+                    {
+                        $found_in_next[$next_row][$row_idx]++;
+                    }
+                }
+                continue
+                {
+                    $prod += $step;
                 }
             }
         }
