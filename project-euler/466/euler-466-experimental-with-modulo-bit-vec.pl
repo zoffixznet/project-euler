@@ -57,7 +57,7 @@ sub calc_P
 
                 if ($delta != @expected_delta)
                 {
-                    die "Row == $row_idx ; Prev_Row == $prev_row. There are $delta whereas there should be " . @expected_delta . "!\n";
+                    die "Row == $row_idx ; Prev_Row == $prev_row. There are $delta whereas there should be " . @expected_delta . " [@expected_delta]!\n";
                 }
             }
 
@@ -107,11 +107,12 @@ sub calc_P
                     $maj_factor
                 );
             }
-            print "LCMs[2] == ", $lcms[2], "\n";
+            # print "LCMs[2] == ", $lcms[2], "\n";
 
             for my $maj_factor (2 .. $row_idx)
             {
                 my $maj_checkpoint = min($MAJ * $maj_factor, $end_prod);
+                # my $maj_checkpoint = $MAJ * $maj_factor;
 
                 my @prev_rows = ($maj_factor .. $row_idx-1);
                 my $prev_rows_and_step_lcm = $lcms[$maj_factor];
@@ -131,11 +132,32 @@ sub calc_P
                     }
                 }
 
+=begin foo
                 my @counts = (0);
                 for my $i (0 .. $prev_rows_div_step - 1)
                 {
                     push @counts, ($counts[-1] + (vec($lookup_vec, $i, 1) == 0));
                 }
+                # push @counts, $counts[-1];
+                #
+=end foo
+
+=cut
+
+                my $_calc_num_mods = sub {
+                    my ($s, $e) = @_;
+
+                    my $count = 0;
+                    for my $i ($s .. $e)
+                    {
+                        if (vec($lookup_vec, $i, 1) == 0)
+                        {
+                            $count++;
+                        }
+                    }
+
+                    return $count;
+                };
 
                 my $maj_end_prod_div = $maj_checkpoint / $step;
                 my $maj_start_prod_div = $prod / $step;
@@ -148,16 +170,29 @@ sub calc_P
                     $maj_start_prod_bound_lcm += $prev_rows_div_step;
                 }
 
-                $found_in_next[$next_row][$row_idx] =
+                $found_in_next[$next_row][$row_idx] +=
+                (
+                    ($maj_end_prod_bound_lcm - $maj_start_prod_bound_lcm) / $prev_rows_div_step * $_calc_num_mods->(0, $prev_rows_div_step - 1)
+                    + $_calc_num_mods->(1, $maj_end_prod_div - $maj_end_prod_bound_lcm-1)
+                    +
+                    $_calc_num_mods->(($maj_start_prod_bound_lcm - $maj_start_prod_div), $prev_rows_div_step - 1)
+                );
+
+                $prod = $maj_end_prod_div * $step;
+=begin removed
+                $found_in_next[$next_row][$row_idx] +=
                 (
                     ($maj_end_prod_bound_lcm - $maj_start_prod_bound_lcm) / $prev_rows_div_step * $counts[-1]
-                    + $counts[$maj_start_prod_bound_lcm - $maj_start_prod_div]
-                    + $counts[$maj_end_prod_div - $maj_end_prod_bound_lcm]
+                    + $counts[1+($maj_end_prod_div - $maj_end_prod_bound_lcm)]
+                    +
+                    (
+                        $counts[-1] -
+                        $counts[1+($maj_start_prod_bound_lcm - $maj_start_prod_div)]
+                    )
                 );
 
                 $prod = $maj_end_prod_div * $step;
 
-=begin removed
                 while ($prod <= $maj_checkpoint)
                 {
                     if (
