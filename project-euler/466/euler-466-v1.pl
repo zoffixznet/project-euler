@@ -70,6 +70,11 @@ sub calc_P
 
                 $count -= (($prev_max_pivot - $prev_min_pivot) / $step + 1);
             }
+
+            if ($count < 0)
+            {
+                die "Count is less than 0! (\$count=$count)\n";
+            }
         }
 
         $total_count += $count;
