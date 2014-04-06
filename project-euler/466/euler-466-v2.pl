@@ -99,10 +99,15 @@ sub calc_P
             {
                 my $maj_checkpoint = min($MAJ * $maj_factor, $end_prod);
 
+                # $lcm can be 0 if the list is empty.
+                # my $lcm = Math::BigInt::blcm($maj_factor .. $row_idx-1) || 1;
+
                 while ($prod <= $maj_checkpoint)
                 {
                     if (
                         (none { $prod % $_ == 0 } $maj_factor .. $row_idx-1)
+                        # Math::BigInt::bgcd($prod % $lcm, $lcm) == 1
+                        # Math::BigInt::bgcd($prod % $lcm, $lcm) < $maj_factor
                     )
                     {
                         $found_in_next[$next_row][$row_idx]++;
