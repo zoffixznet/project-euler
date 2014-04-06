@@ -241,7 +241,7 @@ EOF
                     +
                     (
                         (
-                            ($maj_start_prod_div == $maj_end_prod_div)
+                            1 # ($maj_start_prod_div == $maj_end_prod_div)
                             && ($cond1 && $cond2 && $cond3)
                         )
                         ? $_calc_num_mods->($maj_start_prod_div % $prev_rows_div_step, $maj_end_prod_div % $prev_rows_div_step)
@@ -314,7 +314,6 @@ sub my_test
 
 if (1)
 {
-my_test(11, 11, 42);
 my_test(4, 6, 15);
 my_test(4, 4, 9);
 my_test(3, 4, 8);
@@ -323,6 +322,10 @@ my_test(4, 8, 20);
 my_test(4, 9, 22);
 my_test(4, 10, 24);
 my_test(10, 10, 42);
+my_test(11, 11, 53);
+my_test(12, 12, 59);
+my_test(13, 13, 72);
+my_test(14, 14, 80);
 }
 
 if (1)
