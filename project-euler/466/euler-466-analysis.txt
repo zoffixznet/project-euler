@@ -1,0 +1,15 @@
+In the 1st row of P(64, 10^16), we have { n*1 | n \in {1 .. 10^16 } }
+so 10^16 distinct numbers.
+
+In the 2nd row of P(64, 10^16), we have { n*2 | n \in {1 .. 10^16 } },
+but the lower half of them is less than 10^16 so we get an additional
+(10^16)/2 numbers.
+
+In the 3rd row of P(64, 10^16), we have { n*3 | n \in {1 .. 10^16 } },
+but:
+
+    A) {n*3 | n \in {1 .. 10^16/3 } is already in the first row.
+
+    B) {n*3 | n*3 < 2*10^16 && n % 2 == 0 } is already in the second row.
+
+
