@@ -179,6 +179,7 @@ sub calc_P
                 );
 
                 $prod = $maj_end_prod_div * $step;
+
 =begin removed
                 $found_in_next[$next_row][$row_idx] +=
                 (
@@ -192,6 +193,13 @@ sub calc_P
                 );
 
                 $prod = $maj_end_prod_div * $step;
+
+=end removed
+
+=cut
+
+
+=begin removed2
 
                 while ($prod <= $maj_checkpoint)
                 {
@@ -207,7 +215,7 @@ sub calc_P
                 {
                     $prod += $step;
                 }
-=end removed
+=end removed2
 
 =cut
 
