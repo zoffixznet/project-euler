@@ -25,6 +25,8 @@ sub gcd
     return $n;
 }
 
+my $DEBUG = 1;
+
 sub calc_P
 {
     my ($MIN, $MAJ) = @_;
@@ -33,6 +35,13 @@ sub calc_P
 
     # For row == 1.
     $total_count += $MAJ;
+
+    my %found;
+
+    if ($DEBUG)
+    {
+        %found = (map { $_ => 1 } (1 .. $MAJ));
+    }
 
     foreach my $row_idx (2 .. $MIN)
     {
@@ -43,9 +52,10 @@ sub calc_P
         {
             my $prev_max = $prev_row * $MAJ;
 
+            my $delta;
             if ($prev_row == 1)
             {
-                $count -= int($prev_max / $row_idx);
+                $delta = int($prev_max / $row_idx);
             }
             else
             {
@@ -53,28 +63,59 @@ sub calc_P
                     first { $prev_row % $_ == 0 } reverse(1 .. $prev_row-1)
                     ;
 
-                my $prev_min = ($prev_row__max_divisor * $MAJ);
+                # my $prev_min = ($prev_row__max_divisor * $MAJ);
+                my $prev_min = (($prev_row-1) * $MAJ);
 
                 # The lcm.
                 my $step = ($prev_row * $row_idx / gcd($prev_row, $row_idx));
 
                 # Round up.
-                my $prev_min_pivot = ($prev_min % $step == 0 ? $prev_min
-                    : ($prev_min + ($step - ($prev_min % $step)))
-                );
+                # my $prev_min_pivot = ($prev_min % $step == 0 ? $prev_min
+                # : ($prev_min + ($step - ($prev_min % $step)))
+                # );
+
+                my $prev_min_pivot = ($prev_min + ($step - ($prev_min % $step)));
 
                 # Round down.
-                my $prev_max_pivot = ($prev_max % $step == 0 ? $prev_max
-                    : ($prev_max - ($prev_max % $step))
-                );
+                my $prev_max_pivot = ($prev_max - ($prev_max % $step));
 
-                $count -= (($prev_max_pivot - $prev_min_pivot) / $step + 1);
+                $delta = (($prev_max_pivot - $prev_min_pivot) / $step + 1);
+
+                for my $prev_prev (2 .. $prev_row-1)
+                {
+
+                }
             }
+
+            if ($DEBUG)
+            {
+                my @expected_delta =
+                (grep { ($found{$_} // (-1)) == $prev_row } map { $_ * $row_idx } 1 .. $MAJ);
+
+                if ($delta != @expected_delta)
+                {
+                    die "Row == $row_idx ; Prev_Row == $prev_row. There are $delta whereas there should be " . @expected_delta . "!\n";
+                }
+            }
+
+            $count -= $delta;
 
             if ($count < 0)
             {
                 die "Count is less than 0! (\$count=$count)\n";
             }
+        }
+
+        if ($DEBUG)
+        {
+            my @new = (grep { !exists($found{$_}) } map { $row_idx * $_ } 1 .. $MAJ);
+
+            if (@new != $count)
+            {
+                die "Row == $row_idx. There are $count whereas there should be " . @new . "!\n";
+            }
+
+            %found = (%found, map { $_ => $row_idx } @new);
         }
 
         $total_count += $count;
@@ -92,7 +133,7 @@ sub my_test
     print "P($MIN, $MAJ) = $got (should be $expected)\n";
 }
 
-my_test(3, 4, 8);
+# my_test(3, 4, 8);
 my_test(64, 64, 1263);
 my_test(12, 345, 1998);
 my_test(32, (('1'.('0'x15))+0), 13826382602124302);
