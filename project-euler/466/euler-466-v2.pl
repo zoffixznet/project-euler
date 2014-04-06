@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use integer;
-# use Math::BigInt lib => 'GMP', ':constant';
+use Math::BigInt lib => 'GMP';
 
 use List::Util qw(first sum);
 use List::MoreUtils qw(none);
@@ -80,13 +80,21 @@ sub calc_P
         }
 
         my $start_i = (($MAJ / $row_idx) + 1);
+
         foreach my $next_row ($row_idx+1 .. $MIN)
         {
-            for my $i ($start_i .. $MAJ)
+            my $step = Math::BigInt::blcm($row_idx, $next_row);
+            my $start_i_prod = $start_i * $row_idx;
+            my $start_prod = ($start_i_prod / $step) * $step;
+            if ($start_i_prod % $step)
             {
-                my $prod = $i*$row_idx;
+                $start_prod += $step;
+            }
+            my $end_i_prod = $MAJ * $row_idx;
+            my $end_prod = ($end_i_prod / $step) * $step;
+            for (my $prod = $start_prod ; $prod <= $end_prod ; $prod += $step)
+            {
                 if (
-                    ($prod % $next_row == 0) and
                     (none { $prod <= $MAJ*$_ and $prod % $_ == 0 } 2 .. $row_idx-1)
                 )
                 {
