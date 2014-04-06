@@ -3,8 +3,6 @@
 use strict;
 use warnings;
 
-use List::Util qw(first sum);
-
 my $DEBUG = 1;
 
 sub my_none(&;@)
