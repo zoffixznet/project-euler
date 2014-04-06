@@ -218,23 +218,26 @@ EOF
                         (
                             ($cond1
                                 ? 0
-                                : (
-                                    ($maj_end_prod_bound_lcm - $maj_start_prod_bound_lcm)
-                                    / $prev_rows_div_step
+                                :
+                                (
+                                    (
+                                        ($maj_end_prod_bound_lcm - $maj_start_prod_bound_lcm)
+                                        / $prev_rows_div_step
+                                    )
+                                    * $_calc_num_mods->(0, $prev_rows_div_step - 1)
                                 )
                             )
                         )
-                        * $_calc_num_mods->(0, $prev_rows_div_step - 1)
                     )
                     +
                     (
-                        $cond2
+                        $cond2 # || (not $prev_rows_div_step > 1)
                         ? 0
                         : $_calc_num_mods->(0, $maj_end_prod_div - $maj_end_prod_bound_lcm)
                     )
                     +
                     (
-                        $cond3
+                        $cond3 # || (not $prev_rows_div_step > 1)
                         ? 0
                         : $_calc_num_mods->(($maj_start_prod_bound_lcm - $maj_start_prod_div)+1, $prev_rows_div_step - 1)
                     )
@@ -250,6 +253,22 @@ EOF
                     # - (($maj_end_prod_bound_lcm == $maj_start_prod_bound_lcm and ($maj_start_prod_bound_lcm != $maj_start_prod_div)) ? 1 : 0)
                     # - (($maj_end_prod_bound_lcm == $maj_start_prod_bound_lcm) ? 1 : 0)
                 );
+
+                if ($DEBUG)
+                {
+                    my @expected = grep {
+                        my $prod = $_;
+                        (none { $prod % $_ == 0 } $maj_factor .. $row_idx-1)
+                    }
+                    map { $prod + $_ * $step }
+                    0 .. (($maj_checkpoint-$prod) / $step)
+                    ;
+
+                    if ($found_in_next_delta != @expected)
+                    {
+                        die "[FOO] Row == $next_row ; Prev_Row == $row_idx. There are $found_in_next_delta whereas there should be " . @expected . " [@expected]!\n";
+                    }
+                }
                 $found_in_next[$next_row][$row_idx] += $found_in_next_delta;
 
                 $prod = $maj_end_prod_div * $step;
@@ -326,6 +345,7 @@ my_test(11, 11, 53);
 my_test(12, 12, 59);
 my_test(13, 13, 72);
 my_test(14, 14, 80);
+my_test(15, 15, 80);
 }
 
 if (1)
