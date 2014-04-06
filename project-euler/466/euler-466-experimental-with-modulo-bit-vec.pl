@@ -110,16 +110,25 @@ sub calc_P
             # print "LCMs[2] == ", $lcms[2], "\n";
 
             my $prev_maj_checkpoint = 0;
+            MAJ_FACTOR:
             for my $maj_factor (2 .. $row_idx)
             {
                 # my $maj_checkpoint = min($MAJ * $maj_factor, $end_prod);
                 my $maj_checkpoint = $MAJ * $maj_factor;
 
-                while ($prod <= $prev_maj_checkpoint)
+                if ($prev_maj_checkpoint > 0)
                 {
-                    $prod += $step;
+                    while ($prod <= $prev_maj_checkpoint)
+                    {
+                        $prod += $step;
+                    }
                 }
                 $prev_maj_checkpoint = $maj_checkpoint;
+
+                if ($prod > $maj_checkpoint)
+                {
+                    next MAJ_FACTOR;
+                }
 
                 my @prev_rows = ($maj_factor .. $row_idx-1);
                 my $prev_rows_and_step_lcm = $lcms[$maj_factor];
@@ -197,6 +206,9 @@ step == $step
 EOF
                 };
 
+                my $cond1 = ($maj_end_prod_bound_lcm <= $maj_start_prod_bound_lcm);
+                my $cond2 = ($maj_end_prod_bound_lcm <= $maj_start_prod_div);
+                my $cond3 = ($maj_start_prod_bound_lcm >= $maj_end_prod_div);
 
                 $found_in_next[$next_row][$row_idx] +=
                 (
@@ -204,32 +216,42 @@ EOF
                         # Going from the segments' start to the one right
                         # before the start of the next segment.
                         (
-                            # (($maj_end_prod_bound_lcm < $maj_start_prod_bound_lcm) ? 0 : 1) +
-                            (
-                                ($maj_end_prod_bound_lcm - $maj_start_prod_bound_lcm)
-                                / $prev_rows_div_step
+                            ($cond1
+                                ? 0
+                                : (
+                                    ($maj_end_prod_bound_lcm - $maj_start_prod_bound_lcm)
+                                    / $prev_rows_div_step
+                                )
                             )
                         )
                         * $_calc_num_mods->(0, $prev_rows_div_step - 1)
                     )
                     +
                     (
-                        0 # ($maj_end_prod_bound_lcm == $maj_end_prod_div)
+                        $cond2
                         ? 0
                         : $_calc_num_mods->(0, $maj_end_prod_div - $maj_end_prod_bound_lcm)
                     )
                     +
                     (
-                        0 # ($maj_start_prod_bound_lcm == $maj_start_prod_div)
+                        $cond3
                         ? 0
                         : $_calc_num_mods->(($maj_start_prod_bound_lcm - $maj_start_prod_div)+1, $prev_rows_div_step - 1)
+                    )
+                    +
+                    (
+                        (
+                            ($maj_start_prod_div == $maj_end_prod_div)
+                            && ($cond1 && $cond2 && $cond3)
+                        )
+                        ? $_calc_num_mods->($maj_start_prod_div % $prev_rows_div_step, $maj_end_prod_div % $prev_rows_div_step)
+                        : 0
                     )
                     # - (($maj_end_prod_bound_lcm == $maj_start_prod_bound_lcm and ($maj_start_prod_bound_lcm != $maj_start_prod_div)) ? 1 : 0)
                     # - (($maj_end_prod_bound_lcm == $maj_start_prod_bound_lcm) ? 1 : 0)
                 );
 
                 $prod = $maj_end_prod_div * $step;
-
 
 =begin removed
                 $found_in_next[$next_row][$row_idx] +=
@@ -291,7 +313,6 @@ sub my_test
 
 if (1)
 {
-my_test(10, 10, 50);
 my_test(4, 6, 15);
 my_test(4, 4, 9);
 my_test(3, 4, 8);
@@ -299,6 +320,7 @@ my_test(4, 7, 19);
 my_test(4, 8, 20);
 my_test(4, 9, 22);
 my_test(4, 10, 24);
+my_test(10, 10, 42);
 }
 
 if (0)
