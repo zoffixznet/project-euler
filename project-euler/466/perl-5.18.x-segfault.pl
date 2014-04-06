@@ -3,7 +3,6 @@
 use strict;
 use warnings;
 
-# use Math::BigInt lib => 'GMP', ':constant';
 use List::Util qw(first sum);
 use List::MoreUtils qw(none);
 
