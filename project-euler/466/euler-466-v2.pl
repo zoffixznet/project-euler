@@ -3,6 +3,7 @@
 use strict;
 use warnings;
 
+use integer;
 # use Math::BigInt lib => 'GMP', ':constant';
 
 use List::Util qw(first sum);
@@ -78,12 +79,13 @@ sub calc_P
             %found = (%found, map { $_ => $row_idx } @new);
         }
 
+        my $start_i = (($MAJ / $row_idx) + 1);
         foreach my $next_row ($row_idx+1 .. $MIN)
         {
-            for my $i (1 .. $MAJ)
+            for my $i ($start_i .. $MAJ)
             {
                 my $prod = $i*$row_idx;
-                if ($prod > $MAJ and
+                if (
                     ($prod % $next_row == 0) and
                     (none { $prod <= $MAJ*$_ and $prod % $_ == 0 } 2 .. $row_idx-1)
                 )
