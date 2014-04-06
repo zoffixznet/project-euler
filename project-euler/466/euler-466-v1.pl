@@ -88,3 +88,4 @@ sub my_test
 }
 
 my_test(3, 4, 8);
+my_test(64, 64, 1263);
