@@ -118,14 +118,46 @@ sub calc_P
 
                 my $lookup_vec = '';
 
+                my $prev_rows_div_step = $prev_rows_and_step_lcm / $step;
+
                 foreach my $prev_row (@prev_rows)
                 {
                     for (my $i = 0; $i < $prev_rows_and_step_lcm ; $i += $prev_row)
                     {
-                        vec($lookup_vec, $i, 1) = 1;
+                        if ($i % $step == 0)
+                        {
+                            vec($lookup_vec, $i / $step, 1) = 1;
+                        }
                     }
                 }
 
+                my @counts = (0);
+                for my $i (0 .. $prev_rows_div_step - 1)
+                {
+                    push @counts, ($counts[-1] + (vec($lookup_vec, $i, 1) == 0));
+                }
+
+                my $maj_end_prod_div = $maj_checkpoint / $step;
+                my $maj_start_prod_div = $prod / $step;
+
+                my $maj_end_prod_bound_lcm = ($maj_end_prod_div / $prev_rows_div_step) * $prev_rows_div_step;
+                my $maj_start_prod_bound_lcm = ($maj_start_prod_div / $prev_rows_div_step) * $prev_rows_div_step;
+
+                if ($maj_start_prod_div % $prev_rows_div_step)
+                {
+                    $maj_start_prod_bound_lcm += $prev_rows_div_step;
+                }
+
+                $found_in_next[$next_row][$row_idx] =
+                (
+                    ($maj_end_prod_bound_lcm - $maj_start_prod_bound_lcm) / $prev_rows_div_step * $counts[-1]
+                    + $counts[$maj_start_prod_bound_lcm - $maj_start_prod_div]
+                    + $counts[$maj_end_prod_div - $maj_end_prod_bound_lcm]
+                );
+
+                $prod = $maj_end_prod_div * $step;
+
+=begin removed
                 while ($prod <= $maj_checkpoint)
                 {
                     if (
@@ -140,6 +172,10 @@ sub calc_P
                 {
                     $prod += $step;
                 }
+=end removed
+
+=cut
+
             }
             # print "Row == $row_idx ; Next_row == $next_row\n";
         }
