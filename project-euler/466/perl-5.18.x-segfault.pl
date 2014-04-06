@@ -4,9 +4,24 @@ use strict;
 use warnings;
 
 use List::Util qw(first sum);
-use List::MoreUtils qw(none);
 
 my $DEBUG = 1;
+
+sub my_none(&;@)
+{
+    my $code_ref = shift;
+
+    foreach my $elem (@_)
+    {
+        local $_ = $elem;
+        if ($code_ref->($_))
+        {
+            return;
+        }
+    }
+
+    return 1;
+}
 
 sub calc_P
 {
@@ -83,7 +98,7 @@ sub calc_P
                 my $prod = $i*$row_idx;
                 if ($prod > $MAJ and
                     ($prod % $next_row == 0) and
-                    (none { $prod <= $MAJ*$_ and $prod % $_ == 0 } 2 .. $row_idx-1)
+                    (my_none { $prod <= $MAJ*$_ and $prod % $_ == 0 } 2 .. $row_idx-1)
                 )
                 {
                     $found_in_next[$next_row][$row_idx]++;
