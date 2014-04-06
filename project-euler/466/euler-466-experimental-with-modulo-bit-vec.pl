@@ -207,10 +207,10 @@ EOF
                 };
 
                 my $cond1 = ($maj_end_prod_bound_lcm <= $maj_start_prod_bound_lcm);
-                my $cond2 = ($maj_end_prod_bound_lcm <= $maj_start_prod_div);
-                my $cond3 = ($maj_start_prod_bound_lcm >= $maj_end_prod_div);
+                my $cond2 = ($maj_start_prod_bound_lcm >= $maj_end_prod_div);
+                my $cond3 = ($maj_end_prod_bound_lcm <= $maj_start_prod_div);
 
-                $found_in_next[$next_row][$row_idx] +=
+                my $found_in_next_delta =
                 (
                     (
                         # Going from the segments' start to the one right
@@ -250,6 +250,7 @@ EOF
                     # - (($maj_end_prod_bound_lcm == $maj_start_prod_bound_lcm and ($maj_start_prod_bound_lcm != $maj_start_prod_div)) ? 1 : 0)
                     # - (($maj_end_prod_bound_lcm == $maj_start_prod_bound_lcm) ? 1 : 0)
                 );
+                $found_in_next[$next_row][$row_idx] += $found_in_next_delta;
 
                 $prod = $maj_end_prod_div * $step;
 
@@ -313,6 +314,7 @@ sub my_test
 
 if (1)
 {
+my_test(11, 11, 42);
 my_test(4, 6, 15);
 my_test(4, 4, 9);
 my_test(3, 4, 8);
@@ -323,7 +325,7 @@ my_test(4, 10, 24);
 my_test(10, 10, 42);
 }
 
-if (0)
+if (1)
 {
 my_test(64, 64, 1263);
 my_test(12, 345, 1998);
