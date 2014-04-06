@@ -78,4 +78,13 @@ sub calc_P
     return $total_count;
 }
 
-print "P(3,4) = ", calc_P(3, 4), " (should be 8)\n";
+sub my_test
+{
+    my ($MIN, $MAJ, $expected) = @_;
+
+    my $got = calc_P($MIN, $MAJ);
+
+    print "P($MIN, $MAJ) = $got (should be $expected)\n";
+}
+
+my_test(3, 4, 8);
