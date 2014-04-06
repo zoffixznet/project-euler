@@ -109,10 +109,17 @@ sub calc_P
             }
             # print "LCMs[2] == ", $lcms[2], "\n";
 
+            my $prev_maj_checkpoint = 0;
             for my $maj_factor (2 .. $row_idx)
             {
                 # my $maj_checkpoint = min($MAJ * $maj_factor, $end_prod);
                 my $maj_checkpoint = $MAJ * $maj_factor;
+
+                while ($prod <= $prev_maj_checkpoint)
+                {
+                    $prod += $step;
+                }
+                $prev_maj_checkpoint = $maj_checkpoint;
 
                 my @prev_rows = ($maj_factor .. $row_idx-1);
                 my $prev_rows_and_step_lcm = $lcms[$maj_factor];
@@ -223,10 +230,6 @@ EOF
 
                 $prod = $maj_end_prod_div * $step;
 
-                if ($prod == $maj_checkpoint)
-                {
-                    $prod += $step;
-                }
 
 =begin removed
                 $found_in_next[$next_row][$row_idx] +=
@@ -286,12 +289,17 @@ sub my_test
     print "P($MIN, $MAJ) = $got (should be $expected)\n";
 }
 
-if (0)
+if (1)
 {
-my_test(3, 4, 8);
+my_test(10, 10, 50);
+my_test(4, 6, 15);
 my_test(4, 4, 9);
+my_test(3, 4, 8);
+my_test(4, 7, 19);
+my_test(4, 8, 20);
+my_test(4, 9, 22);
+my_test(4, 10, 24);
 }
-my_test(4, 6, 9);
 
 if (0)
 {
