@@ -26,7 +26,7 @@ sub lcm
     return Math::GMP->new($n)->blcm($m);
 }
 
-my $DEBUG = 0;
+my $DEBUG = 1;
 
 sub calc_P
 {
@@ -188,6 +188,9 @@ sub calc_P
 
                         my $q = shift(@Q);
 
+                        my @p = map { [lcm($_,$step),0] } @prev_rows;
+
+                        I:
                         for (my $j = 0, my $i = $s * $step; $i <= $e; ($i += $step), ($j++))
                         {
                             if ($j == $q)
@@ -196,10 +199,19 @@ sub calc_P
                                 $q = shift(@Q);
                             }
 
-                            if (none { $i % $_ == 0 } @prev_rows)
+                            foreach my $x (@p)
                             {
-                                $c++;
+                                my ($d,$m) = @$x;
+                                while ($m < $i)
+                                {
+                                    $m += $d;
+                                }
+                                if (($x->[1] = $m) == $i)
+                                {
+                                    next I;
+                                }
                             }
+                            $c++;
                         }
                     }
 
