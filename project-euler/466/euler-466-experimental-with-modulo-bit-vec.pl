@@ -165,7 +165,7 @@ sub calc_P
                     vec($lookup_vec, 0, 1) = 1;
                 }
 
-                print "prev_rows_and_step_lcm == $prev_rows_and_step_lcm\n";
+                # print "prev_rows_and_step_lcm == $prev_rows_and_step_lcm\n";
 
                 foreach my $prev_row (@prev_rows)
                 {
@@ -188,8 +188,6 @@ sub calc_P
                         $step_i += $step;
                     }
                 }
-                # push @counts, $counts[-1];
-                #
 
                 my $_calc_num_mods_loop = sub {
                     my ($s, $e) = @_;
@@ -380,12 +378,13 @@ my_test(17, 20, 146);
 my_test(18, 100, 824);
 }
 
-if (1)
+if (1 and !$DEBUG)
+{
+my_test(32, (('1'.('0'x15))+0), 13826382602124302);
+}
+
+if (0)
 {
 my_test(64, 64, 1263);
 }
 
-if (0 and !$DEBUG)
-{
-my_test(32, (('1'.('0'x15))+0), 13826382602124302);
-}

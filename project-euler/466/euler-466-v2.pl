@@ -9,7 +9,7 @@ use Math::BigInt lib => 'GMP';
 use List::Util qw(first sum min);
 use List::MoreUtils qw(none);
 
-my $DEBUG = 1;
+my $DEBUG = 0;
 
 sub calc_P
 {
@@ -133,6 +133,13 @@ sub my_test
     my $got = calc_P($MIN, $MAJ);
 
     print "P($MIN, $MAJ) = $got (should be $expected)\n";
+
+    if ($got != $expected)
+    {
+        die "Got: $got ; Expected: $expected.";
+    }
+
+    return 1;
 }
 
 my_test(3, 4, 8);
