@@ -5,6 +5,9 @@ use warnings;
 
 use bytes;
 use integer;
+
+use Config;
+
 use Math::GMP ();
 
 use List::Util qw(first sum min);
@@ -26,7 +29,99 @@ sub lcm
     return Math::GMP->new($n)->blcm($m);
 }
 
-my $DEBUG = 1;
+my $DEBUG = 0;
+
+use Inline (C => <<'EOF',
+
+void calc_counts(SV * c_out_ref, AV * Q_proto, IV step, IV prev_rows_div_step, HV * C_hash, AV * P_proto)
+{
+    IV Q_len = (1+av_len(Q_proto));
+    IV * Q = malloc(sizeof(Q[0]) * (Q_len+1));
+
+    IV i;
+    for (i = 0 ; i < Q_len ; i++)
+    {
+        SV ** sv = av_fetch(Q_proto, i, 0);
+        Q[i] = SvIV(*sv);
+    }
+    Q[i] = 0;
+
+    IV P_len = (1+av_len(P_proto));
+    IV * P = malloc(sizeof(P[0]) * 2 * P_len);
+
+    for (i = 0 ; i < P_len ; i++)
+    {
+        SV ** sv = av_fetch(P_proto, i, 0);
+        AV * sv_av = (AV *)SvRV(*sv);
+        P[(i << 1)] = SvIV(*(av_fetch(sv_av, 0, 0)));
+        P[(i << 1)+1] = SvIV(*(av_fetch(sv_av, 1, 0)));
+    }
+
+    IV P_l = (P_len << 1);
+
+    IV s = 0;
+
+    IV c = 0;
+
+    IV q_idx = 0;
+    IV q = Q[q_idx++];
+
+    IV j;
+    for (j = 0, i = s * step; j <= prev_rows_div_step; (i += step), j++)
+    {
+        if (j == q)
+        {
+            SV * j_key = newSViv(j);
+            SV * c_val = newSViv(c);
+
+            char * j_str = SvPVbyte_nolen(j_key);
+
+            hv_store(
+                C_hash,
+                j_str,
+                strlen(j_str),
+                c_val,
+                0
+            );
+
+            SvREFCNT_dec(j_key);
+
+            q = Q[q_idx++];
+        }
+
+        for (int x = 0; x < P_l ; x += 2)
+        {
+            IV d = P[x];
+            IV m = P[x+1];
+            while (m < i)
+            {
+                m += d;
+            }
+            if (i == (P[x+1] = m))
+            {
+                goto loop_end;
+            }
+        }
+        c++;
+        loop_end:
+        ;
+    }
+
+    SV * c_out = SvRV(c_out_ref);
+    sv_setiv(c_out, c);
+
+    /* Cleanup. */
+    free (Q);
+    free (P);
+
+    return;
+}
+EOF
+    CLEAN_AFTER_BUILD => 0,
+    CCFLAGS => ($Config{ccflags} . ' -std=gnu99'),
+);
+
+=begin hello
 
 sub calc_counts
 {
@@ -67,6 +162,10 @@ sub calc_counts
 
     return;
 }
+
+=end hello
+
+=cut
 
 sub calc_P
 {
