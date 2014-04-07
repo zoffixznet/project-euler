@@ -107,19 +107,16 @@ sub calc_P
         }
 
         my $start_i = (($MAJ / $row_idx) + 1);
+        my $start_i_prod = $start_i * $row_idx;
 
         foreach my $next_row ($row_idx+1 .. $MIN)
         {
             my $step = lcm($row_idx, $next_row);
-            my $start_i_prod = $start_i * $row_idx;
             my $start_prod = ($start_i_prod / $step) * $step;
             if ($start_i_prod % $step)
             {
                 $start_prod += $step;
             }
-            my $end_i_prod = $MAJ * $row_idx;
-            my $end_prod = ($end_i_prod / $step) * $step;
-
             my $prod = $start_prod;
 
             my @lcms;
@@ -375,9 +372,11 @@ my_test(13, 13, 72);
 my_test(14, 14, 80);
 my_test(15, 20, 137);
 my_test(16, 20, 142);
+my_test(17, 20, 146);
+my_test(18, 100, 824);
 }
 
-if (1)
+if (0)
 {
 my_test(64, 64, 1263);
 }
