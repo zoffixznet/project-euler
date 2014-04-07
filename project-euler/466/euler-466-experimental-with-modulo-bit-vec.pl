@@ -146,17 +146,21 @@ sub calc_P
                 {
                     for (my $i = 0; $i < $prev_rows_and_step_lcm ; $i += $prev_row)
                     {
-                        if ($i % $step == 0)
-                        {
-                            vec($lookup_vec, $i / $step, 1) = 1;
-                        }
+                        vec($lookup_vec, $i, 1) = 1;
                     }
                 }
 
                 my @counts = (0);
-                for my $i (0 .. $prev_rows_div_step - 1)
                 {
-                    push @counts, ($counts[-1] + (vec($lookup_vec, $i, 1) == 0));
+                    my $step_i = 0;
+                    for my $i (0 .. $prev_rows_div_step - 1)
+                    {
+                        push @counts, ($counts[-1] + (vec($lookup_vec, $step_i, 1) == 0));
+                    }
+                    continue
+                    {
+                        $step_i += $step;
+                    }
                 }
                 # push @counts, $counts[-1];
                 #
@@ -167,7 +171,7 @@ sub calc_P
                     my $count = 0;
                     for my $i ($s .. $e)
                     {
-                        if (vec($lookup_vec, $i, 1) == 0)
+                        if (vec($lookup_vec, $i*$step, 1) == 0)
                         {
                             $count++;
                         }
