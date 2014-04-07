@@ -5,12 +5,14 @@ use warnings;
 
 use bytes;
 use integer;
-# use Math::GMP ();
+use Math::GMP ();
 
 use List::Util qw(first sum min);
 use List::MoreUtils qw(none);
 
 STDOUT->autoflush(1);
+
+=begin foo
 
 sub gcd
 {
@@ -34,6 +36,24 @@ sub lcm
     my ($n, $m) = @_;
 
     return ($n * $m / gcd($n,$m));
+}
+
+=end foo
+
+=cut
+
+sub gcd
+{
+    my ($n, $m) = @_;
+
+    return Math::GMP->new($n)->bgcd($m);
+}
+
+sub lcm
+{
+    my ($n, $m) = @_;
+
+    return Math::GMP->new($n)->blcm($m);
 }
 
 my $DEBUG = 0;
@@ -167,6 +187,8 @@ sub calc_P
 
                 # print "prev_rows_and_step_lcm == $prev_rows_and_step_lcm\n";
 
+=begin foo
+
                 foreach my $prev_row (@prev_rows)
                 {
                     my $l = lcm($prev_row, $step);
@@ -207,8 +229,35 @@ sub calc_P
                 my $_calc_num_mods = sub {
                     my ($s, $e) = @_;
 
+                    printf ("_calc_num_mods: [%d-%d]/%d\n", $s,$e,scalar(@counts));
+
                     return $counts[$e+1]-$counts[$s];
                 };
+
+=end foo
+
+=cut
+
+                my $_calc_num_mods = sub {
+                    my ($s, $e_p) = @_;
+
+                    my $count = 0;
+
+                    # printf ("_calc_num_mods: [%d->%d]/%d\n", $s, $e, $prev_rows_div_step);
+                    #
+                    my $e = $e_p * $step;
+
+                    for (my $i = $s * $step; $i <= $e; $i += $step)
+                    {
+                        if (none { $i % $_ == 0 } @prev_rows)
+                        {
+                            $count++;
+                        }
+                    }
+
+                    return $count;
+                };
+
 
                 my $maj_end_prod_div = $maj_checkpoint / $step;
                 my $maj_start_prod_div = $prod / $step;
@@ -289,7 +338,7 @@ EOF
                     }
                 }
 
-                if (0 && $DEBUG)
+                if (1 && $DEBUG)
                 {
                     my @expected = grep {
                         my $prod = $_;
@@ -350,10 +399,6 @@ sub my_test
     {
         die "Got is not expected.";
     }
-}
-
-if (1)
-{
 }
 
 if (1)
