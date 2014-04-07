@@ -210,49 +210,58 @@ EOF
                 my $cond2 = ($maj_start_prod_bound_lcm >= $maj_end_prod_div);
                 my $cond3 = ($maj_end_prod_bound_lcm <= $maj_start_prod_div);
 
-                my $found_in_next_delta =
+                my @mini_deltas =
                 (
-                    (
-                        # Going from the segments' start to the one right
-                        # before the start of the next segment.
-                        (
-                            ($cond1
-                                ? 0
-                                :
+                    {
+                        cond => $cond1,
+                        promise => sub {
+                            return
+                            (
                                 (
-                                    (
-                                        ($maj_end_prod_bound_lcm - $maj_start_prod_bound_lcm)
-                                        / $prev_rows_div_step
-                                    )
-                                    * $_calc_num_mods->(0, $prev_rows_div_step - 1)
+                                    ($maj_end_prod_bound_lcm - $maj_start_prod_bound_lcm)
+                                    / $prev_rows_div_step
                                 )
-                            )
-                        )
-                    )
-                    +
-                    (
-                        $cond2 # || (not $prev_rows_div_step > 1)
-                        ? 0
-                        : $_calc_num_mods->(0, $maj_end_prod_div - $maj_end_prod_bound_lcm)
-                    )
-                    +
-                    (
-                        $cond3 # || (not $prev_rows_div_step > 1)
-                        ? 0
-                        : $_calc_num_mods->(($maj_start_prod_bound_lcm - $maj_start_prod_div)+1, $prev_rows_div_step - 1)
-                    )
-                    +
-                    (
-                        (
-                            1 # ($maj_start_prod_div == $maj_end_prod_div)
-                            && ($cond1 && $cond2 && $cond3)
-                        )
-                        ? $_calc_num_mods->($maj_start_prod_div % $prev_rows_div_step, $maj_end_prod_div % $prev_rows_div_step)
-                        : 0
-                    )
-                    # - (($maj_end_prod_bound_lcm == $maj_start_prod_bound_lcm and ($maj_start_prod_bound_lcm != $maj_start_prod_div)) ? 1 : 0)
-                    # - (($maj_end_prod_bound_lcm == $maj_start_prod_bound_lcm) ? 1 : 0)
+                                * $_calc_num_mods->(0, $prev_rows_div_step - 1)
+                            );
+                        },
+                    },
+                    {
+                        cond => $cond2,
+                        promise => sub {
+                            return
+                            $_calc_num_mods->(0, $maj_end_prod_div - $maj_end_prod_bound_lcm);
+                        },
+                    },
+                    {
+                        cond => $cond3,
+                        promise => sub {
+                            return
+                            (($maj_start_prod_bound_lcm > $maj_start_prod_div)
+                                ? $_calc_num_mods->((($maj_start_prod_bound_lcm - $maj_start_prod_div)+1)%$prev_rows_div_step, $prev_rows_div_step - 1)
+                                : 0);
+                        },
+                    },
+                    {
+                        cond => (not ($cond1 && $cond2 && $cond3)),
+                        promise => sub {
+                            return
+                            $_calc_num_mods->($maj_start_prod_div % $prev_rows_div_step, $maj_end_prod_div % $prev_rows_div_step);
+                        },
+                    },
                 );
+
+                my $found_in_next_delta = 0;
+                foreach my $mini (@mini_deltas)
+                {
+                    $found_in_next_delta +=
+                    (
+                        $mini->{value} =
+                        ($mini->{cond}
+                            ? 0
+                            : $mini->{promise}->()
+                        )
+                    );
+                }
 
                 if ($DEBUG)
                 {
@@ -333,7 +342,7 @@ sub my_test
 
 if (1)
 {
-my_test(4, 6, 15);
+my_test(4, 1000, 2416);
 my_test(4, 4, 9);
 my_test(3, 4, 8);
 my_test(4, 7, 19);
@@ -345,7 +354,7 @@ my_test(11, 11, 53);
 my_test(12, 12, 59);
 my_test(13, 13, 72);
 my_test(14, 14, 80);
-my_test(15, 15, 80);
+my_test(15, 20, 137);
 }
 
 if (1)
