@@ -301,7 +301,7 @@ EOF
 =cut
 
             }
-            # print "Row == $row_idx ; Next_row == $next_row\n";
+            print "Row == $row_idx ; Next_row == $next_row\n";
         }
 
         $total_count += $count;
@@ -317,6 +317,11 @@ sub my_test
     my $got = calc_P($MIN, $MAJ);
 
     print "P($MIN, $MAJ) = $got (should be $expected)\n";
+
+    if ($got != $expected)
+    {
+        die "Got is not expected.";
+    }
 }
 
 if (1)
@@ -343,7 +348,7 @@ my_test(15, 20, 137);
 # my_test(16, 20, 142);
 }
 
-if (0)
+if (1)
 {
 my_test(64, 64, 1263);
 }
