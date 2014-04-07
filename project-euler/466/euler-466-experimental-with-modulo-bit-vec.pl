@@ -8,7 +8,7 @@ use integer;
 use Math::GMP ();
 
 use List::Util qw(first sum min);
-use List::MoreUtils qw(none);
+use List::MoreUtils qw(any none);
 
 STDOUT->autoflush(1);
 
@@ -171,10 +171,18 @@ sub calc_P
 
                 if ($prod > $maj_checkpoint)
                 {
+                    print ("Skipped prod=$prod ; maj_checkpoint=$maj_checkpoint\n");
                     next MAJ_FACTOR;
                 }
 
                 my @prev_rows = ($maj_factor .. $row_idx-1);
+
+                if (any { $step % $_ == 0 } @prev_rows)
+                {
+                    printf ("Skipped due to step evenly divisible for step=%d ; prev_rows=[%s]\n", $step, join(",",@prev_rows));
+                }
+                else
+                {
                 my $prev_rows_and_step_lcm = $lcms[$maj_factor];
 
                 my $lookup_vec = '';
@@ -283,7 +291,11 @@ sub calc_P
 
                 # If $c is 0 then $_calc_num_mods will always return 0 so
                 # the delta will be 0.
-                if ($c)
+                if (! $c)
+                {
+                    printf ("Skipped for count=%d ; prev_rows_div_step=%d ; step=%d ; prev_rows=[%s]\n", $c, $prev_rows_div_step, $step, join(",",@prev_rows));
+                }
+                else
                 {
 
                 my $_calc_num_mods = sub {
@@ -386,8 +398,9 @@ EOF
                 }
                 ($found_in_next[$next_row][$row_idx] //= 0) += $found_in_next_delta;
                 }
+                }
 
-                $prod = $maj_end_prod_div * $step;
+                $prod = (($maj_checkpoint / $step) * $step);
 
 =begin removed2
 
@@ -410,7 +423,7 @@ EOF
 =cut
 
             }
-            print "Row == $row_idx ; Next_row == $next_row\n";
+            # print "Row == $row_idx ; Next_row == $next_row\n";
         }
 
         $total_count += $count;
