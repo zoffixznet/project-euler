@@ -351,7 +351,12 @@ sub calc_P
 
                     # my $LIM = $prev_rows_and_step_lcm;
                     my $_count_mods_up_to_LIM = sub {
-                        my $LIM = $step*shift(@_);
+                        my $lim_in = shift;
+
+                        my @keys = keys(%$lim_in);
+
+                        my $LIM = {map { $_ => $lim_in->{$_}*$step } @keys};
+
                         # Let's try to calculate in a smarter way.
                         my $recurse;
 
@@ -360,15 +365,16 @@ sub calc_P
 
                             if ($depth == @prev_rows)
                             {
-                                my $div = $LIM / $lcm;
-
-                                return (@$rows & 0x1 ? (-$div) : $div);
+                                my $sign = (@$rows & 0x1) ? (-1) : 1;
+                                return +{ map { $_ => $sign * ($LIM->{$_} / $lcm) } @keys };
                             }
                             else
                             {
                                 my $e = $prev_rows[$depth];
-                                return $recurse->($depth+1, [@$rows], $lcm)
-                                + $recurse->($depth+1, [@$rows, $e], lcm($lcm, $e));
+                                my $o = $recurse->($depth+1, [@$rows], $lcm);
+                                my $t = $recurse->($depth+1, [@$rows, $e], lcm($lcm, $e));
+
+                                return +{ map { $_ => $o->{$_} + $t->{$_} } @keys };
                             }
                         };
 
@@ -384,11 +390,28 @@ sub calc_P
                     }
                     else
                     {
+                        my @_mods_checkpoints_base =
+                        (
+                            $prev_rows_div_step - 1,
+                            $maj_end_prod_div - $maj_end_prod_bound_lcm,
+                            ((($prev_rows_div_step + $maj_start_prod_div - $maj_start_prod_bound_lcm))-1),
+                            (($maj_start_prod_div % $prev_rows_div_step ) -1),
+                            $maj_end_prod_div % $prev_rows_div_step
+                        );
+
+                        my %input_hash =
+                        (map { $_ => $_ } @_mods_checkpoints_base);
+
+                        my $out_hash = $_count_mods_up_to_LIM->(
+                            \%input_hash
+                        );
+
                         my $_calc_num_mods = sub {
                             my ($s, $e) = @_;
 
                             # my $ret = $c{$e+1}-$c{$s};
-                            my $ret = $_count_mods_up_to_LIM->($e)-(($s == 0) ? 0 : $_count_mods_up_to_LIM->($s-1));
+                            # my $ret = $_count_mods_up_to_LIM->($e)-(($s == 0) ? 0 : $_count_mods_up_to_LIM->($s-1));
+                            my $ret = $out_hash->{$e} - (($s == 0) ? 0 : $out_hash->{$s-1});
 
                             printf ("_calc_num_mods: [%d->%d]/%d == %d\n", $s, $e, $prev_rows_div_step, $ret);
 
