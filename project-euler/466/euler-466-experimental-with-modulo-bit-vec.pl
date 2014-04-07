@@ -3,6 +3,7 @@
 use strict;
 use warnings;
 
+use bytes;
 use integer;
 # use Math::GMP ();
 
@@ -166,7 +167,8 @@ sub calc_P
 
                 foreach my $prev_row (@prev_rows)
                 {
-                    for (my $i = 0; $i < $prev_rows_and_step_lcm ; $i += $prev_row)
+                    my $l = lcm($prev_row, $step);
+                    for (my $i = 0; $i < $prev_rows_and_step_lcm ; $i += $l)
                     {
                         vec($lookup_vec, $i, 1) = 1;
                     }
