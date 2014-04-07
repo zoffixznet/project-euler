@@ -165,6 +165,8 @@ sub calc_P
                     vec($lookup_vec, 0, 1) = 1;
                 }
 
+                print "prev_rows_and_step_lcm == $prev_rows_and_step_lcm\n";
+
                 foreach my $prev_row (@prev_rows)
                 {
                     my $l = lcm($prev_row, $step);
@@ -378,7 +380,7 @@ my_test(17, 20, 146);
 my_test(18, 100, 824);
 }
 
-if (0)
+if (1)
 {
 my_test(64, 64, 1263);
 }
