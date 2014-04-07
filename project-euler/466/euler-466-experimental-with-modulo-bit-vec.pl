@@ -8,7 +8,7 @@ use integer;
 use Math::GMP ();
 
 use List::Util qw(first sum min);
-use List::MoreUtils qw(any none);
+use List::MoreUtils qw(any none uniq);
 
 STDOUT->autoflush(1);
 
@@ -175,22 +175,25 @@ sub calc_P
                         $maj_end_prod_div % $prev_rows_div_step
                     );
 
-                    my %mods_checkpoints =
-                    (
-                        map { $_ => undef, ($_+1) => undef } @_mods_checkpoints_base
-                    );
+                    my %c;
+
+                    # ( map { $_ => undef, ($_+1) => undef } @_mods_checkpoints_base);
 
                     my $c = 0;
                     {
+                        my @Q = uniq(sort { $a <=> $b } map { $_, $_+1 } @_mods_checkpoints_base);
                         my ($s, $e_p) = (0, $prev_rows_div_step);
 
                         my $e = $e_p * $step;
 
+                        my $q = shift(@Q);
+
                         for (my $j = 0, my $i = $s * $step; $i <= $e; ($i += $step), ($j++))
                         {
-                            if (exists $mods_checkpoints{$j})
+                            if ($j == $q)
                             {
-                                $mods_checkpoints{$j} = $c;
+                                $c{$j} = $c;
+                                $q = shift(@Q);
                             }
 
                             if (none { $i % $_ == 0 } @prev_rows)
@@ -212,7 +215,7 @@ sub calc_P
                         my $_calc_num_mods = sub {
                             my ($s, $e) = @_;
 
-                            my $ret = $mods_checkpoints{$e+1}-$mods_checkpoints{$s};
+                            my $ret = $c{$e+1}-$c{$s};
 
                             printf ("_calc_num_mods: [%d->%d]/%d == %d\n", $s, $e, $prev_rows_div_step, $ret);
 
