@@ -4,12 +4,36 @@ use strict;
 use warnings;
 
 use integer;
-use Math::GMP ();
+# use Math::GMP ();
 
 use List::Util qw(first sum min);
 use List::MoreUtils qw(none);
 
 STDOUT->autoflush(1);
+
+sub gcd
+{
+    my ($n, $m) = @_;
+
+    if ($m > $n)
+    {
+        ($n, $m) = ($m, $n);
+    }
+
+    while ($m > 0)
+    {
+        ($n, $m) = ($m, $n%$m);
+    }
+
+    return $n;
+}
+
+sub lcm
+{
+    my ($n, $m) = @_;
+
+    return ($n * $m / gcd($n,$m));
+}
 
 my $DEBUG = 0;
 
@@ -86,7 +110,7 @@ sub calc_P
 
         foreach my $next_row ($row_idx+1 .. $MIN)
         {
-            my $step = Math::GMP->new($row_idx)->blcm($next_row);
+            my $step = lcm($row_idx, $next_row);
             my $start_i_prod = $start_i * $row_idx;
             my $start_prod = ($start_i_prod / $step) * $step;
             if ($start_i_prod % $step)
@@ -103,7 +127,8 @@ sub calc_P
 
             for my $maj_factor (reverse(2 .. $row_idx-1))
             {
-                $lcms[$maj_factor] = $lcms[$maj_factor+1]->blcm(
+                $lcms[$maj_factor] = lcm(
+                    $lcms[$maj_factor+1],
                     $maj_factor
                 );
             }
@@ -345,14 +370,14 @@ my_test(10, 10, 42);
 my_test(11, 11, 53);
 my_test(12, 12, 59);
 my_test(12, 25, 143);
-# my_test(12, 345, 1998);
+my_test(12, 345, 1998);
 my_test(13, 13, 72);
 my_test(14, 14, 80);
 my_test(15, 20, 137);
-# my_test(16, 20, 142);
+my_test(16, 20, 142);
 }
 
-if (0)
+if (1)
 {
 my_test(64, 64, 1263);
 }
