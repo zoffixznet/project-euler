@@ -156,6 +156,7 @@ sub calc_P
             MAJ_FACTOR:
             for my $maj_factor (2 .. $row_idx)
             {
+                print "Row == $row_idx ; Next_row == $next_row ; Maj_factor == $maj_factor\n";
                 # my $maj_checkpoint = min($MAJ * $maj_factor, $end_prod);
                 my $maj_checkpoint = $MAJ * $maj_factor;
 
@@ -238,33 +239,61 @@ sub calc_P
 
 =cut
 
-                my $_calc_num_mods = sub {
-                    my ($s, $e_p) = @_;
-
-                    my $count = 0;
-
-                    # printf ("_calc_num_mods: [%d->%d]/%d\n", $s, $e, $prev_rows_div_step);
-                    #
-                    my $e = $e_p * $step;
-
-                    for (my $i = $s * $step; $i <= $e; $i += $step)
-                    {
-                        if (none { $i % $_ == 0 } @prev_rows)
-                        {
-                            $count++;
-                        }
-                    }
-
-                    return $count;
-                };
-
-
                 my $maj_end_prod_div = $maj_checkpoint / $step;
                 my $maj_start_prod_div = $prod / $step;
 
                 my $maj_end_prod_bound_lcm = ($maj_end_prod_div / $prev_rows_div_step) * $prev_rows_div_step;
                 my $maj_start_prod_bound_lcm = ($maj_start_prod_div / $prev_rows_div_step) * $prev_rows_div_step;
 
+                my @_mods_checkpoints_base =
+                (
+                    0,
+                    $prev_rows_div_step - 1,
+                    $maj_end_prod_div - $maj_end_prod_bound_lcm,
+                    (($prev_rows_div_step + $maj_start_prod_div - $maj_start_prod_bound_lcm)),
+                    $maj_start_prod_div % $prev_rows_div_step,
+                    $maj_end_prod_div % $prev_rows_div_step
+                );
+
+                my %mods_checkpoints =
+                (
+                    map { $_ => undef, ($_+1) => undef } @_mods_checkpoints_base
+                );
+
+                my $c = 0;
+                {
+                    my ($s, $e_p) = (0, $prev_rows_div_step);
+
+                    my $e = $e_p * $step;
+
+                    for (my $j = 0, my $i = $s * $step; $i <= $e; ($i += $step), ($j++))
+                    {
+                        if (exists $mods_checkpoints{$j})
+                        {
+                            $mods_checkpoints{$j} = $c;
+                        }
+
+                        if (none { $i % $_ == 0 } @prev_rows)
+                        {
+                            $c++;
+                        }
+                    }
+                }
+
+
+                # If $c is 0 then $_calc_num_mods will always return 0 so
+                # the delta will be 0.
+                if ($c)
+                {
+                my $_calc_num_mods = sub {
+                    my ($s, $e) = @_;
+
+                    my $ret = $mods_checkpoints{$e+1}-$mods_checkpoints{$s};
+
+                    printf ("_calc_num_mods: [%d->%d]/%d == %d\n", $s, $e, $prev_rows_div_step, $ret);
+
+                    return $ret;
+                };
                 if ($maj_start_prod_div % $prev_rows_div_step)
                 {
                     $maj_start_prod_bound_lcm += $prev_rows_div_step;
@@ -354,6 +383,7 @@ EOF
                     }
                 }
                 ($found_in_next[$next_row][$row_idx] //= 0) += $found_in_next_delta;
+                }
 
                 $prod = $maj_end_prod_div * $step;
 
@@ -401,7 +431,7 @@ sub my_test
     }
 }
 
-if (1)
+if ($DEBUG)
 {
 my_test(4, 1000, 2416);
 my_test(4, 4, 9);
