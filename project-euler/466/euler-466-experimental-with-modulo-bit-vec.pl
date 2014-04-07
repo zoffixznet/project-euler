@@ -11,7 +11,7 @@ use List::MoreUtils qw(none);
 
 STDOUT->autoflush(1);
 
-my $DEBUG = 1;
+my $DEBUG = 0;
 
 sub calc_P
 {
@@ -33,6 +33,7 @@ sub calc_P
 
     foreach my $row_idx (2 .. $MIN)
     {
+        # print "row_idx == $row_idx\n";
         my $max = $row_idx * $MAJ;
         my $count = $MAJ;
 
@@ -153,7 +154,6 @@ sub calc_P
                     }
                 }
 
-=begin foo
                 my @counts = (0);
                 for my $i (0 .. $prev_rows_div_step - 1)
                 {
@@ -161,11 +161,8 @@ sub calc_P
                 }
                 # push @counts, $counts[-1];
                 #
-=end foo
 
-=cut
-
-                my $_calc_num_mods = sub {
+                my $_calc_num_mods_loop = sub {
                     my ($s, $e) = @_;
 
                     my $count = 0;
@@ -178,6 +175,12 @@ sub calc_P
                     }
 
                     return $count;
+                };
+
+                my $_calc_num_mods = sub {
+                    my ($s, $e) = @_;
+
+                    return $counts[$e+1]-$counts[$s];
                 };
 
                 my $maj_end_prod_div = $maj_checkpoint / $step;
@@ -237,7 +240,7 @@ EOF
                         promise => sub {
                             return
                             (($maj_start_prod_bound_lcm > $maj_start_prod_div)
-                                ? $_calc_num_mods->((($maj_start_prod_bound_lcm - $maj_start_prod_div)+1)%$prev_rows_div_step, $prev_rows_div_step - 1)
+                                ? $_calc_num_mods->((($prev_rows_div_step + $maj_start_prod_div - $maj_start_prod_bound_lcm)), $prev_rows_div_step - 1)
                                 : 0);
                         },
                     },
@@ -263,7 +266,7 @@ EOF
                     );
                 }
 
-                if ($DEBUG)
+                if (0) # if ($DEBUG)
                 {
                     my @expected = grep {
                         my $prod = $_;
@@ -342,6 +345,10 @@ sub my_test
 
 if (1)
 {
+}
+
+if (1)
+{
 my_test(4, 1000, 2416);
 my_test(4, 4, 9);
 my_test(3, 4, 8);
@@ -352,15 +359,20 @@ my_test(4, 10, 24);
 my_test(10, 10, 42);
 my_test(11, 11, 53);
 my_test(12, 12, 59);
+my_test(12, 25, 143);
 my_test(12, 345, 1998);
 my_test(13, 13, 72);
 my_test(14, 14, 80);
 my_test(15, 20, 137);
-my_test(16, 20, 137);
+my_test(16, 20, 142);
 }
 
 if (1)
 {
 my_test(64, 64, 1263);
+}
+
+if (!$DEBUG)
+{
 my_test(32, (('1'.('0'x15))+0), 13826382602124302);
 }
