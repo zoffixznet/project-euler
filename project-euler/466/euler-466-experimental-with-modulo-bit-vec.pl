@@ -388,7 +388,7 @@ sub calc_P
                             my ($s, $e) = @_;
 
                             # my $ret = $c{$e+1}-$c{$s};
-                            my $ret = $_count_mods_up_to_LIM->($e)-$_count_mods_up_to_LIM->($s-1);
+                            my $ret = $_count_mods_up_to_LIM->($e)-(($s == 0) ? 0 : $_count_mods_up_to_LIM->($s-1));
 
                             printf ("_calc_num_mods: [%d->%d]/%d == %d\n", $s, $e, $prev_rows_div_step, $ret);
 
