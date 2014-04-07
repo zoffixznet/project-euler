@@ -26,7 +26,47 @@ sub lcm
     return Math::GMP->new($n)->blcm($m);
 }
 
-my $DEBUG = 0;
+my $DEBUG = 1;
+
+sub calc_counts
+{
+    my ($c_out_ref, $Q, $step, $prev_rows_div_step, $C, $P) = @_;
+
+    my ($s, $e_p) = (0, $prev_rows_div_step);
+    my $e = $e_p * $step;
+
+    my $c = 0;
+
+    my $q = shift(@$Q);
+
+    I:
+    for (my $j = 0, my $i = $s * $step; $i <= $e; ($i += $step), ($j++))
+    {
+        if ($j == $q)
+        {
+            $C->{$j} = $c;
+            $q = shift(@$Q);
+        }
+
+        foreach my $x (@$P)
+        {
+            my ($d,$m) = @$x;
+            while ($m < $i)
+            {
+                $m += $d;
+            }
+            if (($x->[1] = $m) == $i)
+            {
+                next I;
+            }
+        }
+        $c++;
+    }
+
+    $$c_out_ref = $c;
+
+    return;
+}
 
 sub calc_P
 {
@@ -182,37 +222,16 @@ sub calc_P
                     my $c = 0;
                     {
                         my @Q = uniq(sort { $a <=> $b } map { $_, $_+1 } @_mods_checkpoints_base);
-                        my ($s, $e_p) = (0, $prev_rows_div_step);
-
-                        my $e = $e_p * $step;
-
-                        my $q = shift(@Q);
-
                         my @p = map { [(''.lcm($_,$step))+0,0] } @prev_rows;
 
-                        I:
-                        for (my $j = 0, my $i = $s * $step; $i <= $e; ($i += $step), ($j++))
-                        {
-                            if ($j == $q)
-                            {
-                                $c{$j} = $c;
-                                $q = shift(@Q);
-                            }
-
-                            foreach my $x (@p)
-                            {
-                                my ($d,$m) = @$x;
-                                while ($m < $i)
-                                {
-                                    $m += $d;
-                                }
-                                if (($x->[1] = $m) == $i)
-                                {
-                                    next I;
-                                }
-                            }
-                            $c++;
-                        }
+                        calc_counts(
+                            \$c,
+                            \@Q,
+                            $step,
+                            $prev_rows_div_step,
+                            \%c,
+                            \@p,
+                        );
                     }
 
 
