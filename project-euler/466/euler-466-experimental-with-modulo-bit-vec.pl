@@ -29,6 +29,20 @@ sub lcm
     return Math::GMP->new($n)->blcm($m);
 }
 
+sub multi_lcm
+{
+    my ($n_s) = @_;
+
+    my $lcm = 1;
+
+    foreach my $n (@$n_s)
+    {
+        $lcm = lcm($lcm, $n);
+    }
+
+    return $lcm;
+}
+
 my $DEBUG = 0;
 
 use Inline (C => <<'EOF',
@@ -314,15 +328,17 @@ sub calc_P
                         $maj_end_prod_div % $prev_rows_div_step
                     );
 
-                    my %c;
 
                     # ( map { $_ => undef, ($_+1) => undef } @_mods_checkpoints_base);
 
-                    my $c = 0;
+                    if (0)
                     {
+                        my %c;
+                        my $c = 0;
                         my @Q = uniq(sort { $a <=> $b } map { $_, $_+1 } @_mods_checkpoints_base);
                         my @p = map { [(''.lcm($_,$step))+0,0] } @prev_rows;
 
+                        print "Calculating for prev_rows_div_step=$prev_rows_div_step with repetition of lcm=" . multi_lcm([@prev_rows]) . " prev_rows=[@prev_rows]\n";
                         calc_counts(
                             \$c,
                             \@Q,
@@ -333,11 +349,36 @@ sub calc_P
                         );
                     }
 
+                    # my $LIM = $prev_rows_and_step_lcm;
+                    my $_count_mods_up_to_LIM = sub {
+                        my $LIM = $step*shift(@_);
+                        # Let's try to calculate in a smarter way.
+                        my $recurse;
+
+                        $recurse = sub {
+                            my ($depth, $rows) = @_;
+
+                            if ($depth == @prev_rows)
+                            {
+                                my $div = $LIM / multi_lcm([$step, @$rows]);
+
+                                return (@$rows & 0x1 ? (-$div) : $div);
+                            }
+                            else
+                            {
+                                return $recurse->($depth+1, [@$rows])
+                                + $recurse->($depth+1, [@$rows, $prev_rows[$depth]]);
+                            }
+                        };
+
+                        return $recurse->(0, []);
+                    };
 
                     # If $c is 0 then $_calc_num_mods will always return 0 so
                     # the delta will be 0.
-                    if (! $c)
+                    if (0) # if (! $c)
                     {
+                        my $c = 0;
                         printf ("Skipped for count=%d ; prev_rows_div_step=%d ; step=%d ; prev_rows=[%s]\n", $c, $prev_rows_div_step, $step, join(",",@prev_rows));
                     }
                     else
@@ -345,7 +386,8 @@ sub calc_P
                         my $_calc_num_mods = sub {
                             my ($s, $e) = @_;
 
-                            my $ret = $c{$e+1}-$c{$s};
+                            # my $ret = $c{$e+1}-$c{$s};
+                            my $ret = $_count_mods_up_to_LIM->($e)-$_count_mods_up_to_LIM->($s-1);
 
                             printf ("_calc_num_mods: [%d->%d]/%d == %d\n", $s, $e, $prev_rows_div_step, $ret);
 
