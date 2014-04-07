@@ -26,7 +26,7 @@ sub lcm
     return Math::GMP->new($n)->blcm($m);
 }
 
-my $DEBUG = 1;
+my $DEBUG = 0;
 
 sub calc_P
 {
@@ -102,7 +102,7 @@ sub calc_P
 
         foreach my $next_row ($row_idx+1 .. $MIN)
         {
-            my $step = lcm($row_idx, $next_row);
+            my $step = 0+(''.lcm($row_idx, $next_row));
             my $start_prod = ($start_i_prod / $step) * $step;
             if ($start_i_prod % $step)
             {
@@ -188,7 +188,7 @@ sub calc_P
 
                         my $q = shift(@Q);
 
-                        my @p = map { [lcm($_,$step),0] } @prev_rows;
+                        my @p = map { [(''.lcm($_,$step))+0,0] } @prev_rows;
 
                         I:
                         for (my $j = 0, my $i = $s * $step; $i <= $e; ($i += $step), ($j++))
