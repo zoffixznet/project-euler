@@ -56,7 +56,7 @@ sub lcm
     return Math::GMP->new($n)->blcm($m);
 }
 
-my $DEBUG = 0;
+my $DEBUG = 1;
 
 sub calc_P
 {
@@ -285,6 +285,7 @@ sub calc_P
                 # the delta will be 0.
                 if ($c)
                 {
+
                 my $_calc_num_mods = sub {
                     my ($s, $e) = @_;
 
@@ -294,6 +295,7 @@ sub calc_P
 
                     return $ret;
                 };
+
                 if ($maj_start_prod_div % $prev_rows_div_step)
                 {
                     $maj_start_prod_bound_lcm += $prev_rows_div_step;
