@@ -356,22 +356,23 @@ sub calc_P
                         my $recurse;
 
                         $recurse = sub {
-                            my ($depth, $rows) = @_;
+                            my ($depth, $rows, $lcm) = @_;
 
                             if ($depth == @prev_rows)
                             {
-                                my $div = $LIM / multi_lcm([$step, @$rows]);
+                                my $div = $LIM / $lcm;
 
                                 return (@$rows & 0x1 ? (-$div) : $div);
                             }
                             else
                             {
-                                return $recurse->($depth+1, [@$rows])
-                                + $recurse->($depth+1, [@$rows, $prev_rows[$depth]]);
+                                my $e = $prev_rows[$depth];
+                                return $recurse->($depth+1, [@$rows], $lcm)
+                                + $recurse->($depth+1, [@$rows, $e], lcm($lcm, $e));
                             }
                         };
 
-                        return $recurse->(0, []);
+                        return $recurse->(0, [], $step);
                     };
 
                     # If $c is 0 then $_calc_num_mods will always return 0 so
