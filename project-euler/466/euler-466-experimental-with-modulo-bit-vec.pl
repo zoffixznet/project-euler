@@ -215,9 +215,9 @@ EOF
 
                 my @mini_deltas =
                 (
-                    {
-                        cond => $cond1,
-                        promise => sub {
+                    [
+                        $cond1,
+                        sub {
                             return
                             (
                                 (
@@ -227,43 +227,39 @@ EOF
                                 * $_calc_num_mods->(0, $prev_rows_div_step - 1)
                             );
                         },
-                    },
-                    {
-                        cond => $cond2,
-                        promise => sub {
+                    ],
+                    [
+                        $cond2,
+                        sub {
                             return
                             $_calc_num_mods->(0, $maj_end_prod_div - $maj_end_prod_bound_lcm);
                         },
-                    },
-                    {
-                        cond => $cond3,
-                        promise => sub {
+                    ],
+                    [
+                        $cond3,
+                        sub {
                             return
                             (($maj_start_prod_bound_lcm > $maj_start_prod_div)
                                 ? $_calc_num_mods->((($prev_rows_div_step + $maj_start_prod_div - $maj_start_prod_bound_lcm)), $prev_rows_div_step - 1)
                                 : 0);
                         },
-                    },
-                    {
-                        cond => (not ($cond1 && $cond2 && $cond3)),
-                        promise => sub {
+                    ],
+                    [
+                        scalar(not ($cond1 && $cond2 && $cond3)),
+                        sub {
                             return
                             $_calc_num_mods->($maj_start_prod_div % $prev_rows_div_step, $maj_end_prod_div % $prev_rows_div_step);
                         },
-                    },
+                    ],
                 );
 
                 my $found_in_next_delta = 0;
                 foreach my $mini (@mini_deltas)
                 {
-                    $found_in_next_delta +=
-                    (
-                        $mini->{value} =
-                        ($mini->{cond}
-                            ? 0
-                            : $mini->{promise}->()
-                        )
-                    );
+                    if (not $mini->[0])
+                    {
+                        $found_in_next_delta += ($mini->[2] = $mini->[1]->());
+                    }
                 }
 
                 if (0) # if ($DEBUG)
