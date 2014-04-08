@@ -360,48 +360,69 @@ sub calc_P
                     # Returns the number of MODs from 0 up to its argument
                     # - inclusive. So $_count_mods_up_to_LIM->(0) can be
                     # non-zero.
-                    my $_count_mods_up_to_LIM = sub {
 
-                        my $l = shift;
+                    # Put the largest ones first.
+                    my $_count_mods_up_to_LIM;
 
-                        my @LIM = ( map { [0,$_*$step] } @$l );
+                    {
+                        my @_r = reverse@aft_rows;
 
-                        # Let's try to calculate in a smarter way.
-                        my $recurse;
+                        $_count_mods_up_to_LIM  = sub {
 
-                        $recurse = sub {
-                            my ($depth, $rows, $lcm) = @_;
+                            my $l = shift;
 
-                            if ($depth == @aft_rows)
-                            {
-                                my $sign = ($rows & 0x1 ? (-1) : 1);
-                                # Including the modulo at zero.
-                                foreach my $l (@LIM)
+                            my @LIM = ( map { [0,$_*$step] } @$l );
+
+                            # Let's try to calculate in a smarter way.
+                            my $recurse;
+
+                            $recurse = sub {
+                                my ($depth, $rows, $lcm, $lims) = @_;
+
+                                if ($depth == @aft_rows)
                                 {
-                                    $l->[0] += $sign*(1 + $l->[1] / $lcm);
+                                    my $sign = ($rows & 0x1 ? (-1) : 1);
+                                    # Including the modulo at zero.
+                                    foreach my $l (@$lims)
+                                    {
+                                        $l->[0] += $sign*(1 + $l->[1] / $lcm);
+                                    }
                                 }
-                            }
-                            else
-                            {
-                                $recurse->(
-                                    $depth+1,
-                                    $rows,
-                                    $lcm
-                                );
-                                $recurse->(
-                                    $depth+1,
-                                    $rows+1,
-                                    lcm($lcm, $aft_rows[$depth])
-                                );
-                            }
+                                else
+                                {
+                                    # If the lcm is greater, than the rest
+                                    # of the sum will be 0 because the lcm
+                                    # will only get larger and $l->[1] / $lcm
+                                    # would be always 0, so they will cancel
+                                    # each other.
+                                    my @new_lims = grep { $lcm <= $_->[1] } @$lims;
 
-                            return;
+                                    if (@new_lims)
+                                    {
+                                        $recurse->(
+                                            $depth+1,
+                                            $rows,
+                                            $lcm,
+                                            \@new_lims,
+                                        );
+                                        $recurse->(
+                                            $depth+1,
+                                            $rows+1,
+                                            lcm($lcm, $_r[$depth]),
+                                            \@new_lims,
+                                        );
+                                    }
+                                }
+
+                                return;
+                            };
+
+                            $recurse->(0, 0, $step, \@LIM);
+
+                            return [map { $_->[0] } @LIM];
                         };
+                    }
 
-                        $recurse->(0, 0, $step);
-
-                        return [map { $_->[0] } @LIM];
-                    };
 
                     # If $c is 0 then $_calc_num_mods will always return 0 so
                     # the delta will be 0.
@@ -615,15 +636,22 @@ sub main
         my_test(18, 100, 824);
     }
 
+    if (0 && $DEBUG)
+    {
+        my_test(64, 64, 1263);
+    }
+
     if (1 and !$DEBUG)
     {
         my_test(32, (('1'.('0'x15))+0), 13826382602124302);
     }
 
-    if (0)
+    if (0 and !$DEBUG)
     {
-        my_test(64, 64, 1263);
+        my $WRONG_RESULT = 100;
+        my_test(64, (('1'.('0' x 16))+0), $WRONG_RESULT);
     }
+
 }
 
 $DEBUG = 1;
