@@ -318,21 +318,17 @@ sub calc_P
                     my $maj_end_prod_bound_lcm = ($maj_end_prod_div / $prev_rows_div_step) * $prev_rows_div_step;
                     my $maj_start_prod_bound_lcm = ($maj_start_prod_div / $prev_rows_div_step) * $prev_rows_div_step;
 
-                    my @_mods_checkpoints_base =
-                    (
-                        0,
-                        $prev_rows_div_step - 1,
-                        $maj_end_prod_div - $maj_end_prod_bound_lcm,
-                        (($prev_rows_div_step + $maj_start_prod_div - $maj_start_prod_bound_lcm)),
-                        $maj_start_prod_div % $prev_rows_div_step,
-                        $maj_end_prod_div % $prev_rows_div_step
-                    );
-
-
-                    # ( map { $_ => undef, ($_+1) => undef } @_mods_checkpoints_base);
-
                     if (0)
                     {
+                        my @_mods_checkpoints_base =
+                        (
+                            0,
+                            $prev_rows_div_step - 1,
+                            $maj_end_prod_div - $maj_end_prod_bound_lcm,
+                            (($prev_rows_div_step + $maj_start_prod_div - $maj_start_prod_bound_lcm)),
+                            $maj_start_prod_div % $prev_rows_div_step,
+                            $maj_end_prod_div % $prev_rows_div_step
+                        );
                         my %c;
                         my $c = 0;
                         my @Q = uniq(sort { $a <=> $b } map { $_, $_+1 } @_mods_checkpoints_base);
