@@ -407,21 +407,10 @@ sub calc_P
                     else
                     {
                         # checkpoints
-                        my @_cp =
-                        (
-                            $prev_rows_div_step - 1,
-                            $maj_end_prod_div - $maj_end_prod_bound_lcm,
-                            ((($prev_rows_div_step + $maj_start_prod_div - $maj_start_prod_bound_lcm))-1),
-                            (($maj_start_prod_div % $prev_rows_div_step ) -1),
-                            $maj_end_prod_div % $prev_rows_div_step
-                        );
-
-                        my $out_arr = $_count_mods_up_to_LIM->(
-                            \@_cp
-                        );
-
-                        my %out_hash = (map { $_cp[$_] => $out_arr->[$_] } keys(@$out_arr));
-                        $out_hash{-1} = 0;
+                        # my %out_hash = (map { $_cp[$_] => $out_arr->[$_] } keys(@$out_arr));
+                        # $out_hash{-1} = 0;
+                        #
+                        my %out_hash = ((-1) => 0);
 
                         my $_calc_num_mods = sub {
                             my ($s, $e) = @_;
@@ -462,10 +451,25 @@ EOF
                         my $cond2 = ($maj_start_prod_bound_lcm >= $maj_end_prod_div);
                         my $cond3 = ($maj_end_prod_bound_lcm <= $maj_start_prod_div);
 
+                        my $end_mod1 = $prev_rows_div_step - 1;
+                        my $end_mod2 = $maj_end_prod_div - $maj_end_prod_bound_lcm;
+                        my $start_mod3 = (($prev_rows_div_step + $maj_start_prod_div - $maj_start_prod_bound_lcm));
+                        my $start_mod4 = $maj_start_prod_div % $prev_rows_div_step;
+                        my $end_mod4 = $maj_end_prod_div % $prev_rows_div_step;
+
+                        my $_end = sub {
+                            return $_[0];
+                        };
+
+                        my $_start = sub {
+                            return $_[0]-1;
+                        };
+
                         my @mini_deltas =
                         (
                             [
                                 $cond1,
+                                [$_end->($end_mod1)],
                                 sub {
                                     return
                                     (
@@ -473,31 +477,34 @@ EOF
                                             ($maj_end_prod_bound_lcm - $maj_start_prod_bound_lcm)
                                             / $prev_rows_div_step
                                         )
-                                        * $_calc_num_mods->(0, $prev_rows_div_step - 1)
+                                        * $_calc_num_mods->(0, $end_mod1)
                                     );
                                 },
                             ],
                             [
                                 $cond2,
+                                [$_end->($end_mod2)],
                                 sub {
                                     return
-                                    $_calc_num_mods->(0, $maj_end_prod_div - $maj_end_prod_bound_lcm);
+                                    $_calc_num_mods->(0, $end_mod2);
                                 },
                             ],
                             [
                                 $cond3,
+                                [$_start->($start_mod3), $_end->($end_mod1)],
                                 sub {
                                     return
                                     (($maj_start_prod_bound_lcm > $maj_start_prod_div)
-                                        ? $_calc_num_mods->((($prev_rows_div_step + $maj_start_prod_div - $maj_start_prod_bound_lcm)), $prev_rows_div_step - 1)
+                                        ? $_calc_num_mods->($start_mod3, $end_mod1)
                                         : 0);
                                 },
                             ],
                             [
                                 scalar(not ($cond1 && $cond2 && $cond3)),
+                                [$_start->($start_mod4),$_end->($end_mod4)],
                                 sub {
                                     return
-                                    $_calc_num_mods->($maj_start_prod_div % $prev_rows_div_step, $maj_end_prod_div % $prev_rows_div_step);
+                                    $_calc_num_mods->($start_mod4, $end_mod4);
                                 },
                             ],
                         );
@@ -507,8 +514,30 @@ EOF
                         {
                             if (not $mini->[0])
                             {
-                                $found_in_next_delta += ($mini->[2] = $mini->[1]->());
+                                foreach my $mod (@{$mini->[1]})
+                                {
+                                    $out_hash{$mod} = undef;
+                                }
+                                $mini->[3] = $mini->[2];
                             }
+                            else
+                            {
+                                $mini->[3] = sub { return 0; };
+                            }
+                        }
+                        my @k = keys(%out_hash);
+                        my $out_arr = $_count_mods_up_to_LIM->(
+                            \@k
+                        );
+
+                        foreach my $i (keys@k)
+                        {
+                            $out_hash{$k[$i]} = $out_arr->[$i];
+                        }
+
+                        foreach my $mini (@mini_deltas)
+                        {
+                            $found_in_next_delta += ($mini->[4] = $mini->[3]->());
                         }
 
                         if (1 && $DEBUG)
