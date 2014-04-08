@@ -410,7 +410,7 @@ sub calc_P
                         # my %out_hash = (map { $_cp[$_] => $out_arr->[$_] } keys(@$out_arr));
                         # $out_hash{-1} = 0;
                         #
-                        my %out_hash = ((-1) => 0);
+                        my %out_hash;
 
                         my $_calc_num_mods = sub {
                             my ($s, $e) = @_;
@@ -534,6 +534,7 @@ EOF
                         {
                             $out_hash{$k[$i]} = $out_arr->[$i];
                         }
+                        $out_hash{-1} = 0;
 
                         foreach my $mini (@mini_deltas)
                         {
