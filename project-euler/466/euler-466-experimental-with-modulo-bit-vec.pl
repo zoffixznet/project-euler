@@ -306,6 +306,16 @@ sub calc_P
                 }
                 else
                 {
+                    my @aft_rows;
+
+                    foreach my $row (@prev_rows)
+                    {
+                        if (none { $row % $_ == 0 } @aft_rows)
+                        {
+                            push @aft_rows, $row;
+                        }
+                    }
+
                     my $prev_rows_and_step_lcm = $lcms[$maj_factor];
 
 
@@ -332,9 +342,9 @@ sub calc_P
                         my %c;
                         my $c = 0;
                         my @Q = uniq(sort { $a <=> $b } map { $_, $_+1 } @_mods_checkpoints_base);
-                        my @p = map { [(''.lcm($_,$step))+0,0] } @prev_rows;
+                        my @p = map { [(''.lcm($_,$step))+0,0] } @aft_rows;
 
-                        print "Calculating for prev_rows_div_step=$prev_rows_div_step with repetition of lcm=" . multi_lcm([@prev_rows]) . " prev_rows=[@prev_rows]\n";
+                        print "Calculating for prev_rows_div_step=$prev_rows_div_step with repetition of lcm=" . multi_lcm([@aft_rows]) . " aft_rows=[@aft_rows]\n";
                         calc_counts(
                             \$c,
                             \@Q,
@@ -362,7 +372,7 @@ sub calc_P
                         $recurse = sub {
                             my ($depth, $rows, $lcm) = @_;
 
-                            if ($depth == @prev_rows)
+                            if ($depth == @aft_rows)
                             {
                                 my $sign = ($rows & 0x1 ? (-1) : 1);
                                 # Including the modulo at zero.
@@ -381,7 +391,7 @@ sub calc_P
                                 $recurse->(
                                     $depth+1,
                                     $rows+1,
-                                    lcm($lcm, $prev_rows[$depth])
+                                    lcm($lcm, $aft_rows[$depth])
                                 );
                             }
 
@@ -398,7 +408,7 @@ sub calc_P
                     if (0) # if (! $c)
                     {
                         my $c = 0;
-                        printf ("Skipped for count=%d ; prev_rows_div_step=%d ; step=%d ; prev_rows=[%s]\n", $c, $prev_rows_div_step, $step, join(",",@prev_rows));
+                        printf ("Skipped for count=%d ; prev_rows_div_step=%d ; step=%d ; aft_rows=[%s]\n", $c, $prev_rows_div_step, $step, join(",",@aft_rows));
                     }
                     else
                     {
