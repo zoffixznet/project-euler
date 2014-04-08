@@ -368,7 +368,7 @@ sub calc_P
 
                             if ($depth == @prev_rows)
                             {
-                                my $sign = (@$rows & 0x1 ? (-1) : 1);
+                                my $sign = ($rows & 0x1 ? (-1) : 1);
                                 # Including the modulo at zero.
                                 foreach my $l (@LIM)
                                 {
@@ -378,14 +378,14 @@ sub calc_P
                             else
                             {
                                 my $e = $prev_rows[$depth];
-                                $recurse->($depth+1, [@$rows], $lcm);
-                                $recurse->($depth+1, [@$rows, $e], lcm($lcm, $e));
+                                $recurse->($depth+1, $rows, $lcm);
+                                $recurse->($depth+1, $rows+1, lcm($lcm, $e));
                             }
 
                             return;
                         };
 
-                        $recurse->(0, [], $step);
+                        $recurse->(0, 0, $step);
 
                         return [map { $_->[0] } @LIM];
                     };
