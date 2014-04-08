@@ -377,9 +377,16 @@ sub calc_P
                             }
                             else
                             {
-                                my $e = $prev_rows[$depth];
-                                $recurse->($depth+1, $rows, $lcm);
-                                $recurse->($depth+1, $rows+1, lcm($lcm, $e));
+                                $recurse->(
+                                    $depth+1,
+                                    $rows,
+                                    $lcm
+                                );
+                                $recurse->(
+                                    $depth+1,
+                                    $rows+1,
+                                    lcm($lcm, $prev_rows[$depth])
+                                );
                             }
 
                             return;
