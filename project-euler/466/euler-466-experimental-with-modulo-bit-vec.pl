@@ -69,11 +69,12 @@ sub slcm
     return ($n * $m / sgcd($n,$m));
 }
 
+=begin pure_perl
+
 sub count_mods_up_to_LIM
 {
     my ($r, $step, $l) = @_;
 
-    # Let's try to calculate in a smarter way.
     my $recurse;
 
     $recurse = sub {
@@ -123,6 +124,10 @@ sub count_mods_up_to_LIM
 
     return [map { $_->[0] } @LIM];
 }
+
+=end pure_perl
+
+=cut
 
 my $DEBUG = 1;
 
@@ -210,6 +215,125 @@ void calc_counts(SV * c_out_ref, AV * Q_proto, IV step, IV prev_rows_div_step, H
     free (P);
 
     return;
+}
+
+static inline IV my_sgcd(IV n, IV m)
+{
+    IV temp;
+
+    if (m > n)
+    {
+        temp = n;
+        n = m;
+        m = temp;
+    }
+
+    while (m > 0)
+    {
+        temp = n%m;
+        n = m;
+        m = temp;
+    }
+
+    return n;
+}
+
+static inline IV my_slcm(const IV n, const IV m)
+{
+    return (n * m / my_sgcd(n,m));
+}
+
+typedef struct {
+    IV result, lim;
+} my_lim_t;
+
+static inline void my_recurse(const IV const * r, const IV r_count,
+const IV depth, const IV rows, const IV lcm,
+    my_lim_t * * const lims, const IV lims_count)
+{
+    if (depth == r_count)
+    {
+        for (my_lim_t ** l = lims; l < lims+lims_count; l++)
+        {
+            /* Including the modulo at zero. */
+            IV val = (1 + (*l)->lim / lcm);
+            (*l)->result += ((rows&0x1) ? (-val) : val);
+        }
+    }
+    else
+    {
+        /*
+        If the lcm is greater, than the rest
+        of the sum will be 0 because the lcm
+        will only get larger and l->[1] / lcm
+        would be always 0, so they will cancel
+        each other.
+        */
+        my_lim_t * new_lims[lims_count];
+        IV new_lims_count = 0;
+
+        for (my_lim_t ** l = lims; l < lims+lims_count; l++)
+        {
+            if (lcm <= (*l)->lim)
+            {
+                new_lims[new_lims_count++] = (*l);
+            }
+        }
+
+        if (new_lims_count)
+        {
+            my_recurse(r, r_count, depth+1, rows, lcm, new_lims, new_lims_count);
+            my_recurse(
+                r,
+                r_count,
+                depth+1,
+                (rows^0x1),
+                my_slcm(lcm, r[depth]),
+                new_lims,
+                new_lims_count
+            );
+        }
+    }
+}
+
+AV * count_mods_up_to_LIM(AV * r_proto, IV step, AV * l_proto)
+{
+    const IV lims_count = 1+av_len(l_proto);
+    my_lim_t LIM_base[lims_count];
+    my_lim_t * LIM[lims_count];
+
+    for (IV i = 0; i < lims_count; i++)
+    {
+        LIM_base[i].result = 0;
+        LIM_base[i].lim = step * SvIV(*(av_fetch(l_proto,i,0)));
+        LIM[i] = &(LIM_base[i]);
+    }
+
+    const IV r_count = av_len(r_proto) + 1;
+    IV r[r_count];
+
+    for (IV i = 0; i < r_count; i++)
+    {
+        r[i] = SvIV(*(av_fetch(r_proto,i,0)));
+    }
+
+    my_recurse(
+        r,
+        r_count,
+        0,
+        0,
+        step,
+        LIM, lims_count
+    );
+
+    AV * ret = newAV();
+    for (IV i = 0; i < lims_count; i++)
+    {
+        SV * val = newSViv(LIM_base[i].result);
+        av_push(ret, val);
+    }
+
+    return ret;
 }
 EOF
     CLEAN_AFTER_BUILD => 0,
