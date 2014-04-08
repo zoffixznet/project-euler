@@ -381,6 +381,7 @@ sub calc_P
                                 $recurse->($depth+1, [@$rows], $lcm);
                                 $recurse->($depth+1, [@$rows, $e], lcm($lcm, $e));
                             }
+
                             return;
                         };
 
