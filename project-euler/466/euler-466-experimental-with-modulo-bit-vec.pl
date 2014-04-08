@@ -43,7 +43,7 @@ sub multi_lcm
     return $lcm;
 }
 
-my $DEBUG = 1;
+my $DEBUG = 0;
 
 use Inline (C => <<'EOF',
 
@@ -350,15 +350,12 @@ sub calc_P
                     }
 
                     # my $LIM = $prev_rows_and_step_lcm;
-
-                    # Returns the number of MODs from 0 up to its argument
-                    # - inclusive. So $_count_mods_up_to_LIM->(0) can be
-                    # non-zero.
                     my $_count_mods_up_to_LIM = sub {
+                        my $lim_in = shift;
 
-                        my $l = shift;
+                        my @keys = keys(%$lim_in);
 
-                        my @LIM = ( map { [0,$_*$step] } @$l );
+                        my $LIM = {map { $_ => $lim_in->{$_}*$step } @keys};
 
                         # Let's try to calculate in a smarter way.
                         my $recurse;
@@ -368,25 +365,20 @@ sub calc_P
 
                             if ($depth == @prev_rows)
                             {
-                                my $sign = (@$rows & 0x1 ? (-1) : 1);
-                                # Including the modulo at zero.
-                                foreach my $l (@LIM)
-                                {
-                                    $l->[0] += $sign*(1 + $l->[1] / $lcm);
-                                }
+                                my $sign = (@$rows & 0x1) ? (-1) : 1;
+                                return +{ map { $_ => $sign * ($LIM->{$_} / $lcm) } @keys };
                             }
                             else
                             {
                                 my $e = $prev_rows[$depth];
-                                $recurse->($depth+1, [@$rows], $lcm);
-                                $recurse->($depth+1, [@$rows, $e], lcm($lcm, $e));
+                                my $o = $recurse->($depth+1, [@$rows], $lcm);
+                                my $t = $recurse->($depth+1, [@$rows, $e], lcm($lcm, $e));
+
+                                return +{ map { $_ => $o->{$_} + $t->{$_} } @keys };
                             }
-                            return;
                         };
 
-                        $recurse->(0, [], $step);
-
-                        return [map { $_->[0] } @LIM];
+                        return $recurse->(0, [], $step);
                     };
 
                     # If $c is 0 then $_calc_num_mods will always return 0 so
@@ -398,8 +390,7 @@ sub calc_P
                     }
                     else
                     {
-                        # checkpoints
-                        my @_cp =
+                        my @_mods_checkpoints_base =
                         (
                             $prev_rows_div_step - 1,
                             $maj_end_prod_div - $maj_end_prod_bound_lcm,
@@ -408,22 +399,19 @@ sub calc_P
                             $maj_end_prod_div % $prev_rows_div_step
                         );
 
-                        my $out_arr = $_count_mods_up_to_LIM->(
-                            \@_cp
-                        );
+                        my %input_hash =
+                        (map { $_ => $_ } @_mods_checkpoints_base);
 
-                        my %out_hash = (map { $_cp[$_] => $out_arr->[$_] } keys(@$out_arr));
-                        $out_hash{-1} = 0;
+                        my $out_hash = $_count_mods_up_to_LIM->(
+                            \%input_hash
+                        );
 
                         my $_calc_num_mods = sub {
                             my ($s, $e) = @_;
 
                             # my $ret = $c{$e+1}-$c{$s};
-                            # my $ret = $_count_mods_up_to_LIM->($e)-$_count_mods_up_to_LIM->($s-1);
-                            # my $ret = $_count_mods_up_to_LIM->($e)-(($s == 0) ? (-1) : $_count_mods_up_to_LIM->($s));
-
-                            # my $ret = $_count_mods_up_to_LIM->($e)-(($s==0) ? 0 : $_count_mods_up_to_LIM->($s-1));
-                            my $ret = $out_hash{$e}-$out_hash{$s-1};
+                            # my $ret = $_count_mods_up_to_LIM->($e)-(($s == 0) ? 0 : $_count_mods_up_to_LIM->($s-1));
+                            my $ret = $out_hash->{$e} - (($s == 0) ? 0 : $out_hash->{$s-1});
 
                             printf ("_calc_num_mods: [%d->%d]/%d == %d\n", $s, $e, $prev_rows_div_step, $ret);
 
