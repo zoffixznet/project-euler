@@ -133,6 +133,8 @@ my $DEBUG = 1;
 
 use Inline (C => <<'EOF',
 
+#include <gmp.h>
+
 void calc_counts(SV * c_out_ref, AV * Q_proto, IV step, IV prev_rows_div_step, HV * C_hash, AV * P_proto)
 {
     IV Q_len = (1+av_len(Q_proto));
@@ -240,15 +242,15 @@ static inline IV my_sgcd(IV n, IV m)
 
 static inline IV my_slcm(const IV n, const IV m)
 {
-    return (n * m / my_sgcd(n,m));
+    return (n * (m / my_sgcd(n,m)));
 }
 
 typedef struct {
-    IV result, lim;
+    mpz_t result, lim;
 } my_lim_t;
 
 static inline void my_recurse(const IV const * r, const IV r_count,
-const IV depth, const IV rows, const IV lcm,
+const IV depth, const IV rows, const mpz_t lcm,
     my_lim_t * * const lims, const IV lims_count)
 {
     if (depth == r_count)
@@ -256,8 +258,19 @@ const IV depth, const IV rows, const IV lcm,
         for (my_lim_t ** l = lims; l < lims+lims_count; l++)
         {
             /* Including the modulo at zero. */
-            IV val = (1 + (*l)->lim / lcm);
-            (*l)->result += ((rows&0x1) ? (-val) : val);
+            mpz_t val;
+            mpz_init(val);
+            mpz_fdiv_q(val, (*l)->lim, lcm);
+            mpz_add_ui(val, val, 1);
+            if (rows & 0x1)
+            {
+                mpz_sub((*l)->result, (*l)->result, val);
+            }
+            else
+            {
+                mpz_add((*l)->result, (*l)->result, val);
+            }
+            mpz_clear(val);
         }
     }
     else
@@ -274,7 +287,7 @@ const IV depth, const IV rows, const IV lcm,
 
         for (my_lim_t ** l = lims; l < lims+lims_count; l++)
         {
-            if (lcm <= (*l)->lim)
+            if (mpz_cmp(lcm, (*l)->lim) <= 0)
             {
                 new_lims[new_lims_count++] = (*l);
             }
@@ -283,15 +296,28 @@ const IV depth, const IV rows, const IV lcm,
         if (new_lims_count)
         {
             my_recurse(r, r_count, depth+1, rows, lcm, new_lims, new_lims_count);
+
+            mpz_t new_lcm;
+            mpz_init(new_lcm);
+            mpz_lcm_ui(new_lcm, lcm, r[depth]);
+#if 0
+            if (new_lcm < lcm)
+            {
+                fprintf(stderr, "Overflow! %ld ; %ld", new_lcm, lcm);
+                exit(-1);
+            }
+#endif
+
             my_recurse(
                 r,
                 r_count,
                 depth+1,
                 (rows^0x1),
-                my_slcm(lcm, r[depth]),
+                new_lcm,
                 new_lims,
                 new_lims_count
             );
+            mpz_clear(new_lcm);
         }
     }
 }
@@ -304,8 +330,11 @@ AV * count_mods_up_to_LIM(AV * r_proto, IV step, AV * l_proto)
 
     for (IV i = 0; i < lims_count; i++)
     {
-        LIM_base[i].result = 0;
-        LIM_base[i].lim = step * SvIV(*(av_fetch(l_proto,i,0)));
+        /* Initialises it to zero. */
+        mpz_init(LIM_base[i].result);
+        /* Initialise it to step * l_proto[i] */
+        mpz_init_set_str(LIM_base[i].lim, SvPVbyte_nolen(*(av_fetch(l_proto,i,0))), 10);
+        mpz_mul_si(LIM_base[i].lim, LIM_base[i].lim, step);
         LIM[i] = &(LIM_base[i]);
     }
 
@@ -317,20 +346,27 @@ AV * count_mods_up_to_LIM(AV * r_proto, IV step, AV * l_proto)
         r[i] = SvIV(*(av_fetch(r_proto,i,0)));
     }
 
+    mpz_t init_lcm_mpz;
+    mpz_init_set_si(init_lcm_mpz, step);
     my_recurse(
         r,
         r_count,
         0,
         0,
-        step,
+        init_lcm_mpz,
         LIM, lims_count
     );
+    mpz_clear(init_lcm_mpz);
 
     AV * ret = newAV();
     for (IV i = 0; i < lims_count; i++)
     {
-        SV * val = newSViv(LIM_base[i].result);
+        char * str = mpz_get_str(NULL, 10, LIM_base[i].result);
+        SV * val = newSVpv(str, 0);
+        free (str);
         av_push(ret, val);
+        mpz_clear(LIM_base[i].result);
+        mpz_clear(LIM_base[i].lim);
     }
 
     return ret;
@@ -338,6 +374,7 @@ AV * count_mods_up_to_LIM(AV * r_proto, IV step, AV * l_proto)
 EOF
     CLEAN_AFTER_BUILD => 0,
     CCFLAGS => ($Config{ccflags} . ' -std=gnu99 -march=native -flto -O3'),
+    LIBS => ' -lgmp',
 );
 
 =begin hello
@@ -795,7 +832,7 @@ sub main
         my_test(64, 64, 1263);
     }
 
-    if (0 and !$DEBUG)
+    if (1 and !$DEBUG)
     {
         my_test(32, (('1'.('0'x15))+0), 13826382602124302);
     }
