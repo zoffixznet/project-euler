@@ -71,7 +71,7 @@ sub slcm
 
 sub count_mods_up_to_LIM
 {
-    my ($_r, $step, $l) = @_;
+    my ($r, $step, $l) = @_;
 
     # Let's try to calculate in a smarter way.
     my $recurse;
@@ -79,7 +79,7 @@ sub count_mods_up_to_LIM
     $recurse = sub {
         my ($depth, $rows, $lcm, $lims) = @_;
 
-        if ($depth == @$_r)
+        if ($depth == @$r)
         {
             my $sign = ($rows & 0x1 ? (-1) : 1);
             # Including the modulo at zero.
@@ -108,7 +108,7 @@ sub count_mods_up_to_LIM
                 $recurse->(
                     $depth+1,
                     $rows+1,
-                    slcm($lcm, $_r->[$depth]),
+                    slcm($lcm, $r->[$depth]),
                     \@new_lims,
                 );
             }
