@@ -337,7 +337,7 @@ AV * count_mods_up_to_LIM(AV * r_proto, IV step, AV * l_proto)
 }
 EOF
     CLEAN_AFTER_BUILD => 0,
-    CCFLAGS => ($Config{ccflags} . ' -std=gnu99'),
+    CCFLAGS => ($Config{ccflags} . ' -std=gnu99 -march=native -flto -O3'),
 );
 
 =begin hello
