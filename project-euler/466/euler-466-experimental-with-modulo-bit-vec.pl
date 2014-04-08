@@ -43,6 +43,87 @@ sub multi_lcm
     return $lcm;
 }
 
+# Small gcd (sgcd) and small lcm (slcm) that don't involve Math::GMP.
+
+sub sgcd
+{
+    my ($n, $m) = @_;
+
+    if ($m > $n)
+    {
+        ($n, $m) = ($m, $n);
+    }
+
+    while ($m > 0)
+    {
+        ($n, $m) = ($m, $n%$m);
+    }
+
+    return $n;
+}
+
+sub slcm
+{
+    my ($n, $m) = @_;
+
+    return ($n * $m / sgcd($n,$m));
+}
+
+sub count_mods_up_to_LIM
+{
+    my ($_r, $step, $l) = @_;
+
+    # Let's try to calculate in a smarter way.
+    my $recurse;
+
+    $recurse = sub {
+        my ($depth, $rows, $lcm, $lims) = @_;
+
+        if ($depth == @$_r)
+        {
+            my $sign = ($rows & 0x1 ? (-1) : 1);
+            # Including the modulo at zero.
+            foreach my $l (@$lims)
+            {
+                $l->[0] += $sign*(1 + $l->[1] / $lcm);
+            }
+        }
+        else
+        {
+            # If the lcm is greater, than the rest
+            # of the sum will be 0 because the lcm
+            # will only get larger and $l->[1] / $lcm
+            # would be always 0, so they will cancel
+            # each other.
+            my @new_lims = grep { $lcm <= $_->[1] } @$lims;
+
+            if (@new_lims)
+            {
+                $recurse->(
+                    $depth+1,
+                    $rows,
+                    $lcm,
+                    \@new_lims,
+                );
+                $recurse->(
+                    $depth+1,
+                    $rows+1,
+                    slcm($lcm, $_r->[$depth]),
+                    \@new_lims,
+                );
+            }
+        }
+
+        return;
+    };
+
+    my @LIM = ( map { [0,$_*$step] } @$l );
+
+    $recurse->(0, 0, $step, \@LIM);
+
+    return [map { $_->[0] } @LIM];
+}
+
 my $DEBUG = 1;
 
 use Inline (C => <<'EOF',
@@ -255,7 +336,7 @@ sub calc_P
 
         foreach my $next_row ($row_idx+1 .. $MIN)
         {
-            my $step = 0+(''.lcm($row_idx, $next_row));
+            my $step = slcm($row_idx, $next_row);
             my $start_prod = ($start_i_prod / $step) * $step;
             if ($start_i_prod % $step)
             {
@@ -361,65 +442,14 @@ sub calc_P
                     # - inclusive. So $_count_mods_up_to_LIM->(0) can be
                     # non-zero.
 
-                    # Put the largest ones first.
                     my $_count_mods_up_to_LIM;
 
                     {
+                        # Put the largest ones first.
                         my @_r = reverse@aft_rows;
 
                         $_count_mods_up_to_LIM  = sub {
-
-                            my $l = shift;
-
-                            # Let's try to calculate in a smarter way.
-                            my $recurse;
-
-                            $recurse = sub {
-                                my ($depth, $rows, $lcm, $lims) = @_;
-
-                                if ($depth == @aft_rows)
-                                {
-                                    my $sign = ($rows & 0x1 ? (-1) : 1);
-                                    # Including the modulo at zero.
-                                    foreach my $l (@$lims)
-                                    {
-                                        $l->[0] += $sign*(1 + $l->[1] / $lcm);
-                                    }
-                                }
-                                else
-                                {
-                                    # If the lcm is greater, than the rest
-                                    # of the sum will be 0 because the lcm
-                                    # will only get larger and $l->[1] / $lcm
-                                    # would be always 0, so they will cancel
-                                    # each other.
-                                    my @new_lims = grep { $lcm <= $_->[1] } @$lims;
-
-                                    if (@new_lims)
-                                    {
-                                        $recurse->(
-                                            $depth+1,
-                                            $rows,
-                                            $lcm,
-                                            \@new_lims,
-                                        );
-                                        $recurse->(
-                                            $depth+1,
-                                            $rows+1,
-                                            lcm($lcm, $_r[$depth]),
-                                            \@new_lims,
-                                        );
-                                    }
-                                }
-
-                                return;
-                            };
-
-                            my @LIM = ( map { [0,$_*$step] } @$l );
-
-                            $recurse->(0, 0, $step, \@LIM);
-
-                            return [map { $_->[0] } @LIM];
+                            return count_mods_up_to_LIM(\@_r, $step, shift);
                         };
                     }
 
@@ -641,12 +671,12 @@ sub main
         my_test(64, 64, 1263);
     }
 
-    if (1 and !$DEBUG)
+    if (0 and !$DEBUG)
     {
         my_test(32, (('1'.('0'x15))+0), 13826382602124302);
     }
 
-    if (0 and !$DEBUG)
+    if (1 and !$DEBUG)
     {
         my $WRONG_RESULT = 100;
         my_test(64, (('1'.('0' x 16))+0), $WRONG_RESULT);
