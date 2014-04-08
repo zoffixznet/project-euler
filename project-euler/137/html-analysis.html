@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE
+    html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US">
+<head>
+<title>Project Euler #137: Fibonacci Golden Nuggets</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="author" content="Shlomi Fish" />
+<meta name="description" content="Analysis of Project Euler Problem No. 137" />
+</head>
+<body>
+
+<h1>Project Euler #137: Fibonacci Golden Nuggets</h1>
+<script type="text/javascript" src="http://www.shlomifish.org/js/MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+<p>
+<a href="http://projecteuler.net/problem=137">Link to Project Euler problem
+No. 137</a>
+</p>
+
+<p>
+\[
+
+s = \sqrt{5} \\
+
+F[n] = \frac{1}{s} \cdot \left\{ \left[ \frac{1+s}{2} \right]^n - \left[\frac{1 - s}{2}\right]^n \right\}
+
+\]
+</p>
+
+Therefore:
+
+[ Given limits according to the |q| &lt; 1 ]
+</p>
+
+<p>
+\[
+
+A_F(x) = \frac{1}{s} \cdot \left\{ \dfrac{ \frac{x(1+s)}{2} }{  1 - \frac{x(1+s)}{2} } - \dfrac{ \frac{x(1-s)}{2} }{ 1 - \frac{x(1-s)}{2} } \right\} = \\
+
+\frac{x}{2s} \cdot \left\{ \dfrac{ (1+s) }{ 1 - \frac{x(1+s)}{2} } - \dfrac{ (1-s) }{ 1 - \frac{x(1-s)}{2} } \right\} = \\
+
+\frac{x}{2s} \cdot \left\{ \dfrac{ 1 }{ \frac{1}{1+s} - x/2 } - \dfrac{ 1 }{ \frac{1}{1-s} - x/2 } \right\} = \\
+
+    \left[y = x/2\right] \\
+
+\frac{y}{s} \cdot \left\{ \dfrac{ 1 }{ \frac{1}{1+s} - y } - \dfrac{ 1 }{ \frac{1}{1-s} - y } \right\} = \\
+
+    \left[z = 1/y ; \cdot \dfrac{\frac{1}{y}}{\frac{1}{y}} \right] \\
+
+\frac{1}{s} \cdot \left\{ \dfrac{1}{\frac{z}{1+s} - 1} - \dfrac{1}{\frac{z}{1-s} - 1} \right\} = N \\
+
+\frac{1}{s} \cdot \dfrac{ \left[\frac{z}{1-s}-1 - \frac{z}{1+s} + 1 \right]}{[\frac{z}{1+s}-1][\frac{z}{1-s}-1]} = N \\
+
+\frac{z}{s} \cdot (\frac{1}{1-s}-\frac{1}{1+s}) = N\left[\frac{z}{1+s}-1\right]\left[\frac{z}{1-s}-1\right] \\
+
+    \text{[ * (1+s) * (1-s)]} \\
+
+    \frac{z}{s}(1+s-1+s) = N\left[z-(1+s)\right]\left[z-(1-s)\right] \\
+
+    2z = N \left[ z^2 - 2z + (1-s^2)\right] \\
+
+    s^2 = 5 \\
+
+    2z = N \left[ z^2 - 2z - 4 \right] \\
+
+    z^2 - (2+2/N)z - 4 = 0 \\
+
+    z = \dfrac{ -b \pm \sqrt{b^2-4ac}}{2a} \\
+
+    \text{z is rational iff b^2-4ac is a square of a rational number:} \\
+
+    ∆ = (2+2/N)^2+16 = 4\left[ (1+1/N)^2+4 \right] = 4[ (N+1)^2/N^2 + 4 ] \\
+
+    ∆ = 4\dfrac{ (N+1)^2+4N^2 }{ N^2 } \\
+
+    \text{rational iff (N+1)^2+4N^2 is a whole square.}
+
+    (N+1)^2+(2N)^2 = T^2
+
+    T^2-(2N)^2 = (N+1)^2
+    (T-2N)(T+2N) = (N+1)^2
+    (T-(N+1))(T+(N+1)) = (2N)^2
+\]
+</p>
+
+
+</body>
+</html>

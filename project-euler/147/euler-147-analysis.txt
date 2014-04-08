@@ -1,0 +1,107 @@
+The vertical/horizontal number of rectangles is trivial:
+
+If the rectangle dimensions are  s[x],s[y] and the board dimensions are
+b[x], b[y] then there are ( b[x] - (s[x] - 1) ) * ( b[y] - (s[y] - 1) )
+squares there of that size.
+
+Now for the diagonal rectangles:
+
+1 * 1 rectangles:
+-----------------
+
+If the diagonal rectangle is 1*1 then for C ( b = (1,1) ) = 0, and
+C(b(2,1)) = 1 , C(b(3,1)) = 2 and so C(b(n+1,1)) = n;
+
+    (C == count of 1*1 diagonals rectangles)
+
+C(b(2,2)) = 4 , C(b(2,3)) = 7 , C(b(2,4)) = 10 , C(b(2,n+2)) = 4+n*3
+
+C(b(3,3)) = 12 , C(b(3,4)) = 12+5 = 17  C(b(3,n+3)) = 12 + n*5
+
+C(b(4,4)) = C(b(3,4)) + 7 ; C(b(4,5)) = C(b(4,4)) + 7
+
+And in general:
+
+* C(b(1,1)) = 0 C(b(n+1,1)) = C(b(n,1)) + 1
+* C(b(n+1,n+1)) = C(b(n+1,n)) + 2*n+1
+* C(b(m+1>n+1,n+1)) = C(b(m, n+1)) + 2*n+1
+
+2 * 1 diagonal rectangles:
+--------------------------
+
+C(1,1) = 0 ; C(2,1) = 0 ; C(2,2) = 2 (but there are two possible directions in
+which the 2 * 1 block can be aligned so it's twice that and 4).
+
+C(2,3) = 4 ; C(2,4) = 6 ; C(2,step) = 2
+
+C(3,3) = C(2,3) + 4 ; C(3,4) = C(3,3) + 4 ; C(3,step) = 4
+
+C(4,4) = C(3,4) + 6 ; C(4,5) = C(3,4) + 6 ; C(4,step) = 6
+
+C(5,step) = 8
+
+C(6,step) = 10
+
+C(n,step) = n-1 * 2
+
+2* 2 diagonal rectangles:
+-------------------------
+
+C(1,1) = 0 ; C(2,1) = 0 ; C(2,2) = 1
+
+C(2,3) = C(2,2)+1 ; C(2,4) = C(2,3) + 1 ; C(2,step) = 1
+
+C(3,3) = C(2,3) + 3 ; C(3,4) = C(3,3) + 3 ; C(3,step) = 3
+
+C(4,4) = C(3,4) + 5 ; C(4,step) = 5
+
+C(5,step) = 7
+
+C(6,step) = 9
+
+C(n,step) = n*2-3;
+
+1*3 diagonal rectangles:
+------------------------
+
+C(1,1) = 0 ; C(2,1) = 0; C(2,2) = 0
+
+C(2,3) = 1 (in each direction - so 2 * 1 overall)
+
+C(2,4) = C(2,3) + 1 ; C(2,step) = 1
+
+C(3,3) = C(2,3) + 3 ; C(3,step)  = 3
+
+C(4,4) = C(3,4) + 5 ; C(4,step) = 5
+
+C(n,step) = n*2-3
+
+General diagonal rectangles analysis:
+-------------------------------------
+
+Since the rectangles stop at midpoint, we can treat the board as having
+units of 2. The points can be either (2x, 2y) or (2x+1, 2y+1). If the origin
+is point (Ox,Oy), then the dimensions of a w*h diagonal rectangle are:
+
+( Ox , Oy )
+( Ox - w , Oy + w )
+( Ox - w + h , Oy + w + h )
+( Ox + h , Oy + h )
+
+The complete span is (w+h) * (w+h) (but the origin of the span is not at
+a lattice point).
+
+So we need the straight square with dimensions x==[-w, h] * y==[0, w+h]
+
+Without loss of generality, let's assume that w >= h.
+
+For b[x] = 2x' ; b[y] = 2y' (board dimensions), the points for such a span
+are:
+
+1. For even points:   x==[w , 2x' - h] * y==[0, 2y'-(w+h)]
+(divided by 2 and rounded down and while ignoring values beyond the board
+dimensions.)
+
+2. For the +(1,1) points: there are (x'-1) * (y'-1) points like that.
+    and they follow the same rules:
+    (1, 3, 5...) * (1, 3, 5...)
