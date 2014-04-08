@@ -249,11 +249,14 @@ typedef struct {
     mpz_t result, lim;
 } my_lim_t;
 
-static inline void my_recurse(const IV const * r, const IV r_count,
-const IV depth, const IV rows, const mpz_t lcm,
-    my_lim_t * * const lims, const IV lims_count)
+static inline void my_recurse(
+    const IV const * r, const IV const * r_end,
+    const IV rows,
+    const mpz_t lcm,
+    my_lim_t * * const lims, const IV lims_count
+)
 {
-    if (depth == r_count)
+    if (r == r_end)
     {
         for (my_lim_t ** l = lims; l < lims+lims_count; l++)
         {
@@ -295,11 +298,11 @@ const IV depth, const IV rows, const mpz_t lcm,
 
         if (new_lims_count)
         {
-            my_recurse(r, r_count, depth+1, rows, lcm, new_lims, new_lims_count);
+            my_recurse(r+1, r_end, rows, lcm, new_lims, new_lims_count);
 
             mpz_t new_lcm;
             mpz_init(new_lcm);
-            mpz_lcm_ui(new_lcm, lcm, r[depth]);
+            mpz_lcm_ui(new_lcm, lcm, *r);
 #if 0
             if (new_lcm < lcm)
             {
@@ -309,9 +312,8 @@ const IV depth, const IV rows, const mpz_t lcm,
 #endif
 
             my_recurse(
-                r,
-                r_count,
-                depth+1,
+                r+1,
+                r_end,
                 (rows^0x1),
                 new_lcm,
                 new_lims,
@@ -350,8 +352,7 @@ AV * count_mods_up_to_LIM(AV * r_proto, IV step, AV * l_proto)
     mpz_init_set_si(init_lcm_mpz, step);
     my_recurse(
         r,
-        r_count,
-        0,
+        r+r_count,
         0,
         init_lcm_mpz,
         LIM, lims_count
