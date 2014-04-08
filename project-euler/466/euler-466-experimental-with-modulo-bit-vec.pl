@@ -548,37 +548,46 @@ sub my_test
     }
 }
 
-if ($DEBUG)
+sub main
 {
-my_test(4, 1000, 2416);
-my_test(4, 4, 9);
-my_test(3, 4, 8);
-my_test(4, 7, 19);
-my_test(4, 8, 20);
-my_test(4, 9, 22);
-my_test(4, 10, 24);
-my_test(10, 10, 42);
-my_test(11, 11, 53);
-my_test(12, 12, 59);
-my_test(12, 25, 143);
-my_test(12, 345, 1998);
-my_test(13, 13, 72);
-my_test(14, 14, 80);
-my_test(15, 20, 137);
-my_test(16, 20, 142);
-my_test(17, 20, 146);
-my_test(18, 100, 824);
+    if ($DEBUG)
+    {
+        my_test(4, 1000, 2416);
+        my_test(4, 4, 9);
+        my_test(3, 4, 8);
+        my_test(4, 7, 19);
+        my_test(4, 8, 20);
+        my_test(4, 9, 22);
+        my_test(4, 10, 24);
+        my_test(10, 10, 42);
+        my_test(11, 11, 53);
+        my_test(12, 12, 59);
+        my_test(12, 25, 143);
+        my_test(12, 345, 1998);
+        my_test(13, 13, 72);
+        my_test(14, 14, 80);
+        my_test(15, 20, 137);
+        my_test(16, 20, 142);
+        my_test(17, 20, 146);
+        my_test(18, 100, 824);
+    }
+
+    if (1 and !$DEBUG)
+    {
+        my_test(32, (('1'.('0'x15))+0), 13826382602124302);
+    }
+
+    if (0)
+    {
+        my_test(64, 64, 1263);
+    }
 }
 
-if (1 and !$DEBUG)
-{
-my_test(32, (('1'.('0'x15))+0), 13826382602124302);
-}
+$DEBUG = 1;
+main();
+$DEBUG = 0;
+main();
 
-if (0)
-{
-my_test(64, 64, 1263);
-}
 
 __END__
 
