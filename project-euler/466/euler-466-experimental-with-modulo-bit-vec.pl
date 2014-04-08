@@ -371,8 +371,6 @@ sub calc_P
 
                             my $l = shift;
 
-                            my @LIM = ( map { [0,$_*$step] } @$l );
-
                             # Let's try to calculate in a smarter way.
                             my $recurse;
 
@@ -416,6 +414,8 @@ sub calc_P
 
                                 return;
                             };
+
+                            my @LIM = ( map { [0,$_*$step] } @$l );
 
                             $recurse->(0, 0, $step, \@LIM);
 
