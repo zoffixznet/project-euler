@@ -1,0 +1,19 @@
+In 0-9 there is a 1 delta of f(n,d) for every d.
+
+In 10-99 there is for 1 : 21,31,41,51,61,71,81,91 [in total 8 digits]
+and 10,12,13,14,15,16,17,18,19 [in total 9 digits] and two digits in 11,
+so in total a delta of 19.
+
+==> In 0-99 delta_f = 20.
+
+In 100-999 there are 20 ds in every hundred in the last two digits (20*9)
+and an extra 100 ones in one of the leading digits - in total
+100 + 20* 9 = 280.
+
+===> in 0-999 delta_f = 280+20 = 300
+
+In 1000-9999 there are 300 ds in ever thousand (310*9) + an extra 1000 ds
+in one of the leading digits - in total
+1000 + 300*9 = 3700
+
+===> in 0-9999 delta_f = 3790+300 = 4000
