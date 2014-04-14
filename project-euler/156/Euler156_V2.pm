@@ -5,7 +5,7 @@ use warnings;
 
 use Math::BigInt lib => 'GMP', ':constant';
 
-use List::Util qw(sum);
+use List::Util qw(max sum);
 use List::MoreUtils qw();
 
 use parent 'Exporter';
@@ -40,17 +40,14 @@ sub f_d_n
     {
         my $place_d = $digits[$place];
 
-        for my $iter_d (0 .. $place_d-1)
-        {
-            if ($iter_d != $d)
-            {
-                $ret += calc_f_delta_for_leading_digits($place, $num_leading_d_digits);
-            }
-            else
-            {
-                $ret += calc_f_delta_for_leading_digits($place, $num_leading_d_digits+1);
-            }
-        }
+        my $place_d_min = $place_d-1;
+        my $d_in = ($d <= $place_d_min);
+
+        $ret +=
+            calc_f_delta_for_leading_digits($place, $num_leading_d_digits) *
+            max(0, $place_d - ($d_in ? 1 : 0))
+            + ($d_in ? calc_f_delta_for_leading_digits($place, $num_leading_d_digits+1) : 0);
+
         if ($place_d == $d)
         {
             $num_leading_d_digits++;
