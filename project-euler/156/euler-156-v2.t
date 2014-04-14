@@ -8,7 +8,7 @@ use Math::BigInt lib => 'GMP', ':constant';
 use List::Util qw(sum);
 use List::MoreUtils qw();
 
-use Test::More tests => 10;
+use Test::More tests => 11;
 
 use Euler156_V2 qw(calc_f_delta_for_leading_digits calc_f_delta f_d_n);
 
@@ -80,4 +80,11 @@ is (
     f_d_n(1, 2),
     1,
     "f_d_n(1,2)",
+);
+
+# TEST
+is (
+    f_d_n(1, 10),
+    2,
+    "f_d_n(1, 10)",
 );
