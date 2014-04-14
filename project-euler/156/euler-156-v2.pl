@@ -8,7 +8,7 @@ use Math::BigInt lib => 'GMP', ':constant';
 use List::Util qw(sum);
 use List::MoreUtils qw();
 
-use Test::More tests => 4;
+use Test::More tests => 5;
 
 sub calc_f_delta
 {
@@ -19,9 +19,9 @@ sub calc_f_delta
 
 sub calc_f_delta_for_leading_digits
 {
-    my ($exp, $num_d_digits) = @_;
+    my ($num_digits_after, $num_leading_d_digits) = @_;
 
-    return $num_d_digits * 10 ** ($exp + 1) + calc_f_delta($exp);
+    return $num_leading_d_digits * 10 ** $num_digits_after + calc_f_delta($num_digits_after-1);
 }
 
 # TEST
@@ -51,3 +51,11 @@ is (
     900000000,
     "calc_f_delta(8)",
 );
+
+# TEST
+is (
+    calc_f_delta_for_leading_digits(1, 0),
+    1,
+    "calc_f_delta_for_leading_digits(1,0)",
+);
+
