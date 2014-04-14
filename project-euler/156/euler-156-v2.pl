@@ -8,7 +8,7 @@ use Math::BigInt lib => 'GMP', ':constant';
 use List::Util qw(sum);
 use List::MoreUtils qw();
 
-use Test::More tests => 9;
+use Test::More tests => 10;
 
 sub calc_f_delta
 {
@@ -119,4 +119,11 @@ is (
     f_d_n(1, 1),
     1,
     "f_d_n(1,1)",
+);
+
+# TEST
+is (
+    f_d_n(1, 2),
+    1,
+    "f_d_n(1,2)",
 );
