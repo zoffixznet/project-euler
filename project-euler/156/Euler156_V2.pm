@@ -3,7 +3,9 @@ package Euler156_V2;
 use strict;
 use warnings;
 
-use Math::BigInt lib => 'GMP', ':constant';
+use integer;
+
+# use Math::BigInt lib => 'GMP', ':constant';
 
 use List::Util qw(max sum);
 use List::MoreUtils qw();
