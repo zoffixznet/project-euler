@@ -3,8 +3,8 @@
 use strict;
 use warnings;
 
-use integer;
-# use Math::BigInt lib => 'GMP', ':constant';
+# use integer;
+use Math::BigInt lib => 'GMP', ':constant';
 
 use List::Util qw(sum);
 use List::MoreUtils qw();
