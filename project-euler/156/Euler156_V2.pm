@@ -30,7 +30,7 @@ sub f_d_n
 {
     my ($d, $n) = @_;
 
-    my @digits = split(//, ($n+1).'');
+    my @digits = reverse(split(//, ($n+1).''));
 
     my $ret = 0;
 
