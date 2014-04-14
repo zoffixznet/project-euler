@@ -8,7 +8,7 @@ use Math::BigInt lib => 'GMP', ':constant';
 use List::Util qw(sum);
 use List::MoreUtils qw();
 
-use Test::More tests => 15;
+use Test::More tests => 9015;
 
 use Euler156_V2 qw(calc_f_delta_for_leading_digits calc_f_delta f_d_n);
 
@@ -116,3 +116,25 @@ is (
     13,
     "f_d_n(1, 21)",
 );
+
+{
+    # A mega-test.
+    my @f_ds = ((0) x 10);
+
+    for my $n (1 .. 1000)
+    {
+        foreach my $d (split//,$n)
+        {
+            $f_ds[$d]++;
+        }
+        foreach my $d (1 .. 9)
+        {
+            # TEST*9*1000
+            is(
+                f_d_n($d, $n),
+                $f_ds[$d],
+                "Mega-test f(d=$d,n=$n)",
+            );
+        }
+    }
+}
