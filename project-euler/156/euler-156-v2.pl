@@ -8,7 +8,7 @@ use Math::BigInt lib => 'GMP', ':constant';
 use List::Util qw(sum);
 use List::MoreUtils qw();
 
-use Test::More tests => 6;
+use Test::More tests => 7;
 
 sub calc_f_delta
 {
@@ -64,4 +64,11 @@ is (
     calc_f_delta_for_leading_digits(2, 0),
     20,
     "calc_f_delta_for_leading_digits(2,0)",
+);
+
+# TEST
+is (
+    calc_f_delta_for_leading_digits(1, 1),
+    11,
+    "calc_f_delta_for_leading_digits(1,1)",
 );
