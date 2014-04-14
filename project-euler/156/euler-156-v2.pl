@@ -8,122 +8,95 @@ use Math::BigInt lib => 'GMP', ':constant';
 use List::Util qw(sum);
 use List::MoreUtils qw();
 
-use Test::More tests => 10;
+use Euler156_V2 qw(calc_f_delta_for_leading_digits calc_f_delta f_d_n);
 
-sub calc_f_delta
+my @found = (map { +{} } 0 .. 9);
+
+sub check
 {
-    my ($exp) = @_;
+    my ($d, $first, $f_first, $last, $f_last) = @_;
 
-    return ($exp+1) * (10 ** $exp);
-}
-
-sub calc_f_delta_for_leading_digits
-{
-    my ($num_digits_after, $num_leading_d_digits) = @_;
-
-    return $num_leading_d_digits * 10 ** $num_digits_after + (($num_digits_after-1 >= 0) ? calc_f_delta($num_digits_after-1) : 0);
-}
-
-sub f_d_n
-{
-    my ($d, $n) = @_;
-
-    my @digits = split(//, ($n+1).'');
-
-    my $ret = 0;
-
-    my $num_leading_d_digits = 0;
-
-    foreach my $place (reverse(keys @digits))
+    # print "[@_]\n";
+    if ($first >= $last)
     {
-        my $place_d = $digits[$place];
-
-        for my $iter_d (0 .. $place_d-1)
+        if ($f_first == $first)
         {
-            if ($iter_d != $d)
-            {
-                $ret += calc_f_delta_for_leading_digits($place, $num_leading_d_digits);
-            }
-            else
-            {
-                $ret += calc_f_delta_for_leading_digits($place, $num_leading_d_digits+1);
-            }
+            $found[$d]{$first} = 1;
         }
-        if ($place_d == $d)
+    }
+    elsif ($last == $first+1)
+    {
+        check($d, $first, $f_first, $first, $f_first);
+        check($d, $last, $f_last, $last, $f_last);
+    }
+    else
+    {
+        my $mid = (($first+$last)>>1);
+
+        if ($mid == $first)
         {
-            $num_leading_d_digits++;
+            $mid++;
+        }
+        if ($mid < $first or $mid > $last)
+        {
+            die "Foo";
+        }
+        my $f_mid = f_d_n($d, $mid);
+
+        if (not( $f_first > $mid or $f_mid < $first ))
+        {
+            check($d, $first, $f_first, $mid, $f_mid);
+        }
+
+        if (not( $f_mid > $last or $f_last < $mid ))
+        {
+            check($d, $mid, $f_mid, $last, $f_last);
         }
     }
 
-    return $ret;
+    return;
 }
 
-# TEST
-is (
-    calc_f_delta(0),
-    1,
-    "calc_f_delta(0)",
-);
+my $total_sum = 0;
 
-# TEST
-is (
-    calc_f_delta(1),
-    20,
-    "calc_f_delta(1)",
-);
+for my $d (1 .. 9)
+{
+    my $first = 1;
+    my $last = ($first << 1);
+    my $continue = 1;
+    while ($continue)
+    {
+        my $f_first = f_d_n($d, $first);
+        my $f_last = f_d_n($d, $last);
 
-# TEST
-is (
-    calc_f_delta(2),
-    300,
-    "calc_f_delta(2)",
-);
+        if ($f_first > $last)
+        {
+            $continue = 0;
+            print "Cannot be (f_d_n > n) in range [$first .. $last]\n";
+        }
+        elsif ($f_last < $first)
+        {
+            print "Cannot be (f_d_n < n) in range [$first .. $last]\n";
+        }
+        else
+        {
+            print "I don't know in range [$first .. $last]\n";
+            check($d, $first, $f_first, $last, $f_last);
+        }
+    }
+    continue
+    {
+        $first = $last;
+        $last <<= 1;
+    }
 
-# TEST
-is (
-    calc_f_delta(8),
-    900000000,
-    "calc_f_delta(8)",
-);
+    my $sum = 0;
+    for my $k (keys(%{$found[$d]}))
+    {
+        $sum += $k;
+    }
 
-# TEST
-is (
-    calc_f_delta_for_leading_digits(1, 0),
-    1,
-    "calc_f_delta_for_leading_digits(1,0)",
-);
-
-# TEST
-is (
-    calc_f_delta_for_leading_digits(2, 0),
-    20,
-    "calc_f_delta_for_leading_digits(2,0)",
-);
-
-# TEST
-is (
-    calc_f_delta_for_leading_digits(1, 1),
-    11,
-    "calc_f_delta_for_leading_digits(1,1)",
-);
-
-# TEST
-is (
-    calc_f_delta_for_leading_digits(1, 2),
-    21,
-    "calc_f_delta_for_leading_digits(1,2)",
-);
-
-# TEST
-is (
-    f_d_n(1, 1),
-    1,
-    "f_d_n(1,1)",
-);
-
-# TEST
-is (
-    f_d_n(1, 2),
-    1,
-    "f_d_n(1,2)",
-);
+    print "s($d) = $sum\n";
+    $total_sum += $sum;
+}
+print "total_sum = $total_sum\n";
