@@ -236,9 +236,26 @@ sub try_to_fit_shape_at_pos
     return;
 }
 
+sub _print_buf
+{
+    my ($buf) = @_;
+
+    for my $y (0 .. $Y_DIM-1)
+    {
+        for my $x (0 .. $X_DIM-1)
+        {
+            print vec_get($buf, $x, $y) ? "#" : " ";
+        }
+        print "\n";
+    }
+    print "\n------\n\n";
+}
+
 sub handle_buf_at_depth
 {
     my ($depth, $buf, $count) = @_;
+
+    # _print_buf(\$buf);
 
     my $pos = find_pos(\$buf);
 
