@@ -1,0 +1,9 @@
+If the trailing 9 digits (which are the only one affecting the solution)
+are d[0] x c[0] . d[1] x c[1] ... d[n] x c[n], then there are
+9!/(c[0]!*c[1]!*c[2]!...c[n]!) combinations where each one contains digit d[i]
+at any position in a frequency of c[i]/Σc = c[i]/9 .
+
+As a result, the total contribution of any digit is Σ{d[i]*c[i]}/9 * 9!/(...)
+
+And the total contribution is 111,111,111 * Σ{d[i]*c[i]}/9 * 9!/Pi[c[i]!]
+
