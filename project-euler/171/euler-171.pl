@@ -93,7 +93,7 @@ sub square_sum_combinations
         elsif ($next_digit == 0)
         {
             my @new_digits = @$digits;
-            if (@new_digits and $new_digits[-1][0] != 0)
+            if (! @new_digits or $new_digits[-1][0] != 0)
             {
                 push @new_digits, [0, 0];
             }
@@ -153,13 +153,13 @@ sub square_sum_combinations
 }
 
 my $COUNT_TRAILING_DIGITS = 9;
-my $MOD = 1_000_000_000;
 my $COUNT_ALL_DIGITS = 19;
 
 # Temporary: remove later.
-$COUNT_TRAILING_DIGITS = 2;
-$MOD = 100;
+$COUNT_TRAILING_DIGITS = 3;
 $COUNT_ALL_DIGITS = 5;
+
+my $MOD = 10 ** $COUNT_TRAILING_DIGITS;
 
 my $COUNT_LEADING_DIGITS = $COUNT_ALL_DIGITS - $COUNT_TRAILING_DIGITS;
 
@@ -182,7 +182,7 @@ foreach my $trailing_sq_sum (1 .. $sq[9] * $COUNT_TRAILING_DIGITS)
         sub {
             my ($digits) = @_;
 
-            $trailing_mod += (
+            my $delta = (
                 $INC *
                 sum(
                     map { $_->[0]*$_->[1] } @$digits
@@ -190,13 +190,17 @@ foreach my $trailing_sq_sum (1 .. $sq[9] * $COUNT_TRAILING_DIGITS)
             ) / (
                 reduce { $a * $b } (@facts[map { $_->[1] } @$digits])
             );
-            $trailing_mod %= $MOD;
-            # print "$trailing_sq_sum: ", join(",", map { "$_->[1]*$_->[0]" } @$digits), "\n";
-
+            ($trailing_mod += $delta) %= $MOD;
+            print "$trailing_sq_sum: ", join(",", map { "$_->[1]*$_->[0]" } @$digits), "\n";
+            print "==delta=$delta\n";
             # Sanity checks.
             if (sum ( map { $_->[1] } @$digits ) != $COUNT_TRAILING_DIGITS)
             {
                 die "Foo";
+            }
+            if (sum ( map { $_->[1]*$_->[0]*$_->[0] } @$digits ) != $trailing_sq_sum)
+            {
+                die "Bazzoka";
             }
 
             return;
@@ -209,22 +213,31 @@ foreach my $trailing_sq_sum (1 .. $sq[9] * $COUNT_TRAILING_DIGITS)
 
         foreach my $all_digits_sq_sum (@sq)
         {
-            if ($all_digits_sq_sum > $trailing_sq_sum)
+            my $remaining = $all_digits_sq_sum - $trailing_sq_sum;
+            if ($remaining >= 0)
             {
                 square_sum_combinations(
                     $COUNT_LEADING_DIGITS,
-                    $all_digits_sq_sum - $trailing_sq_sum,
+                    $remaining,
                     sub {
                         my ($digits) = @_;
 
-                        $leading_count += _count_permutations(
+                        my $delta = _count_permutations(
                             $COUNT_LEADING_DIGITS,
-                            [map { $_->[1]} @$digits],
+                            [map { $_->[1] } @$digits],
                         );
+
+                        $leading_count += $delta;
+
+                        print "leading_count = $leading_count ; Delta = $delta\n";
 
                         if (sum ( map { $_->[1] } @$digits ) != $COUNT_LEADING_DIGITS)
                         {
                             die "Bar";
+                        }
+                        if (sum ( map { $_->[1]*$_->[0]*$_->[0] } @$digits ) != $remaining)
+                        {
+                            die "Enigmatic";
                         }
                         return;
                     }
