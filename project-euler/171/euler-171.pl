@@ -9,7 +9,7 @@ use integer;
 use List::Util qw(sum reduce);
 use List::MoreUtils qw();
 
-my @squares;
+my @sq;
 
 sub sq
 {
@@ -22,10 +22,10 @@ my $LIMIT = sq(9) * 19;
 {
     my $n = 0;
 
-    my $sq = sq(++$n);
+    my $sq = sq($n);
     while ($sq <= $LIMIT)
     {
-        push @squares, $sq;
+        push @sq, $sq;
         $sq = sq(++$n);
     }
 }
@@ -84,11 +84,32 @@ sub square_sum_combinations
         elsif ($sq > $remaining_sum)
         {
             my $next = $next_digit - 1;
-            return $trail_cb->($digits, $num, $next, sq($next), $remaining_sum);
+            return $trail_cb->($digits, $num, $next, $sq[$next], $remaining_sum);
         }
         elsif ($remaining_sum > $sq * ($COUNT_DIGITS - $num))
         {
             return;
+        }
+        elsif ($next_digit == 0)
+        {
+            my @new_digits = @$digits;
+            if (@new_digits and $new_digits[-1][0] != 0)
+            {
+                push @new_digits, [0, 0];
+            }
+            else
+            {
+                $new_digits[-1] = [@{$new_digits[-1]}];
+            }
+            $new_digits[-1][1] += $COUNT_DIGITS-$num;
+
+            return $trail_cb->(
+                \@new_digits,
+                $COUNT_DIGITS,
+                0,
+                0,
+                0
+            );
         }
         else
         {
@@ -103,7 +124,7 @@ sub square_sum_combinations
                 {
                     push @new_digits, [$next, 1];
                 }
-                my $new_sq = sq($next);
+                my $new_sq = $sq[$next];
                 my $new_remaining_sum = $remaining_sum - $new_sq;
 
                 if ($new_remaining_sum >= 0)
@@ -124,7 +145,7 @@ sub square_sum_combinations
         [],
         0,
         9,
-        sq(9),
+        $sq[9],
         $trailing_sq_sum,
     );
 
@@ -140,7 +161,7 @@ my $total_mod = 0;
 
 STDOUT->autoflush(1);
 
-foreach my $trailing_sq_sum (1 .. sq(9) * $COUNT_TRAILING_DIGITS)
+foreach my $trailing_sq_sum (1 .. $sq[9] * $COUNT_TRAILING_DIGITS)
 {
     print "trailing_sq_sum = $trailing_sq_sum\n";
 
@@ -165,10 +186,10 @@ foreach my $trailing_sq_sum (1 .. sq(9) * $COUNT_TRAILING_DIGITS)
             # print "$trailing_sq_sum: ", join(",", map { "$_->[1]*$_->[0]" } @$digits), "\n";
 
             # Sanity checks.
-            # if (sum ( map { $_->[1] } @$digits ) != $COUNT_TRAILING_DIGITS)
-            # {
-            #     die "Foo";
-            # }
+            if (sum ( map { $_->[1] } @$digits ) != $COUNT_TRAILING_DIGITS)
+            {
+                die "Foo";
+            }
 
             return;
         }
@@ -178,7 +199,7 @@ foreach my $trailing_sq_sum (1 .. sq(9) * $COUNT_TRAILING_DIGITS)
     {
         my $leading_count = 0;
 
-        foreach my $all_digits_sq_sum (@squares)
+        foreach my $all_digits_sq_sum (@sq)
         {
             if ($all_digits_sq_sum > $trailing_sq_sum)
             {
@@ -193,6 +214,10 @@ foreach my $trailing_sq_sum (1 .. sq(9) * $COUNT_TRAILING_DIGITS)
                             [map { $_->[1]} @$digits],
                         );
 
+                        if (sum ( map { $_->[1] } @$digits ) != $COUNT_LEADING_DIGITS)
+                        {
+                            die "Bar";
+                        }
                         return;
                     }
                 );
