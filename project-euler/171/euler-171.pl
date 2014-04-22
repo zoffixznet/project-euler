@@ -7,7 +7,7 @@ use integer;
 # use Math::GMP qw(:constant);
 
 use List::Util qw(sum reduce);
-use List::MoreUtils qw();
+use List::MoreUtils qw(any);
 
 my @sq;
 
@@ -155,9 +155,17 @@ sub square_sum_combinations
 my $COUNT_TRAILING_DIGITS = 9;
 my $MOD = 1_000_000_000;
 my $COUNT_ALL_DIGITS = 19;
+
+# Temporary: remove later.
+$COUNT_TRAILING_DIGITS = 2;
+$MOD = 100;
+$COUNT_ALL_DIGITS = 5;
+
 my $COUNT_LEADING_DIGITS = $COUNT_ALL_DIGITS - $COUNT_TRAILING_DIGITS;
 
 my $total_mod = 0;
+my $INC = 0 + ('1' x $COUNT_TRAILING_DIGITS);
+my $COUNT_FACT = $COUNT_TRAILING_DIGITS - 1;
 
 STDOUT->autoflush(1);
 
@@ -175,10 +183,10 @@ foreach my $trailing_sq_sum (1 .. $sq[9] * $COUNT_TRAILING_DIGITS)
             my ($digits) = @_;
 
             $trailing_mod += (
-                111_111_111 *
+                $INC *
                 sum(
                     map { $_->[0]*$_->[1] } @$digits
-                ) * $facts[8]
+                ) * $facts[$COUNT_FACT]
             ) / (
                 reduce { $a * $b } (@facts[map { $_->[1] } @$digits])
             );
@@ -229,3 +237,18 @@ foreach my $trailing_sq_sum (1 .. $sq[9] * $COUNT_TRAILING_DIGITS)
 }
 
 printf "Last digits = <%09d>\n", $total_mod;
+
+# Brute force
+if (1)
+{
+    my $sum = 0;
+    for my $n (1 .. '9' x $COUNT_ALL_DIGITS)
+    {
+        my $sq_sum = sum(map { $sq[$_] } split//,$n);
+        if (any { $_ == $sq_sum } @sq)
+        {
+            $sum += $n;
+        }
+    }
+    print "Sum=<$sum>\n";
+}
