@@ -155,9 +155,9 @@ sub square_sum_combinations
 my $COUNT_TRAILING_DIGITS = 9;
 my $COUNT_ALL_DIGITS = 19;
 
-# Temporary: remove later.
-$COUNT_TRAILING_DIGITS = 3;
-$COUNT_ALL_DIGITS = 5;
+# ### Temporary: remove later.
+# $COUNT_TRAILING_DIGITS = 3;
+# $COUNT_ALL_DIGITS = 5;
 
 my $MOD = 10 ** $COUNT_TRAILING_DIGITS;
 
@@ -191,8 +191,8 @@ foreach my $trailing_sq_sum (1 .. $sq[9] * $COUNT_TRAILING_DIGITS)
                 reduce { $a * $b } (@facts[map { $_->[1] } @$digits])
             );
             ($trailing_mod += $delta) %= $MOD;
-            print "$trailing_sq_sum: ", join(",", map { "$_->[1]*$_->[0]" } @$digits), "\n";
-            print "==delta=$delta\n";
+            # print "$trailing_sq_sum: ", join(",", map { "$_->[1]*$_->[0]" } @$digits), "\n";
+            # print "==delta=$delta\n";
             # Sanity checks.
             if (sum ( map { $_->[1] } @$digits ) != $COUNT_TRAILING_DIGITS)
             {
@@ -229,7 +229,7 @@ foreach my $trailing_sq_sum (1 .. $sq[9] * $COUNT_TRAILING_DIGITS)
 
                         $leading_count += $delta;
 
-                        print "leading_count = $leading_count ; Delta = $delta\n";
+                        # print "leading_count = $leading_count ; Delta = $delta\n";
 
                         if (sum ( map { $_->[1] } @$digits ) != $COUNT_LEADING_DIGITS)
                         {
@@ -252,7 +252,7 @@ foreach my $trailing_sq_sum (1 .. $sq[9] * $COUNT_TRAILING_DIGITS)
 printf "Last digits = <%09d>\n", $total_mod;
 
 # Brute force
-if (1)
+if (0)
 {
     my $sum = 0;
     for my $n (1 .. '9' x $COUNT_ALL_DIGITS)
