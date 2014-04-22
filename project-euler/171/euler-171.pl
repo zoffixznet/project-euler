@@ -17,7 +17,13 @@ sub sq
     return $n*$n;
 }
 
-my $LIMIT = sq(9) * 19;
+my $COUNT_TRAILING_DIGITS = 9;
+my $COUNT_ALL_DIGITS = 20;
+# ### Temporary: remove later.
+# $COUNT_TRAILING_DIGITS = 3;
+# $COUNT_ALL_DIGITS = 7;
+
+my $LIMIT = sq(9) * $COUNT_ALL_DIGITS;
 
 {
     my $n = 0;
@@ -152,12 +158,7 @@ sub square_sum_combinations
     return;
 }
 
-my $COUNT_TRAILING_DIGITS = 9;
-my $COUNT_ALL_DIGITS = 19;
 
-# ### Temporary: remove later.
-# $COUNT_TRAILING_DIGITS = 3;
-# $COUNT_ALL_DIGITS = 5;
 
 my $MOD = 10 ** $COUNT_TRAILING_DIGITS;
 
@@ -249,7 +250,7 @@ foreach my $trailing_sq_sum (1 .. $sq[9] * $COUNT_TRAILING_DIGITS)
     }
 }
 
-printf "Last digits = <%09d>\n", $total_mod;
+printf "Last digits = <%0${COUNT_TRAILING_DIGITS}d>\n", $total_mod;
 
 # Brute force
 if (0)
@@ -258,7 +259,8 @@ if (0)
     for my $n (1 .. '9' x $COUNT_ALL_DIGITS)
     {
         my $sq_sum = sum(map { $sq[$_] } split//,$n);
-        if (any { $_ == $sq_sum } @sq)
+        my $root = int( sqrt($sq_sum) );
+        if ($root*$root == $sq_sum)
         {
             $sum += $n;
         }
