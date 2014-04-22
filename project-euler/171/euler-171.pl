@@ -3,6 +3,7 @@
 use strict;
 use warnings;
 
+use integer;
 # use Math::GMP qw(:constant);
 
 use List::Util qw(sum reduce);
@@ -132,9 +133,17 @@ sub square_sum_combinations
 
 my $COUNT_TRAILING_DIGITS = 9;
 my $MOD = 1_000_000_000;
+my $COUNT_ALL_DIGITS = 19;
+my $COUNT_LEADING_DIGITS = $COUNT_ALL_DIGITS - $COUNT_TRAILING_DIGITS;
+
+my $total_mod = 0;
+
+STDOUT->autoflush(1);
 
 foreach my $trailing_sq_sum (1 .. sq(9) * $COUNT_TRAILING_DIGITS)
 {
+    print "trailing_sq_sum = $trailing_sq_sum\n";
+
     # First calculate the trailing mod.
     my $trailing_mod = 0;
 
@@ -164,4 +173,34 @@ foreach my $trailing_sq_sum (1 .. sq(9) * $COUNT_TRAILING_DIGITS)
             return;
         }
     );
+
+    if ($trailing_mod)
+    {
+        my $leading_count = 0;
+
+        foreach my $all_digits_sq_sum (@squares)
+        {
+            if ($all_digits_sq_sum > $trailing_sq_sum)
+            {
+                square_sum_combinations(
+                    $COUNT_LEADING_DIGITS,
+                    $all_digits_sq_sum - $trailing_sq_sum,
+                    sub {
+                        my ($digits) = @_;
+
+                        $leading_count += _count_permutations(
+                            $COUNT_LEADING_DIGITS,
+                            [map { $_->[1]} @$digits],
+                        );
+
+                        return;
+                    }
+                );
+            }
+        }
+
+        ($total_mod += ($leading_count * $trailing_mod)) %= $MOD;
+    }
 }
+
+printf "Last digits = <%09d>\n", $total_mod;
