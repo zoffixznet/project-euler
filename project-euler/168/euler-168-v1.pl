@@ -3,10 +3,11 @@
 use strict;
 use warnings;
 
-use Math::BigInt lib => 'GMP', ':constant';
+# use Math::BigInt lib => 'GMP', ':constant';
 
-use List::Util qw(sum);
-use List::MoreUtils qw();
+use Math::GMP (':constant');
+# use List::Util qw(sum);
+# use List::MoreUtils qw();
 
 # $multiplier is "d"
 my $sum = 0;
