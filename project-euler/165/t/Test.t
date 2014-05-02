@@ -7,7 +7,7 @@ use Euler165::R;
 
 use Euler165::Seg qw($TYPE_X_ONLY $TYPE_XY compile_segment intersect);
 
-use Test::More tests => 13;
+use Test::More tests => 14;
 
 use Test::Differences qw(eq_or_diff);
 
@@ -92,6 +92,15 @@ use Test::Differences qw(eq_or_diff);
         compile_segment([5,10,10,9]),
         { t => $TYPE_XY, m => [-1,5], b => [11,1], x1 => 5, x2 => 10,},
         "TYPE_XY",
+    );
+}
+
+{
+    # TEST
+    eq_or_diff(
+        compile_segment([10,9,5,10,]),
+        { t => $TYPE_XY, m => [-1,5], b => [11,1], x1 => 5, x2 => 10,},
+        "TYPE_XY [reversed]",
     );
 }
 
