@@ -10,7 +10,7 @@ use parent 'Exporter';
 our $TYPE_X_ONLY = 0;
 our $TYPE_XY = 1;
 
-our @EXPORT_OK = qw($TYPE_X_ONLY $TYPE_XY compile_segment intersect);
+our @EXPORT_OK = qw($TYPE_X_ONLY $TYPE_XY compile_segment intersect intersect_x);
 
 sub gcd
 {
@@ -124,58 +124,48 @@ sub compile_segment
     }
 }
 
+sub intersect_x
+{
+    my ($s1, $s2) = @_;
+    my $x = [$s1->{'x'},1];
+
+    my $y = _add(_mul($s2->{'m'},[$x,1]), $s2->{'b'});
+
+    if (_lt([$s2->{'x1'},1], $x) and _lt($x, [$s2->{'x2'},1])
+            and _lt([$s1->{'y1'},1], $y)
+            and _lt($y, [$s1->{'y2'},1])
+    )
+    {
+        return [$x, $y];
+    }
+    else
+    {
+        return undef;
+    }
+}
+
 sub intersect
 {
     my ($s1, $s2) = @_;
 
-    ($s1, $s2) = sort { $a->{'t'} <=> $b->{'t'} } ($s1, $s2);
-
-    if ($s1->{'t'} == $TYPE_X_ONLY)
+    # Both are y = f(x) so m1x+b1 == m2x+b2 ==> x
+    if (_eq($s1->{'m'}, $s2->{'m'}))
     {
-        if ($s2->{'t'} == $TYPE_X_ONLY)
-        {
-            return undef;
-        }
-        else
-        {
-            my $x = [$s1->{'x'},1];
-
-            my $y = _add(_mul($s2->{'m'},[$x,1]), $s2->{'b'});
-
-            if (_lt([$s2->{'x1'},1], $x) and _lt($x, [$s2->{'x2'},1])
-                    and _lt([$s1->{'y1'},1], $y)
-                    and _lt($y, [$s1->{'y2'},1])
-            )
-            {
-                return [$x, $y];
-            }
-            else
-            {
-                return undef;
-            }
-        }
+        return undef;
     }
     else
     {
-        # Both are y = f(x) so m1x+b1 == m2x+b2 ==> x
-        if (_eq($s1->{'m'}, $s2->{'m'}))
+        my $x = _div(_subtract($s2->{'b'}, $s1->{'b'}), _subtract($s1->{'m'}, $s2->{'m'}));
+
+        if (_lt([$s1->{'x1'},1], $x) and _lt($x, [$s1->{'x2'},1]) and _lt([$s2->{'x1'}, 1], $x) and
+            _lt($x, [$s2->{'x2'},1])
+        )
         {
-            return undef;
+            return [$x, _add($s2->{'b'}, _mul($s2->{'m'}, $x))];
         }
         else
         {
-            my $x = _div(_subtract($s2->{'b'}, $s1->{'b'}), _subtract($s1->{'m'}, $s2->{'m'}));
-
-            if (_lt([$s1->{'x1'},1], $x) and _lt($x, [$s1->{'x2'},1]) and _lt([$s2->{'x1'}, 1], $x) and
-                _lt($x, [$s2->{'x2'},1])
-            )
-            {
-                return [$x, _add($s2->{'b'}, _mul($s2->{'m'}, $x))];
-            }
-            else
-            {
-                return undef;
-            }
+            return undef;
         }
     }
 }

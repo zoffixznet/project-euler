@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Euler165::Seg qw($TYPE_X_ONLY $TYPE_XY compile_segment intersect);
+use Euler165::Seg qw($TYPE_X_ONLY $TYPE_XY compile_segment intersect intersect_x);
 use Euler165::R;
 
 STDOUT->autoflush(1);
@@ -34,8 +34,7 @@ for my $n (1 .. 5000)
 
 sub _check
 {
-    my ($s1, $s2) = @_;
-    my $p = intersect($s1, $s2);
+    my ($p) = @_;
     if (defined $p)
     {
         $points{join("!",map { @$_ } @$p)} = undef();
@@ -51,7 +50,7 @@ while ($first < @xy_segs)
 
     for my $s2 (@x_segs)
     {
-        _check($s1, $s2);
+        _check(intersect_x($s2, $s1));
     }
     I2:
     for my $i2 ($first+1 .. $#xy_segs)
@@ -61,7 +60,7 @@ while ($first < @xy_segs)
         {
             last I2;
         }
-        _check($s1,$s2);
+        _check(intersect($s1,$s2));
     }
     print "Reached $first/$#xy_segs.\n";
     $first++;
