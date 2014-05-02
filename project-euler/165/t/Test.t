@@ -71,3 +71,12 @@ sub compile_segment
         "TYPE_XY_ONLY #2 - 0 slope.",
     );
 }
+
+{
+    # TEST
+    eq_or_diff(
+        compile_segment([-5,0,5,0]),
+        { t => $TYPE_XY, m => 0, b => 0, x1 => -5, x2 => 5,},
+        "TYPE_XY_ONLY #2 - 0 slope.",
+    );
+}
