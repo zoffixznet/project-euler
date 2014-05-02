@@ -3,6 +3,8 @@ package Euler165::Seg;
 use strict;
 use warnings;
 
+use bigrat;
+
 use parent 'Exporter';
 
 our $TYPE_X_ONLY = 0;
@@ -27,7 +29,7 @@ sub compile_segment
     }
     else
     {
-        my $m = ($y2-$y1)/($x2-$x1);
+        my $m = Math::BigRat->new($y2-$y1)/($x2-$x1);
         my $bb = ($y1 - $m * $x1);
         my @x_s = sort { $a <=> $b } ($x1,$x2);
         return {t => $TYPE_XY, m => $m, b => $bb, x1 => $x_s[0], x2 => $x_s[-1],};

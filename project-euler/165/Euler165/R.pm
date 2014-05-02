@@ -3,6 +3,8 @@ package Euler165::R;
 use strict;
 use warnings;
 
+use bigrat;
+
 sub new
 {
     my $class = shift;
