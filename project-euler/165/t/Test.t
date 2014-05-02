@@ -24,7 +24,8 @@ sub compile_segment
         {
             die "Duplicate point in segment [@$L].";
         }
-        return {t => $TYPE_X_ONLY, x => $x1};
+        my @y_s = sort {$a <=> $b} ($y1,$y2);
+        return {t => $TYPE_X_ONLY, x => $x1, y1=>$y_s[0], y2=>$y_s[-1],};
     }
     else
     {
@@ -50,7 +51,7 @@ sub compile_segment
     # TEST
     eq_or_diff(
         compile_segment([0,1,0,2]),
-        { t => $TYPE_X_ONLY, x => 0, },
+        { t => $TYPE_X_ONLY, x => 0, y1 => 1, y2 => 2,},
         "TYPE_X_ONLY",
     );
 }
