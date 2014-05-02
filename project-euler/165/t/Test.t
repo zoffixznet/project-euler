@@ -5,7 +5,7 @@ use warnings;
 
 use Euler165::R;
 
-use Test::More tests => 4;
+use Test::More tests => 5;
 
 use Test::Differences qw(eq_or_diff);
 
