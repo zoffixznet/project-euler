@@ -7,7 +7,7 @@ use Euler165::R;
 
 use Euler165::Seg qw($TYPE_X_ONLY $TYPE_XY compile_segment intersect);
 
-use Test::More tests => 12;
+use Test::More tests => 13;
 
 use Test::Differences qw(eq_or_diff);
 
@@ -46,7 +46,7 @@ use Test::Differences qw(eq_or_diff);
     eq_or_diff(
         compile_segment([0,0,1,1]),
         { t => $TYPE_XY, m => [1,1], b => [0,1], x1 => 0, x2 => 1,},
-        "TYPE_XY_ONLY #1",
+        "TYPE_XY #1",
     );
 }
 
@@ -55,7 +55,7 @@ use Test::Differences qw(eq_or_diff);
     eq_or_diff(
         compile_segment([0,0,100,0]),
         { t => $TYPE_XY, m => [0,1], b => [0,1], x1 => 0, x2 => 100,},
-        "TYPE_XY_ONLY #2 - 0 slope.",
+        "TYPE_XY #2 - 0 slope.",
     );
 }
 
@@ -64,7 +64,7 @@ use Test::Differences qw(eq_or_diff);
     eq_or_diff(
         compile_segment([-5,0,5,0]),
         { t => $TYPE_XY, m => [0,1], b => [0,1], x1 => -5, x2 => 5,},
-        "TYPE_XY_ONLY #2 - 0 slope.",
+        "TYPE_XY #2 - 0 slope.",
     );
 }
 
@@ -73,7 +73,7 @@ use Test::Differences qw(eq_or_diff);
     eq_or_diff(
         compile_segment([100,3,0,3]),
         { t => $TYPE_XY, m => [0,1], b => [3,1], x1 => 0, x2 => 100,},
-        "TYPE_XY_ONLY #2 - reversed Xs - should be sorted.",
+        "TYPE_XY #2 - reversed Xs - should be sorted.",
     );
 }
 
@@ -82,7 +82,16 @@ use Test::Differences qw(eq_or_diff);
     eq_or_diff(
         compile_segment([100,2*100+5,0,0+5,]),
         { t => $TYPE_XY, m => [2,1], b => [5,1], x1 => 0, x2 => 100,},
-        "TYPE_XY_ONLY #2 - slope - reversed Xs - should be sorted.",
+        "TYPE_XY #2 - slope - reversed Xs - should be sorted.",
+    );
+}
+
+{
+    # TEST
+    eq_or_diff(
+        compile_segment([5,10,10,9]),
+        { t => $TYPE_XY, m => [-1,5], b => [11,1], x1 => 5, x2 => 10,},
+        "TYPE_XY",
     );
 }
 
