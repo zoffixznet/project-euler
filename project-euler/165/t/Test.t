@@ -5,7 +5,7 @@ use warnings;
 
 use Euler165::R;
 
-use Test::More tests => 8;
+use Test::More tests => 10;
 
 use Test::Differences qw(eq_or_diff);
 
@@ -33,6 +33,61 @@ sub compile_segment
         my $bb = ($y1 - $m * $x1);
         my @x_s = sort { $a <=> $b } ($x1,$x2);
         return {t => $TYPE_XY, m => $m, b => $bb, x1 => $x_s[0], x2 => $x_s[-1],};
+    }
+}
+
+sub intersect
+{
+    my ($s1, $s2) = @_;
+
+    ($s1, $s2) = sort { $a->{'t'} <=> $b->{'t'} } ($s1, $s2);
+
+    if ($s1->{'t'} == $TYPE_X_ONLY)
+    {
+        if ($s2->{'t'} == $TYPE_X_ONLY)
+        {
+            return undef;
+        }
+        else
+        {
+            my $x = ($s1->{'x'});
+
+            my $y = ($s2->{'m'} * $x + $s2->{'b'});
+
+            if ($s2->{'x1'} < $x and $x < $s2->{'x2'} and
+                $s1->{'y1'} < $y and $y < $s1->{'y2'}
+            )
+            {
+                return [$x, $y];
+            }
+            else
+            {
+                return undef;
+            }
+        }
+    }
+    else
+    {
+        # Both are y = f(x) so m1x+b1 == m2x+b2 ==> x
+        if ($s1->{'m'} == $s2->{'m'})
+        {
+            return undef;
+        }
+        else
+        {
+            my $x = (($s2->{'b'} - $s1->{'b'}) / ($s1->{'m'} - $s2->{'m'}));
+
+            if ($s1->{'x1'} < $x and $x < $s1->{'x2'} and $s2->{'x1'} < $x and
+                $x < $s2->{'x2'}
+            )
+            {
+                return [$x, $s2->{'m'} * $x + $s2->{'b'}];
+            }
+            else
+            {
+                return undef;
+            }
+        }
     }
 }
 
@@ -109,3 +164,22 @@ sub compile_segment
         "TYPE_XY_ONLY #2 - slope - reversed Xs - should be sorted.",
     );
 }
+
+{
+    my $r = intersect(compile_segment([46,53,17,62]),compile_segment([46,70,22,40]));
+
+    my $EPSILON = 0.001;
+    # TEST
+    ok (
+        scalar(abs($r->[0] - 35.1049723) <= $EPSILON),
+        "X for intersect."
+    );
+
+    # TEST
+    ok (
+        scalar(abs($r->[1] - 56.381215) <= $EPSILON),
+        "Y for intersect."
+    );
+
+}
+
