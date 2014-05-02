@@ -5,7 +5,7 @@ use warnings;
 
 use Euler165::R;
 
-use Test::More tests => 6;
+use Test::More tests => 7;
 
 use Test::Differences qw(eq_or_diff);
 
@@ -53,6 +53,15 @@ sub compile_segment
         compile_segment([0,1,0,2]),
         { t => $TYPE_X_ONLY, x => 0, y1 => 1, y2 => 2,},
         "TYPE_X_ONLY",
+    );
+}
+
+{
+    # TEST
+    eq_or_diff(
+        compile_segment([0,50,0,0]),
+        { t => $TYPE_X_ONLY, x => 0, y1 => 0, y2 => 50,},
+        "TYPE_X_ONLY - reversed y extents.",
     );
 }
 
