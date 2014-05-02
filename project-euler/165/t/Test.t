@@ -5,7 +5,7 @@ use warnings;
 
 use Euler165::R;
 
-use Test::More tests => 10;
+use Test::More tests => 11;
 
 use Test::Differences qw(eq_or_diff);
 
@@ -183,3 +183,11 @@ sub intersect
 
 }
 
+{
+    # TEST
+    eq_or_diff(
+        intersect(compile_segment([46,53,17,62]),compile_segment([27,44,12,32])),
+        undef,
+        "Intersect L2 and L1",
+    );
+}
