@@ -7,7 +7,7 @@ use Euler165::R;
 
 use Euler165::Seg qw($TYPE_X_ONLY $TYPE_XY compile_segment intersect intersect_x);
 
-use Test::More tests => 15;
+use Test::More tests => 16;
 
 use Test::Differences qw(eq_or_diff);
 
@@ -146,5 +146,14 @@ use Test::Differences qw(eq_or_diff);
         intersect_x(compile_segment([46, -100, 46, 100]),compile_segment([0,0,200,0])),
         [[46,1],[0,1]],
         "intersect_x found.",
+    );
+}
+
+{
+    # TEST
+    eq_or_diff(
+        intersect_x(compile_segment([46, -100, 46, 100]),compile_segment([50,0,200,0])),
+        undef,
+        "intersect_x not found.",
     );
 }
