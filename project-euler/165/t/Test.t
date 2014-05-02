@@ -5,9 +5,9 @@ use warnings;
 
 use Euler165::R;
 
-use Euler165::Seg qw($TYPE_X_ONLY $TYPE_XY compile_segment intersect);
+use Euler165::Seg qw($TYPE_X_ONLY $TYPE_XY compile_segment intersect intersect_x);
 
-use Test::More tests => 14;
+use Test::More tests => 15;
 
 use Test::Differences qw(eq_or_diff);
 
@@ -137,5 +137,14 @@ use Test::Differences qw(eq_or_diff);
         intersect(compile_segment([46, 70, 22, 40]),compile_segment([27,44,12,32])),
         undef,
         "Intersect L1 and L3",
+    );
+}
+
+{
+    # TEST
+    eq_or_diff(
+        intersect_x(compile_segment([46, -100, 46, 100]),compile_segment([0,0,200,0])),
+        [[46,1],[0,1]],
+        "intersect_x found.",
     );
 }
