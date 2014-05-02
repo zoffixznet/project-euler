@@ -7,7 +7,7 @@ use Euler165::R;
 
 use Euler165::Seg qw($TYPE_X_ONLY $TYPE_XY compile_segment intersect);
 
-use Test::More tests => 11;
+use Test::More tests => 12;
 
 use Test::Differences qw(eq_or_diff);
 
@@ -83,6 +83,15 @@ use Test::Differences qw(eq_or_diff);
         compile_segment([100,2*100+5,0,0+5,]),
         { t => $TYPE_XY, m => [2,1], b => [5,1], x1 => 0, x2 => 100,},
         "TYPE_XY_ONLY #2 - slope - reversed Xs - should be sorted.",
+    );
+}
+
+{
+    # TEST
+    eq_or_diff(
+        compile_segment([0,100,50,100+50/5,]),
+        { t => $TYPE_XY, m => [1,5], b => [100,1], x1 => 0, x2 => 50,},
+        "TYPE_XY #2 - slope - ",
     );
 }
 
