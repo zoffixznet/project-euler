@@ -5,7 +5,7 @@ use warnings;
 
 use Euler165::R;
 
-use Test::More tests => 3;
+use Test::More tests => 4;
 
 use Test::Differences qw(eq_or_diff);
 
@@ -60,5 +60,14 @@ sub compile_segment
         compile_segment([0,0,1,1]),
         { t => $TYPE_XY, m => 1, b => 0, x1 => 0, x2 => 1,},
         "TYPE_XY_ONLY #1",
+    );
+}
+
+{
+    # TEST
+    eq_or_diff(
+        compile_segment([0,0,100,0]),
+        { t => $TYPE_XY, m => 0, b => 0, x1 => 0, x2 => 100,},
+        "TYPE_XY_ONLY #2 - 0 slope.",
     );
 }
