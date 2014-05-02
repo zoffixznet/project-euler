@@ -3,10 +3,6 @@
 use strict;
 use warnings;
 
-use List::MoreUtils qw(any);
-
-use bigrat;
-
 use Euler165::Seg qw($TYPE_X_ONLY $TYPE_XY compile_segment intersect);
 use Euler165::R;
 
@@ -34,35 +30,40 @@ for my $n (1 .. 5000)
     }
 }
 
-@xy_segs = (sort { $a->{'m'} <=> $b->{'m'} } @xy_segs);
+@xy_segs = (sort { $a->{'x1'} <=> $b->{'x1'} or $a->{'x2'} <=> $b->{'x2'} } @xy_segs);
 
 my $first = 0;
 while ($first < @xy_segs)
 {
     my $s1 = $xy_segs[$first];
-    my $m = $s1->{'m'};
+    my $x1 = $s1->{'x1'};
+    my $x2 = $s1->{'x2'};
 
-    my $i = $first+1;
-
-    while ($i < @xy_segs and $xy_segs[$i]->{'m'} == $i)
+    for my $s2 (@x_segs)
     {
-        $i++;
-    }
-
-    for my $s1_1 (@xy_segs[$first .. $i-1])
-    {
-        for my $s2 (@x_segs, @xy_segs[$i .. $#xy_segs])
+        # print "Subreached $first->$second.\n";
+        my $p = intersect($s1, $s2);
+        if (defined $p)
         {
-            # print "Subreached $first->$second.\n";
-            my $p = intersect($s1_1, $s2);
-            if (defined $p)
-            {
-                $points{join("!",@$p)} = undef();
-            }
+            $points{join("!",@$p)} = undef();
         }
     }
-    $first = $i;
+    I2:
+    for my $i2 ($first+1 .. $#xy_segs)
+    {
+        my $s2 = $xy_segs[$i2];
+        if ($s2->{'x1'} >= $x2)
+        {
+            last I2;
+        }
+        my $p = intersect($s1, $s2);
+        if (defined $p)
+        {
+            $points{join("!",@$p)} = undef();
+        }
+    }
     print "Reached $first/$#xy_segs.\n";
+    $first++;
 }
 
 print "Num intersections == ", scalar(keys%points), "\n";

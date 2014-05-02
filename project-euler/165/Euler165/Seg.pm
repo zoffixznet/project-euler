@@ -3,7 +3,7 @@ package Euler165::Seg;
 use strict;
 use warnings;
 
-use bigrat;
+use Math::BigRat (lib => "GMP");
 
 use parent 'Exporter';
 
@@ -75,7 +75,7 @@ sub intersect
         }
         else
         {
-            my $x = (($s2->{'b'} - $s1->{'b'}) / ($s1->{'m'} - $s2->{'m'}));
+            my $x = (Math::BigRat->new($s2->{'b'} - $s1->{'b'}) / Math::BigRat->new($s1->{'m'} - $s2->{'m'}));
 
             if ($s1->{'x1'} < $x and $x < $s1->{'x2'} and $s2->{'x1'} < $x and
                 $x < $s2->{'x2'}

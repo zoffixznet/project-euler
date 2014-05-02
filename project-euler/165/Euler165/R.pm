@@ -3,7 +3,7 @@ package Euler165::R;
 use strict;
 use warnings;
 
-use bigrat;
+use bigrat (lib => "GMP");
 
 sub new
 {
