@@ -10,7 +10,6 @@ our $TYPE_XY = 1;
 
 our @EXPORT_OK = qw($TYPE_X_ONLY $TYPE_XY compile_segment intersect);
 
-
 sub compile_segment
 {
     my ($L) = @_;
