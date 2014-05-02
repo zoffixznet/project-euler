@@ -3,8 +3,6 @@ package Euler165::R;
 use strict;
 use warnings;
 
-use bigrat (lib => "GMP");
-
 sub new
 {
     my $class = shift;

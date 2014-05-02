@@ -32,6 +32,16 @@ for my $n (1 .. 5000)
 
 @xy_segs = (sort { $a->{'x1'} <=> $b->{'x1'} or $a->{'x2'} <=> $b->{'x2'} } @xy_segs);
 
+sub _check
+{
+    my ($s1, $s2) = @_;
+    my $p = intersect($s1, $s2);
+    if (defined $p)
+    {
+        $points{join("!",map { @$_ } @$p)} = undef();
+    }
+}
+
 my $first = 0;
 while ($first < @xy_segs)
 {
@@ -41,12 +51,7 @@ while ($first < @xy_segs)
 
     for my $s2 (@x_segs)
     {
-        # print "Subreached $first->$second.\n";
-        my $p = intersect($s1, $s2);
-        if (defined $p)
-        {
-            $points{join("!",@$p)} = undef();
-        }
+        _check($s1, $s2);
     }
     I2:
     for my $i2 ($first+1 .. $#xy_segs)
@@ -56,11 +61,7 @@ while ($first < @xy_segs)
         {
             last I2;
         }
-        my $p = intersect($s1, $s2);
-        if (defined $p)
-        {
-            $points{join("!",@$p)} = undef();
-        }
+        _check($s1,$s2);
     }
     print "Reached $first/$#xy_segs.\n";
     $first++;
