@@ -5,7 +5,7 @@ use warnings;
 
 use Euler165::R;
 
-use Test::More tests => 7;
+use Test::More tests => 8;
 
 use Test::Differences qw(eq_or_diff);
 
@@ -98,5 +98,14 @@ sub compile_segment
         compile_segment([100,3,0,3]),
         { t => $TYPE_XY, m => 0, b => 3, x1 => 0, x2 => 100,},
         "TYPE_XY_ONLY #2 - reversed Xs - should be sorted.",
+    );
+}
+
+{
+    # TEST
+    eq_or_diff(
+        compile_segment([100,2*100+5,0,0+5,]),
+        { t => $TYPE_XY, m => 2, b => 5, x1 => 0, x2 => 100,},
+        "TYPE_XY_ONLY #2 - slope - reversed Xs - should be sorted.",
     );
 }
