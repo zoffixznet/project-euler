@@ -5,7 +5,7 @@ use warnings;
 
 use Euler165::R;
 
-use Test::More tests => 2;
+use Test::More tests => 3;
 
 use Test::Differences qw(eq_or_diff);
 
@@ -51,5 +51,14 @@ sub compile_segment
         compile_segment([0,1,0,2]),
         { t => $TYPE_X_ONLY, x => 0, },
         "TYPE_X_ONLY",
+    );
+}
+
+{
+    # TEST
+    eq_or_diff(
+        compile_segment([0,0,1,1]),
+        { t => $TYPE_XY, m => 1, b => 0, x1 => 0, x2 => 1,},
+        "TYPE_XY_ONLY #1",
     );
 }
