@@ -5,7 +5,7 @@ use warnings;
 
 use Euler165::R;
 
-use Test::More tests => 5;
+use Test::More tests => 6;
 
 use Test::Differences qw(eq_or_diff);
 
@@ -29,8 +29,9 @@ sub compile_segment
     else
     {
         my $m = ($y2-$y1)/($x2-$x1);
-        my $b = ($y1 - $m * $x1);
-        return {t => $TYPE_XY, m => $m, b => $b, x1 => $x1, x2 => $x2,};
+        my $bb = ($y1 - $m * $x1);
+        my @x_s = sort { $a <=> $b } ($x1,$x2);
+        return {t => $TYPE_XY, m => $m, b => $bb, x1 => $x_s[0], x2 => $x_s[-1],};
     }
 }
 
@@ -78,5 +79,14 @@ sub compile_segment
         compile_segment([-5,0,5,0]),
         { t => $TYPE_XY, m => 0, b => 0, x1 => -5, x2 => 5,},
         "TYPE_XY_ONLY #2 - 0 slope.",
+    );
+}
+
+{
+    # TEST
+    eq_or_diff(
+        compile_segment([100,3,0,3]),
+        { t => $TYPE_XY, m => 0, b => 3, x1 => 0, x2 => 100,},
+        "TYPE_XY_ONLY #2 - reversed Xs - should be sorted.",
     );
 }
