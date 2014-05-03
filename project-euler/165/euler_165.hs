@@ -23,6 +23,7 @@ data Frac = Frac {
     , frac_d :: Int64
 } deriving (Show)
 
+
 data Type_X_Only_Seg = Type_X_Only_Seg {
       x_Only_x :: Int64
     , x_Only_y1 :: Int64
@@ -59,6 +60,12 @@ _div x (Frac yn yd) = _mul x (Frac yd yn)
 _lt x y = 0 > (frac_n (_subtract x y))
 _eq x y = 0 == (frac_n (_subtract x y))
 
+instance Eq Frac where
+    x == y = _eq x y
+
+instance Ord Frac where
+    x <= y =  (not $ _lt y x)
+
 compile_segment :: Seg -> CompiledSeg
 compile_segment (x1,y1,x2,y2) = (if (x1 == x2)
     then let y_s = (sort [y1,y2]) in (CompX $ Type_X_Only_Seg x1 (y_s!!0) (y_s!!1))
@@ -75,6 +82,13 @@ data Point = Point {
     , point_y :: Frac
 } deriving (Show)
 
+instance Ord Point where
+    compare (Point x1 y1) (Point x2 y2) =  if (c == EQ) then d else c where
+        c = compare x1 x2
+        d = compare y1 y2
+
+instance Eq Point where
+    c == d = (compare c d) == EQ
 
 intersect_x :: Type_X_Only_Seg -> Type_XY_Seg -> [Point]
 intersect_x (Type_X_Only_Seg x_ y1 y2) (Type_XY_Seg m b x1 x2) =
@@ -118,15 +132,21 @@ xy_segs = sortBy (\s1 -> \s2 -> xy_segs_sort (xy_x1 s1) (xy_x2 s1) (xy_x1 s2) (x
     foo ((CompXY a):xs) = a:(foo xs)
     foo (_:xs) = foo xs
 
-get_points [] = []
-get_points (s1:xs) = (concat [intersect_x s2 s1 | s2 <- x_segs]) ++
-    (concat [intersect_xy s1 s2 | s2 <- takeWhile (\s2 -> (xy_x1 s2) < x2) xs]) where
+get_points_helper [] = []
+get_points_helper (s1:xs) = ((concat [intersect_x s2 s1 | s2 <- x_segs]) ++
+    (concat [intersect_xy s1 s2 | s2 <- takeWhile (\s2 -> (xy_x1 s2) < x2) xs])) where
         x2 = (xy_x2 s1)
 
-points = sort [show p | p <- get_points xy_segs]
+get_points [] = []
+get_points (x:xs) = (get_points_helper (x:xs)):(get_points xs)
+
+-- points = sort $ get_points xy_segs
+points = sort $ concat $ get_points xy_segs
 
 count_points [] = 0
 count_points (x:[]) = 1
 count_points (x:(y:xs)) = (if (x == y) then 0 else 1 ) + (count_points (y:xs))
 
 count = count_points points
+
+main = putStrLn $ show count
