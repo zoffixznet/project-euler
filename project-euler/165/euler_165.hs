@@ -86,9 +86,9 @@ intersect_x (Type_X_Only_Seg x_ y1 y2) (Type_XY_Seg m b x1 x2) =
         x = (Frac x_ 1)
         y = _add (_mul m x) b
 
-intersect :: Type_XY_Seg -> Type_XY_Seg -> [Point]
+intersect_xy :: Type_XY_Seg -> Type_XY_Seg -> [Point]
 
-intersect (Type_XY_Seg s1_m s1_b s1_x1 s1_x2) (Type_XY_Seg s2_m s2_b s2_x1 s2_x2) =
+intersect_xy (Type_XY_Seg s1_m s1_b s1_x1 s1_x2) (Type_XY_Seg s2_m s2_b s2_x1 s2_x2) =
     if (_eq s1_m s2_m) then [] else
         let x = (_div (_subtract s2_b s1_b) (_subtract s1_m s2_m))
         in if and [
@@ -118,4 +118,15 @@ xy_segs = sortBy (\s1 -> \s2 -> xy_segs_sort (xy_x1 s1) (xy_x2 s1) (xy_x2 s1) (x
     foo ((CompXY a):xs) = a:(foo xs)
     foo (_:xs) = foo xs
 
+get_points [] = []
+get_points (s1:xs) = (concat [intersect_x s2 s1 | s2 <- x_segs]) ++
+    (concat [intersect_xy s1 s2 | s2 <- takeWhile (\s2 -> (xy_x1 s2) < x2) xs]) where
+        x2 = (xy_x2 s1)
 
+points = sort [show p | p <- get_points xy_segs]
+
+count_points [] = 0
+count_points (x:[]) = 1
+count_points (x:(y:xs)) = (if (x == y) then 0 else 1 ) + (count_points (y:xs))
+
+count = count_points points
