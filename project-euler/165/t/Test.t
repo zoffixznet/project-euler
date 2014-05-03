@@ -7,7 +7,7 @@ use Euler165::R;
 
 use Euler165::Seg qw($TYPE_X_ONLY $TYPE_XY compile_segment intersect intersect_x);
 
-use Test::More tests => 19;
+use Test::More tests => 20;
 
 use Test::Differences qw(eq_or_diff);
 
@@ -182,5 +182,14 @@ use Test::Differences qw(eq_or_diff);
         intersect(compile_segment([-2,-2,0,0,]),compile_segment([-2,0,0,-2])),
         [[-1,1],[-1,1],],
         "Interesct at (-1,-1)",
+    );
+}
+
+{
+    # TEST
+    eq_or_diff(
+        intersect(compile_segment([2,2,4,4,]),compile_segment([0,2,2,0])),
+        undef,
+        "No Interesct - should be (1,1) but out-of-range.",
     );
 }

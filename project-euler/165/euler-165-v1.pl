@@ -9,6 +9,7 @@ use Euler165::R;
 STDOUT->autoflush(1);
 
 my %points;
+my $total = 0;
 
 my $r = Euler165::R->new;
 
@@ -37,7 +38,8 @@ sub _check
     my ($p) = @_;
     if (defined $p)
     {
-        $points{join("!",map { @$_ } @$p)} = undef();
+        $total++;
+        $points{join("!",map { @$_ } @$p)}++;
     }
 }
 
@@ -67,3 +69,4 @@ while ($first < @xy_segs)
 }
 
 print "Num intersections == ", scalar(keys%points), "\n";
+print "Total = $total\n";
