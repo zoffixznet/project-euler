@@ -3,6 +3,9 @@
 use strict;
 use warnings;
 
+use integer;
+use bytes;
+
 use Euler165::Seg qw($TYPE_X_ONLY $TYPE_XY compile_segment intersect intersect_x);
 use Euler165::R;
 
@@ -52,9 +55,8 @@ sub _check
 =cut
 
         $total++;
-        my $s = join("!",map { @$_ } @$p);
         # print "==Found [$s]\n";
-        $points{$s}++;
+        $points{join("!",map { @$_ } @$p)} = undef;
     }
 }
 
@@ -79,8 +81,7 @@ while ($first < @xy_segs)
 
     for my $s2 (@x_segs)
     {
-        my $p = intersect_x($s2, $s1);
-        _check($p);
+        _check(intersect_x($s2, $s1));
     }
     I2:
     for my $i2 ($first+1 .. $#xy_segs)

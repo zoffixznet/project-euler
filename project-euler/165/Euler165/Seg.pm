@@ -3,6 +3,9 @@ package Euler165::Seg;
 use strict;
 use warnings;
 
+use integer;
+use bytes;
+
 use Carp::Always;
 
 use parent 'Exporter';

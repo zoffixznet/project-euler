@@ -3,6 +3,9 @@ package Euler165::R;
 use strict;
 use warnings;
 
+use integer;
+use bytes;
+
 sub new
 {
     my $class = shift;
