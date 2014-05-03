@@ -76,7 +76,6 @@ my $first = 0;
 while ($first < @xy_segs)
 {
     my $s1 = $xy_segs[$first];
-    my $x1 = $s1->{'x1'};
     my $x2 = $s1->{'x2'};
 
     for my $s2 (@x_segs)
