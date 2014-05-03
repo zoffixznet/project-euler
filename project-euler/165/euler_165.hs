@@ -23,6 +23,7 @@ data Frac = Frac {
     , frac_d :: Int64
 } deriving (Show)
 
+f n = Frac n 1
 
 data Type_X_Only_Seg = Type_X_Only_Seg {
       x_Only_x :: Int64
@@ -46,7 +47,7 @@ signed_gcd n m = gcd (abs n) (abs m)
 
 _reduce n d = let g = (signed_gcd n d) in let ret = (Frac (n `div` g) (d `div` g)) in
     let Frac nn dd = ret in
-    (if nn == 0 then (Frac 0 1) else
+    (if nn == 0 then (f 0) else
         if dd < 0 then (Frac (-nn) (-dd)) else ret)
 
 _mul (Frac xn xd) (Frac yn yd) = _reduce (xn*yn) (xd*yd)
@@ -66,12 +67,13 @@ instance Eq Frac where
 instance Ord Frac where
     x <= y =  (not $ _lt y x)
 
+
 compile_segment :: Seg -> CompiledSeg
 compile_segment (x1,y1,x2,y2) = (if (x1 == x2)
     then let y_s = (sort [y1,y2]) in (CompX $ Type_X_Only_Seg x1 (y_s!!0) (y_s!!1))
     else (CompXY $ Type_XY_Seg m bb (x_s!!0) (x_s!!1)) ) where
         m = _reduce (y2-y1) (x2-x1)
-        bb = _subtract (Frac y1 1) (_mul m (Frac x1 1))
+        bb = _subtract (f y1) (_mul m (f x1))
         x_s = sort [x1,x2]
 
 
@@ -92,12 +94,12 @@ instance Eq Point where
 
 intersect_x :: Type_X_Only_Seg -> Type_XY_Seg -> [Point]
 intersect_x (Type_X_Only_Seg x_ y1 y2) (Type_XY_Seg m b x1 x2) =
-    (if (and [(_lt (Frac x1 1) x), (_lt x (Frac x2 1)), (_lt (Frac y1 1) y)
-            ,(_lt y (Frac y2 1))])
+    (if (and [(_lt (f x1) x), (_lt x (f x2)), (_lt (f y1) y)
+            ,(_lt y (f y2))])
             then [Point x y]
             else []
     ) where
-        x = (Frac x_ 1)
+        x = (f x_)
         y = _add (_mul m x) b
 
 intersect_xy :: Type_XY_Seg -> Type_XY_Seg -> [Point]
@@ -106,10 +108,10 @@ intersect_xy (Type_XY_Seg s1_m s1_b s1_x1 s1_x2) (Type_XY_Seg s2_m s2_b s2_x1 s2
     if (_eq s1_m s2_m) then [] else
         let x = (_div (_subtract s2_b s1_b) (_subtract s1_m s2_m))
         in if and [
-        (_lt (Frac s1_x1 1) x),
-        (_lt x (Frac s1_x2 1)),
-        (_lt (Frac s2_x1 1) x),
-        (_lt x (Frac s2_x2 1))
+        (_lt (f s1_x1) x),
+        (_lt x (f s1_x2)),
+        (_lt (f s2_x1) x),
+        (_lt x (f s2_x2))
         ] then
             [(Point x (_add s2_b (_mul s2_m x)))]
             else []
