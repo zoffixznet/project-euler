@@ -38,6 +38,19 @@ sub _check
     my ($p) = @_;
     if (defined $p)
     {
+
+=begin foo
+        A sanity check that never gets triggered:
+
+        if (grep { $_->[1] <= 0 } @$p)
+        {
+            die "Wrong!";
+        }
+
+=end foo
+
+=cut
+
         $total++;
         $points{join("!",map { @$_ } @$p)}++;
     }
