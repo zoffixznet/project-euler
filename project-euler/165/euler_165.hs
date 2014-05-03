@@ -54,6 +54,11 @@ _add (Frac xn xd) (Frac yn yd) = _reduce (xn*yd+xd*yn) (xd*yd)
 
 _subtract x (Frac yd yn) = _add x (Frac (-yd)  yn)
 
+_div x (Frac yn yd) = _mul x (Frac yd yn)
+
+_lt x y = 0 > (frac_n (_subtract x y))
+_eq x y = 0 == (frac_n (_subtract x y))
+
 compile_segment :: Seg -> CompiledSeg
 compile_segment (x1,y1,x2,y2) = (if (x1 == x2)
     then let y_s = (sort [y1,y2]) in (CompX $ Type_X_Only_Seg x1 (y_s!!0) (y_s!!1))
@@ -64,3 +69,34 @@ compile_segment (x1,y1,x2,y2) = (if (x1 == x2)
 
 
 mysegs = map compile_segment $ take 5000 segs
+
+data Point = Point {
+      point_x :: Frac
+    , point_y :: Frac
+} deriving (Show)
+
+
+intersect_x :: Type_X_Only_Seg -> Type_XY_Seg -> [Point]
+intersect_x (Type_X_Only_Seg x_ y1 y2) (Type_XY_Seg m b x1 x2) =
+    (if (and [(_lt (Frac x1 1) x), (_lt x (Frac x2 1)), (_lt (Frac y1 1) y)
+            ,(_lt y (Frac y2 1))])
+            then [Point x y]
+            else []
+    ) where
+        x = (Frac x_ 1)
+        y = _add (_mul m x) b
+
+intersect :: Type_XY_Seg -> Type_XY_Seg -> [Point]
+
+intersect (Type_XY_Seg s1_m s1_b s1_x1 s1_x2) (Type_XY_Seg s2_m s2_b s2_x1 s2_x2) =
+    if (_eq s1_m s2_m) then [] else
+        let x = (_div (_subtract s2_b s1_b) (_subtract s1_m s2_m))
+        in if and [
+        (_lt (Frac s1_x1 1) x),
+        (_lt x (Frac s1_x2 1)),
+        (_lt (Frac s2_x1 1) x),
+        (_lt x (Frac s2_x2 1))
+        ] then
+            [(Point x (_add s2_b (_mul s2_m x)))]
+            else []
+
