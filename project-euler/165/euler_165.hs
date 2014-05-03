@@ -39,9 +39,28 @@ data Type_XY_Seg = Type_XY_Seg {
 data CompiledSeg = CompX Type_X_Only_Seg
                  | CompXY Type_XY_Seg
 
+-- gcd n m = if m < n then (gcd m n) else if m == 0 then n else (gcd m (n `mod` m))
+
+signed_gcd n m = gcd (abs n) (abs m)
+
+_reduce n d = let g = (signed_gcd n d) in let ret = (Frac (n `div` g) (d `div` g)) in
+    let Frac nn dd = ret in
+    (if nn == 0 then (Frac 0 1) else
+        if dd < 0 then (Frac (-nn) (-dd)) else ret)
+
+_mul (Frac xn xd) (Frac yn yd) = _reduce (xn*yn) (xd*yd)
+
+_add (Frac xn xd) (Frac yn yd) = _reduce (xn*yd+xd*yn) (xd*yd)
+
+_subtract x (Frac yd yn) = _add x (Frac (-yd)  yn)
+
 compile_segment :: Seg -> CompiledSeg
-compile_segment (x1,y1,x2,y2) = if (x1 == x2)
+compile_segment (x1,y1,x2,y2) = (if (x1 == x2)
     then let y_s = (sort [y1,y2]) in (CompX $ Type_X_Only_Seg x1 (y_s!!0) (y_s!!1))
-    else (CompX $ Type_X_Only_Seg x1 0 0)
+    else (CompXY $ Type_XY_Seg m bb (x_s!!0) (x_s!!1)) ) where
+        m = _reduce (y2-y1) (x2-x1)
+        bb = _subtract (Frac y1 1) (_mul m (Frac x1 1))
+        x_s = sort [x1,x2]
+
 
 mysegs = map compile_segment $ take 5000 segs
