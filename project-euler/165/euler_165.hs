@@ -107,13 +107,13 @@ x_segs = foo mysegs where
     foo (_:xs) = foo xs
 
 xy_segs_sort s1_x1 s1_x2 s2_x1 s2_x2 | s1_x1 < s2_x1 = LT
-                                     | s1_x1 > s2_x2 = GT
+                                     | s1_x1 > s2_x1 = GT
                                      | s1_x2 < s2_x2 = LT
                                      | s1_x2 > s2_x2 = GT
                                      | otherwise = EQ
 
 xy_segs :: [Type_XY_Seg]
-xy_segs = sortBy (\s1 -> \s2 -> xy_segs_sort (xy_x1 s1) (xy_x2 s1) (xy_x2 s1) (xy_x2 s2)) $ foo mysegs where
+xy_segs = sortBy (\s1 -> \s2 -> xy_segs_sort (xy_x1 s1) (xy_x2 s1) (xy_x1 s2) (xy_x2 s2)) $ foo mysegs where
     foo [] = []
     foo ((CompXY a):xs) = a:(foo xs)
     foo (_:xs) = foo xs
