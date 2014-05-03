@@ -1,5 +1,5 @@
 import Data.Int
-import Data.List
+import Data.List (nub , sort , sortBy)
 
 r_transform :: Int64 -> Int64
 
@@ -143,12 +143,8 @@ get_points [] = []
 get_points (x:xs) = (get_points_helper (x:xs)):(get_points xs)
 
 -- points = sort $ get_points xy_segs
-points = sort $ concat $ get_points xy_segs
+points = concat $ get_points xy_segs
 
-count_points [] = 0
-count_points (x:[]) = 1
-count_points (x:(y:xs)) = (if (x == y) then 0 else 1 ) + (count_points (y:xs))
-
-count = count_points points
+count = length (nub points)
 
 main = putStrLn $ show count
