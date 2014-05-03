@@ -52,8 +52,22 @@ sub _check
 =cut
 
         $total++;
-        $points{join("!",map { @$_ } @$p)}++;
+        my $s = join("!",map { @$_ } @$p);
+        # print "==Found [$s]\n";
+        $points{$s}++;
     }
+}
+
+sub f
+{
+    my $f = shift;
+    return $f->[0] / $f->[1];
+}
+
+sub e
+{
+    my ($x, $y) = @_;
+    return (abs($x - $y) <= 0.001);
 }
 
 my $first = 0;
@@ -65,7 +79,8 @@ while ($first < @xy_segs)
 
     for my $s2 (@x_segs)
     {
-        _check(intersect_x($s2, $s1));
+        my $p = intersect_x($s2, $s1);
+        _check($p);
     }
     I2:
     for my $i2 ($first+1 .. $#xy_segs)
@@ -75,7 +90,35 @@ while ($first < @xy_segs)
         {
             last I2;
         }
+
         _check(intersect($s1,$s2));
+
+=begin SanityCheck
+
+        my $p = intersect($s1,$s2);
+        if (defined($p))
+        {
+            my $x = f($p->[0]);
+            if ($x <= $s1->{'x1'} or $x >= $s1->{'x2'}
+                    or $x <= $s2->{'x1'} or $x >= $s2->{'x2'})
+            {
+                die "X is out of range for I2=$i2\n";
+            }
+            my $y = f($p->[1]);
+            if (not e(f($s1->{'m'})*$x+f($s1->{'b'}), $y))
+            {
+                die "Wrong result for I2=$i2 s1.";
+            }
+            if (not e(f($s2->{'m'})*$x+f($s2->{'b'}), $y))
+            {
+                die "Wrong result for I2=$i2 s2.";
+            }
+            _check($p);
+        }
+=end
+
+=cut
+
     }
     print "Reached $first/$#xy_segs.\n";
     $first++;

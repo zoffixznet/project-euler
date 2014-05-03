@@ -83,7 +83,7 @@ sub _subtract
 {
     my ($x, $y) = @_;
 
-    return _add($x, [-$y->[0],$y->[1]]);
+    return _add($x, [(-$y->[0]),$y->[1]]);
 }
 
 sub _lt
@@ -129,7 +129,7 @@ sub intersect_x
     my ($s1, $s2) = @_;
     my $x = [$s1->{'x'},1];
 
-    my $y = _add(_mul($s2->{'m'},[$x,1]), $s2->{'b'});
+    my $y = _add(_mul($s2->{'m'},$x), $s2->{'b'});
 
     if (_lt([$s2->{'x1'},1], $x) and _lt($x, [$s2->{'x2'},1])
             and _lt([$s1->{'y1'},1], $y)
