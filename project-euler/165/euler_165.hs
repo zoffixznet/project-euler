@@ -1,5 +1,8 @@
 import Data.Int
 import Data.List (nub , sort , sortBy)
+import Data.Ratio
+
+
 
 r_transform :: Int64 -> Int64
 
@@ -18,12 +21,15 @@ get_seg (a:b:c:d:rest) = (a,b,c,d):(get_seg rest)
 
 segs = get_seg get_t
 
-data Frac = Frac {
-      frac_n :: Int64
-    , frac_d :: Int64
-} deriving (Show)
+type Frac = Ratio Int64
 
-f n = Frac n 1
+frac :: Int64 -> Int64 -> Ratio Int64
+frac = (%)
+
+frac_n = numerator
+frac_d = denominator
+
+f n = frac n 1
 
 data Type_X_Only_Seg = Type_X_Only_Seg {
       x_Only_x :: Int64
@@ -45,37 +51,18 @@ data CompiledSeg = CompX Type_X_Only_Seg
 
 signed_gcd n m = gcd (abs n) (abs m)
 
-_reduce n d = let g = (signed_gcd n d) in let ret = (Frac (n `div` g) (d `div` g)) in
-    let Frac nn dd = ret in
+_reduce n d = let g = (signed_gcd n d) in let ret = (frac (n `div` g) (d `div` g)) in
+    let nn = frac_n ret in
+    let dd = frac_d ret in
     (if nn == 0 then (f 0) else
-        if dd < 0 then (Frac (-nn) (-dd)) else ret)
-
-_mul (Frac xn xd) (Frac yn yd) = _reduce (xn*yn) (xd*yd)
-
-_add (Frac xn xd) (Frac yn yd) = _reduce (xn*yd+xd*yn) (xd*yd)
-
-_subtract x (Frac yd yn) = _add x (Frac (-yd)  yn)
-
-_div x (Frac yn yd) = _mul x (Frac yd yn)
-
-_lt x y = 0 > (frac_n (_subtract x y))
-_eq x y = 0 == (frac_n (_subtract x y))
-
-
-instance Ord Frac where
-    compare (Frac x1 y1) (Frac x2 y2) = if (c == EQ) then d else c where
-        c = compare x1 x2
-        d = compare y1 y2
-
-instance Eq Frac where
-    x == y = (compare x y) == EQ
+        if dd < 0 then (frac (-nn) (-dd)) else ret)
 
 compile_segment :: Seg -> CompiledSeg
 compile_segment (x1,y1,x2,y2) = (if (x1 == x2)
     then let y_s = (sort [y1,y2]) in (CompX $ Type_X_Only_Seg x1 (y_s!!0) (y_s!!1))
     else (CompXY $ Type_XY_Seg m bb (x_s!!0) (x_s!!1)) ) where
-        m = _reduce (y2-y1) (x2-x1)
-        bb = _subtract (f y1) (_mul m (f x1))
+        m = (y2-y1)%(x2-x1)
+        bb = (f y1) - (m * (f x1))
         x_s = sort [x1,x2]
 
 
@@ -87,35 +74,33 @@ data Point = Point {
 } deriving (Show)
 
 instance Ord Point where
-    compare (Point x1 y1) (Point x2 y2) =  if (c == EQ) then d else c where
-        c = compare x1 x2
-        d = compare y1 y2
+    compare (Point x1 y1) (Point x2 y2) =  compare (x1,y1) (x2,y2)
 
 instance Eq Point where
-    c == d = (compare c d) == EQ
+    (Point x1 y1) == (Point x2 y2) = (x1,y1) == (x2,y2)
 
 intersect_x :: Type_X_Only_Seg -> Type_XY_Seg -> [Point]
 intersect_x (Type_X_Only_Seg x_ y1 y2) (Type_XY_Seg m b x1 x2) =
-    (if (and [(_lt (f x1) x), (_lt x (f x2)), (_lt (f y1) y)
-            ,(_lt y (f y2))])
+    (if (and [((f x1) < x), (x < (f x2)), ((f y1) < y)
+            ,(y < (f y2))])
             then [Point x y]
             else []
     ) where
         x = (f x_)
-        y = _add (_mul m x) b
+        y = (m * x) + b
 
 intersect_xy :: Type_XY_Seg -> Type_XY_Seg -> [Point]
 
 intersect_xy (Type_XY_Seg s1_m s1_b s1_x1 s1_x2) (Type_XY_Seg s2_m s2_b s2_x1 s2_x2) =
-    if (_eq s1_m s2_m) then [] else
-        let x = (_div (_subtract s2_b s1_b) (_subtract s1_m s2_m))
+    if s1_m == s2_m then [] else
+        let x = ((s2_b - s1_b) / (s1_m - s2_m))
         in if and [
-        (_lt (f s1_x1) x),
-        (_lt x (f s1_x2)),
-        (_lt (f s2_x1) x),
-        (_lt x (f s2_x2))
+        ((f s1_x1) < x),
+        (x < (f s1_x2)),
+        ((f s2_x1) < x),
+        (x < (f s2_x2))
         ] then
-            [(Point x (_add s2_b (_mul s2_m x)))]
+            [(Point x (s2_b + (s2_m * x)))]
             else []
 
 x_segs :: [Type_X_Only_Seg]
