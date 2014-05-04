@@ -119,7 +119,7 @@ sub my_compile_segment
     # TEST
     eq_or_diff(
         compile_segment([0,100,50,100+50/5,]),
-        { t => $TYPE_XY, m => [1,5], b => [100,1], x1 => 0, X1 => [0,1], x2 => 50, X2=>[50,1],y1 => 100, y2 => (100+50/5)},
+        { t => $TYPE_XY, m => [1,5], b => [100,1], x1 => 0, x2 => 50, y1 => 100, y2 => (100+50/5)},
         "TYPE_XY #2 - slope - ",
     );
 }

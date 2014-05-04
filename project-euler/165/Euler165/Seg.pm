@@ -135,30 +135,30 @@ sub compile_segment
         {
             die "Duplicate point in segment [@$L].";
         }
-        return {t => $TYPE_X_ONLY, x => $x1, X => _f($x1), y1=>$y_s[0], Y1 => _f($y_s[0]), y2=>$y_s[-1], Y2 => _f($y_s[-1])};
+        return {t => $TYPE_X_ONLY, x => $x1, X => _f($x1), y1=>$y_s[0], y2=>$y_s[-1], };
     }
     else
     {
         my $m = [_reduce($y2-$y1, $x2-$x1)];
         my $bb = _subtract(_f($y1), _mul($m, _f($x1)));
         my @x_s = sort { $a <=> $b } ($x1,$x2);
-        return { t => $TYPE_XY, m => $m, b => $bb, x1 => $x_s[0], X1 => _f($x_s[0]), x2 => $x_s[-1], X2 => _f($x_s[-1]), y1=> $y_s[0], y2 => $y_s[-1], };
+        return { t => $TYPE_XY, m => $m, b => $bb, x1 => $x_s[0], x2 => $x_s[-1], y1=> $y_s[0], y2 => $y_s[-1], };
     }
 }
 
 sub intersect_x
 {
     my ($s1, $s2) = @_;
-    my $x = $s1->{'X'};
+    my ($X, $x) = @$s1{qw(X x)};
 
-    my $y = _add(_mul($s2->{'m'},$x), $s2->{'b'});
+    my $y = _add(_mul($s2->{'m'},$X), $s2->{'b'});
 
-    if (_lt3($s2->{'x1'}, $x) and _lt2($x, $s2->{'x2'})
+    if (($x > $s2->{'x1'}) and ($x < $s2->{'x2'})
             and _lt3($s1->{'y1'}, $y)
             and _lt2($y, $s1->{'y2'})
     )
     {
-        return [$x, $y];
+        return [$X, $y];
     }
     else
     {
