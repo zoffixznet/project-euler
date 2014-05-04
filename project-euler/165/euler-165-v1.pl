@@ -80,7 +80,7 @@ while ($first < @xy_segs)
     my $y1 = $s1->{'y1'};
     my $y2 = $s1->{'y2'};
 
-    for my $s2 (@x_segs)
+    for my $s2 (grep { $_->{x} > $s1->{'x1'} } (@x_segs = grep { $_->{x} < $x2 } @x_segs))
     {
         _check(intersect_x($s2, $s1));
     }
