@@ -108,6 +108,7 @@ sub compile_segment
     my ($L) = @_;
 
     my ($x1, $y1, $x2, $y2) = @$L;
+    my @y_s = sort {$a <=> $b} ($y1,$y2);
 
     if ($x1 == $x2)
     {
@@ -115,7 +116,6 @@ sub compile_segment
         {
             die "Duplicate point in segment [@$L].";
         }
-        my @y_s = sort {$a <=> $b} ($y1,$y2);
         return {t => $TYPE_X_ONLY, x => $x1, y1=>$y_s[0], y2=>$y_s[-1],};
     }
     else
@@ -123,7 +123,7 @@ sub compile_segment
         my $m = [_reduce($y2-$y1, $x2-$x1)];
         my $bb = _subtract([$y1,1], _mul($m, [$x1,1]));
         my @x_s = sort { $a <=> $b } ($x1,$x2);
-        return {t => $TYPE_XY, m => $m, b => $bb, x1 => $x_s[0], x2 => $x_s[-1],};
+        return { t => $TYPE_XY, m => $m, b => $bb, x1 => $x_s[0], x2 => $x_s[-1], y1=> $y_s[0], y2 => $y_s[-1], };
     }
 }
 

@@ -77,6 +77,8 @@ while ($first < @xy_segs)
 {
     my $s1 = $xy_segs[$first];
     my $x2 = $s1->{'x2'};
+    my $y1 = $s1->{'y1'};
+    my $y2 = $s1->{'y2'};
 
     for my $s2 (@x_segs)
     {
@@ -86,12 +88,16 @@ while ($first < @xy_segs)
     for my $i2 ($first+1 .. $#xy_segs)
     {
         my $s2 = $xy_segs[$i2];
+
         if ($s2->{'x1'} >= $x2)
         {
             last I2;
         }
 
-        _check(intersect($s1,$s2));
+        if ($y1 <= $s2->{'y2'} and $y2 >= $s2->{'y1'})
+        {
+            _check(intersect($s1,$s2));
+        }
 
 =begin SanityCheck
 
