@@ -93,7 +93,7 @@ sub _lt
 {
     my ($x, $y) = @_;
 
-    return (_subtract($x,$y)->[0] < 0);
+    return ($x->[0] * $y->[1] < $x->[1] * $y->[0]);
 }
 
 sub _eq
