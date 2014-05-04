@@ -96,6 +96,20 @@ sub _lt
     return ($x->[0] * $y->[1] < $x->[1] * $y->[0]);
 }
 
+sub _lt2
+{
+    my ($f, $x) = @_;
+
+    return ($f->[0] < $x*$f->[1]);
+}
+
+sub _lt3
+{
+    my ($x, $f) = @_;
+
+    return ($f->[0] > $x * $f->[1]);
+}
+
 sub _eq
 {
     my ($x, $y) = @_;
@@ -139,9 +153,9 @@ sub intersect_x
 
     my $y = _add(_mul($s2->{'m'},$x), $s2->{'b'});
 
-    if (_lt($s2->{'X1'}, $x) and _lt($x, $s2->{'X2'})
-            and _lt($s1->{'Y1'}, $y)
-            and _lt($y, $s1->{'Y2'})
+    if (_lt3($s2->{'x1'}, $x) and _lt2($x, $s2->{'x2'})
+            and _lt3($s1->{'y1'}, $y)
+            and _lt2($y, $s1->{'y2'})
     )
     {
         return [$x, $y];
@@ -165,8 +179,8 @@ sub intersect
     {
         my $x = _div(_subtract($s2->{'b'}, $s1->{'b'}), _subtract($s1->{'m'}, $s2->{'m'}));
 
-        if (_lt($s1->{'X1'}, $x) and _lt($x, $s1->{'X2'}) and _lt($s2->{'X1'}, $x) and
-            _lt($x, $s2->{'X2'})
+        if (_lt3($s1->{'x1'}, $x) and _lt2($x, $s1->{'x2'}) and _lt3($s2->{'x1'}, $x) and
+            _lt2($x, $s2->{'x2'})
         )
         {
             return [$x, _add($s2->{'b'}, _mul($s2->{'m'}, $x))];
