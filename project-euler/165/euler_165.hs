@@ -61,12 +61,14 @@ _div x (Frac yn yd) = _mul x (Frac yd yn)
 _lt x y = 0 > (frac_n (_subtract x y))
 _eq x y = 0 == (frac_n (_subtract x y))
 
-instance Eq Frac where
-    x == y = _eq x y
 
 instance Ord Frac where
-    x <= y =  (not $ _lt y x)
+    compare (Frac x1 y1) (Frac x2 y2) = if (c == EQ) then d else c where
+        c = compare x1 x2
+        d = compare y1 y2
 
+instance Eq Frac where
+    x == y = (compare x y) == EQ
 
 compile_segment :: Seg -> CompiledSeg
 compile_segment (x1,y1,x2,y2) = (if (x1 == x2)
