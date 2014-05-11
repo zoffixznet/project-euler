@@ -6,7 +6,9 @@ use warnings;
 use integer;
 use bytes;
 
-use Math::BigInt lib => 'GMP', ':constant';
+use Test::More tests => 2;
+
+# use Math::BigInt lib => 'GMP', ':constant';
 
 use List::Util qw(sum);
 use List::MoreUtils qw();
@@ -21,7 +23,7 @@ sub rec
 {
     my ($n, $left) = @_;
 
-    print "Checking [$n,$left]\n";
+    # print "Checking [$n,$left]\n";
 
     if ($left == 0)
     {
@@ -35,16 +37,24 @@ sub rec
     {
         return $Cache{"$n|$left"} //= do {
             my $ret = 0;
-            while ($left >= 0)
+
+            if ($left >= $n)
             {
-                $ret += rec($n-1, $left);
-                $left -= $n;
+                $ret += rec($n, $left-$n);
             }
+            $ret += rec($n-1, $left);
             $ret;
         };
     }
 
 }
 
+# TEST
+is (rec(1, 5), 1, 'rec(1,5)');
+
+# TEST
+is (rec(2, 5), 3, 'rec(2,5)');
+
 my $NUM_OBJS = 60;
-print "Found ", rec($NUM_OBJS,$NUM_OBJS), "\n";
+# print "Found ", rec($NUM_OBJS,$NUM_OBJS), "\n";
+# exit(0);
