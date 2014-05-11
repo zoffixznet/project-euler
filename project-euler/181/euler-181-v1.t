@@ -6,7 +6,7 @@ use warnings;
 use integer;
 use bytes;
 
-use Test::More tests => 3;
+use Test::More tests => 4;
 
 # use Math::BigInt lib => 'GMP', ':constant';
 
@@ -57,6 +57,16 @@ is (rec(2, 5), 3, 'rec(2,5)');
 
 # TEST
 is (rec(3, 3), 3, 'rec(3,3)');
+
+# TEST
+is (rec(3, 4),
+    (
+        1 # 3,1
+        + 1 # 2,2
+        + 1 # 2,1,1
+        + 1 # 1,1,1,1
+    )
+    , 'rec(3,3)');
 
 my $NUM_OBJS = 60;
 # print "Found ", rec($NUM_OBJS,$NUM_OBJS), "\n";
