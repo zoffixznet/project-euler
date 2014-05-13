@@ -23,7 +23,7 @@ sub rec
 {
     my ($n, $left) = @_;
 
-    print "Checking [$n,$left]\n";
+    # print "Checking [$n,$left]\n";
 
     if ($left == 0)
     {
@@ -60,7 +60,7 @@ sub r_bw_helper
                     [$max_b_to_take,$count_of_b] ,[$w_to_take,$count_of_w];
 
     my $ret = r_bw(@args);
-    print "r_bw(@args) == $ret\n";
+    # print "r_bw(@args) == $ret\n";
     return $ret;
 }
 
@@ -107,7 +107,7 @@ sub r_bw
         };
     }
 
-    print "r_bw(@_) = $r\n";
+    # print "r_bw(@_) = $r\n";
 
     return $r;
 }
