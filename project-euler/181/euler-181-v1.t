@@ -53,11 +53,11 @@ my %C;
 
 sub r_bw_helper
 {
-    my ($b_to_take, $count_of_b, $w_to_take, $count_of_w) = @_;
+    my ($max_b_to_take, $count_of_b, $w_to_take, $count_of_w) = @_;
 
     my @args = map { @$_ }
             sort { $a->[1] <=> $b->[1] or $a->[0] <=> $b->[0] }
-                    [$b_to_take,$count_of_b] ,[$w_to_take,$count_of_w];
+                    [$max_b_to_take,$count_of_b] ,[$w_to_take,$count_of_w];
 
     my $ret = r_bw(@args);
     print "r_bw(@args) == $ret\n";
@@ -66,12 +66,11 @@ sub r_bw_helper
 
 sub r_bw
 {
-    my ($b_to_take, $count_of_b, $count_of_w) = @_;
-
+    my ($max_b_to_take, $count_of_b, $temp_max_w_to_take, $count_of_w) = @_;
 
     my $r;
 
-    if ($b_to_take == 0 and $count_of_b)
+    if ($max_b_to_take == 0 and $count_of_b)
     {
         $r = 0;
     }
@@ -91,44 +90,18 @@ sub r_bw
         $r = $C{"@_"} //= do {
             my $ret = 0;
 
-            my $new_b = $count_of_b - $b_to_take;
-
-            while ($new_b >= 0)
+            for my $new_b_delta (reverse(0 .. min($count_of_b, $max_b_to_take)))
             {
-                if ($new_b == 0)
+                my $max_w_delta = (($new_b_delta == $max_b_to_take) ? $temp_max_w_to_take : $count_of_w);
+                for my $w_delta (reverse(0 .. min($count_of_w, $max_w_delta)))
                 {
-                    $ret += rec(($count_of_w) x 2);
+                    $ret += r_bw(
+                        $new_b_delta,
+                        $count_of_b - $new_b_delta,
+                        $w_delta,
+                        $count_of_w - $w_delta,
+                    );
                 }
-                elsif ($new_b > 0)
-                {
-                    {
-                        for my $w_delta (reverse(0 .. $count_of_w))
-                        {
-                            $ret += r_bw(
-                                $b_to_take-1,
-                                $new_b,
-                                $count_of_w - $w_delta,
-                            );
-                        }
-                    }
-                    {
-                        for my $new_b_delta (reverse(0 .. min($new_b, $b_to_take-1)))
-                        {
-                            for my $w_delta (reverse(0 .. $count_of_w))
-                            {
-                                $ret += r_bw(
-                                    $new_b_delta,
-                                    $new_b,
-                                    $count_of_w - $w_delta,
-                                );
-                            }
-                        }
-                    }
-                }
-            }
-            continue
-            {
-                $new_b -= $b_to_take;
             }
             $ret;
         };
@@ -145,10 +118,7 @@ sub bw_total
 
     my $ret = 0;
 
-    for my $b_to_take (0 .. $count_of_b)
-    {
-        $ret += r_bw($b_to_take, $count_of_b, $count_of_w);
-    }
+    $ret += r_bw($count_of_b, $count_of_b, $count_of_w, $count_of_w);
 
     return $ret;
 }
