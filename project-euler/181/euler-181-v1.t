@@ -6,7 +6,7 @@ use warnings;
 use integer;
 use bytes;
 
-use Test::More tests => 8;
+use Test::More tests => 11;
 
 # use Math::BigInt lib => 'GMP', ':constant';
 
@@ -53,11 +53,11 @@ my %C;
 
 sub r_bw_helper
 {
-    my ($b_n, $b_left, $w_n, $w_left) = @_;
+    my ($b_to_take, $count_of_b, $w_to_take, $count_of_w) = @_;
 
     my @args = map { @$_ }
             sort { $a->[1] <=> $b->[1] or $a->[0] <=> $b->[0] }
-                    [$b_n,$b_left] ,[$w_n,$w_left];
+                    [$b_to_take,$count_of_b] ,[$w_to_take,$count_of_w];
 
     my $ret = r_bw(@args);
     print "r_bw(@args) == $ret\n";
@@ -66,24 +66,24 @@ sub r_bw_helper
 
 sub r_bw
 {
-    my ($b_n, $b_left, $w_n, $w_left) = @_;
+    my ($b_to_take, $count_of_b, $count_of_w) = @_;
 
 
     my $r;
 
-    if ($b_n == 0 and $b_left)
+    if ($b_to_take == 0 and $count_of_b)
     {
         $r = 0;
     }
-    elsif ($b_left == 0)
+    elsif ($count_of_b == 0)
     {
-        if ($w_left == 0)
+        if ($count_of_w == 0)
         {
             $r = 1;
         }
         else
         {
-            $r = rec($w_left, $w_left);
+            $r = rec($count_of_w, $count_of_w);
         }
     }
     else
@@ -91,34 +91,44 @@ sub r_bw
         $r = $C{"@_"} //= do {
             my $ret = 0;
 
-            if ($b_left >= $b_n)
+            my $new_b = $count_of_b - $b_to_take;
+
+            while ($new_b >= 0)
             {
-                my $new_b = $b_left-$b_n;
+                if ($new_b == 0)
                 {
-                    for my $w_delta (reverse(0 .. min($w_n, $w_left)))
-                    {
-                        $ret += r_bw(
-                            $b_n,
-                            $new_b,
-                            $w_delta,
-                            $w_left - $w_delta,
-                        );
-                    }
+                    $ret += rec(($count_of_w) x 2);
                 }
+                elsif ($new_b > 0)
                 {
-                    for my $new_b_delta (reverse(0 .. min($new_b, $b_n-1)))
                     {
-                        for my $w_delta (reverse(0 .. $w_left))
+                        for my $w_delta (reverse(0 .. $count_of_w))
                         {
                             $ret += r_bw(
-                                $new_b_delta,
+                                $b_to_take-1,
                                 $new_b,
-                                $w_delta,
-                                $w_left - $w_delta,
+                                $count_of_w - $w_delta,
                             );
                         }
                     }
+                    {
+                        for my $new_b_delta (reverse(0 .. min($new_b, $b_to_take-1)))
+                        {
+                            for my $w_delta (reverse(0 .. $count_of_w))
+                            {
+                                $ret += r_bw(
+                                    $new_b_delta,
+                                    $new_b,
+                                    $count_of_w - $w_delta,
+                                );
+                            }
+                        }
+                    }
                 }
+            }
+            continue
+            {
+                $new_b -= $b_to_take;
             }
             $ret;
         };
@@ -131,13 +141,13 @@ sub r_bw
 
 sub bw_total
 {
-    my ($b_left, $w_left) = @_;
+    my ($count_of_b, $count_of_w) = @_;
 
     my $ret = 0;
 
-    for my $b_n (0 .. $b_left)
+    for my $b_to_take (0 .. $count_of_b)
     {
-        $ret += r_bw($b_n, $b_left, $w_left, $w_left);
+        $ret += r_bw($b_to_take, $count_of_b, $count_of_w);
     }
 
     return $ret;
@@ -172,6 +182,24 @@ is (rec(4, 4),
         + 1 # 1,1,1,1
     )
     , 'rec(4,4)');
+
+# TEST
+is (bw_total(0,0),
+    1,
+    "bw_total(1,1) == 2",
+);
+
+# TEST
+is (bw_total(0,1),
+    1,
+    "bw_total(0,1) == 1",
+);
+
+# TEST
+is (bw_total(1,0),
+    1,
+    "bw_total(1,0) == 1",
+);
 
 # TEST
 is (bw_total(1,1),
