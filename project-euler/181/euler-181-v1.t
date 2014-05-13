@@ -189,3 +189,4 @@ is (bw_total(3,1), 7, "bw_total(3,1) - given precase.");
 my $NUM_OBJS = 60;
 # print "Found ", rec($NUM_OBJS,$NUM_OBJS), "\n";
 # exit(0);
+print "bw_total(60,40) = ", bw_total(60,40), "\n";
