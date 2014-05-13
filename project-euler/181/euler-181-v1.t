@@ -49,7 +49,7 @@ sub rec
 
 }
 
-my %C;
+my @C;
 
 sub r_bw_helper
 {
@@ -87,13 +87,15 @@ sub r_bw
     }
     else
     {
-        $r = $C{"@_"} //= do {
+        $r = $C[$max_b_to_take][$count_of_b][$temp_max_w_to_take][$count_of_w] //= do {
             my $ret = 0;
 
-            for my $new_b_delta (reverse(0 .. min($count_of_b, $max_b_to_take)))
+            # for my $new_b_delta (reverse(0 .. min($count_of_b, $max_b_to_take)))
+            for my $new_b_delta (0 .. min($count_of_b, $max_b_to_take))
             {
                 my $max_w_delta = (($new_b_delta == $max_b_to_take) ? $temp_max_w_to_take : $count_of_w);
-                for my $w_delta (reverse(0 .. min($count_of_w, $max_w_delta)))
+                # for my $w_delta (reverse(0 .. min($count_of_w, $max_w_delta)))
+                for my $w_delta (0 .. min($count_of_w, $max_w_delta))
                 {
                     $ret += r_bw(
                         $new_b_delta,
