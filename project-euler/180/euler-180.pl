@@ -82,7 +82,7 @@ sub check
     my @xy = @_;
     my ($x_a, $x_b, $y_a, $y_b) = @_;
 
-    my @sum = add(($n == 1) ? @xy : map { $_ * $_ } @xy);
+    my @sum = add(($n == 1) ? @xy : (map { $_ * $_ } @xy));
 
     my @z;
     if ($n == 2)
