@@ -3,9 +3,8 @@
 use strict;
 use warnings;
 
+use integer;
 use bytes;
-
-use Math::BigRat lib => 'GMP';
 
 use List::Util qw(sum);
 use List::MoreUtils qw();
@@ -58,7 +57,14 @@ sub gcd
 sub norm
 {
     my ($aa, $bb) = @_;
-    my $g = gcd($aa, $bb);
+
+    if ($bb < 0)
+    {
+        $aa = -$aa;
+        $bb = -$bb;
+    }
+
+    my $g = gcd(abs($aa), abs($bb));
 
     return ($aa / $g, $bb / $g);
 }
@@ -76,8 +82,6 @@ sub check
     my @xy = @_;
     my ($x_a, $x_b, $y_a, $y_b) = @_;
 
-    # my $x = Math::BigRat->new("$x_a/$x_b");
-    # my $y = Math::BigRat->new("$y_a/$y_b");
     my @sum = add(($n == 1) ? @xy : map { $_ * $_ } @xy);
 
     my @z;
@@ -98,14 +102,24 @@ sub check
     }
 
     {
-        if
-        (
-            ($x_a < $x_b)
-            ? ($z[0] < $z[1] and $z[1] <= $K)
-            : ($z[0] > $z[1] and $z[0] <= $K)
-        )
+        my @s;
+        if ( $x_a < $x_b )
         {
-            my @s = add(add(@xy), @z);
+            if ($z[0] < $z[1] and $z[1] <= $K)
+            {
+                @s = add(add(@xy), @z);
+            }
+        }
+        else
+        {
+            if ($z[0] > $z[1] and $z[0] <= $K)
+            {
+                @s = add(add($x_b,$x_a,$y_b,$y_a), @z[1,0]);
+            }
+        }
+
+        if (@s)
+        {
             my $s_str = "$s[0]/$s[1]";
             if (!exists($found_s{$s_str}))
             {
