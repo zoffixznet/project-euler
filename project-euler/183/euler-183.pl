@@ -116,7 +116,7 @@ for my $N (5 .. $MAX)
 =cut
 
     my $logN = log($N);
-    my $k = max_by { $_ * ($logN - log($_)) } (1 .. $N);
+    my $k = max_by { $_ * ($logN - log($_)) } (1 .. ($N-1));
 
     # M($N) == ($N/$k) ** $k
     my $g = gcd($N, $k);
