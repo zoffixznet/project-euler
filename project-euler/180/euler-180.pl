@@ -3,8 +3,11 @@
 use strict;
 use warnings;
 
+use Carp;
 use integer;
 use bytes;
+
+use Math::BigInt try => 'GMP';
 
 use List::Util qw(sum);
 use List::MoreUtils qw();
@@ -35,7 +38,7 @@ foreach my $n (1 .. ($K*2))
 }
 
 my %found_s;
-my @total_sum = (0,1);
+my @total_sum = (Math::BigInt->new(0),Math::BigInt->new(1));
 
 sub gcd
 {
@@ -60,8 +63,7 @@ sub norm
 
     if ($bb < 0)
     {
-        $aa = -$aa;
-        $bb = -$bb;
+        Carp::confess ( "Foo $aa/$bb" );
     }
 
     my $g = gcd(abs($aa), abs($bb));
@@ -69,13 +71,23 @@ sub norm
     return ($aa / $g, $bb / $g);
 }
 
-sub add
+sub _add
 {
     my ($x_a, $x_b, $y_a, $y_b) = @_;
 
     return norm ($x_a*$y_b+$x_b*$y_a,$x_b*$y_b);
 }
 
+sub add
+{
+    my @r = _add(@_);
+
+    if ($r[0] < 0)
+    {
+        Carp::confess ( "glim $r[0]/$r[1]" );
+    }
+    return @r;
+}
 sub check
 {
     my $n = shift;
