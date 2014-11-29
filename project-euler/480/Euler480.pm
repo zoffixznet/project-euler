@@ -106,8 +106,9 @@ sub calc_P
         LETTERS:
         for my $prev_l (sort { $a cmp $b } keys(%new_weights))
         {
-            if ($prev_l eq $l)
+            if ($prev_l ge $l)
             {
+                $ret++;
                 last LETTERS;
             }
             my %n = %new_weights;
