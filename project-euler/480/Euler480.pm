@@ -26,23 +26,26 @@ foreach my $l (split//,$WORD)
 
 my @LETTERS = (map { [$_,$MAP{$_}] } sort keys %MAP);
 
-my @WEIGHTS_PROTO = (reverse sort { $a <=> $b } map { $_->[1] } @LETTERS);
-
-my @WEIGHTS;
-
+sub _weights_from_proto
 {
+    my $WEIGHTS_PROTO = shift;
+    my @WEIGHTS;
     my $start_idx = 0;
-    foreach my $i (1 .. $#WEIGHTS_PROTO)
+    foreach my $i (1 .. $#$WEIGHTS_PROTO)
     {
-        if ($WEIGHTS_PROTO[$i] != $WEIGHTS_PROTO[$start_idx])
+        if ($WEIGHTS_PROTO->[$i] != $WEIGHTS_PROTO->[$start_idx])
         {
-            push @WEIGHTS, [$WEIGHTS_PROTO[$start_idx], $i - $start_idx];
+            push @WEIGHTS, [$WEIGHTS_PROTO->[$start_idx], $i - $start_idx];
             $start_idx = $i;
         }
     }
-    push @WEIGHTS, [$WEIGHTS_PROTO[$start_idx], $#WEIGHTS_PROTO - $start_idx];
+    push @WEIGHTS, [$WEIGHTS_PROTO->[$start_idx], $#$WEIGHTS_PROTO - $start_idx];
+
+    return \@WEIGHTS;
 }
 
+my @WEIGHTS_PROTO = (reverse sort { $a <=> $b } map { $_->[1] } @LETTERS);
+my @WEIGHTS = @{_weights_from_proto(\@WEIGHTS_PROTO)};
 my @caches_by_len;
 
 sub calc_num_words_with_letters
@@ -85,8 +88,43 @@ sub calc_num_words_with_letters
     };
 }
 
-sub calc_W
+sub calc_P
 {
-    my ($i) = @_;
+    my ($w) = @_;
 
+    my $ret = 0;
+
+    my @letters = split//,$w;
+    my %new_weights = %MAP;
+    foreach my $l_idx (keys @letters)
+    {
+        my $l = $letters[$l_idx];
+        if ((--$new_weights{$l}) == 0)
+        {
+            delete($new_weights{$l});
+        }
+        LETTERS:
+        for my $prev_l (sort { $a cmp $b } keys(%new_weights))
+        {
+            if ($prev_l eq $l)
+            {
+                last LETTERS;
+            }
+            my %n = %new_weights;
+            if ((--$n{$prev_l}) == 0)
+            {
+                delete ($n{$prev_l});
+            }
+            $ret += calc_num_words_with_letters(
+                _weights_from_proto(
+                    [ reverse sort { $a <=> $b } values(%n) ],
+                ),
+                $MAX_LEN - $l_idx
+            );
+        }
+    }
+
+    return $ret;
 }
+
+1;
