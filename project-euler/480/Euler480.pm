@@ -167,7 +167,7 @@ sub calc_W_with_prefix
         $prev_letter = $new_letter;
     }
 
-    die "Could not find";
+    return calc_W_with_prefix($prefix.$prev_letter, $i);
 }
 
 sub calc_W
