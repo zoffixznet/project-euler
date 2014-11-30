@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 11;
+use Test::More tests => 12;
 
 use Test::Differences (qw( eq_or_diff ));
 
@@ -68,5 +68,10 @@ use Euler480;
         'Test "euleoywuttttsss"',
     );
 
+    # TEST
+    is (Euler480::calc_P('eulera'), '115246685191495244',
+        'Test "eulera"',
+    );
+    
 }
 
