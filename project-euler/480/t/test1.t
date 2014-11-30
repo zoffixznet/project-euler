@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 6;
+use Test::More tests => 7;
 
 use Euler480;
 
@@ -30,6 +30,11 @@ use Euler480;
     # TEST
     is (Euler480::calc_P('aaaaaacdeeeeeeh'), 17,
         'Test aaaaaacdeeeeeeh',
+    );
+
+    # TEST
+    is (Euler480::calc_P('aaaaaacdeeeeeey'), 28,
+        'Test aaaaaacdeeeeeey',
     );
 
     # TEST

@@ -99,10 +99,6 @@ sub calc_P
     foreach my $l_idx (keys @letters)
     {
         my $l = $letters[$l_idx];
-        if ((--$new_weights{$l}) == 0)
-        {
-            delete($new_weights{$l});
-        }
         LETTERS:
         for my $prev_l (sort { $a cmp $b } keys(%new_weights))
         {
@@ -122,6 +118,10 @@ sub calc_P
                 ),
                 $MAX_LEN - 1 - $l_idx
             );
+        }
+        if ((--$new_weights{$l}) == 0)
+        {
+            delete($new_weights{$l});
         }
     }
 
