@@ -120,7 +120,7 @@ sub calc_P
                 _weights_from_proto(
                     [ reverse sort { $a <=> $b } values(%n) ],
                 ),
-                $MAX_LEN - $l_idx
+                $MAX_LEN - 1 - $l_idx
             );
         }
     }
