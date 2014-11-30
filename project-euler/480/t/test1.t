@@ -3,11 +3,22 @@
 use strict;
 use warnings;
 
-use Test::More tests => 7;
+use Test::More tests => 10;
+
+use Test::Differences (qw( eq_or_diff ));
 
 use Euler480;
 
 {
+    # TEST
+    is_deeply(
+        Euler480::_weights_from_proto(
+            [ qw(5 5 1 1 1 1 1)],
+        ),
+        [[5,2],[1,5]],
+        "_weights_from_proto works fine",
+    );
+
     # TEST
     is (Euler480::calc_P('aaaaaacd'), 8, 
         'Test aaaaaacd');
@@ -35,6 +46,16 @@ use Euler480;
     # TEST
     is (Euler480::calc_P('aaaaaacdeeeeeey'), 28,
         'Test aaaaaacdeeeeeey',
+    );
+
+    # TEST
+    is (Euler480::calc_P('aaaaaacdeeeeef'), 29,
+        'Test aaaaaacdeeeeef',
+    );
+
+    # TEST
+    is (Euler480::calc_P('aaaaaacdeeeeefe'), 30,
+        'Test aaaaaacdeeeeefe',
     );
 
     # TEST

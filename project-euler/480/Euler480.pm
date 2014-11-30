@@ -39,7 +39,7 @@ sub _weights_from_proto
             $start_idx = $i;
         }
     }
-    push @WEIGHTS, [$WEIGHTS_PROTO->[$start_idx], $#$WEIGHTS_PROTO - $start_idx];
+    push @WEIGHTS, [$WEIGHTS_PROTO->[$start_idx], @$WEIGHTS_PROTO - $start_idx];
 
     return \@WEIGHTS;
 }
@@ -112,12 +112,14 @@ sub calc_P
             {
                 delete ($n{$prev_l});
             }
-            $ret += calc_num_words_with_letters(
+            my $delta = calc_num_words_with_letters(
                 _weights_from_proto(
                     [ reverse sort { $a <=> $b } values(%n) ],
                 ),
                 $MAX_LEN - 1 - $l_idx
             );
+            # print "l_idx=$l_idx ; delta=$delta ; prev_l=$prev_l\n";
+            $ret += $delta;
         }
         if ((--$new_weights{$l}) == 0)
         {
