@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 13;
+use Test::More tests => 14;
 
 use Test::Differences (qw( eq_or_diff ));
 
@@ -78,5 +78,9 @@ use Euler480;
         'Test "ywuuttttssssrrr"',
     );
     
+    # TEST
+    is (Euler480::calc_W('115246685191495243'), 'euler',
+        'Test calc_W - "euler"',
+    );
 }
 

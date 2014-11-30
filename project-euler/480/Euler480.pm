@@ -130,4 +130,51 @@ sub calc_P
     return $ret;
 }
 
+sub calc_W_with_prefix
+{
+    my ($prefix, $i) = @_;
+
+    my @letters = split//,$prefix;
+    my %new_weights = %MAP;
+
+    for my $l (@letters)
+    {
+        if ((--$new_weights{$l}) == 0)
+        {
+            delete($new_weights{$l});
+        }
+    }
+
+    my $prev_letter = '';
+
+    if (calc_P($prefix) == $i)
+    {
+        return $prefix;
+    }
+    for my $new_letter (sort { $a cmp $b } keys %new_weights)
+    {
+        my $got = calc_P($prefix.$new_letter);
+
+        if ($got == $i)
+        {
+            return $prefix.$new_letter;
+        }
+        elsif ($got > $i)
+        {
+            return calc_W_with_prefix($prefix.$prev_letter, $i);
+        }
+
+        $prev_letter = $new_letter;
+    }
+
+    die "Could not find";
+}
+
+sub calc_W
+{
+    my ($i) = @_;
+
+    return calc_W_with_prefix('', $i);
+}
+
 1;
