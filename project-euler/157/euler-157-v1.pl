@@ -19,18 +19,21 @@ for my $n (9)
     my $B = 1;
     while (1)
     {
-        A_LOOP:
-        for my $A (1 .. $B)
+        if ($B == 1 or (not (($B & 0b1) && ($B % 5))))
         {
-            my $num = ($A+$B)*$t_n;
-            my $denom = $A * $B;
-            if ($num % $denom == 0)
+            A_LOOP:
+            for my $A (1 .. $B)
             {
-                print "Found 1/$A+1/$B = " . ($num/$denom) . "/$t_n\n";
-            }
-            elsif (($denom << 1) > $num)
-            {
-                last A_LOOP;
+                my $num = ($A+$B)*$t_n;
+                my $denom = $A * $B;
+                if ($num % $denom == 0)
+                {
+                    print "Found 1/$A+1/$B = " . ($num/$denom) . "/$t_n\n";
+                }
+                elsif (($denom << 1) > $num)
+                {
+                    last A_LOOP;
+                }
             }
         }
     }
