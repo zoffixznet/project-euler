@@ -34,7 +34,7 @@ sub f_div
             {
                 return $d;
             }
-            push @$prev_place_products, $d;
+            push @$prev_place_products, [$d, ($prod/10)];
         }
     }
 
@@ -42,22 +42,30 @@ sub f_div
     {
         my $next_place_products = [];
 
+        my $d_tens = 0;
+        my $d_n = 0;
         for my $d (0 .. 9)
         {
-            for my $prev_factor (@$prev_place_products)
+            for my $p (@$prev_place_products)
             {
-                my $factor = $d * $tens + $prev_factor;
-                my $prod = $factor * $n;
+                my ($prev_factor, $mod) = @$p;
+                my $prod = $d_n + $mod;
 
-                if ((($prod / $tens) % 10) <= 2)
+                if (($prod % 10) <= 2)
                 {
+                    my $factor = $d_tens + $prev_factor;
                     if ($prod !~ /[^012]/)
                     {
                         return $factor;
                     }
-                    push @$next_place_products, $factor;
+                    push @$next_place_products, [$factor, $prod/10];
                 }
             }
+        }
+        continue
+        {
+            $d_tens += $tens;
+            $d_n += $n;
         }
         $prev_place_products = $next_place_products;
     }
@@ -74,3 +82,5 @@ sub f_complete
 
     return f_div($n) * $n;
 }
+
+1;
