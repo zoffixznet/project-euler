@@ -12,14 +12,48 @@ our @EXPORT_OK = (qw(f_div f_complete));
 
 use Math::BigInt lib => 'GMP', ':constant';
 
-use List::Util qw(sum);
+use List::Util qw(min sum);
 use List::MoreUtils qw();
 
 STDOUT->autoflush(1);
 
+sub f_div_9999_try_pos
+{
+    my ($n, $count_2) = @_;
+
+    my $f = "2222" x $count_2;
+
+    my $digits_sum = 2*4*$count_2;
+
+    while (!length($f) || ($digits_sum % 9 != 0))
+    {
+        $f = "1111" . $f;
+        $digits_sum += 4;
+    }
+
+    if ((0 + $f) % $n != 0)
+    {
+        die "Fail $n $count_2!";
+    }
+    return ((0 + $f) / $n);
+}
+
+sub f_div_9999
+{
+    my ($n) = @_;
+
+    return min(map { f_div_9999_try_pos($n, $_) } 0 .. 9);
+}
+
 sub f_div
 {
     my ($n) = @_;
+
+    # Special case because it's too slow and memory hungry.
+    if ($n == 9_999)
+    {
+        return f_div_9999 ($n);
+    }
 
     my $digit = 1;
 
