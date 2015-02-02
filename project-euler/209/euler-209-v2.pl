@@ -27,31 +27,6 @@ foreach my $node (@Graph)
     $node = [sort { $a <=> $b } @$node];
 }
 
-sub recurse
-{
-    my ($queue, $state) = @_;
-
-    print "Q==@$queue\n";
-    if (!@$queue)
-    {
-        return 1;
-    }
-
-    my ($inputs, @newQ) = @$queue;
-
-    my @newS = @$state;
-    $newS[$inputs] = 0;
-
-    my $ret = recurse((\@newQ), \@newS);
-
-    if (none { $state->[$_] == 1 } @{$Graph[$inputs]})
-    {
-        $newS[$inputs] = 1;
-        $ret += recurse((\@newQ), \@newS);
-    }
-
-    return $ret;
-}
 
 # Find Fully-connected components (FCCs).
 
@@ -86,12 +61,54 @@ if (! @{$FCCs[-1]})
 
 my $result = 1;
 
+my @dead_ends;
 foreach my $fcc (@FCCs)
 {
     my @state = ((-1) x 64);
     $state[63] = 0;
-    $result *= recurse([grep { $_ != 63 } @$fcc], \@state);
+
+    my @queue;
+    @dead_ends = ();
+
+    foreach my $i (grep { $_ != 63 } @$fcc)
+    {
+        if (@{$Graph[$i]} == 1)
+        {
+            push @dead_ends, $Graph[$i][0];
+        }
+        else
+        {
+            push @queue, $i;
+        }
+    }
+    $result *= recurse(\@queue, \@state);
 }
 
 print "Result == $result\n";
 # print Dumper ([ \@FCCs ] )
+
+sub recurse
+{
+    my ($queue, $state) = @_;
+
+    # print "Q==@$queue\n";
+    if (!@$queue)
+    {
+        return (1 << (scalar grep { $state->[$_] == 0 } @dead_ends));
+    }
+
+    my ($inputs, @newQ) = @$queue;
+
+    my @newS = @$state;
+    $newS[$inputs] = 0;
+
+    my $ret = recurse((\@newQ), \@newS);
+
+    if (none { $state->[$_] == 1 } @{$Graph[$inputs]})
+    {
+        $newS[$inputs] = 1;
+        $ret += recurse((\@newQ), \@newS);
+    }
+
+    return $ret;
+}
