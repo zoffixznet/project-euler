@@ -15,6 +15,7 @@ my $sum = 0;
 
 sub divisors
 {
+    my $lim = shift;
     if (!@_)
     {
         return [1];
@@ -22,17 +23,18 @@ sub divisors
     my ($this, @rest) = @_;
 
     my ($b, $e) = @$this;
-    my $d_rest = divisors(@rest);
+    my $d_rest = divisors($lim, @rest);
 
     my @ret;
+    EXP_LOOP:
     for my $i (0 .. $e)
     {
         push @ret, @$d_rest;
 
-        for my $d (@$d_rest)
+        if (! @{$d_rest = [grep { $_ < $lim } map { $_ * $b } @$d_rest]})
         {
-            $d *= $b;
-        };
+            last EXP_LOOP;
+        }
     }
     return \@ret;
 }
@@ -49,18 +51,16 @@ for my $d (2 .. 1e6)
     {
         $factors{$f} += 3;
     }
-    my @divisors = sort {$a <=> $b } @{divisors(
-        map {[$_, $factors{$_}]} keys(%factors)
-    )};
-
-    R:
-    foreach my $r (@divisors)
-    {
-        if ($r >= $d)
-        {
-            last R;
+    
+    foreach my $r
+    (
+        @{divisors(
+                $d,
+                map {[$_, $factors{$_}]} keys(%factors)
+            )
         }
-
+    )
+    {
         my $n = $r + $d3 / $r;
 
         if ($n < 1e12)
