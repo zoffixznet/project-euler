@@ -17,7 +17,7 @@ my %squares = (map { _ * _ => undef() } 1 .. 999_999);
 int d;
 LL d3;
 
-void divisors(LL r, std::map<int,int> & factors, const std::map<int,int>::iterator & this_)
+void divisors(LL r, std::map<int,int> & factors, const std::map<int,int>::iterator this_)
 {
     if (this_ == factors.end())
     {
