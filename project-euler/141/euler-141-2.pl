@@ -3,15 +3,12 @@
 use strict;
 use warnings;
 
-# use Math::BigInt lib => 'GMP', ':constant';
-
-use List::Util qw(sum);
-use List::MoreUtils qw(any);
+use Math::BigInt lib => 'GMP';
 
 STDOUT->autoflush(1);
 
-my %found;
-my $sum = 0;
+my %squares = (map { $_ * $_ => undef() } 1 .. 999_999);
+# my $sum = 0;
 
 sub divisors
 {
@@ -45,6 +42,7 @@ for my $d (2 .. 1e6)
     {
         print "D=$d\n";
     }
+    # my $d3 = Math::BigInt->new($d) * $d * $d;
     my $d3 = $d * $d * $d;
     my %factors;
     for my $f (split/\s+/, `factor "$d"` =~ s/\A[^:]+:\s*//r)
@@ -61,22 +59,21 @@ for my $d (2 .. 1e6)
         }
     )
     {
-        my $n = $r + $d3 / $r;
+        my $n = (($r + $d3 / $r).'');
 
-        if ($n < 1e12)
+        if (exists($squares{$n}))
         {
-            my $sq = int(sqrt($n));
-
-            if (any { $_ * $_ == $n } ($sq-1 .. $sq+1))
+            if ($n % $d == $r)
             {
-                if (!exists($found{$n}))
+                my @i = sort {$a <=> $b} (int($n/$d),$d,$r);
+                if (Math::BigInt->new($i[1]) * Math::BigInt->new($i[1])
+                    == Math::BigInt->new($i[0]) * Math::BigInt->new($i[2])
+                )
                 {
-                    $found{$n} = 1;
-                    $sum += $n;
-                    print "Found for d=$d n=$n sum = $sum\n";
+                    print "Found for d=$d r=$r q=@{[int($n/$d)]} n=$n\n";
                 }
             }
         }
     }
 }
-print "sum = $sum\n";
+# print "sum = $sum\n";
