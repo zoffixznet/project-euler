@@ -14,11 +14,15 @@ for my $n_root (1 .. (1_000_000 - 1))
 {
     my $n = ($n_root * $n_root);
 
+=begin removed
     # TODO : Remove later.
     if ($n >= 100_000)
     {
         last N;
     }
+=end removed
+
+=cut
 
     R:
     for my $r (1 .. $n)
@@ -42,12 +46,13 @@ for my $n_root (1 .. (1_000_000 - 1))
                 if ($seq[1] *$seq[1] == $seq[0]*$seq[2])
                 {
                     $sum += $n;
-                    print "Intermediate sum[n=$n] = $sum\n";
+                    print "Found Intermediate sum[n=$n] = $sum\n";
                     last R;
                 }
             }
         }
     }
+    print "Intermediate sum[n_root=$n_root] = $sum\n";
 }
 
 print "Final sum = $sum\n";
