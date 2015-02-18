@@ -1,0 +1,15 @@
+d > r (since r is the remainder) so the only possible orders are:
+
+1. d > r > q
+
+2. q > d > r
+
+3. d > q > r
+
+Case 1:
+
+d = ar = (a^2)q ==>
+    n = a^2q*q+aq = qa[1+qa] = r(1+r)
+    = r^2 + r != perfect square.
+
+Case 2:
