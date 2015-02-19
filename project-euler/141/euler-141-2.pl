@@ -12,10 +12,11 @@ my %squares = (map { $_ * $_ => undef() } 1 .. 999_999);
 
 my $d;
 my $d3;
+my $factors;
 
 sub divisors
 {
-    my ($r, $factors, $this_) = @_;
+    my ($r, $this_) = @_;
     if ($this_ == @$factors)
     {
         my $n = ($r + $d3 / $r);
@@ -46,7 +47,7 @@ sub divisors
             {
                 last I;
             }
-            divisors($r, $factors, $rest);
+            divisors($r, $rest);
             $r *= $b;
         }
     }
@@ -63,14 +64,16 @@ for my $i (2 .. 999_999)
     }
     # my $d3 = Math::BigInt->new($d) * $d * $d;
     $d3 = $d * $d * $d;
-    my %factors;
+    my %f;
     my @x = split/\s+/,<$fh>;
     pop(@x);
-    for my $f (@x)
+    foreach my $f (@x)
     {
-        $factors{$f} += 3;
+        $f{$f} += 3;
     }
-    divisors(1, [map { [$_,$factors{$_}]} keys(%factors)], 0);
+
+    $factors = [map { [$_,$f{$_}]} keys(%f)];
+    divisors(1, 0);
 }
 
 close($fh);
