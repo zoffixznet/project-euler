@@ -16,10 +16,11 @@ my %squares = (map { _ * _ => undef() } 1 .. 999_999);
 
 int d;
 LL d3;
+std::map<int,int> * factors;
 
-void divisors(LL r, std::map<int,int> & factors, const std::map<int,int>::iterator this_)
+void divisors(LL r, const std::map<int,int>::iterator this_)
 {
-    if (this_ == factors.end())
+    if (this_ == factors->end())
     {
         /* Handle the stuff. */
         LL n = (r + d3 / r);
@@ -54,7 +55,7 @@ void divisors(LL r, std::map<int,int> & factors, const std::map<int,int>::iterat
             {
                 break;
             }
-            divisors(r, factors, rest);
+            divisors(r, rest);
             r *= b;
         }
     }
@@ -77,7 +78,7 @@ int main()
         }
         d3 = ((LL)d) * d * d;
 
-        std::map<int,int> factors;
+        std::map<int,int> physical_factors;
         int factor;
         while (fscanf(f, "%d", &factor) == 1)
         {
@@ -85,10 +86,11 @@ int main()
             {
                 break;
             }
-            factors[factor] += 3;
+            physical_factors[factor] += 3;
         }
 
-        divisors(1, factors, factors.begin());
+        factors = &physical_factors;
+        divisors(1, physical_factors.begin());
     }
     fclose (f);
 
