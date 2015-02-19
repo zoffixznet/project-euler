@@ -10,56 +10,15 @@ STDOUT->autoflush(1);
 my %squares = (map { $_ * $_ => undef() } 1 .. 999_999);
 # my $sum = 0;
 
+my $d;
+my $d3;
+
 sub divisors
 {
-    my $lim = shift;
-    if (!@_)
+    my ($r, $factors, $this_) = @_;
+    if ($this_ == @$factors)
     {
-        return [1];
-    }
-    my ($this, @rest) = @_;
-
-    my ($b, $e) = @$this;
-    my $d_rest = divisors($lim, @rest);
-
-    my @ret;
-    EXP_LOOP:
-    for my $i (0 .. $e)
-    {
-        push @ret, @$d_rest;
-
-        if (! @{$d_rest = [grep { $_ < $lim } map { $_ * $b } @$d_rest]})
-        {
-            last EXP_LOOP;
-        }
-    }
-    return \@ret;
-}
-
-for my $d (2 .. 1e6)
-{
-    if ($d % 1_000 == 0)
-    {
-        print "D=$d\n";
-    }
-    # my $d3 = Math::BigInt->new($d) * $d * $d;
-    my $d3 = $d * $d * $d;
-    my %factors;
-    for my $f (split/\s+/, `factor "$d"` =~ s/\A[^:]+:\s*//r)
-    {
-        $factors{$f} += 3;
-    }
-    
-    foreach my $r
-    (
-        @{divisors(
-                $d,
-                map {[$_, $factors{$_}]} keys(%factors)
-            )
-        }
-    )
-    {
-        my $n = (($r + $d3 / $r).'');
+        my $n = ($r + $d3 / $r);
 
         if (exists($squares{$n}))
         {
@@ -75,5 +34,44 @@ for my $d (2 .. 1e6)
             }
         }
     }
+    else
+    {
+        my ($b, $e) = @{ $factors->[$this_] };
+        my $rest = $this_ + 1;
+
+        I:
+        for my $i (0 .. $e)
+        {
+            if ($r >= $d)
+            {
+                last I;
+            }
+            divisors($r, $factors, $rest);
+            $r *= $b;
+        }
+    }
+    return;
 }
+
+open my $fh, '<', 'factors.txt';
+for my $i (2 .. 999_999)
+{
+    $d = $i;
+    if ($d % 1_000 == 0)
+    {
+        print "D=$d\n";
+    }
+    # my $d3 = Math::BigInt->new($d) * $d * $d;
+    $d3 = $d * $d * $d;
+    my %factors;
+    my @x = split/\s+/,<$fh>;
+    pop(@x);
+    for my $f (@x)
+    {
+        $factors{$f} += 3;
+    }
+    divisors(1, [map { [$_,$factors{$_}]} keys(%factors)], 0);
+}
+
+close($fh);
 # print "sum = $sum\n";
