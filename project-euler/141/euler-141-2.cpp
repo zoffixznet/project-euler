@@ -16,11 +16,12 @@ my %squares = (map { _ * _ => undef() } 1 .. 999_999);
 
 int d;
 LL d3;
-std::map<int,int> * factors;
+// std::map<int,int> * factors;
+std::map<int,int>::iterator factors_end;
 
 void divisors(LL r, const std::map<int,int>::iterator this_)
 {
-    if (this_ == factors->end())
+    if (this_ == factors_end)
     {
         /* Handle the stuff. */
         LL n = (r + d3 / r);
@@ -89,7 +90,7 @@ int main()
             physical_factors[factor] += 3;
         }
 
-        factors = &physical_factors;
+        factors_end = physical_factors.end();
         divisors(1, physical_factors.begin());
     }
     fclose (f);
