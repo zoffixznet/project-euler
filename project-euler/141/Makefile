@@ -11,3 +11,6 @@ all: 141.exe 141-2.exe 141-2-debug.exe factors.txt
 
 factors.txt:
 	seq 2 999999 | xargs factor | perl -lpe 's/^[^:]+:\s*//; s/\s*\z/ -1/;' > $@
+
+clean:
+	rm -f factors.txt 141.exe 141-2-debug.exe 141-2.exe
