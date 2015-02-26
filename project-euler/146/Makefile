@@ -1,4 +1,4 @@
-all: db.txt primes-c.txt 146-v1.exe 146-v1-debug.exe 146-v2.exe
+all: db.txt db-c.txt primes-c.txt 146-v1.exe 146-v1-debug.exe 146-v2.exe
 
 db.txt: euler-146-analysis-1.pl
 	perl $< | tee $@
@@ -14,3 +14,6 @@ db.txt: euler-146-analysis-1.pl
 
 primes-c.txt:
 	primes 2 151000000 > $@
+
+db-c.txt: db.txt
+	cat $< | tail -1 | perl -lpe 's/\A.*?\[//;s/\]\s*\z//;s/\s+/\n/g' > $@
