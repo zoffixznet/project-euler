@@ -52,7 +52,7 @@ my @y_off = (1,3,7,9,13,27);
 my @n_off = (grep { my $n = $_; ($n % 2 == 1) && (none { $_ == $n } @y_off) } 1 .. 27);
 
 my $sum = 0;
-my $LIMIT = 1_000_000;
+my $LIMIT = 150_000_000;
 my $offset = 0;
 
 MAIN:
