@@ -1,0 +1,26 @@
+Based on the law of sines:
+
+a / sin[A] = b / sin[B] = c / sin[C]
+
+Based on the law of cosines:
+
+c^2 = a^2 + b^2 - 2*a*b*cos[C] ⇒ cos[C] = (a^2+b^2-c^2)/(2*a*b)
+                                 cos[A] = (c^2+b^2-a^2)/(2*c*b)
+                                 cos[B] = (a^2+c^2-b^2)/(2*a*c)
+
+Based on the law of cosines
+
+AN = p+q+r = sqrt { c^2 + a^2 - 2*a*c*cos[B+60°] } =
+    sqrt { c^2 + a^2 - 2*a*c*[cosBcos60°-sinBsin60°] } =
+    sqrt { c^2 + a^2 - 2*a*c*[(a^2+c^2-b^2)/(2*a*c)*1/2 -
+        sqrt[1-[(a^2+c^2-b^2)/(2*a*c)]^2]*sqrt[3]/2] } =
+    sqrt { c^2 + a^2 - [a^2+c^2-b^2]/2 -
+        sqrt[3] / 2* sqrt[4a^2c^2-(a^2+c^2-b^2)^2] } =
+    sqrt { (c^2 + a^2 + b^2)/2 - sqrt[3] / 2 *
+        sqrt[4a^2c^2-[a^4+a^2c^2-a^2b^2+a^2c^2+c^4-c^2b^2-a^2b^2-b^2c^3+b^4]] }
+        =
+    sqrt { (c^2 + a^2 + b^2)/2 - sqrt[3] / 2 *
+        sqrt[4a^2c^2-[a^4+a^2c^2-a^2b^2+a^2c^2+c^4-c^2b^2-a^2b^2-b^2c^3+b^4]] }
+        =
+    sqrt { (c^2 + a^2 + b^2)/2 - sqrt[3] / 2 *
+        sqrt[2a^2b^2+2a^2c^2+2b^2c^2-a^4-b^4-c^4] }
