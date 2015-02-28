@@ -23,4 +23,6 @@ AN = p+q+r = sqrt { c^2 + a^2 - 2*a*c*cos[B+60°] } =
         sqrt[4a^2c^2-[a^4+a^2c^2-a^2b^2+a^2c^2+c^4-c^2b^2-a^2b^2-b^2c^3+b^4]] }
         =
     sqrt { (c^2 + a^2 + b^2)/2 - sqrt[3] / 2 *
-        sqrt[2a^2b^2+2a^2c^2+2b^2c^2-a^4-b^4-c^4] }
+        sqrt[2a^2b^2+2a^2c^2+2b^2c^2-a^4-b^4-c^4] } =
+
+    sqrt { [(c^2 + a^2 + b^2) - sqrt[3 * [2a^2b^2+2a^2c^2+2b^2c^2-a^4-b^4-c^4]]]/2 }
