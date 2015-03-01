@@ -26,3 +26,13 @@ AN = p+q+r = sqrt { c^2 + a^2 - 2*a*c*cos[B+60°] } =
         sqrt[2a^2b^2+2a^2c^2+2b^2c^2-a^4-b^4-c^4] } =
 
     sqrt { [(c^2 + a^2 + b^2) - sqrt[3 * [2a^2b^2+2a^2c^2+2b^2c^2-a^4-b^4-c^4]]]/2 }
+
+sin[deg_TAB]/a = sin[B+60°]/(p+q+r) ⇒
+    sin[deg_TAB] = a/(p+q+r)*sin[B+60°] = a/(p+q+r)*[sinB/2+sqrt[3]/2*cosB]
+    sin[deg_TBA] = b/(p+q+r)*[sinA/2+sqrt[3]/2*cosA]
+    sin[deg_TBC] = b/(p+q+r)*[sinC/2+sqrt[3]/2*cosC]
+    sin[deg_TCB] = c/(p+q+r)*[sinB/2+sqrt[3]/2*cosB]
+    sin[deg_TAC] = a/(p+q+r)*[sinC/2+sqrt[3]/2*cosC]
+    sin[deg_TCA] = c/(p+q+r)*[sinA/2+sqrt[3]/2*cosA]
+
+
