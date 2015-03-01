@@ -1,5 +1,5 @@
 There are [Shlomi Fish](http://www.shlomifish.org)’s solutions to
-the [Project Euler](https://projecteuler.net/) which are a set of
+the [Project Euler’s](https://projecteuler.net/) problems which are a set of
 mathematical problems that may be solved by writing computer programs.
 
 The licences of the contents of this repository varies, but most of the
