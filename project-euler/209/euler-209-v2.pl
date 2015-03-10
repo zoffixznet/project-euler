@@ -101,21 +101,29 @@ sub recurse
 
     if ($d == @queue)
     {
+        # print "Foo\n";
         return (1 << (scalar grep { vec($s,$_,2) == 0 } @dead_ends));
     }
 
     my $inputs = $queue[$d];
     my $new_d = $d+1;
 
+    if (vec($s,$inputs,2) == 0)
+    {
+        return recurse($new_d, $s);
+    }
+
     vec($s, $inputs, 2) = 0;
 
     my $ret = recurse($new_d, $s);
 
-    if (none { vec($s, $_, 2) == 1 } @{$Graph[$inputs]})
+    vec($s, $inputs, 2) = 1;
+
+    for my $l (@{ $Graph[$inputs] })
     {
-        vec($s, $inputs, 2) = 1;
-        $ret += recurse($new_d, $s);
+        vec($s, $l, 2) = 0;
     }
+    $ret += recurse($new_d, $s);
 
     return $ret;
 }
