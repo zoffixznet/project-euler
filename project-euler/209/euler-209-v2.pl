@@ -17,7 +17,7 @@ my @Graph;
 foreach my $inputs (0 .. (2**6-1))
 {
     my ($aa, $bb, $cc, $dd, $ee, $ff) = split//, sprintf"%06b", $inputs;
-    my $new = eval ("0b$bb$cc$dd$ee$ff" . (($aa ^ ($bb & $cc)) ? '1' : '0'));
+    my $new = eval ("0b$bb$cc$dd$ee$ff" . (($aa xor ($bb && $cc)) ? '1' : '0'));
     push @{$Graph[$inputs]}, $new;
     push @{$Graph[$new]}, $inputs;
 }
@@ -69,14 +69,14 @@ for my $i (0 .. 64-1)
 {
     vec($initial_state,$i,2) = 3;
 }
-vec($initial_state, 63, 2) = 0;
+vec($initial_state, 0, 2) = 0;
 
 foreach my $fcc (@FCCs)
 {
     @queue = ();
     @dead_ends = ();
 
-    foreach my $i (grep { $_ != 63 } @$fcc)
+    foreach my $i (grep { $_ != 0 } @$fcc)
     {
         if (@{$Graph[$i]} == 1)
         {
