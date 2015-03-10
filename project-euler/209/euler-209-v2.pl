@@ -63,11 +63,16 @@ my $result = 1;
 
 my @dead_ends;
 my @queue;
+
+my $initial_state = '';
+for my $i (0 .. 64-1)
+{
+    vec($initial_state,$i,2) = 3;
+}
+vec($initial_state, 63, 2) = 0;
+
 foreach my $fcc (@FCCs)
 {
-    my @state = ((-1) x 64);
-    $state[63] = 0;
-
     @queue = ();
     @dead_ends = ();
 
@@ -82,7 +87,7 @@ foreach my $fcc (@FCCs)
             push @queue, $i;
         }
     }
-    $result *= recurse(0, \@state);
+    $result *= recurse(0, $initial_state);
 }
 
 print "Result == $result\n";
@@ -91,25 +96,25 @@ print "Result == $result\n";
 sub recurse
 {
     # $d is depth.
-    my ($d, $state) = @_;
+    # $s is state.
+    my ($d, $s) = @_;
 
     if ($d == @queue)
     {
-        return (1 << (scalar grep { $state->[$_] == 0 } @dead_ends));
+        return (1 << (scalar grep { vec($s,$_,2) == 0 } @dead_ends));
     }
 
     my $inputs = $queue[$d];
     my $new_d = $d+1;
 
-    my @newS = @$state;
-    $newS[$inputs] = 0;
+    vec($s, $inputs, 2) = 0;
 
-    my $ret = recurse($new_d, \@newS);
+    my $ret = recurse($new_d, $s);
 
-    if (none { $state->[$_] == 1 } @{$Graph[$inputs]})
+    if (none { vec($s, $_, 2) == 1 } @{$Graph[$inputs]})
     {
-        $newS[$inputs] = 1;
-        $ret += recurse($new_d, \@newS);
+        vec($s, $inputs, 2) = 1;
+        $ret += recurse($new_d, $s);
     }
 
     return $ret;
