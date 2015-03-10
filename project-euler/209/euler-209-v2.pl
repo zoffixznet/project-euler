@@ -62,12 +62,13 @@ if (! @{$FCCs[-1]})
 my $result = 1;
 
 my @dead_ends;
+my @queue;
 foreach my $fcc (@FCCs)
 {
     my @state = ((-1) x 64);
     $state[63] = 0;
 
-    my @queue;
+    @queue = ();
     @dead_ends = ();
 
     foreach my $i (grep { $_ != 63 } @$fcc)
@@ -81,7 +82,7 @@ foreach my $fcc (@FCCs)
             push @queue, $i;
         }
     }
-    $result *= recurse(\@queue, \@state);
+    $result *= recurse(0, \@state);
 }
 
 print "Result == $result\n";
@@ -89,25 +90,26 @@ print "Result == $result\n";
 
 sub recurse
 {
-    my ($queue, $state) = @_;
+    # $d is depth.
+    my ($d, $state) = @_;
 
-    # print "Q==@$queue\n";
-    if (!@$queue)
+    if ($d == @queue)
     {
         return (1 << (scalar grep { $state->[$_] == 0 } @dead_ends));
     }
 
-    my ($inputs, @newQ) = @$queue;
+    my $inputs = $queue[$d];
+    my $new_d = $d+1;
 
     my @newS = @$state;
     $newS[$inputs] = 0;
 
-    my $ret = recurse((\@newQ), \@newS);
+    my $ret = recurse($new_d, \@newS);
 
     if (none { $state->[$_] == 1 } @{$Graph[$inputs]})
     {
         $newS[$inputs] = 1;
-        $ret += recurse((\@newQ), \@newS);
+        $ret += recurse($new_d, \@newS);
     }
 
     return $ret;
