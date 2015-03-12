@@ -35,7 +35,7 @@ has '_prev' => (is => 'ro', lazy => 1, default => sub {
     }
 );
 
-has 'buf' => (is => 'rw', default => sub { return (\""); },);
+has 'buf' => (is => 'rw', default => sub { my $buf = ''; return (\$buf); },);
 
 sub mark_primes
 {
@@ -44,7 +44,7 @@ sub mark_primes
     my $top = $self->_next->_next->end;
     my $top_prime = int(sqrt($top));
 
-    my @rows = ($self->_prev->_prev, $self->_prev, $self, $self->_next, $self->_nex->_next);
+    my @rows = ($self->_prev->_prev, $self->_prev, $self, $self->_next, $self->_next->_next);
 
     open my $primes_fh, "primes 2 '$top_prime'|";
     while (my $p = <$primes_fh>)
@@ -74,9 +74,17 @@ sub mark_primes
     return;
 }
 
+# Requires mark_primes to be called first.
+sub is_prime
+{
+    my ($self, $col) = @_;
+
+    return (vec(${$self->buf}, $col, 1) == 0);
+}
+
 package main;
 
-use Test::More tests => 8;
+use Test::More tests => 11;
 
 # TEST
 is (Row->new({idx => 1})->start(), 1, "Row[1].start");
@@ -101,3 +109,17 @@ is (Row->new({idx => 3})->end(), 6, "Row[3].end");
 
 # TEST
 is (Row->new({idx => 4})->end(), 10, "Row[4].end");
+
+{
+    my $row = Row->new({idx => 4});
+
+    $row->mark_primes;
+    # TEST
+    ok (scalar( $row->is_prime(0) ), "Row[4].is_prime(0)");
+
+    # TEST
+    ok (scalar( ! $row->is_prime(1) ), "! Row[4].is_prime(1)");
+
+    # TEST
+    ok (scalar( ! $row->is_prime(2) ), "! Row[4].is_prime(2)");
+}
