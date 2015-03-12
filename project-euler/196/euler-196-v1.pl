@@ -84,7 +84,7 @@ sub is_prime
 
 package main;
 
-use Test::More tests => 11;
+use Test::More tests => 14;
 
 # TEST
 is (Row->new({idx => 1})->start(), 1, "Row[1].start");
@@ -122,4 +122,18 @@ is (Row->new({idx => 4})->end(), 10, "Row[4].end");
 
     # TEST
     ok (scalar( ! $row->is_prime(2) ), "! Row[4].is_prime(2)");
+}
+
+{
+    my $row = Row->new({idx => 8});
+
+    $row->mark_primes;
+    # TEST
+    ok (scalar( $row->is_prime(0) ), "Row[8].is_prime(0)");
+
+    # TEST
+    ok (scalar( ! $row->is_prime(1) ), "! Row[8].is_prime(1)");
+
+    # TEST
+    ok (scalar( $row->is_prime(2) ), "Row[8].is_prime(2)");
 }
