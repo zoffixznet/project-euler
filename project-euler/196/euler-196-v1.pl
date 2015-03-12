@@ -2,6 +2,7 @@
 
 use strict;
 use warnings;
+use autodie;
 
 package Row;
 
@@ -21,6 +22,57 @@ has 'end' => (isa => 'Int', is => 'ro', lazy => 1, default => sub {
         return $self->start + $self->idx - 1;
     }
 );
+
+has '_next' => (is => 'ro', lazy => 1, default => sub {
+        my $self = shift;
+        return Row->new({idx => ($self->idx+1)});
+    }
+);
+
+has '_prev' => (is => 'ro', lazy => 1, default => sub {
+        my $self = shift;
+        return Row->new({idx => ($self->idx-1)});
+    }
+);
+
+has 'buf' => (is => 'rw', default => sub { return (\""); },);
+
+sub mark_primes
+{
+    my ($self) = @_;
+
+    my $top = $self->_next->_next->end;
+    my $top_prime = int(sqrt($top));
+
+    my @rows = ($self->_prev->_prev, $self->_prev, $self, $self->_next, $self->_nex->_next);
+
+    open my $primes_fh, "primes 2 '$top_prime'|";
+    while (my $p = <$primes_fh>)
+    {
+        chomp($p);
+        my $i = $rows[0]->start;
+        my $m = $i % $p;
+        if ($m != 0)
+        {
+            $i += $p-$m;
+        }
+
+        foreach my $row (@rows)
+        {
+            my $s = $row->start;
+            my $e = $row->end;
+            my $buf = $row->buf;
+
+            for(; $i<=$e ; $i += $p)
+            {
+                vec ($$buf, $i-$s, 1) = 1;
+            }
+        }
+    }
+    close($primes_fh);
+
+    return;
+}
 
 package main;
 
