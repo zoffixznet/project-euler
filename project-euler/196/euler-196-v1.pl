@@ -148,7 +148,7 @@ sub calc_S
 
 package main;
 
-use Test::More tests => 17;
+use Test::More tests => 18;
 
 # TEST
 is (Row->new({idx => 1})->start(), 1, "Row[1].start");
@@ -227,4 +227,13 @@ is (Row->new({idx => 4})->end(), 10, "Row[4].end");
 
     # TEST
     is ($row->calc_S(), 37, "Row[9].S()");
+}
+
+{
+    my $row = Row->new({idx => 10_000});
+
+    $row->mark_primes;
+
+    # TEST
+    is ($row->calc_S(), 950007619, "Row[10,000].S()");
 }
