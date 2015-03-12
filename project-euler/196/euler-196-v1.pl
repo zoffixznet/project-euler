@@ -37,6 +37,10 @@ has '_prev' => (is => 'ro', lazy => 1, default => sub {
 
 has 'buf' => (is => 'rw', default => sub { my $buf = ''; return (\$buf); },);
 
+has '_found' => (is => 'ro', default => sub { return +{}; });
+
+has '_here' => (is => 'rw', isa => 'Bool', default => 0,);
+
 sub mark_primes
 {
     my ($self) = @_;
@@ -82,9 +86,66 @@ sub is_prime
     return (vec(${$self->buf}, $col, 1) == 0);
 }
 
+sub calc_S
+{
+    my ($self) = @_;
+
+    $self->_here(1);
+
+    my @rows = ($self->_prev->_prev, $self->_prev, $self, $self->_next, $self->_next->_next);
+
+    for my $row_idx (1 .. 3)
+    {
+        my $row = $rows[$row_idx];
+        for my $col (0 .. $row->idx - 1)
+        {
+            my @to_check =
+            (grep
+                {
+                    my ($y, $x) = @$_;
+                    $x >= 0 and $x < $y->idx
+                }
+                map
+                {
+                    my $y = $_;
+                    map { [$y, $col+$_] } ((-1) .. 1)
+                }
+                @rows[($row_idx-1) .. ($row_idx+1)]
+            );
+
+            my @primes = (grep { $_->[0]->is_prime($_->[1]) } @to_check);
+
+            if (@primes >= 3)
+            {
+                for my $p (@primes)
+                {
+                    my ($y, $x) = @$p;
+
+                    if ($y->_here)
+                    {
+                        $y->_found->{$x} = 1;
+                    }
+                }
+            }
+        }
+    }
+
+    # Just for safety.
+    $self->_here(0);
+
+    my $ret_S = 0;
+    my $s = $self->start;
+    for my $col (keys ( %{ $self->_found } ))
+    {
+        $ret_S += $s + $col;
+    }
+
+    return $ret_S;
+}
+
 package main;
 
-use Test::More tests => 14;
+use Test::More tests => 15;
 
 # TEST
 is (Row->new({idx => 1})->start(), 1, "Row[1].start");
@@ -137,3 +198,13 @@ is (Row->new({idx => 4})->end(), 10, "Row[4].end");
     # TEST
     ok (scalar( $row->is_prime(2) ), "Row[8].is_prime(2)");
 }
+
+{
+    my $row = Row->new({idx => 3});
+
+    $row->mark_primes;
+
+    # TEST
+    is ($row->calc_S(), 5, "Row[3].S()");
+}
+
