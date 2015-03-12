@@ -99,31 +99,34 @@ sub calc_S
         my $row = $rows[$row_idx];
         for my $col (0 .. $row->idx - 1)
         {
-            my @to_check =
-            (grep
-                {
-                    my ($y, $x) = @$_;
-                    $x >= 0 and $x < $y->idx
-                }
-                map
-                {
-                    my $y = $_;
-                    map { [$y, $col+$_] } ((-1) .. 1)
-                }
-                @rows[($row_idx-1) .. ($row_idx+1)]
-            );
-
-            my @primes = (grep { $_->[0]->is_prime($_->[1]) } @to_check);
-
-            if (@primes >= 3)
+            if ($row->is_prime($col))
             {
-                for my $p (@primes)
-                {
-                    my ($y, $x) = @$p;
-
-                    if ($y->_here)
+                my @to_check =
+                (grep
                     {
-                        $y->_found->{$x} = 1;
+                        my ($y, $x) = @$_;
+                        $x >= 0 and $x < $y->idx
+                    }
+                    map
+                    {
+                        my $y = $_;
+                        map { [$y, $col+$_] } ((-1) .. 1)
+                    }
+                    @rows[($row_idx-1) .. ($row_idx+1)]
+                );
+
+                my @primes = (grep { $_->[0]->is_prime($_->[1]) } @to_check);
+
+                if (@primes >= 3)
+                {
+                    for my $p (@primes)
+                    {
+                        my ($y, $x) = @$p;
+
+                        if ($y->_here)
+                        {
+                            $y->_found->{$x} = 1;
+                        }
                     }
                 }
             }
@@ -145,7 +148,7 @@ sub calc_S
 
 package main;
 
-use Test::More tests => 16;
+use Test::More tests => 17;
 
 # TEST
 is (Row->new({idx => 1})->start(), 1, "Row[1].start");
@@ -215,4 +218,13 @@ is (Row->new({idx => 4})->end(), 10, "Row[4].end");
 
     # TEST
     is ($row->calc_S(), 60, "Row[8].S()");
+}
+
+{
+    my $row = Row->new({idx => 9});
+
+    $row->mark_primes;
+
+    # TEST
+    is ($row->calc_S(), 37, "Row[9].S()");
 }
