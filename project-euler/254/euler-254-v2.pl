@@ -24,7 +24,7 @@ my @g;
 my $count = 0;
 
 my $num_digits = 1;
-my $SEEK = 20;
+my $SEEK = 150;
 while ($count < $SEEK)
 {
     my $recurse;
@@ -34,7 +34,7 @@ while ($count < $SEEK)
 
         if (length($n) == $num_digits)
         {
-            my $sf = sum(@factorials[split//,$n]);
+            my $sf = sum(split//,sum(@factorials[split//,$n]));
 
             if ($sf <= $SEEK)
             {
@@ -55,7 +55,8 @@ while ($count < $SEEK)
         }
         else
         {
-            for my $d (substr($n,-1) .. 9)
+            my $s = substr($n,-1);
+            for my $d (($s <= 1) ? (0 , 2..9) : ($s .. 9))
             {
                 if ($recurse->($n.$d))
                 {
