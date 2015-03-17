@@ -36,7 +36,8 @@ while ($count < $SEEK)
 
         if (! $remain)
         {
-            my $sf = sum(split//,sum(@factorials[split//,$n]));
+            my $f = sum(@factorials[split//,$n]);
+            my $sf = sum(split//,$f);
 
             if ($sf <= $SEEK)
             {
@@ -45,7 +46,7 @@ while ($count < $SEEK)
                     $count++;
                     $g[$sf] = $n;
                     $sum += sum(split//,$n);
-                    print "Found g($sf) == $n [Count=$count]\n";
+                    print "Found g($sf) == $n (f=$f) [Count=$count]\n";
                     if ($count == $SEEK)
                     {
                         return 1;
