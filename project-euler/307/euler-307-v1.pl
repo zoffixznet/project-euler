@@ -76,51 +76,95 @@ sub analytic_solve
 
     my $count = 0;
 
-    for my $num_pairs (1 .. ($k>>1))
+    if (1)
     {
-        # OK, here's the deal: we have $num_pairs pairs and
-        # $g = $k - $num_pairs*2 singles.
-        #
-        # We choose $num_pairs places out of $n (
-        # $n!/($num_pairs!)/($n-$num_pairs)! ) and an extra
-        # nCr($n-$num_pairs, $g) places for the placement of the singles.
-        #
-        # We choose
-        #
-        my $prod = nCr ( $n, $num_pairs) * nCr( $n-$num_pairs, $k-($num_pairs<<1));
+        my $num_pairs = 1;
 
-        $prod *= $k->copy->bfac / (1 << Math::BigInt->new($num_pairs));
+        my $MAX_PAIRS = ($k >> 1);
 
-=begin foo
-        my $prod = 1;
-
-        for my $pair_idx (1 .. $num_pairs)
+        my $prod;
+        if ($num_pairs <= $MAX_PAIRS)
         {
-            my $x = ($n-($pair_idx-1));
-            # $prod *= $x * $x;
-            $prod *= $x * ($k - (($pair_idx-1) << 1));
+            $prod = nCr ( $n, $num_pairs) * nCr( $n-$num_pairs, $k-($num_pairs<<1))
+            * $k->copy->bfac / (1 << $num_pairs);
+
+            $count += $prod;
+
         }
 
-        my $remaining_k = ($k - ($num_pairs << 1));
-        my $remaining_n = ($n - $num_pairs);
-        $prod *= $remaining_n->copy->bfac / ($remaining_n - $remaining_k)->copy->bfac;
+        my $l = $k - (($num_pairs-1) << 1);
+        my $t = ($n - $k - ($num_pairs-1));
+        my $new_num_pairs = $num_pairs+1;
+        while ($new_num_pairs <= $MAX_PAIRS)
+        {
+            print "Reached num_pairs=$num_pairs\n";
+            $num_pairs = $new_num_pairs;
+            $new_num_pairs++;
 
-=end foo
+            my $good_prod = nCr ( $n, $num_pairs) * nCr( $n-$num_pairs, $k-($num_pairs<<1));
 
-=cut
+            $good_prod *= $k->copy->bfac >> Math::BigInt->new($num_pairs);
 
-        $count += $prod;
+            # $prod = (($prod * ($l+1) * $l / $num_pairs / $t) >> 1);
+            #
+            my $x = ($k - ($num_pairs << 1));
+            # my $new_prod = (($prod / ($num_pairs) / ($n-$num_pairs-($k-($num_pairs<<1))) * (($x || 1) * ($x + 1))) >> 1);
+            my $new_prod = (($prod * (($x + 2) * ($x + 1)) / ($num_pairs) / ($n-$k+$num_pairs))>>1);
+
+            if ($good_prod != $new_prod)
+            {
+                die "good_prod=$good_prod prod=$new_prod!";
+            }
+
+            $prod = $new_prod;
+        }
+        continue
+        {
+            $count += $prod;
+            $l -= 2;
+            $t++;
+        }
+
+    }
+    else
+    {
+        for my $num_pairs (1 .. ($k>>1))
+        {
+            print "Reached num_pairs=$num_pairs\n";
+            # OK, here's the deal: we have $num_pairs pairs and
+            # $g = $k - $num_pairs*2 singles.
+            #
+            # We choose $num_pairs places out of $n (
+            # $n!/($num_pairs!)/($n-$num_pairs)! ) and an extra
+            # nCr($n-$num_pairs, $g) places for the placement of the singles.
+            #
+            # We choose
+            #
+
+
+            my $prod = nCr ( $n, $num_pairs) * nCr( $n-$num_pairs, $k-($num_pairs<<1));
+
+            # prod = n*(n-1)...*1 * (n-num_pairs) * (n-num_pairs-1) .. *1 / (num_pairs*(num_pairs-1)...*1) /
+            # ((n-num_pairs)*(n-num_pairs-1)...1) / ((k-num_pairs*2) * (k- num_pairs*2-1 * ... 1) / ((n-k+num_pairs)*(n-k+num_pairs-1)...*1)
+            #             =
+            #
+            # n! / [ (num_pairs!)*(k-num_pairs*2)!*(n-k+num_pairs)! ]
+
+            $prod *= $k->copy->bfac / (1 << Math::BigInt->new($num_pairs));
+
+            $count += $prod;
+        }
     }
 
     my $total = ($n ** $k);
     return ($total, $total-($count+$all_singles), $all_singles, $count);
 }
 
+my $sep = ' ; ';
 sub mytest
 {
     my ($k, $n) = @_;
 
-    my $sep = ' ; ';
     my $brute = join($sep, brute_force_solve($k, $n));
     my $an = join($sep, analytic_solve($k, $n));
 
@@ -137,8 +181,15 @@ sub mytest
     }
 }
 
-mytest(3,7);
-mytest(4,7);
-mytest(4,8);
-mytest(5,8);
-mytest(6,8);
+if (1)
+{
+    mytest(3,7);
+    mytest(4,7);
+    mytest(4,8);
+    mytest(5,8);
+    mytest(6,8);
+}
+else
+{
+    print "Solution ==", join($sep, analytic_solve(20_000, 1_000_000)), "\n";
+}
