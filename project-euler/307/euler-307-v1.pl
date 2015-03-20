@@ -47,5 +47,34 @@ sub brute_force_solve
     return (($n ** $k), $count);
 }
 
+sub analytic_solve
+{
+    my ($k, $n) = @_;
+
+    my $all_singles = $n->copy->bfac / ($n-$k)->copy->bfac;
+
+    my $count = 0;
+
+    for my $num_pairs (1 .. ($k>>1))
+    {
+        my $prod = 1;
+
+        for my $pair_idx (1 .. $num_pairs)
+        {
+            my $x = ($n-($pair_idx-1));
+            $prod *= $x * $x;
+        }
+
+        my $remaining_k = ($k - ($num_pairs << 1));
+        my $remaining_n = ($n - $num_pairs);
+        $prod *= $remaining_n->copy->bfac / ($remaining_n - $remaining_k)->copy->bfac;
+        $count += $prod;
+    }
+
+    return (($n ** $k), $count+$all_singles);
+}
+
 print join(",", brute_force_solve(3, 7));
+print "\n";
+print join(",", analytic_solve(3, 7));
 print "\n";
