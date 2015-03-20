@@ -93,28 +93,32 @@ sub analytic_solve
         }
 
         my $l = $k - (($num_pairs-1) << 1);
-        my $t = ($n - $k - ($num_pairs-1));
         my $new_num_pairs = $num_pairs+1;
+        my $t = ($n - $k + $new_num_pairs);
         while ($new_num_pairs <= $MAX_PAIRS)
         {
             print "Reached num_pairs=$num_pairs\n";
             $num_pairs = $new_num_pairs;
             $new_num_pairs++;
 
-            my $good_prod = nCr ( $n, $num_pairs) * nCr( $n-$num_pairs, $k-($num_pairs<<1));
-
-            $good_prod *= $k->copy->bfac >> Math::BigInt->new($num_pairs);
 
             # $prod = (($prod * ($l+1) * $l / $num_pairs / $t) >> 1);
             #
             my $x = ($k - ($num_pairs << 1));
             # my $new_prod = (($prod / ($num_pairs) / ($n-$num_pairs-($k-($num_pairs<<1))) * (($x || 1) * ($x + 1))) >> 1);
-            my $new_prod = (($prod * (($x + 2) * ($x + 1)) / ($num_pairs) / ($n-$k+$num_pairs))>>1);
+            my $new_prod = (($prod * (($x + 2) * ($x + 1)) / ($num_pairs) / $t)>>1);
 
+=begin foo
+            my $good_prod = nCr ( $n, $num_pairs) * nCr( $n-$num_pairs, $k-($num_pairs<<1));
+
+            $good_prod *= $k->copy->bfac >> Math::BigInt->new($num_pairs);
             if ($good_prod != $new_prod)
             {
                 die "good_prod=$good_prod prod=$new_prod!";
             }
+=end foo
+
+=cut
 
             $prod = $new_prod;
         }
