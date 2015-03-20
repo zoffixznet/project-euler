@@ -9,7 +9,7 @@ use bytes;
 use Math::BigInt lib => 'GMP', ':constant';
 
 use List::Util qw(sum);
-use List::MoreUtils qw();
+use List::MoreUtils qw(all);
 
 STDOUT->autoflush(1);
 
@@ -20,6 +20,8 @@ sub brute_force_solve
     my $recurse;
 
     my $count = 0;
+    my $all_singles = 0;
+    my $with_pairs = 0;
 
     $recurse = sub {
         my ($depth, $vec, $verdict) = @_;
@@ -29,6 +31,17 @@ sub brute_force_solve
             if ($verdict)
             {
                 $count++;
+            }
+            else
+            {
+                if (all { $_ <= 1 } @$vec)
+                {
+                    $all_singles++;
+                }
+                else
+                {
+                    $with_pairs++;
+                }
             }
         }
         else
@@ -44,7 +57,7 @@ sub brute_force_solve
 
     $recurse->(0, [map { 0 } 1 .. $n], 0);
 
-    return (($n ** $k), $count);
+    return (($n ** $k), $count, $all_singles, $with_pairs);
 }
 
 sub analytic_solve
@@ -62,7 +75,8 @@ sub analytic_solve
         for my $pair_idx (1 .. $num_pairs)
         {
             my $x = ($n-($pair_idx-1));
-            $prod *= $x * $x;
+            # $prod *= $x * $x;
+            $prod *= $x * ($k - (($pair_idx-1) << 1));
         }
 
         my $remaining_k = ($k - ($num_pairs << 1));
@@ -71,10 +85,23 @@ sub analytic_solve
         $count += $prod;
     }
 
-    return (($n ** $k), $count+$all_singles);
+    my $total = ($n ** $k);
+    return ($total, $total-($count+$all_singles), $all_singles, $count);
 }
 
-print join(",", brute_force_solve(3, 7));
-print "\n";
-print join(",", analytic_solve(3, 7));
-print "\n";
+sub mytest
+{
+    my ($k, $n) = @_;
+
+    print "<<<<\n";
+    print "K=$k N=$n\n";
+    print join(",", brute_force_solve($k, $n));
+    print "\n";
+    print join(",", analytic_solve($k, $n));
+    print "\n";
+    print ">>>>\n";
+    print "\n\n";
+}
+
+mytest(3,7);
+mytest(4,7);
