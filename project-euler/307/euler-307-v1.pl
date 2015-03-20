@@ -6,7 +6,7 @@ use warnings;
 use integer;
 use bytes;
 
-use Math::BigInt lib => 'GMP', ':constant';
+use Math::BigInt lib => 'GMP';
 
 use List::Util qw(sum);
 use List::MoreUtils qw(all);
@@ -72,7 +72,7 @@ sub analytic_solve
 {
     my ($k, $n) = @_;
 
-    my $all_singles = $n->copy->bfac / ($n-$k)->copy->bfac;
+    my $all_singles = Math::BigInt->new($n)->copy->bfac / Math::BigInt->new($n-$k)->copy->bfac;
 
     my $count = 0;
 
@@ -85,8 +85,8 @@ sub analytic_solve
         my $prod;
         if ($num_pairs <= $MAX_PAIRS)
         {
-            $prod = nCr ( $n, $num_pairs) * nCr( $n-$num_pairs, $k-($num_pairs<<1))
-            * $k->copy->bfac / (1 << $num_pairs);
+            $prod = ((nCr ( $n, $num_pairs) * nCr( $n-$num_pairs, $k-($num_pairs<<1))
+            * Math::BigInt->new($k)->copy->bfac) >> $num_pairs);
 
             $count += $prod;
 
@@ -156,7 +156,7 @@ sub analytic_solve
         }
     }
 
-    my $total = ($n ** $k);
+    my $total = (Math::BigInt->new($n) ** $k);
     return ($total, $total-($count+$all_singles), $all_singles, $count);
 }
 
@@ -181,7 +181,7 @@ sub mytest
     }
 }
 
-if (1)
+if (0)
 {
     mytest(3,7);
     mytest(4,7);
@@ -191,5 +191,6 @@ if (1)
 }
 else
 {
-    print "Solution ==", join($sep, analytic_solve(20_000, 1_000_000)), "\n";
+    my @sol = analytic_solve(20_000, 1_000_000);
+    print "Solution == ", join(' ; ', @sol), "\n";
 }
