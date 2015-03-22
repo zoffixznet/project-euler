@@ -198,6 +198,8 @@ sub try_to_fit_shape_at_pos
         vec_set(\$buf, @$cell_pos);
     }
 
+=begin removed.
+
     # Now let's see if the empty space in $buf is still contiguous.
     #
     foreach my $neighbour (map { [$pos->[0]+$_->[0],$pos->[1]+$_->[1]] } @{$shape->{'neighbours'}})
@@ -233,6 +235,9 @@ sub try_to_fit_shape_at_pos
             }
         }
     }
+=end removed
+
+=cut
 
     # Finally add it to the next depth.
     $bufs[$depth+1]{$buf} += $count;
