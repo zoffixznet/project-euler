@@ -207,7 +207,7 @@ sub try_to_fit_shape_at_pos
             my %found = (join(",", @$neighbour) => 1);
             my @queue = ($neighbour);
 
-            my $MAX_TO_FIND = min(10, $X_DIM*$Y_DIM-3*$depth);
+            my $MAX_TO_FIND = min(10, $X_DIM*$Y_DIM-3*($depth+1));
             while (keys(%found) < $MAX_TO_FIND and @queue)
             {
                 my $p = shift(@queue);
