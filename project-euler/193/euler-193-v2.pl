@@ -10,7 +10,7 @@ use List::MoreUtils qw();
 
 STDOUT->autoflush(1);
 
-my $SQRT_LIMIT = 1 << 25;
+my $SQRT_LIMIT = ($ENV{MAX} || (1 << 25));
 my $LIMIT = ($SQRT_LIMIT * $SQRT_LIMIT);
 
 my @p_sq = (map { $_ * $_ } `primes 2 $SQRT_LIMIT`);
