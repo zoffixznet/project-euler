@@ -285,6 +285,12 @@ sub handle_depth
         handle_buf_at_depth($depth, $buf, $count);
     }
 
+    # Clear up space to save on memory.
+    if (!$ENV{DEBUG})
+    {
+        $bufs[$depth] = 'REMOVED';
+    }
+
     return;
 }
 
