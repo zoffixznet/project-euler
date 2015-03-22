@@ -97,8 +97,12 @@ sub get_shapes
 # Some routines to manipulate location vectors:
 #
 
-my $X_DIM = 9;
-my $Y_DIM = 12;
+my ($X_DIM, $Y_DIM);
+
+sub set_XY_DIM
+{
+    ($X_DIM, $Y_DIM) = @_;
+}
 
 sub vec_set
 {
@@ -271,7 +275,7 @@ sub handle_depth
 {
     my ($depth) = @_;
 
-    while (my ($buf, $count) = each($bufs[$depth]))
+    while (my ($buf, $count) = each(%{$bufs[$depth]}))
     {
         handle_buf_at_depth($depth, $buf, $count);
     }
