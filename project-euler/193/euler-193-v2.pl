@@ -34,8 +34,16 @@ sub recurse
 
     my $x = int($LIMIT / $prod);
 
-    $count += ($parity ? $x : (-$x));
+    if ($parity)
+    {
+        $count += $x;
+    }
+    else
+    {
+        $count -= $x;
+    }
 
+    my $np = ($parity ^ 0x1);
     I:
     for my $i ($min_i .. $#p_sq)
     {
@@ -45,7 +53,7 @@ sub recurse
         {
             last I;
         }
-        recurse($i+1, ($parity ^ 0x1), $new_prod);
+        recurse($i+1, $np, $new_prod);
     }
 
     return;
@@ -54,7 +62,7 @@ sub recurse
 for my $i (0 .. $SQRT_IDX)
 {
     print "Checking $p_sq[$i]\n";
-    recurse($i, 1, $p_sq[$i]);
+    recurse($i+1, 1, $p_sq[$i]);
 }
 
 for my $p (@p_sq[($SQRT_IDX+1) .. $#p_sq])
