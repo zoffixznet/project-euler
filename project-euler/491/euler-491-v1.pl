@@ -38,6 +38,11 @@ for my $leading_digit (1 .. $MAX_DIGIT)
     $rec = sub {
         my ($start_from, $num_remaining, $digits_c, $sum_left) = @_;
 
+        if ($start_from > $MAX_DIGIT)
+        {
+            return;
+        }
+
         if ($sum_left < 0)
         {
             return;
@@ -59,10 +64,6 @@ for my $leading_digit (1 .. $MAX_DIGIT)
             return;
         }
 
-        if ($start_from > $MAX_DIGIT)
-        {
-            return;
-        }
 
         C:
         for my $c (0 .. $digits_c->[$start_from])
