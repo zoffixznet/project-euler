@@ -50,11 +50,10 @@ for my $leading_digit (1 .. $MAX_DIGIT)
 
         if ($num_remaining == 0)
         {
-            if ($sum_left > 0)
+            if ($sum_left == 0)
             {
-                return;
+                $count += $factorials[$num_half_digits-1] * $factorials[$num_half_digits] / product(map { $factorials[$digits_c->[$_]] * $factorials[$digits_counts[$_]-$digits_c->[$_]] } keys(@digits_counts));
             }
-            $count += $factorials[$num_half_digits-1] * $factorials[$num_half_digits] / product(map { $factorials[$digits_c->[$_]] * $factorials[$digits_counts[$_]-$digits_c->[$_]] } keys(@digits_counts));
 
             return;
         }
