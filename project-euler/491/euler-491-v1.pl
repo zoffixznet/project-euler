@@ -43,7 +43,7 @@ for my $leading_digit (1 .. $MAX_DIGIT)
             return;
         }
 
-        if ($sum_left == 0 and $num_remaining)
+        if ($sum_left == 0 and $num_remaining and $start_from)
         {
             return;
         }
@@ -59,15 +59,25 @@ for my $leading_digit (1 .. $MAX_DIGIT)
             return;
         }
 
-        for my $count (0 .. $digits_c->[$start_from])
+        if ($start_from > $MAX_DIGIT)
         {
+            return;
+        }
+
+        C:
+        for my $c (0 .. $digits_c->[$start_from])
+        {
+            if ($num_remaining < $c)
+            {
+                last C;
+            }
             my @new = @$digits_c;
-            $new[$start_from] -= $count;
+            $new[$start_from] -= $c;
             $rec->(
                 $start_from+1,
-                $num_remaining-$count,
+                $num_remaining-$c,
                 (\@new),
-                $sum_left - ($start_from*$count)
+                $sum_left - ($start_from*$c)
             );
         }
     };
