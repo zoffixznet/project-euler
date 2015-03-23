@@ -38,11 +38,6 @@ for my $leading_digit (1 .. $MAX_DIGIT)
     $rec = sub {
         my ($start_from, $num_remaining, $digits_c, $sum_left) = @_;
 
-        if ($start_from > $MAX_DIGIT)
-        {
-            return;
-        }
-
         if ($sum_left < 0)
         {
             return;
@@ -64,23 +59,27 @@ for my $leading_digit (1 .. $MAX_DIGIT)
             return;
         }
 
-
-        C:
-        for my $c (0 .. $digits_c->[$start_from])
+        if ($start_from <= $MAX_DIGIT)
         {
-            if ($num_remaining < $c)
+            C:
+            for my $c (0 .. $digits_c->[$start_from])
             {
-                last C;
+                if ($num_remaining < $c)
+                {
+                    last C;
+                }
+                my @new = @$digits_c;
+                $new[$start_from] -= $c;
+                $rec->(
+                    $start_from+1,
+                    $num_remaining-$c,
+                    (\@new),
+                    $sum_left - ($start_from*$c)
+                );
             }
-            my @new = @$digits_c;
-            $new[$start_from] -= $c;
-            $rec->(
-                $start_from+1,
-                $num_remaining-$c,
-                (\@new),
-                $sum_left - ($start_from*$c)
-            );
         }
+
+        return;
     };
 
     $rec->(0, $num_half_digits-1, \@digits_counts, ($EXPECTED_SUM-$leading_digit));
