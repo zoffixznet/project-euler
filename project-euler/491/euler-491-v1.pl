@@ -38,19 +38,9 @@ for my $leading_digit (1 .. $MAX_DIGIT)
     $rec = sub {
         my ($start_from, $num_remaining, $digits_c, $sum_left) = @_;
 
-        if ($sum_left < 0)
-        {
-            return;
-        }
-
-        if ($sum_left == 0 and $num_remaining and $start_from)
-        {
-            return;
-        }
-
         if ($num_remaining == 0)
         {
-            if ($sum_left == 0)
+            if ($sum_left % 11 == 0)
             {
                 $count += $factorials[$num_half_digits-1] * $factorials[$num_half_digits] / product(map { $factorials[$digits_c->[$_]] * $factorials[$digits_counts[$_]-$digits_c->[$_]] } keys(@digits_counts));
             }
