@@ -15,7 +15,8 @@ use List::MoreUtils qw();
 
 STDOUT->autoflush(1);
 
-my $NUM_DIVS = 10;
+# my $NUM_DIVS = 10;
+my $NUM_DIVS = 5;
 my $MAX = 10_000 + 399;
 my $DIV = (( $MAX ) / $NUM_DIVS + 1);
 
@@ -46,63 +47,34 @@ sub rec
     {
         my $v = '';
 
-        my @dim_r =
-        (
-            map
-            {
-                my $i = $_->{dim_i};
-                my $r = $DIM_RANGES[$i];
-                [ $i, $r->[1]-$r->[0]+1, $r->[0],]
-            }
-            @$prev_coords
-        );
+        my $y_delta = $prev_coords->[0]->[1];
+        my $z_delta = $prev_coords->[1]->[1] * $y_delta;
 
         my $count = 0;
         foreach my $r (@$remaining)
         {
-            my ($XX, $YY, $ZZ) =
-            (map {
-                    my $i = $_;
-                    my $off = $dim_r[$i]->[2];
-                    [map { $_-$off} @{$r->[$i]}]
-                }
-                keys(@$r)
-            );
-            my $y_delta = $dim_r[0]->[1];
-            my $z_delta = $dim_r[1]->[1] * $y_delta;
-            my $z_off = $z_delta * $ZZ->[0];
-            for my $z ($ZZ->[0] .. $ZZ->[1])
+            my ($XX, $YY, $ZZ) = @$r;
+
+            my $z_end = $z_delta * $ZZ->[1];
+            for (my $z = $z_delta * $ZZ->[0]; $z <= $z_end; $z += $z_delta)
             {
-                my $y_off = $z_off + $YY->[0] * $y_delta;
-                for my $y ($YY->[0] .. $YY->[1])
+                my $y_end = $z + $YY->[1] * $y_delta;
+                for (my $y = $z + $y_delta * $YY->[0]; $y <= $y_end; $y += $y_delta)
                 {
-                    my $x_off = $y_off + $XX->[0];
-                    for my $x ($XX->[0] .. $XX->[1])
+                    for my $x (($y + $XX->[0]) .. ($y + $XX->[1]))
                     {
-                        if (!vec($v, $x_off, 1))
+                        if (!vec($v, $x, 1))
                         {
                             $count++;
                         }
-                        vec($v, $x_off, 1) = 1;
-                    }
-                    continue
-                    {
-                        $x_off++;
+                        vec($v, $x, 1) = 1;
                     }
                 }
-                continue
-                {
-                    $y_off += $y_delta;
-                }
-            }
-            continue
-            {
-                $z_off += $z_delta;
             }
         }
 
         $total_count += $count;
-        print "Found Count = $count for (" . join(",", map {$_->{dim_i} } @$prev_coords) . ") for a total of TotalCount = $total_count\n"
+        print "Found Count = $count for (" . join(",", map {$_->[0] } @$prev_coords) . ") for a total of TotalCount = $total_count\n"
     }
     else
     {
@@ -115,23 +87,40 @@ sub rec
 
             my @rects;
 
+            my $S = $X_RANGE->[0];
+            my $E = $NUM_X - 1;
+
             # Popoulate @rects.
             RECTS:
             foreach my $r (@$remaining)
             {
                 my @p = @$r;
-                my $s = max($X_RANGE->[0], $p[$dim][0]);
-                my $e = min($X_RANGE->[1], $p[$dim][1]);
 
-                if ($e < $s)
+                my $s = $p[$dim][0]-$S;
+                if ($s > $E)
                 {
                     next RECTS;
                 }
+                if ($s < 0)
+                {
+                    $s = 0;
+                }
+
+                my $e = $p[$dim][1]-$S;
+                if ($e < 0)
+                {
+                    next RECTS;
+                }
+                if ($e > $E)
+                {
+                    $e = $E;
+                }
+
                 $p[$dim] = [$s,$e];
                 push @rects, \@p;
             }
 
-            rec([@$prev_coords, { dim_i => $dim_i, }], ( \@rects ));
+            rec([@$prev_coords, [$dim_i, $NUM_X]], ( \@rects ));
         }
     }
 
