@@ -30,5 +30,17 @@ sub calc_rects
     return \@rects;
 }
 
+sub calc_processed_rects
+{
+    return
+    [
+        map {
+            my $r = $_;
+            [map { [$r->[$_], $r->[$_]+$r->[3+$_]-1] } 0 .. 2 ]
+        }
+        @{calc_rects()}
+    ];
+}
+
 1;
 
