@@ -3,6 +3,9 @@ package CalcRects;
 use strict;
 use warnings;
 
+use integer;
+use bytes;
+
 use Rand;
 
 sub calc_rects

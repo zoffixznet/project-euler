@@ -3,6 +3,9 @@ package Rand;
 use strict;
 use warnings;
 
+use integer;
+use bytes;
+
 use MooX qw/late/;
 
 has k => (is => 'rw', isa => 'Int', default => sub { 1; });
