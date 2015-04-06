@@ -54,6 +54,12 @@ if (! -e $RECTS_FN)
 
 my $RECTS = decode_json(io->file($RECTS_FN)->all);
 
+my $C_RECTS_FN = 'rects_cache.txt';
+if (! -e $C_RECTS_FN)
+{
+    io->file($C_RECTS_FN)->print(map { join(" " , map {@$_ } @$_) . "\n" } @$RECTS);
+}
+
 if (my $filter = $ENV{COUNT})
 {
     splice(@$RECTS, $filter);
@@ -76,9 +82,15 @@ sub rec
         my $z_delta = $prev_coords->[1]->[1] * $y_delta;
 
         my $count = 0;
+        print "Starting for (" . join(",", map {$_->[0] } @$prev_coords) . ")\n";
+        print "Evaluating ", scalar(@$remaining), " Cuboids\n";
+        my $r_idx = 0;
         foreach my $r (@$remaining)
         {
             my ($XX, $YY, $ZZ) = @$r;
+
+            print "Rectangle No. $r_idx\n";
+            $r_idx++;
 
             my $z_end = $z_delta * $ZZ->[1];
             for (my $z = $z_delta * $ZZ->[0]; $z <= $z_end; $z += $z_delta)
