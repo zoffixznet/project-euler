@@ -61,6 +61,9 @@ if (my $filter = $ENV{COUNT})
 
 my $total_count = 0;
 
+my @XEs = (map { ((1 << (1+($_ & 0xF)))- 1) } 0 .. 0xF);
+my @XSs = (map {  (0xFFFF ^ ((1 << ($_ & 0xF))-1)) } 0 .. 0xF);
+
 sub rec
 {
     my ($prev_coords, $remaining) = @_;
@@ -101,11 +104,11 @@ sub rec
                         {
                             my $val = vec($v, $byte_start, 16);
                             $count += $O_C[
-                                vec($v, $byte_start, 16) = ($val | (0xFFFF ^ ((1 << ($x_start & 0xF))-1)))
+                                vec($v, $byte_start, 16) = ($val | $XSs[$x_start & 0xF])
                             ] - $O_C[$val];
                         }
-                        # This is a funky way to do $count += 8 - $O_C[byte]
-                        # for every byte, where 8 is the number of bit counts.
+                        # This is a funky way to do $count += 16 - $O_C[byte]
+                        # for every byte, where 16 is the number of bit counts.
                         for my $x ($byte_start + 1 .. $byte_end - 1)
                         {
                             $count -= $O_C[vec($v,$x,16)];
@@ -117,7 +120,7 @@ sub rec
                         }
                         {
                             my $val = vec($v, $byte_end, 16);
-                            $count += $O_C[vec($v, $byte_end, 16) = ($val | ((1 << (1+($x_end & 0xF)))- 1))] - $O_C[$val];
+                            $count += $O_C[vec($v, $byte_end, 16) = ($val | $XEs[$x_end & 0xF])] - $O_C[$val];
                         }
                     }
                     # print ":COUNT:=@$XX,@$YY,@$ZZ => $count\n";
