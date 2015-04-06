@@ -21,7 +21,7 @@ STDOUT->autoflush(1);
 # Octet set-bits counts.
 my @O_C;
 {
-    for my $from (0 .. 255)
+    for my $from (0 .. 0xFFFF)
     {
         my $bit_count = sub {
             my $binary = sprintf("%b", shift);
@@ -87,38 +87,37 @@ sub rec
                     my $x_start = ($y + $XX->[0]);
                     my $x_end = ($y + $XX->[1]);
 
-                    my $byte_start = ($x_start >> 3);
-                    my $byte_end = ($x_end >> 3);
+                    my $byte_start = ($x_start >> 4);
+                    my $byte_end = ($x_end >> 4);
                     if ($byte_start == $byte_end)
                     {
-                        my $val = vec($v, $byte_start, 8);
+                        my $val = vec($v, $byte_start, 16);
                         $count += $O_C[
-                            vec($v, $byte_start, 8) = ($val | (((1 << ($x_end-$x_start+1))-1) << ($x_start & 0x7)))
+                            vec($v, $byte_start, 16) = ($val | (((1 << ($x_end-$x_start+1))-1) << ($x_start & 0xF)))
                         ] - $O_C[$val];
                     }
                     else
                     {
                         {
-                            my $val = vec($v, $byte_start, 8);
+                            my $val = vec($v, $byte_start, 16);
                             $count += $O_C[
-                                vec($v, $byte_start, 8) = ($val | (0xFF ^ ((1 << ($x_start & 0x7))-1)))
+                                vec($v, $byte_start, 16) = ($val | (0xFFFF ^ ((1 << ($x_start & 0xF))-1)))
                             ] - $O_C[$val];
                         }
                         # This is a funky way to do $count += 8 - $O_C[byte]
                         # for every byte, where 8 is the number of bit counts.
                         for my $x ($byte_start + 1 .. $byte_end - 1)
                         {
-                            $count -= $O_C[vec($v,$x,8)];
-                            vec($v,$x,8) = 0xFF;
+                            $count -= $O_C[vec($v,$x,16)];
+                            vec($v,$x,16) = 0xFFFF;
                         }
                         if ((my $n = ($byte_end - $byte_start - 1)) > 0)
                         {
-                            $count += ($n << 3);
+                            $count += ($n << 4);
                         }
-                        # if (($x_end & 0x7) != 0x7)
                         {
-                            my $val = vec($v, $byte_end, 8);
-                            $count += $O_C[vec($v, $byte_end, 8) = ($val | ((1 << (1+($x_end & 0x7)))- 1))] - $O_C[$val];
+                            my $val = vec($v, $byte_end, 16);
+                            $count += $O_C[vec($v, $byte_end, 16) = ($val | ((1 << (1+($x_end & 0xF)))- 1))] - $O_C[$val];
                         }
                     }
                     # print ":COUNT:=@$XX,@$YY,@$ZZ => $count\n";
