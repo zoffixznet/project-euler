@@ -54,7 +54,7 @@ static ll total_count = 0;
 static int XEs[0x10];
 static int XSs[0x10];
 
-#define V_SIZE ( (DIV * DIV * DIV >> 4) + 200 )
+const long V_SIZE = ( ((DIV * DIV * DIV) >> 4) + 200 );
 static u16 v[V_SIZE];
 
 static void rec(const int depth)
@@ -117,6 +117,12 @@ static void rec(const int depth)
         for (u16 * v_ptr = v; v_ptr < v_end; v_ptr++)
         {
             count += O_C[*v_ptr];
+#if 0
+            if (count < 0)
+            {
+                fprintf(stderr , "Foo!\n");
+            }
+#endif
         }
 
         total_count += count;
@@ -190,7 +196,7 @@ int main()
         }
     }
 
-    DIM_RANGES[0] = range_t(0, DIV);
+    DIM_RANGES[0] = range_t(0, DIV-1);
     for (int i = 1; i < NUM_DIVS; i++)
     {
         const int start = DIM_RANGES[i-1].end+1;
