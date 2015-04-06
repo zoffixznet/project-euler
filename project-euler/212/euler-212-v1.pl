@@ -6,14 +6,30 @@ use warnings;
 use integer;
 use bytes;
 
+use List::Util qw(min max sum);
+use List::MoreUtils qw();
+
+use IO::All qw/io/;
+use JSON::MaybeXS qw(decode_json encode_json);
+
 use CalcRects;
 
 # use Math::BigInt lib => 'GMP', ':constant';
 
-use List::Util qw(min max sum);
-use List::MoreUtils qw();
-
 STDOUT->autoflush(1);
+
+# Octet set-bits counts.
+my @O_C;
+{
+    for my $from (0 .. 255)
+    {
+        my $bit_count = sub {
+            my $binary = sprintf("%b", shift);
+            return $binary =~ tr/1/1/;
+        };
+        $O_C[$from] = $bit_count->($from);
+    }
+}
 
 # my $NUM_DIVS = 10;
 my $NUM_DIVS = 5;
@@ -30,7 +46,13 @@ while ($DIM_RANGES[-1][-1] != $MAX)
     push @DIM_RANGES, [$start, $end];
 }
 
-my $RECTS = CalcRects::calc_processed_rects();
+my $RECTS_FN = 'rects_cache.json';
+if (! -e $RECTS_FN)
+{
+    io->file($RECTS_FN)->print(encode_json(CalcRects::calc_processed_rects()));
+}
+
+my $RECTS = decode_json(io->file($RECTS_FN)->all);
 
 if (my $filter = $ENV{COUNT})
 {
@@ -61,14 +83,45 @@ sub rec
                 my $y_end = $z + $YY->[1] * $y_delta;
                 for (my $y = $z + $y_delta * $YY->[0]; $y <= $y_end; $y += $y_delta)
                 {
-                    for my $x (($y + $XX->[0]) .. ($y + $XX->[1]))
+                    # print ":COUNT:=@$XX,@$YY,@$ZZ => $count\n";
+                    my $x_start = ($y + $XX->[0]);
+                    my $x_end = ($y + $XX->[1]);
+
+                    my $byte_start = ($x_start >> 3);
+                    my $byte_end = ($x_end >> 3);
+                    if ($byte_start == $byte_end)
                     {
-                        if (!vec($v, $x, 1))
-                        {
-                            $count++;
-                        }
-                        vec($v, $x, 1) = 1;
+                        my $val = vec($v, $byte_start, 8);
+                        $count += $O_C[
+                            vec($v, $byte_start, 8) = ($val | (((1 << ($x_end-$x_start+1))-1) << ($x_start & 0x7)))
+                        ] - $O_C[$val];
                     }
+                    else
+                    {
+                        {
+                            my $val = vec($v, $byte_start, 8);
+                            $count += $O_C[
+                                vec($v, $byte_start, 8) = ($val | (0xFF ^ ((1 << ($x_start & 0x7))-1)))
+                            ] - $O_C[$val];
+                        }
+                        # This is a funky way to do $count += 8 - $O_C[byte]
+                        # for every byte, where 8 is the number of bit counts.
+                        for my $x ($byte_start + 1 .. $byte_end - 1)
+                        {
+                            $count -= $O_C[vec($v,$x,8)];
+                            vec($v,$x,8) = 0xFF;
+                        }
+                        if ((my $n = ($byte_end - $byte_start - 1)) > 0)
+                        {
+                            $count += ($n << 3);
+                        }
+                        # if (($x_end & 0x7) != 0x7)
+                        {
+                            my $val = vec($v, $byte_end, 8);
+                            $count += $O_C[vec($v, $byte_end, 8) = ($val | ((1 << (1+($x_end & 0x7)))- 1))] - $O_C[$val];
+                        }
+                    }
+                    # print ":COUNT:=@$XX,@$YY,@$ZZ => $count\n";
                 }
             }
         }
@@ -80,6 +133,7 @@ sub rec
     {
         my $dim = @$prev_coords;
         for my $dim_i (keys(@DIM_RANGES))
+        # for my $dim_i ($dim == 0 ? 1 : 4)
         {
             my $X_RANGE = $DIM_RANGES[$dim_i];
 
