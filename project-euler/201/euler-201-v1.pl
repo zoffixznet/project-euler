@@ -57,7 +57,7 @@ sub solve_for_set
                 return;
             }
         }
-        for my $s ($init_s .. $num_elems - $num_remain - 1)
+        for my $s ($init_s .. @set - $num_remain - 1)
         {
             {
                 my $bs = $bottom_sum->($s, $num_remain);
