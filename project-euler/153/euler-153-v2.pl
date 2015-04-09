@@ -37,6 +37,7 @@ sub gcd
 my $r2 = 2;
 for my $r (1 .. $MAX)
 {
+    print "R=$r\n";
     # print "R=$r - adding ", int ($MAX / $r) * $r, "\n";
     $sum += int ($MAX / $r) * $r;
 
