@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use integer;
+# use integer;
 use bytes;
 
 # use Math::BigInt lib => 'GMP', ':constant';
@@ -33,29 +33,43 @@ sub gcd
 
     return $n;
 }
+
+my $r2 = 2;
 for my $r (1 .. $MAX)
 {
-    print "R=$r - adding ", int ($MAX / $r) * $r, "\n";
+    # print "R=$r - adding ", int ($MAX / $r) * $r, "\n";
     $sum += int ($MAX / $r) * $r;
 
-    I:
-    for my $i (1 .. $MAX)
+    my $x = $r * $r + 1;
+    my $i = 1;
+    my $inc = 1;
+    while ($x <= $MAX)
     {
         if (gcd($i, $r) == 1)
         {
-            my $x = $r*$r+$i*$i;
-            if ($x > $MAX)
-            {
-                last I;
-            }
+            my $xm = $x;
+            my $rm = $r2;
 
-            for my $m (1 .. $MAX / $x)
+            while ($xm <= $MAX)
             {
-                print "C=(@{[$r*$m]}+i*@{[$m*$i]}) - adding ", int ($MAX / ($x * $m)) * (2 * $r * $m) , "\n";
-                $sum += int ($MAX / ($x * $m)) * (2 * $r * $m);
+                $sum += int ($MAX / $xm) * $rm;
+            }
+            continue
+            {
+                $xm += $x;
+                $rm += $r2;
             }
         }
     }
+    continue
+    {
+        $i++;
+        $x += ($inc += 2);
+    }
+}
+continue
+{
+    $r2 += 2;
 }
 
 print "Sum = $sum\n";
