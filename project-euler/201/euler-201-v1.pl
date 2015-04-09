@@ -33,7 +33,7 @@ sub solve_for_set
     my $bottom_sum = sub {
         my ($start, $c) = @_;
 
-        return $sums[$start+$c+1] - $sums[$start];
+        return $sums[$start+$c] - $sums[$start];
     };
 
     # Recurse;
