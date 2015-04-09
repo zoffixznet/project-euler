@@ -81,8 +81,10 @@ sub solve_for_set
 
     my $total_sum = 0;
 
-    for my $partial_sum ($bottom_sum->(0, $num_elems) .. $top_sum->($num_elems))
+    my $TOP = $top_sum->($num_elems);
+    for my $partial_sum ($bottom_sum->(0, $num_elems) .. $TOP)
     {
+        print "Evaluating $partial_sum/$TOP [total_sum = $total_sum ]\n";
         $num_sols = 0;
         $r->($num_elems, $partial_sum, 0);
 
@@ -95,4 +97,7 @@ sub solve_for_set
     return $total_sum;
 }
 
-print solve_for_set([1, 3, 6, 8, 10, 11], 3), "\n";
+# Test data.
+print "Test data == ", solve_for_set([1, 3, 6, 8, 10, 11], 3), "\n";
+my $result = solve_for_set([map { $_*$_ } 1 .. 100], 50);
+print "Solution == $result\n";
