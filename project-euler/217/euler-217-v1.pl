@@ -36,7 +36,7 @@ for my $num_digits (2 .. 26)
         my $d_t = (($leading_digit != 0) ? 1 : 0);
         while (my ($prev_sum, $prev_leads_aref) = each(@{$S[$prev]}))
         {
-            while (my ($prev_lead_digit, $prev_stats) = each(@$prev_leads_aref))
+            foreach my $prev_stats (@$prev_leads_aref)
             {
                 if (defined($prev_stats))
                 {
