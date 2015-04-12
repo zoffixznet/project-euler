@@ -124,92 +124,94 @@ my $next_ring_len = 12;
 my $next_ring_start = 8;
 
 my $ring = 1;
-while ($count < 2_000)
+
+sub check_side_and_cell
 {
-    my $check_side_and_cell =
-    sub {
-        my ($side, $cell, $n) = @_;
+    my ($side, $cell, $n) = @_;
 
-        my @vicinity;
+    my @vicinity;
 
-        if ($cell != 0)
+    if ($cell != 0)
+    {
+        push @vicinity, $n-1;
+
+        my $is_last = (($cell == $ring-1) && ($side == $LAST_SIDE));
+        if ($is_last)
         {
-            push @vicinity, $n-1;
-
-            my $is_last = (($cell == $ring-1) && ($side == $LAST_SIDE));
-            if ($is_last)
-            {
-                push @vicinity, $ring_start;
-            }
-            else
-            {
-                push @vicinity, $n+1;
-            }
-
-            {
-                my $x = $prev_ring_start + $side * ($ring-1) + ($cell-1);
-                push @vicinity, $x;
-                if ($is_last)
-                {
-                    push @vicinity, $prev_ring_start;
-                }
-                else
-                {
-                    push @vicinity, $x+1;
-                }
-            }
-
-            {
-                my $x = $next_ring_start + $side * ($ring+1) + $cell;
-                # TODO : This is wrong for the cell == 0 ; side == 0
-                # item.
-                push @vicinity, $x, $x+1;
-            }
+            push @vicinity, $ring_start;
         }
         else
         {
+            push @vicinity, $n+1;
+        }
+
+        {
+            my $x = $prev_ring_start + $side * ($ring-1) + ($cell-1);
+            push @vicinity, $x;
+            if ($is_last)
             {
-                my $x = $n + 1;
-                if ($x < $next_ring_start)
-                {
-                    push @vicinity, $x;
-                }
-                else
-                {
-                    push @vicinity, $ring_start;
-                }
-            }
-            if ($side == 0)
-            {
-                # Up and down.
-                push @vicinity, ($prev_ring_start, $next_ring_start);
-                push @vicinity, ($next_ring_start-1);
-                push @vicinity, ($next_ring_start+1);
-                push @vicinity, ($next_ring_start+$next_ring_len-1);
+                push @vicinity, $prev_ring_start;
             }
             else
             {
-                push @vicinity, $n-1;
-                push @vicinity, ($prev_ring_start + ($ring-1) * $side);
-                my $x = $next_ring_start + ($ring+1) * $side;
-                push @vicinity, ($x-1 .. $x+1);
+                push @vicinity, $x+1;
             }
         }
 
-        if (0)
         {
-            print "$n [Ring=$ring,Side=$side,Cell=$cell] ; Neighbours = ",
-            join(",", sort { $a <=> $b } map { abs($n-$_) } @vicinity),
-            "\n";
+            my $x = $next_ring_start + $side * ($ring+1) + $cell;
+            # TODO : This is wrong for the cell == 0 ; side == 0
+            # item.
+            push @vicinity, $x, $x+1;
         }
-        if (scalar(grep { is_prime(abs($n-$_)) } @vicinity) == 3)
+    }
+    else
+    {
         {
-            $count++;
-            print "Found $count: $n [Ring=$ring,Side=$side,Cell=$cell]\n";
+            my $x = $n + 1;
+            if ($x < $next_ring_start)
+            {
+                push @vicinity, $x;
+            }
+            else
+            {
+                push @vicinity, $ring_start;
+            }
         }
-    };
-    $check_side_and_cell->(0, 0, $ring_start);
-    $check_side_and_cell->($LAST_SIDE, $ring-1, $next_ring_start-1);
+        if ($side == 0)
+        {
+            # Up and down.
+            push @vicinity, ($prev_ring_start, $next_ring_start);
+            push @vicinity, ($next_ring_start-1);
+            push @vicinity, ($next_ring_start+1);
+            push @vicinity, ($next_ring_start+$next_ring_len-1);
+        }
+        else
+        {
+            push @vicinity, $n-1;
+            push @vicinity, ($prev_ring_start + ($ring-1) * $side);
+            my $x = $next_ring_start + ($ring+1) * $side;
+            push @vicinity, ($x-1 .. $x+1);
+        }
+    }
+
+    if (0)
+    {
+        print "$n [Ring=$ring,Side=$side,Cell=$cell] ; Neighbours = ",
+        join(",", sort { $a <=> $b } map { abs($n-$_) } @vicinity),
+        "\n";
+    }
+    if (scalar(grep { is_prime(abs($n-$_)) } @vicinity) == 3)
+    {
+        $count++;
+        print "Found $count: $n [Ring=$ring,Side=$side,Cell=$cell]\n";
+    }
+}
+
+while ($count < 2_000)
+{
+    check_side_and_cell(0, 0, $ring_start);
+    check_side_and_cell($LAST_SIDE, $ring-1, $next_ring_start-1);
 }
 continue
 {
