@@ -3,10 +3,10 @@
 use strict;
 use warnings;
 
-use integer;
+# use integer;
 use bytes;
 
-# use Math::BigInt lib => 'GMP', ':constant';
+# use Math::BigInt lib => 'GMP';
 
 use List::Util qw(min max sum);
 use List::MoreUtils qw();
@@ -14,8 +14,12 @@ use List::MoreUtils qw();
 STDOUT->autoflush(1);
 
 my @primes = map { 0 + $_ } `primes 2 100`;
+my @logs = map { log($_) } @primes;
 
 my $L = (10 ** 16);
+# my $L = 1_000;
+
+my $LOG_L = log($L);
 
 my $total = 0;
 
@@ -28,7 +32,13 @@ sub f
     # $i is index to start from.
     # $c is count.
     # $mul is the product
-    my ($i, $c, $mul) = @_;
+    my ($i, $c, $mul, $mul_l) = @_;
+
+    # print "\@_ = @_\n";
+    if ($mul_l > $LOG_L)
+    {
+        return;
+    }
 
     if ($i == @primes)
     {
@@ -52,12 +62,12 @@ sub f
     }
     else
     {
-        f($i + 1, $c, $mul);
-        f($i + 1, $c+1, $mul*$primes[$i]);
+        f($i + 1, $c, $mul, $mul_l);
+        f($i + 1, $c+1, $mul*$primes[$i], $mul_l + $logs[$i]);
     }
     return;
 }
 
-f(0, 0, 1);
+f(0, 0, 1, 0);
 
 print "total = $total\n";
