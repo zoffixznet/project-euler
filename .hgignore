@@ -12,6 +12,8 @@ project-euler/165/euler_165
 project-euler/165/euler_165.hi
 project-euler/165/euler_165.o
 project-euler/209/connectivity.png
+project-euler/258/.*\.exe
+project-euler/258/CACHE/[A-F0-9]+.bin
 project-euler/455/RESULTS/(?:ten)?\d+.result
 project-euler/466/_Inline
 project-euler/75/euler-75
