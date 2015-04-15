@@ -117,10 +117,12 @@ int main()
     }
 
     Mat * p = new Mat;
-#if 0
+#if 1
     power( 1000000000000000000LL, p);
-#else
+#elif 0
     power( 2LL, p);
+#else
+    power( 4000LL, p);
 #endif
 
     ll sum = 0;
