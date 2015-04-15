@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <string.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 typedef long long ll;
 typedef uint32_t u32;
@@ -31,25 +32,59 @@ static void mul(Mat * ret, const Mat * const m_base, const Mat * const n_base)
 
     for (int r = 0 ; r < LEN ; r++)
     {
-        typeof(&(m->c[r])) mi = &(m->c[r]);
+        const u32 * mi = (m->c[r]);
         for (int c = 0; c < LEN ; c++)
         {
             ll sum = 0;
-            typeof(&(n->c[c])) ni = &(n->c[c]);
+            const u32 * ni = (n->c[c]);
             for (int i = 0; i < LEN ; i++)
             {
-                sum = (sum + (((ll)mi[i]) * ((ll)ni[i]))) % BASE;
+                sum = ((sum + (((ll)mi[i]) * ((ll)ni[i]))) % BASE);
             }
             ret->trans.c[c][r] = ret->orig.c[r][c] = (u32)sum;
         }
     }
 }
 
-void power(ll n, Mat * ret)
+static void power_helper(ll n, Mat * ret);
+
+static void power(ll n, Mat * ret)
+{
+    char cache_fn[200];
+    snprintf(cache_fn, sizeof(cache_fn), "CACHE/%llX.bin", n);
+    FILE * cache_fh = fopen(cache_fn, "rb");
+    if (! cache_fh)
+    {
+        power_helper(n,ret);
+        FILE * w = fopen(cache_fn, "wb");
+        fwrite(ret, sizeof(*ret), 1, w);
+        fclose(w);
+        cache_fh = fopen(cache_fn, "rb");
+    }
+    if (fread(ret, sizeof(*ret), 1, cache_fh) != 1)
+    {
+        fprintf(stderr, "SNAFU for %lld\n" , n);
+        exit(-1);
+    }
+    fclose(cache_fh);
+}
+
+static void power_helper(ll n, Mat * ret)
 {
     if (n == 1)
     {
         *ret = ONE;
+    }
+    else if (n & 0x1)
+    {
+        Mat * temp_ret = new Mat;
+        power ((n ^ 0x1), temp_ret);
+        printf ("After rec %lld\n", n);
+        fflush(stdout);
+        mul(ret, temp_ret, &ONE);
+        printf ("After mul %lld\n", n);
+        fflush(stdout);
+        delete temp_ret;
     }
     else
     {
@@ -57,17 +92,7 @@ void power(ll n, Mat * ret)
         power(n >> 1, rec);
         printf ("After rec %lld\n", n);
         fflush(stdout);
-        if (n & 0x1)
-        {
-            Mat * temp_ret = new Mat;
-            mul(temp_ret, rec, rec);
-            mul(ret, temp_ret, &ONE);
-            delete temp_ret;
-        }
-        else
-        {
-            mul(ret, rec, rec);
-        }
+        mul(ret, rec, rec);
         printf ("After mul %lld\n", n);
         fflush(stdout);
         delete rec;
@@ -92,7 +117,11 @@ int main()
     }
 
     Mat * p = new Mat;
+#if 0
     power( 1000000000000000000LL, p);
+#else
+    power( 2LL, p);
+#endif
 
     ll sum = 0;
 
