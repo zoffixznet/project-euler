@@ -16,8 +16,9 @@ STDOUT->autoflush(1);
 my @primes = map { 0 + $_ } `primes 2 100`;
 my @logs = map { log($_) } @primes;
 
+my $L = 1_0000_0000_0000_0000;
 # my $L = (10 ** 16);
-my $L = 1_000_000;
+# my $L = 1_000_000;
 # my $L = 1_000;
 
 my $LOG_L = log($L);
@@ -30,7 +31,6 @@ my $count = 0;
 my $next_iter = $ITER;
 
 my %gross_sizes;
-my %links;
 
 sub f
 {
@@ -57,26 +57,19 @@ sub f
             my $offset = int( $L / $mul );
             $gross_sizes{"@$c"} = $offset;
 
+=begin removed.
             if (@$c > 4)
             {
-                for my $pos (0 .. (1 << @$c)-2)
+                for my $pos (0 .. $#$c)
                 {
-                    my @link = @$c[grep { $pos & (1 << $_) } keys@$c];
-                    if (@link >= 4)
-                    {
-                        push @{$links{"@link"}}, $c;
-                    }
-                }
-                if (0)
-                {
-                    for my $pos (0 .. $#$c)
-                    {
-                        my @link = @$c;
-                        splice(@link, $pos, 1);
-                        push @{$links{"@link"}}, $c;
-                    }
+                    my @link = @$c;
+                    splice(@link, $pos, 1);
+                    push @{$links{"@link"}}, $c;
                 }
             }
+=end removed
+
+=cut
 
             if (0)
             {
@@ -122,19 +115,56 @@ f(0, [], 1, 0);
 
 my %net_sizes;
 
+sub calc_links
+{
+    my ($c, $s) = @_;
+
+    my @ret;
+
+    for my $in (-1 .. $#$c)
+    {
+        for my $add (
+            (($in == -1 ? -1 : $c->[$in])+1)
+                ..
+            (($in == $#$c ? scalar(@primes) : $c->[$in+1])-1)
+        )
+        {
+            my @new = (@$c[0 .. $in], $add, @$c[$in+1 .. $#$c]);
+            my $n = "@new";
+            if (exists $gross_sizes{$n})
+            {
+                push @ret , [\@new, $n];
+            }
+        }
+    }
+
+    return \@ret;
+}
+
 sub n
 {
-    my ($c) = @_;
-
-    my $s = "@$c";
+    my ($c, $s) = @_;
 
     return $net_sizes{$s} //=
     sub {
         my $size = $gross_sizes{$s};
 
-        for my $k (@{$links{$s}})
+        my @Q = @{ calc_links($c, $s) };
+        my %seen = (map { +($_->[1] => undef()) } @Q);
+        while (defined(my $krec = shift(@Q)))
         {
-            $size -= n($k);
+            my ($k, $ks) = @$krec;
+            $size -= n($k, $ks);
+
+            for my $next_k (@{ calc_links($k, $ks) })
+            {
+                my $n_s = $next_k->[1];
+                if (!exists($seen{$n_s}))
+                {
+                    $seen{$n_s} = undef();
+                    push @Q, $next_k;
+                }
+            }
         }
 
         $total += $size;
@@ -148,7 +178,7 @@ $count = 0;
 foreach my $k (keys(%gross_sizes))
 {
     printf "Inspecting %d/%d\n", ($count++, $LIM);
-    n([split / /, $k]);
+    n([split / /, $k], $k);
 }
 
 if (0)
