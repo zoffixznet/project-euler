@@ -118,23 +118,16 @@ sub n
 
     return $net_sizes{$s} //=
     sub {
-        if (!exists($gross_sizes{$s}))
+        my $size = $gross_sizes{$s};
+
+        for my $k (@{$links{$s}})
         {
-            return 0;
+            $size -= n($k);
         }
-        else
-        {
-            my $size = $gross_sizes{$s};
 
-            for my $k (@{$links{$s}})
-            {
-                $size -= n($k);
-            }
+        $total += $size;
 
-            $total += $size;
-
-            return $size;
-        }
+        return $size;
     }->();
 }
 
@@ -143,11 +136,7 @@ $count = 0;
 foreach my $k (keys(%gross_sizes))
 {
     printf "Inspecting %d/%d\n", ($count++, $LIM);
-    my @set = split(/ /, $k);
-    if (@set == 4)
-    {
-        n(\@set);
-    }
+    n([split / /, $k]);
 }
 
 # Got 84176 for $L = 1_000_000;
