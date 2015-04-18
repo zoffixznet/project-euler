@@ -57,12 +57,24 @@ sub f
             my $offset = int( $L / $mul );
             $gross_sizes{"@$c"} = $offset;
 
+            if (@$c > 4)
             {
-                for my $pos (0 .. $#$c)
+                for my $pos (0 .. (1 << @$c)-2)
                 {
-                    my @link = @$c;
-                    splice(@link, $pos, 1);
-                    push @{$links{"@link"}}, $c;
+                    my @link = @$c[grep { $pos & (1 << $_) } keys@$c];
+                    if (@link >= 4)
+                    {
+                        push @{$links{"@link"}}, $c;
+                    }
+                }
+                if (0)
+                {
+                    for my $pos (0 .. $#$c)
+                    {
+                        my @link = @$c;
+                        splice(@link, $pos, 1);
+                        push @{$links{"@link"}}, $c;
+                    }
                 }
             }
 
@@ -139,6 +151,21 @@ foreach my $k (keys(%gross_sizes))
     n([split / /, $k]);
 }
 
-# Got 84176 for $L = 1_000_000;
+if (0)
+{
+    my $fh = io->file("bad.dump");
+    foreach my $k (keys(%net_sizes))
+    {
+        my $v = $net_sizes{$k};
+        my @key = @primes[split/ /,$k];
+        for my $i (1 .. $v)
+        {
+            $fh->print(": @key\n");
+        }
+    }
+}
+
+# Got 77579 for $L = 1_000_000;
 # Should be 77579.
+# Yay!
 print "total = $total\n";
