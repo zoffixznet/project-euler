@@ -30,6 +30,7 @@ my $count = 0;
 my $next_iter = $ITER;
 
 my %gross_sizes;
+my %links;
 
 sub f
 {
@@ -55,6 +56,15 @@ sub f
         {
             my $offset = int( $L / $mul );
             $gross_sizes{"@$c"} = $offset;
+
+            {
+                for my $pos (0 .. $#$c)
+                {
+                    my @link = @$c;
+                    splice(@link, $pos, 1);
+                    push @{$links{"@link"}}, $c;
+                }
+            }
 
             if (0)
             {
@@ -104,51 +114,27 @@ sub n
 {
     my ($c) = @_;
 
-    return $net_sizes{"@$c"} //=
+    my $s = "@$c";
+
+    return $net_sizes{$s} //=
     sub {
-        my $size = sub {
-            if (!exists($gross_sizes{"@$c"}))
-            {
-                return 0;
-            }
-            else
-            {
-                my $size = $gross_sizes{"@$c"};
-
-                for my $k (keys(%gross_sizes))
-                {
-                    my %d = (map { $_ => 0 } @$c);
-
-                    my @elems = split/ /, $k;
-
-                    if (@elems == @$c + 1)
-                    {
-                        my $count = 0;
-                        foreach my $e (@elems)
-                        {
-                            if (exists($d{$e}))
-                            {
-                                $count++;
-                            }
-                        }
-
-                        if ($count == @$c)
-                        {
-                            $size -= n(\@elems);
-                        }
-                    }
-                }
-
-                return $size;
-            }
-        }->();
-
-        if (@$c == 4)
+        if (!exists($gross_sizes{$s}))
         {
-            $total += $size;
+            return 0;
         }
+        else
+        {
+            my $size = $gross_sizes{$s};
 
-        return $size;
+            for my $k (@{$links{$s}})
+            {
+                $size -= n($k);
+            }
+
+            $total += $size;
+
+            return $size;
+        }
     }->();
 }
 
@@ -156,8 +142,7 @@ my $LIM = keys(%gross_sizes);
 $count = 0;
 foreach my $k (keys(%gross_sizes))
 {
-    print "Inspecting $count/$LIM\n";
-    $count++;
+    printf "Inspecting %d/%d\n", ($count++, $LIM);
     my @set = split(/ /, $k);
     if (@set == 4)
     {
