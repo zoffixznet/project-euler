@@ -7,15 +7,20 @@ use integer;
 use bytes;
 
 use List::Util qw(sum);
-use List::MoreUtils qw();
+use List::MoreUtils qw(all);
 
 use DB_File;
 
 STDOUT->autoflush(1);
 
+my $TIED = 1;
+
 my %cache;
 
-tie %cache, 'DB_File', 'e306.db';
+if ($TIED)
+{
+    tie %cache, 'DB_File', 'e306.db';
+}
 
 my $THIS_PLAYER = 1;
 my $OTHER_PLAYER = 2;
@@ -37,26 +42,48 @@ sub evl
     else
     {
         my $val = sub {
+
+            if (@$key == 1 and (($key->[0] & 0x1) == 0))
+            {
+                # The first player can partition the space in the middle
+                # to two equal halves after which he becomes the second
+                # player and can use the mirroring method to win.
+                return $THIS_PLAYER_WINS;
+            }
+
+            if ((@$key & 0x1 == 0) and
+                all { $key->[$_ << 1] == $key->[($_ << 1)|1] } (0 .. @$key >> 1)
+            )
+            {
+                # The other player wins because he can use the mirroring
+                # process to force a victory
+                return $OTHER_PLAYER_WINS;
+            }
+            my $prev_len = -1;
             for my $i (keys @$key)
             {
                 my $len = $key->[$i];
-                my @head = @$key[0 .. $i-1];
-                my @tail = @$key[$i+1 .. $#$key];
-
-                # k[i] = 2 => 0
-                # k[i] = 3 => 0
-                # k[i] = 4 => 1
-                # k[i] = 5 => 1
-                # k[i] = 6 => 2
-                # k[i] = 7 => 2 [  XX   ]
-                for my $start (0 .. (($len>>1)-1) )
+                if ($len != $prev_len)
                 {
-                    my @parts = (grep { $_ >= 2 } ($start, $len-$start-2));
-                    my @new_key = (@head, (sort {$b <=> $a} @tail, @parts));
-                    if (evl(\@new_key) == $OTHER_PLAYER_WINS)
+                    my @head = @$key[0 .. $i-1];
+                    my @tail = @$key[$i+1 .. $#$key];
+
+                    # k[i] = 2 => 0
+                    # k[i] = 3 => 0
+                    # k[i] = 4 => 1
+                    # k[i] = 5 => 1
+                    # k[i] = 6 => 2
+                    # k[i] = 7 => 2 [  XX   ]
+                    for my $start (0 .. (($len>>1)-1) )
                     {
-                        return $THIS_PLAYER_WINS;
+                        my @parts = (grep { $_ >= 2 } ($start, $len-$start-2));
+                        my @new_key = (@head, (sort {$b <=> $a} @tail, @parts));
+                        if (evl(\@new_key) == $OTHER_PLAYER_WINS)
+                        {
+                            return $THIS_PLAYER_WINS;
+                        }
                     }
+                    $prev_len = $len;
                 }
             }
             return $OTHER_PLAYER_WINS;
@@ -93,7 +120,15 @@ sub evl
 
 my $count = 1;
 
-my $MAX = 50;
+my $MAX = 1_000_000;
+
+$SIG{'INT'} = sub {
+    if ($TIED)
+    {
+        untie %cache;
+    }
+    exit(-1);
+};
 
 for my $n (3 .. $MAX)
 {
