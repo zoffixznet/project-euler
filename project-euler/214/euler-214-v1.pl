@@ -15,7 +15,7 @@ use List::MoreUtils qw();
 STDOUT->autoflush(1);
 
 # Cache.
-my %C = (1 => 0);
+my %C = (1 => 1);
 
 sub chain_len
 {
@@ -67,14 +67,6 @@ open my $fh, "primes 2 $MAX|";
 while (my $p = <$fh>)
 {
     chomp($p);
-    my $l = chain_len($p);
-    if ($l == $LEN)
-    {
-        print "Found $p\n";
-    }
-    else
-    {
-        print "Missed $p\n";
-    }
+    printf "%d L=%d\n", $p, chain_len($p);
 }
 close($fh);
