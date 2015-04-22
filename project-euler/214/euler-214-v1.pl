@@ -19,16 +19,16 @@ my %C = (1 => 1);
 
 sub chain_len
 {
-    my ($n) = @_;
+    my ($n, $is_p) = @_;
 
-    return ($C{$n} //= (1 + chain_len(totient($n))));
+    return ($C{$n} //= (1 + chain_len(scalar($is_p ? ($n-1) : totient($n)), 0)));
 }
 
 sub totient
 {
     my ($n) = @_;
 
-    my @factors = ((`factor "$n"` =~ s/\A[^:]+://r) =~ /(\d+)/g);
+    my @factors = ((`factor "$n"` =~ s/\A[^:]+://r) =~ /([0-9]+)/g);
 
     if (@factors == 1)
     {
@@ -67,6 +67,6 @@ open my $fh, "primes 2 $MAX|";
 while (my $p = <$fh>)
 {
     chomp($p);
-    printf "%d L=%d\n", $p, chain_len($p);
+    printf "%d L=%d\n", $p, chain_len($p, 1);
 }
 close($fh);
