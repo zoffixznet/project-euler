@@ -14,54 +14,45 @@ use List::MoreUtils qw();
 
 STDOUT->autoflush(1);
 
+my $counts = "";
 # Cache.
 my %C = (1 => 1);
 
 sub chain_len
 {
-    my ($n, $is_p) = @_;
-
-    return ($C{$n} //= (1 + chain_len(scalar($is_p ? ($n-1) : totient($n)), 0)));
-}
-
-sub totient
-{
     my ($n) = @_;
 
-    my @factors = ((`factor "$n"` =~ s/\A[^:]+://r) =~ /([0-9]+)/g);
-
-    if (@factors == 1)
-    {
-        return $n-1;
-    }
-
-    my %f = (map { $_ => 1 } @factors);
-
-    my @p = (map { [$_, $_] } sort { $a <=> $b } keys%f);
-
-    my $count = 1;
-
-    I:
-    for my $i (2 .. $n-1)
-    {
-        for my $p (@p)
-        {
-            while ($p->[0] < $i)
-            {
-                $p->[0] += $p->[1];
-            }
-            if ($p->[0] == $i)
-            {
-                next I;
-            }
-        }
-        $count++;
-    }
-
-    return $count;
+    return ($C{$n} //= (1 + chain_len(vec($counts, $n, 32))));
 }
 
 my $MAX = 40_000_000;
+
+foreach my $i (2 .. $MAX-1)
+{
+    vec($counts, $i, 32) = $i-1;
+}
+print "Initialized Array\n";
+
+my $min_n;
+my $min_expr = 1_000_000;
+
+my $l = ($MAX >> 1);
+foreach my $d (2 .. $l)
+{
+    print "d=$d\n" if ($d % 1_000 == 0);
+    my $totient = vec($counts, $d, 32);
+
+    my $m = $d<<1;
+    while ($m < $MAX)
+    {
+        vec($counts, $m, 32) -= $totient;
+    }
+    continue
+    {
+        $m += $d;
+    }
+}
+
 my $LEN = 25;
 open my $fh, "primes 2 $MAX|";
 while (my $p = <$fh>)
