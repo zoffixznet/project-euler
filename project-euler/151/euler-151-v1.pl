@@ -34,7 +34,7 @@ sub rec
                 {
                     $c[$s]++;
                 }
-                rec ($factor*$f, (\@c), $result + ($cnt == 1));
+                rec ($factor*$f/$cnt, (\@c), $result + ($cnt == 1));
             }
         }
     }
