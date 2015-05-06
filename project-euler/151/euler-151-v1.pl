@@ -8,7 +8,6 @@ use List::MoreUtils qw(all);
 
 STDOUT->autoflush(1);
 
-my $total_num = 0;
 my $sum = 0;
 
 # rec is short for "recurse".
@@ -20,7 +19,6 @@ sub rec
     if ($cnt == 0)
     {
         $sum += $factor * $result;
-        $total_num += $factor;
     }
     else
     {
@@ -43,4 +41,4 @@ sub rec
 
 rec(1,[1],0);
 
-printf "Result == %.6f\n", ($sum / $total_num - 2);
+printf "Result == %.6f\n", ($sum - 2);
