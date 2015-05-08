@@ -48,6 +48,11 @@ sub solve_for_level
     # The level index.
     my ($l) = @_;
 
+    if (!defined($levels[$l]))
+    {
+        return;
+    }
+
     while (my ($id, $count) = each(%{$levels[$l]}))
     {
         my $wall = from_id($id);
@@ -94,6 +99,39 @@ sub solve_for_level
     $levels[$l] = undef();
 
     return;
+}
+
+sub solve
+{
+    my ($len, $num_layers) = @_;
+
+    @levels = ();
+
+    $LEN = $len;
+    $NUM_LAYERS = $num_layers;
+
+    foreach my $start_new (2,3)
+    {
+        my $wall = [
+            map { my $l = (($_&0x1) ? $start_new : ($start_new^0x1));
+                +{ o => $l, l => $l }
+            } (0 .. $NUM_LAYERS-1)
+        ];
+
+        my $sum = sum (map { $_->{l} } @$wall);
+
+        $levels[$sum]{to_id($wall)} = 1;
+    }
+
+    my $total = $LEN*$NUM_LAYERS;
+    for my $l (0 .. $total-1)
+    {
+        solve_for_level($l);
+    }
+
+    # Now let's count the number of elements in the total level.
+    #
+    return sum(values(%{$levels[$total]}));
 }
 
 1;
