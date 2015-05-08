@@ -39,4 +39,61 @@ sub from_id
     ];
 }
 
+our $LEN;
+our $NUM_LAYERS;
+our @levels;
+
+sub solve_for_level
+{
+    # The level index.
+    my ($l) = @_;
+
+    while (my ($id, $count) = each(%{$levels[$l]}))
+    {
+        my $wall = from_id($id);
+
+        my $min_i;
+        my $min_len = $LEN+1;
+
+        while (my ($i, $rec) = each @$wall)
+        {
+            my $len = $rec->{l};
+            if ($len < $min_len)
+            {
+                $min_len = $len;
+                $min_i = $i;
+            }
+        }
+
+        my $rem = $LEN-$min_len;
+        NEW:
+        for my $new (($rem >= 5) ? (2,3) : ($rem == 3) ? (3) : (2))
+        {
+            my $new_len = $min_len+$new;
+            if ($new_len != $LEN)
+            {
+                foreach my $i (
+                    (($min_i > 0) ? ($min_i - 1) : ()),
+                    (($min_i+1 < $NUM_LAYERS) ? ($min_i+1) : ()),
+                )
+                {
+                    my ($o, $l) = @{$wall->[$i]}{qw(o l)};
+                    if ($l == $new_len or ($l-$o) == $new_len)
+                    {
+                        next NEW;
+                    }
+                }
+            }
+            my $new_id = $id;
+            vec($new_id, $min_i, 8) = (($new & 0x1) | ($new_len << 1));
+            $levels[$new_len]{$new_id} += $count;
+        }
+    }
+
+    # Free no longer necessary results.
+    $levels[$l] = undef();
+
+    return;
+}
+
 1;
