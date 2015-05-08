@@ -91,7 +91,7 @@ sub solve_for_level
             }
             my $new_id = $id;
             vec($new_id, $min_i, 8) = (($new & 0x1) | ($new_len << 1));
-            $levels[$new_len]{$new_id} += $count;
+            $levels[$l+$new]{$new_id} += $count;
         }
     }
 
