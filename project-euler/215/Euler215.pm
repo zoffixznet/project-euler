@@ -14,6 +14,7 @@ use parent 'Exporter';
 our @EXPORT_OK = (qw(to_id from_id));
 
 STDOUT->autoflush(1);
+STDERR->autoflush(1);
 
 sub to_id
 {
@@ -47,6 +48,8 @@ sub solve_for_level
 {
     # The level index.
     my ($l) = @_;
+
+    STDERR->print("Checking level $l\n");
 
     if (!defined($levels[$l]))
     {
