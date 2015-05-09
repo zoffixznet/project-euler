@@ -6,7 +6,9 @@ use warnings;
 use integer;
 use bytes;
 
-use Math::BigInt lib => 'GMP', ':constant';
+use Tree::RB;
+
+# use Math::BigInt lib => 'GMP', ':constant';
 
 use List::Util qw(sum);
 use List::MoreUtils qw();
@@ -26,7 +28,7 @@ sub solve
     my $v = '';
     vec($v, $AA+$BB, 2) = 1;
 
-    while (@u < 1_000)
+    while (@u < 5_000)
     {
         my $next;
         FIND_NEXT:
