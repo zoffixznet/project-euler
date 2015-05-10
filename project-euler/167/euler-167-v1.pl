@@ -15,6 +15,8 @@ use List::MoreUtils qw();
 
 STDOUT->autoflush(1);
 
+my $DESIRED_K = int(1 . ('0' x 11)) - 1;
+
 sub solve
 {
     my ($n) = @_;
@@ -28,7 +30,11 @@ sub solve
     my $v = '';
     vec($v, $AA+$BB, 2) = 1;
 
-    while (@u < 5_000)
+    my $CALC_CNT = $n * 2_000;
+    my $FIND_NUM = $n * 1000;
+    my $MAX_STEP = $n * 500;
+
+    while (@u < $CALC_CNT)
     {
         my $next;
         FIND_NEXT:
@@ -59,7 +65,25 @@ sub solve
         push @u, $next;
     }
 
-    return $u[-1];
+    my $M = $#u;
+    STEP:
+    for my $STEP (1 .. $MAX_STEP)
+    {
+        my $delta = $u[$M]-$u[$M-$STEP];
+
+        for my $i ($M-$FIND_NUM .. $M-$STEP-1)
+        {
+            if ($u[$i+$STEP] - $u[$i] != $delta)
+            {
+                next STEP;
+            }
+        }
+        my $STEP_K = $DESIRED_K;
+        $STEP_K -= ((int (($STEP_K - $M) / $STEP) + 1) * $STEP);
+        return $u[$STEP_K] + $delta * (($DESIRED_K - $STEP_K) / $STEP);
+    }
+
+    die "Cannot find for $n!";
 }
 
 my $total_sum = 0;
