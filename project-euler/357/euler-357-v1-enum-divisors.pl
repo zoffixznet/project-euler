@@ -9,8 +9,13 @@ my %f;
 foreach my $f (split/\s+/, $_)
 {
     die if $f !~ /\S/;
-    print"F=$f\n";
     $f{$f}++;
+}
+
+my @t;
+while (my ($k, $v) = each%f)
+{
+    push @t, [$k => $v];
 }
 my $root = sqrt($n);
 
@@ -22,13 +27,12 @@ sub f
     }
     else
     {
-        my $f = shift;
-        print "F/=$f ; %F = @{[%f]}\n";
+        my ($f, $m) = @{shift(@_)};
         my @r = f(@_);
 
         my $x = 1;
         my @ret;
-        for my $e (0 .. $f{$f})
+        for my $e (0 .. $m)
         {
             push @ret, map { $x * $_ } @r;
         }
@@ -40,4 +44,4 @@ sub f
     }
 }
 
-print join " ", $n, (sort { $a <=> $b } grep { $_ > 1 and $_ <= $root } f(keys(%f)));
+print join " ", $n, (sort { $a <=> $b } grep { $_ > 1 and $_ <= $root } f(@t));
