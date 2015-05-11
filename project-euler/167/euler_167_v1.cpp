@@ -11,12 +11,13 @@ const ll DESIRED_K = (100000000000LL - 1);
 
 ll solve(unsigned int n)
 {
+    std::cerr << "Inspecting " << n << std::endl;
     const int AA = 2;
     const int BB = n*2+1;
 
-    const unsigned int CALC_CNT = n * 2000;
-    const unsigned int FIND_NUM = n * 1000;
-    const unsigned int MAX_STEP = n * 500;
+    const unsigned int CALC_CNT = 2000 << n;
+    const unsigned int FIND_NUM = CALC_CNT/2;
+    const unsigned int MAX_STEP = FIND_NUM/2;
 
     std::vector<int> u;
 
@@ -93,7 +94,7 @@ end_of_STEP:
         ;
     }
 
-    std::cerr << "Cannot find for n!" << std::endl;
+    std::cerr << "Cannot find for " << n << "!" << std::endl;
     exit(-1);
     return -1;
 }
