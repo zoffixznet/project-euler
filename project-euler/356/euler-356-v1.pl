@@ -8,19 +8,22 @@ use bytes;
 STDOUT->autoflush(1);
 STDERR->autoflush(1);
 
-use Math::GMPf qw(:mpf);
-Rmpf_set_default_prec(1000);
+use Math::MPFR qw(:mpfr);
+Rmpfr_set_default_prec(1000);
 
-# Math::GMPf->precision(50);
-# Math::GMPf->accuracy(50);
-# my $sum = Math::GMPf->new('0');
-my $eps = Math::GMPf->new('1e-10');
+# Math::MPFR->precision(50);
+# Math::MPFR->accuracy(50);
+# my $sum = Math::MPFR->new('0');
+my $eps = Math::MPFR->new('1e-100');
+my $base = Math::MPFR->new('1e8');
+my $log_base = log($base);
+my $total_sum = 0;
 for my $n (1 .. 30)
 {
     print STDERR "Evaulating $n\n";
-    my $top_pivot = Math::GMPf->new(2) ** $n;
+    my $top_pivot = Math::MPFR->new(2) ** $n;
     my $exp2 = $top_pivot;
-    my $delta = Math::GMPf->new('0.00000001');
+    my $delta = Math::MPFR->new('0.00000001');
 
     my $calc = sub {
         my ($x) = @_;
@@ -54,11 +57,23 @@ for my $n (1 .. 30)
         $mid_val = $calc->($mid);
     }
 
-    my $val = Rmpf_init();
-    Rmpf_floor($val, ($mid ** 987654321));
+    my $mid_log = log($mid) / $log_base;
+    my $log_times = $mid_log * 987654321;
+
+    my $val = Rmpfr_init();
+    Rmpfr_floor($val, $log_times);
+
+    my $diff = $log_times - $val;
+
+    my $modulo = $base ** $diff;
+
+    $val = Rmpfr_init();
+    Rmpfr_floor($val, $modulo);
     # print "Found f($n) = $val\n";
-    print "Found f($n) = ", Rmpf_get_str($val, 10, 0), "\n";
+    my $as_int = Rmpfr_integer_string($val, 10, 0);
+    print "Found f($n) = $as_int\n";
     # print "S($n) = $sum\n";
+    ($total_sum += $as_int) %= 1e8;
 }
 
-# print "Sum = $sum\n";
+print "Sum = $total_sum\n";
