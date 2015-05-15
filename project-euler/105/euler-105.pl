@@ -51,6 +51,8 @@ sub is_special_sum_set
         $recurse->(
             $i+1, $B_sum, $B_count, $C_sum, $C_count
         );
+
+        return;
     };
 
     eval {
