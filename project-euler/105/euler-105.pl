@@ -6,10 +6,6 @@ use warnings;
 use List::Util qw(sum);
 use IO::All;
 
-=head1 DESCRIPTION
-
-=cut
-
 sub is_special_sum_set
 {
     my $A = shift;
