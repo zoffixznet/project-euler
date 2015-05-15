@@ -9,12 +9,12 @@ STDOUT->autoflush(1);
 STDERR->autoflush(1);
 
 use Math::MPFR qw(:mpfr);
-Rmpfr_set_default_prec(1000);
+Rmpfr_set_default_prec(10000);
 
 # Math::MPFR->precision(50);
 # Math::MPFR->accuracy(50);
 # my $sum = Math::MPFR->new('0');
-my $eps = Math::MPFR->new('1e-100');
+my $eps = Math::MPFR->new('1e-300');
 my $base = Math::MPFR->new('1e8');
 my $log_base = log($base);
 my $total_sum = 0;
