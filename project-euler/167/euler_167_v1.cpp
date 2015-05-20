@@ -11,12 +11,12 @@ const ll DESIRED_K = (100000000000LL - 1);
 
 ll solve(unsigned int n)
 {
-    std::cerr << "Inspecting " << n << std::endl;
+    std::cout << "Inspecting " << n << std::endl;
     const int AA = 2;
     const int BB = n*2+1;
 
-    const unsigned int CALC_CNT = 2000 << n;
-    const unsigned int FIND_NUM = CALC_CNT/2;
+    const unsigned int CALC_CNT = ((n < 8) ? (1000 << n) : (4000 << n));
+    const unsigned int FIND_NUM = (CALC_CNT>>2);
     const unsigned int MAX_STEP = FIND_NUM/2;
 
     std::vector<int> u;
@@ -35,7 +35,6 @@ ll solve(unsigned int n)
         int next = -1;
         const int last_elem = u.back();
         const int double_last_elem = last_elem<<1;
-FIND_NEXT:
         for (int i=last_elem+1; i < double_last_elem; i++)
         {
             if (v[i] == 1)
@@ -68,11 +67,14 @@ FIND_NEXT:
             }
         }
 
+        std::cout << next << std::endl;
         u.push_back(next);
     }
 
+    free (v);
+    v = NULL;
+
     const int M = u.size()-1;
-STEP:
     for (unsigned int STEP=1; STEP < MAX_STEP; STEP++)
     {
         const int delta = u[M]-u[M-STEP];
