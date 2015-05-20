@@ -30,6 +30,8 @@ ll solve(unsigned int n)
     memset(v, '\0', v_size+1);
     v[AA+BB] = 1;
 
+    std::cout << "[] " << AA << std::endl;
+    std::cout << "[] " << BB << std::endl;
     while (u.size() < CALC_CNT)
     {
         int next = -1;
@@ -67,7 +69,7 @@ ll solve(unsigned int n)
             }
         }
 
-        std::cout << next << std::endl;
+        std::cout << '[' << (next - u.back()) << "] " << next << std::endl;
         u.push_back(next);
     }
 
