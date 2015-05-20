@@ -11,4 +11,4 @@ euler_167_v1.exe: $(SOURCES)
 	g++ -O3 $(CPPFLAGS) -flto -fwhole-program -fvisibility=hidden -fomit-frame-pointer -march=native -o $@ $< -lm
 
 clean:
-	rm -f *.exe bit_counts.h
+	rm -f *.exe
