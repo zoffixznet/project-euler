@@ -17,9 +17,19 @@ sub top_dice
 {
     my ($num_dice, $num_sides, $num_top, $top_sum) = @_;
 
+    # The factorials.
+    my @fac = (1,1);
+
+    for my $n (2 .. $num_dice)
+    {
+        push @fac, $fac[-1] * $n;
+    }
+
     my $count = 0;
 
     my $rec;
+
+    my $init_base = $fac[$num_dice];
 
     $rec = sub {
         my ($n, $dice, $sum) = @_;
@@ -28,11 +38,11 @@ sub top_dice
         {
             if ($sum == $top_sum)
             {
-                my $base = $num_dice->copy->bfac;
+                my $base = $init_base->copy;
 
                 for my $d (@$dice[0 .. $#$dice-1])
                 {
-                    $base /= $d->[1]->copy->bfac;
+                    $base /= $fac[$d->[1]]
                 }
 
                 my $least = $dice->[-1]->[0];
@@ -45,8 +55,8 @@ sub top_dice
                     (
                         $base
                         / (
-                            ($dice->[-1]->[1] + $extra_least)->copy->bfac
-                            * $num_below->copy->bfac
+                            $fac[$dice->[-1]->[1] + $extra_least]
+                            * $fac[$num_below]
                         )
                         * ($top_is_1 ? 1 : ($least - 1) ** $num_below)
                     );
