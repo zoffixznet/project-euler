@@ -81,10 +81,12 @@ sub top_dice
 
     for my $top (1 .. $num_sides)
     {
+        print "Reached $top\n";
         $rec->(1, [[$top,1]], $top);
     }
 
     return $count;
 }
 
-print "For the test case it is ", top_dice(5, 6, 3, 15), "\n";
+print "For the test case it is ", top_dice(5, 6, 3, 15), " and should be 1111\n";
+print "Answer = ", top_dice(20, 12, 10, 70), "\n";
