@@ -6,7 +6,7 @@ use warnings;
 use integer;
 use bytes;
 
-use Math::BigInt lib => 'GMP', ':constant';
+# use Math::BigInt lib => 'GMP', ':constant';
 
 use List::Util qw(sum);
 use List::MoreUtils qw();
@@ -38,7 +38,8 @@ sub top_dice
         {
             if ($sum == $top_sum)
             {
-                my $base = $init_base->copy;
+                # my $base = $init_base->copy;
+                my $base = $init_base;
 
                 for my $d (@$dice[0 .. $#$dice-1])
                 {
