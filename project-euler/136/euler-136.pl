@@ -9,19 +9,6 @@ use IO::Handle;
 
 STDOUT->autoflush(1);
 
-=head1 DESCRIPTION
-
-The positive integers, x, y, and z, are consecutive terms of an arithmetic
-progression. Given that n is a positive integer, the equation, x2 − y2 − z2 =
-n, has exactly one solution when n = 20:
-
-132 − 102 − 72 = 20
-
-In fact there are twenty-five values of n below one hundred for which the
-equation has a unique solution.
-
-How many values of n less than fifty million have exactly one solution?
-
 =head1 ANALYSIS
 
 (z+2d)^2 - (z+d)^2 - z^2 = z^2+4dz+4d^2 - z^2 - 2dz - d^2 - z^2 =
