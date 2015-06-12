@@ -3,7 +3,7 @@ package Euler504;
 use strict;
 use warnings;
 
-# use integer;
+use integer;
 use bytes;
 
 # use Math::BigInt lib => 'GMP', ':constant';
@@ -30,15 +30,19 @@ sub calc_tri
     my ($x, $y) = sort { $a <=> $b } @_;
 
     return $cache{"$x,$y"} //= sub {
-        my $dy = $y / $x;
+        # my $dy = $y / $x;
 
         my $count = 0;
         my $edges = $y + $x - 1;
 
         for my $i (0 .. $x)
         {
-            my $len = $dy * $i;
-            $count += int($len) + ((int($len) < $len) ? 1 : 0);
+            my $len = $y * $i;
+            $count += int($len / $x);
+            if ($len % $x)
+            {
+                $count++;
+            }
         }
 
         return [$count, $edges];
@@ -53,6 +57,7 @@ sub calc_all_quadris
     {
         for my $B (1 .. $M)
         {
+            print "A,B=$A,$B\n";
             my $AB = calc_tri($A,$B);
 
             for my $C (1 .. $M)
