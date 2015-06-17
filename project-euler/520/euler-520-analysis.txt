@@ -1,0 +1,23 @@
+Let E(n,g) be the number of numbers with exactly "n" digits (including possible
+leading zeros) where exactly g digits appear an odd number of times.
+
+So:
+
+E(2,0) = 10
+
+E(2,2) = 90
+
+E(n + 2,0) = 10*E(n,0) + 2*E(n,2)
+
+# x, y - even-repeating digits in E(n,x)
+# a, b - odd-repeating digits.
+E(n + 2,2) = [xy]E(n,0)  + [xa]E(n,2) + [ax]E(n,2) + [aa]E(n,2) +
+             + [xx]E(n,2) + [ab]E(n,4) =
+             90*E(n,0) + (8*2*2+10)*E(n,2) + 4*3*E(n,4)
+
+E(n + 2,4) = [xy]E(n,2)  + [xa]E(n,4) + [ax]E(n,4) + [aa]E(n,4) +
+             + [xx]E(n,4) + [ab]E(n,6) =
+             8*7*E(n,2) + (6*4*2+10)*E(n,4) + 6*5*E(n,6)
+
+E(n + 2,10) = 10*E(n,10) + 2*E(n,8)
+
