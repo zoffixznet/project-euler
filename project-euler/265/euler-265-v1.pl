@@ -73,6 +73,8 @@ sub recurse
             }
         }
     }
+
+    return;
 }
 
 recurse([(0)x$N], (1 << 0));
