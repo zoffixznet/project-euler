@@ -194,12 +194,16 @@ while (1)
     }
     while (my ($i, $rec) = each@mins)
     {
-        my $prefix = $rec->{'s'};
-        my $suffix = $rec->{strs}->{'s'};
+        my $r = $rec->{strs};
+        my $pos = $r->{p} //= do {
 
-        my $needle = $prefix.$n.$suffix;
+            my $prefix = $rec->{'s'};
+            my $suffix = $r->{'s'};
 
-        my $pos = calc_start($needle) + length($prefix);
+            my $needle = $prefix.$n.$suffix;
+
+            calc_start($needle) + length($prefix);
+        };
         if (!defined($min) || $pos < $min)
         {
             $last_i = $i;
@@ -215,13 +219,16 @@ while (1)
     my $last_s;
     for my $start_new_pos (1 .. length($n)-1)
     {
-        my $prefix = substr($n, $start_new_pos);
-        my $middle = $mm{$start_new_pos}{'s'};
-        my $suffix = substr($n, 0, $start_new_pos);
+        my $rec = $mm{$start_new_pos};
 
-        my $needle = $prefix.$middle.$suffix;
+        my $pos = $rec->{p} //= do {
+            my $prefix = substr($n, $start_new_pos);
+            my $middle = $rec->{'s'};
+            my $suffix = substr($n, 0, $start_new_pos);
 
-        my $pos = calc_start($needle) + length($prefix)+length($middle);
+            my $needle = $prefix.$middle.$suffix;
+            calc_start($needle) + length($prefix)+length($middle);
+        };
 
         if (!defined($min) || $pos < $min)
         {
@@ -247,6 +254,7 @@ while (1)
             $rec = $mins[$last_i]{'strs'};
         }
         $rec->{'s'} = $rec->{'next'}->next;
+        $rec->{'p'} = undef;
     }
 
     if ($min > $last_pos)
