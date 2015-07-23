@@ -122,7 +122,7 @@ my @seq_poses;
 {
     my %p;
     my $len = length($n);
-    for my $item_l (1 .. $len/2)
+    for my $item_l (1 .. $len)
     {
         START_POS:
         for my $start_pos (0 .. $item_l-1)
@@ -138,30 +138,27 @@ my @seq_poses;
             }
             my $count = 0;
 
-            my $pos = $start_pos + $item_l;
-            while ($pos <= $len - $item_l)
+            my $pos = $start_pos + length($s);
+            my $next_s = $s + 1;
+            while ($pos <= $len - length($s))
             {
-                my $next_s = substr($n, $pos, $item_l);
-                if ($next_s == $s+1)
+                if (substr($n, $pos, length($next_s)) eq $next_s)
                 {
+                    $pos += length($next_s);
                     $count++;
-                    $s = $next_s;
+                    $s = $next_s++;
                 }
                 else
                 {
                     next START_POS;
                 }
             }
-            continue
-            {
-                $pos += $item_l;
-            }
 
-            if ($count)
+            if ($count >= 0)
             {
                 if ($pos < $len)
                 {
-                    if (substr($s, 0, $len-$pos) ne substr($n,$pos))
+                    if (substr($s+1, 0, $len-$pos) ne substr($n,$pos))
                     {
                         next START_POS;
                     }
