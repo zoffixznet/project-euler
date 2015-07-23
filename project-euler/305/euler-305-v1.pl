@@ -117,6 +117,63 @@ test_calc_start(100, 10+(100-10)*2);
 test_calc_start(200, 10+(100-10)*2+(200-100)*3);
 test_calc_start(1000, 10+(100-10)*2+(1000-100)*3);
 
+my @seq_poses;
+
+{
+    my %p;
+    my $len = length($n);
+    for my $item_l (1 .. $len/2)
+    {
+        START_POS:
+        for my $start_pos (0 .. $item_l-1)
+        {
+            my $s = my $init_s = substr($n, $start_pos, $item_l);
+            if ($start_pos > 0)
+            {
+                my $prev = $s-1;
+                if (substr($n, 0, $start_pos) ne substr($prev, -$start_pos))
+                {
+                    next START_POS;
+                }
+            }
+            my $count = 0;
+
+            my $pos = $start_pos + $item_l;
+            while ($pos <= $len - $item_l)
+            {
+                my $next_s = substr($n, $pos, $item_l);
+                if ($next_s == $s+1)
+                {
+                    $count++;
+                    $s = $next_s;
+                }
+                else
+                {
+                    next START_POS;
+                }
+            }
+            continue
+            {
+                $pos += $item_l;
+            }
+
+            if ($count)
+            {
+                if ($pos < $len)
+                {
+                    if (substr($s, 0, $len-$pos) ne substr($n,$pos))
+                    {
+                        next START_POS;
+                    }
+                }
+                # Let's rock and roll.
+                $p{calc_start($init_s) - $start_pos} = 1;
+            }
+        }
+    }
+
+    @seq_poses = sort {$a <=> $b } keys(%p);
+}
 my $last_pos;
 my $count = 1;
 while (1)
@@ -126,6 +183,15 @@ while (1)
 
     my $last_i;
     my $which = '';
+
+    if (@seq_poses)
+    {
+        if (!defined($min) or $seq_poses[0] < $min)
+        {
+            $min = $seq_poses[0];
+            $which = "seq_poses";
+        }
+    }
     while (my ($i, $rec) = each@mins)
     {
         my $prefix = $rec->{'s'};
@@ -165,15 +231,22 @@ while (1)
         }
     }
 
-    my $rec;
-    if ($which eq 'mid')
+    if ($which eq 'seq_poses')
     {
-        $rec = $mm{$last_s};
+        shift(@seq_poses);
     }
     else
     {
-        $rec = $mins[$last_i]{'strs'};
+        my $rec;
+        if ($which eq 'mid')
+        {
+            $rec = $mm{$last_s};
+        }
+        else
+        {
+            $rec = $mins[$last_i]{'strs'};
+        }
+        $rec->{'s'} = $rec->{'next'}->next;
     }
-    $rec->{'s'} = $rec->{'next'}->next;
     print $count++, " $min\n";
 }
