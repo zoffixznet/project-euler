@@ -127,6 +127,10 @@ my @seq_poses;
         START_POS:
         for my $start_pos (0 .. $item_l-1)
         {
+            if (substr($n, $start_pos, 1) eq '0')
+            {
+                next START_POS;
+            }
             my $s = my $init_s = substr($n, $start_pos, $item_l);
             if ($start_pos > 0)
             {
@@ -221,7 +225,7 @@ while ($count <= $MAX_COUNT)
 
             my $needle = $prefix.$middle.$suffix;
             my $offset = length($prefix)+length($middle);
-            if ($needle =~ /9\z/)
+            if ($needle =~ /\A.?9+\z/)
             {
                 my $d = (substr($needle, 0, -1) - 1);
                 if ($d < 0)
@@ -266,7 +270,8 @@ while ($count <= $MAX_COUNT)
 
     if ($min > $last_pos)
     {
-        print $count++, " $min\n";
+        print "$min\n";
+        $count++;
         $last_pos = $min;
     }
 }
