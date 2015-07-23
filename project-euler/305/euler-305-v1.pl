@@ -13,12 +13,67 @@ use List::MoreUtils qw();
 
 STDOUT->autoflush(1);
 
+package Nexter;
+
+sub new
+{
+    my ($class, $args) = @_;
+    return bless $args, shift;
+}
+
+sub next
+{
+    my $self = shift;
+
+    my $skip_all_zeros = $self->[2];
+
+    my $ret;
+
+    do
+    {
+        $ret = sprintf("%0" . $self->[0] . 'd', ($self->[1]++));
+
+        if ($self->[1] == 10 ** $self->[0])
+        {
+            $self->[0]++;
+            $self->[1] = 0;
+        }
+    } while($skip_all_zeros && $ret !~ /[1-9]/);
+
+    return $ret;
+}
+
+package main;
+
+sub test_nexter
+{
+    my ($num_digits, $base, $ret1, $ret2) = @_;
+
+    my $obj = Nexter->new([$num_digits, $base]);
+
+    if ($obj->next ne $ret1)
+    {
+        die "Nexter ret1: @_";
+    }
+    if ($obj->next ne $ret2)
+    {
+        die "Nexter ret2: @_";
+    }
+
+    return;
+}
+
+test_nexter(1,9, '9', '00');
+test_nexter(1,0, '0', '1');
+test_nexter(2, 0, '00', '01');
+test_nexter(2, 99, '99', '000');
+
 my $n = shift(@ARGV);
 
 my $next_mins = 1;
-my @mins = ({ s => '', strs => {next => 1, s => '',}});
+my @mins = ({ s => '', strs => {next => Nexter->new([1,1,1]), s => '',}});
 
-my %mm = (map { $_ => +{ next => 1, s => '' } } 1 .. length($n)-1);
+my %mm = (map { $_ => +{ next => Nexter->new([0,0,0]), s => '' } } 1 .. length($n)-1);
 
 sub start_10
 {
@@ -88,7 +143,7 @@ while (1)
     }
     if ($last_i == $#mins)
     {
-        push @mins, +{ s => ($next_mins++), strs => {next => 1, s => ''} };
+        push @mins, +{ s => ($next_mins++), strs => {next => Nexter->new([1,1,1]), s => ''} };
     }
 
     my $last_s;
@@ -119,6 +174,6 @@ while (1)
     {
         $rec = $mins[$last_i]{'strs'};
     }
-    $rec->{'s'} = $rec->{'next'}++;
+    $rec->{'s'} = $rec->{'next'}->next;
     print $count++, " $min\n";
 }
