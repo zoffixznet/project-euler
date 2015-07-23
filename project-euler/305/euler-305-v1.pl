@@ -117,7 +117,7 @@ while (1)
     }
     else
     {
-        $rec = $mins[$last_i];
+        $rec = $mins[$last_i]{'strs'};
     }
     $rec->{'s'} = $rec->{'next'}++;
     print $count++, " $min\n";
