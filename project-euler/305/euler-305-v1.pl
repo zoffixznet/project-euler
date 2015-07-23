@@ -229,6 +229,7 @@ while ($count <= $MAX_COUNT)
             my $suffix = substr($n, 0, $start_new_pos);
 
             my $needle = $prefix.$middle.$suffix;
+            my $offset = length($prefix)+length($middle);
             if ($needle =~ /9\z/)
             {
                 my $d = (substr($needle, 0, -1) - 1);
@@ -239,9 +240,10 @@ while ($count <= $MAX_COUNT)
                 else
                 {
                     $needle = ($d . '9');
+                    $offset = length($d);
                 }
             }
-            return calc_start($needle) + length($prefix)+length($middle);
+            return calc_start($needle) + $offset;
         }->();
 
         if (!defined($min) || $pos < $min)
