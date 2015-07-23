@@ -24,6 +24,7 @@ $mins{contained} =
 };
 
 my %mm = (map { $_ => +{ next => 1, s => '' } } 1 .. length($n)-1);
+
 sub start_10
 {
     my $l = shift;
@@ -45,6 +46,19 @@ sub calc_start
 
     return start_10($len) + ($needle - (10 ** ($len-1))) * $len;
 }
+
+sub test_calc_start
+{
+    my ($needle, $want_pos) = @_;
+
+    my $have_pos = calc_start($needle);
+    if ($have_pos != $want_pos)
+    {
+        die "For needle=$needle got $have_pos instead of $want_pos";
+    }
+}
+
+test_calc_start(1, 1);
 
 my $last_pos;
 my $count = 1;
