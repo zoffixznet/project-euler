@@ -73,7 +73,8 @@ my $n = shift(@ARGV);
 my $next_mins = 1;
 my @mins = ({ s => '', strs => {next => Nexter->new([0,0,0]), s => '',}});
 
-my %mm = (map { $_ => +{ next => Nexter->new([0,0,0]), s => '' } } 1 .. length($n)-1);
+my @s_pos = (grep { substr($n, $_, 1) ne '0' } (1 .. length($n) -1));
+my %mm = (map { $_ => +{ next => Nexter->new([0,0,0]), s => '' } } @s_pos);
 
 {
     my @c = (undef(), 1);
@@ -216,7 +217,7 @@ while (1)
     }
 
     my $last_s;
-    for my $start_new_pos (1 .. length($n)-1)
+    for my $start_new_pos (@s_pos)
     {
         my $rec = $mm{$start_new_pos};
 
