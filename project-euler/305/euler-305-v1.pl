@@ -68,7 +68,7 @@ test_nexter(1,0, '0', '1');
 test_nexter(2, 0, '00', '01');
 test_nexter(2, 99, '99', '000');
 
-my $n = shift(@ARGV);
+my ($n, $MAX_COUNT) = @ARGV;
 
 my $next_mins = 1;
 my @mins = ({ s => '', strs => {next => Nexter->new([0,0,0]), s => '',}});
@@ -174,9 +174,11 @@ my @seq_poses;
 
     @seq_poses = sort {$a <=> $b } keys(%p);
 }
+
 my $last_pos = 0;
 my $count = 1;
-while (1)
+
+while ($count <= $MAX_COUNT)
 {
     my $min;
     # For within a number containing the full number:
@@ -211,7 +213,7 @@ while (1)
             $which = 'contained';
         }
     }
-    if ($last_i == $#mins)
+    if (defined($last_i) && ($last_i == $#mins))
     {
         push @mins, +{ s => ($next_mins++), strs => {next => Nexter->new([0,0,0]), s => ''} };
     }
