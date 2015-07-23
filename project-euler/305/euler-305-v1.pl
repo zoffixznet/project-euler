@@ -75,16 +75,15 @@ my @mins = ({ s => '', strs => {next => Nexter->new([0,0,0]), s => '',}});
 
 my %mm = (map { $_ => +{ next => Nexter->new([0,0,0]), s => '' } } 1 .. length($n)-1);
 
-sub start_10
 {
-    my $l = shift;
-    if ($l == 1)
+    my @c = (undef(), 1);
+
+    sub start_10
     {
-        return 1;
-    }
-    else
-    {
-        return +($l-1) * (9 * 10 ** ($l-2)) + start_10($l-1);
+        my $l = shift;
+        return $c[$l] //= do {
+            ($l-1) * (9 * 10 ** ($l-2)) + start_10($l-1);
+        };
     }
 }
 
