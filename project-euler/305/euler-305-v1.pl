@@ -15,13 +15,8 @@ STDOUT->autoflush(1);
 
 my $n = shift(@ARGV);
 
-my %mins;
-
-$mins{contained} =
-{
-    next => 1,
-    strs => [{ s => '', strs => {next => 1, str => '',}},],
-};
+my $next_mins = 1;
+my @mins = ({ s => '', strs => {next => 1, s => '',}});
 
 my %mm = (map { $_ => +{ next => 1, s => '' } } 1 .. length($n)-1);
 
@@ -64,6 +59,8 @@ test_calc_start(10, 10);
 test_calc_start(11, 12);
 test_calc_start(99, 10+(99-10)*2);
 test_calc_start(100, 10+(100-10)*2);
+test_calc_start(200, 10+(100-10)*2+(200-100)*3);
+test_calc_start(1000, 10+(100-10)*2+(1000-100)*3);
 
 my $last_pos;
 my $count = 1;
@@ -72,14 +69,12 @@ while (1)
     my $min;
     # For within a number containing the full number:
 
-    my $contained = $mins{contained}{strs};
-
     my $last_i;
     my $which = '';
-    while (my ($i, $rec) = each@$contained)
+    while (my ($i, $rec) = each@mins)
     {
         my $prefix = $rec->{'s'};
-        my $suffix = $rec->{strs}->{str};
+        my $suffix = $rec->{strs}->{'s'};
 
         my $needle = $prefix.$n.$suffix;
 
@@ -91,9 +86,9 @@ while (1)
             $which = 'contained';
         }
     }
-    if ($last_i == $#$contained)
+    if ($last_i == $#mins)
     {
-        push @{ $mins{contained}{strs} }, +{ s => ($mins{contained}{'next'}++), strs => {next => 1, str => ''} };
+        push @mins, +{ s => ($next_mins++), strs => {next => 1, s => ''} };
     }
 
     my $last_s;
@@ -122,7 +117,7 @@ while (1)
     }
     else
     {
-        $rec = $mins{contained}{strs}[$last_i];
+        $rec = $mins[$last_i];
     }
     $rec->{'s'} = $rec->{'next'}++;
     print $count++, " $min\n";
