@@ -73,7 +73,7 @@ my ($n, $MAX_COUNT) = @ARGV;
 my $next_mins = 1;
 my @mins = ({ s => '', strs => {next => Nexter->new([0,0,0]), s => '',}});
 
-my @s_pos = (grep { substr($n, $_, 1) ne '0' and substr($n, $_-1, 2) !~ /\A9[01]\z/ } (1 .. length($n) -1));
+my @s_pos = (grep { substr($n, $_, 1) ne '0' } (1 .. length($n) -1));
 my %mm = (map { $_ => +{ next => Nexter->new([0,0,0]), s => '' } } @s_pos);
 
 {
@@ -231,7 +231,15 @@ while ($count <= $MAX_COUNT)
             my $needle = $prefix.$middle.$suffix;
             if ($needle =~ /9\z/)
             {
-                substr($needle, 0, 1)--;
+                my $d = (substr($needle, 0, -1) - 1);
+                if ($d < 0)
+                {
+                    return -1;
+                }
+                else
+                {
+                    $needle = ($d . '9');
+                }
             }
             return calc_start($needle) + length($prefix)+length($middle);
         }->();
