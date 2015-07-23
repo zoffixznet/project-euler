@@ -59,6 +59,7 @@ sub test_calc_start
 }
 
 test_calc_start(1, 1);
+test_calc_start(2, 2);
 
 my $last_pos;
 my $count = 1;
