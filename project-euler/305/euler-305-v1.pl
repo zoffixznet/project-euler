@@ -71,7 +71,7 @@ test_nexter(2, 99, '99', '000');
 my $n = shift(@ARGV);
 
 my $next_mins = 1;
-my @mins = ({ s => '', strs => {next => Nexter->new([1,1,1]), s => '',}});
+my @mins = ({ s => '', strs => {next => Nexter->new([0,0,0]), s => '',}});
 
 my %mm = (map { $_ => +{ next => Nexter->new([0,0,0]), s => '' } } 1 .. length($n)-1);
 
@@ -174,7 +174,7 @@ my @seq_poses;
 
     @seq_poses = sort {$a <=> $b } keys(%p);
 }
-my $last_pos;
+my $last_pos = 0;
 my $count = 1;
 while (1)
 {
@@ -209,7 +209,7 @@ while (1)
     }
     if ($last_i == $#mins)
     {
-        push @mins, +{ s => ($next_mins++), strs => {next => Nexter->new([1,1,1]), s => ''} };
+        push @mins, +{ s => ($next_mins++), strs => {next => Nexter->new([0,0,0]), s => ''} };
     }
 
     my $last_s;
@@ -248,5 +248,10 @@ while (1)
         }
         $rec->{'s'} = $rec->{'next'}->next;
     }
-    print $count++, " $min\n";
+
+    if ($min > $last_pos)
+    {
+        print $count++, " $min\n";
+        $last_pos = $min;
+    }
 }
