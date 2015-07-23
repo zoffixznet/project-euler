@@ -34,7 +34,7 @@ sub start_10
     }
     else
     {
-        return +($l-1) * (9 * 10 ** ($l-1)) + start_10($l-1);
+        return +($l-1) * (9 * 10 ** ($l-2)) + start_10($l-1);
     }
 }
 
@@ -60,6 +60,7 @@ sub test_calc_start
 
 test_calc_start(1, 1);
 test_calc_start(2, 2);
+test_calc_start(10, 10);
 
 my $last_pos;
 my $count = 1;
