@@ -180,7 +180,7 @@ my $c9_pos;
 
 my $count_9s_base;
 
-if (($count_9s_base) = ($n =~ /\A9+(.0*)\z/))
+if (($count_9s_base) = ($n =~ /\A9+([^0]0*)\z/))
 {
     $is_count_9s = 1;
 }
