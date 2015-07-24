@@ -2,6 +2,7 @@
 
 use strict;
 use warnings;
+no warnings 'portable';
 
 use integer;
 use bytes;
@@ -293,7 +294,8 @@ sub _calc_mid_val
 
 while ($count <= $MAX_COUNT)
 {
-    my $min;
+    # Int max.
+    my $min = 0x7FFF_FFFF_FFFF_FFFF;
     # Cleanup handler.
     my $cl;
 
@@ -301,7 +303,7 @@ while ($count <= $MAX_COUNT)
     my $s = sub {
         my ($p, $cb) = @_;
 
-        if (!defined($min) || $p < $min)
+        if ($p < $min)
         {
             $min = $p;
             $cl = $cb;
