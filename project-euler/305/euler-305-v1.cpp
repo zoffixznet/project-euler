@@ -251,6 +251,28 @@ static inline ll _calc_mid_val(const ll start_new_pos, const std::string & middl
 
 }
 
+
+// Int max.
+ll min;
+
+// Cleanup handler.
+void (*cl)();
+
+// Set.
+static inline bool s(const ll p, void (*cb)())
+{
+    if (p < min)
+    {
+        min = p;
+        cl = cb;
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 int main(int argc, char * argv[])
 {
     n = atol(argv[1]);
@@ -432,31 +454,16 @@ AFTER_START_POS:
             is_count_9s = true;
         }
     }
-#if 0
-while (count <= MAX_COUNT)
-{
-    // Int max.
-    my min = 0x7FFF_FFFF_FFFF_FFFF;
-    // Cleanup handler.
-    my cl;
 
-    // Set.
-    my s = sub {
-        my (p, cb) = @_;
-
-        if (p < min)
-        {
-            min = p;
-            cl = cb;
-            return 1;
-        }
-        return;
-    };
-
-    if (@seq_poses)
+    while (count <= MAX_COUNT)
     {
-        s->(seq_poses[0], \&_seq_cl);
-    }
+        min = 0x7FFFFFFFFFFFFFFFLL;
+
+        if (! seq_poses.empty())
+        {
+            s(seq_poses.front(), _seq_cl);
+        }
+#if 0
 
     {
     my last_i;
@@ -589,8 +596,8 @@ while (count <= MAX_COUNT)
         count++;
         last_pos = min;
     }
-}
 #endif
+    }
 
     return 0;
 }
