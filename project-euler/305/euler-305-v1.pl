@@ -8,7 +8,7 @@ use bytes;
 
 use Math::BigInt lib => 'GMP', ':constant';
 
-use List::Util qw(sum);
+use List::Util qw(min sum);
 use List::MoreUtils qw();
 
 STDOUT->autoflush(1);
@@ -188,6 +188,45 @@ my @seq_poses;
                         if (substr(($needle) . ($needle+1), $offset, length($n)) eq $n)
                         {
                             $p{calc_start($needle) + $offset} = 1;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    for my $p (0 .. $len-2)
+    {
+        if (substr($n, $p, 1) eq '9')
+        {
+            my $suffix = substr($n, 0, $p+1);
+            my $prefix = substr($n, $p+1) - 1;
+
+            if ($prefix > 0)
+            {
+                for my $common (0 .. min(length($prefix), length($suffix)))
+                {
+                    my $pref_suf = substr($prefix, length($prefix)-$common);
+                    my $suf_pref = substr($suffix, 0, $common);
+
+                    if ($pref_suf eq $suf_pref)
+                    {
+                        my $needle =
+                            substr($prefix, 0, length($prefix)-$common)
+                            . $pref_suf
+                            . substr($suffix , $common);
+
+                        my $both = $needle . ($needle + 1);
+
+                        my $start = calc_start($needle);
+
+                        for my $x (
+                            map { $start + $_ }
+                            grep { substr($both, $_, length($n)) eq $n }
+                            (0 .. length($both) - length($n))
+                        )
+                        {
+                            $p{$x} = 1;
                         }
                     }
                 }
