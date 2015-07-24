@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 1;
+use Test::More tests => 3;
 
 use Test::Differences (qw( eq_or_diff ));
 
@@ -23,5 +23,11 @@ sub mytest
 {
     # TEST
     mytest(1, 100, "Euler 305");
+
+    # TEST
+    mytest(2, 100, "Euler 305");
+
+    # TEST
+    mytest(3, 100, "Euler 305");
 }
 
