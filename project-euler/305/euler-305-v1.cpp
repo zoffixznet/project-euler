@@ -488,7 +488,7 @@ AFTER_START_POS:
 
         {
             ll last_i = -1;
-            for(std::vector<int>::size_type i = 0; i != mins.size(); i++) {
+            for (std::vector<int>::size_type i = 0; i != mins.size(); i++) {
                 auto rec = mins[i];
                 auto & r = rec->strs;
 
@@ -512,7 +512,7 @@ AFTER_START_POS:
             if (last_i == (ll)(mins.size())-1)
             {
                 Mins * m = new Mins;
-                m->s = next_mins++;
+                m->s = std::to_string(next_mins++);
                 mins.push_back(m);
             }
         }
@@ -614,10 +614,11 @@ AFTER_START_POS:
         cl();
         if (min > last_pos)
         {
-            if (verbose || (count++ == MAX_COUNT))
+            if (verbose || (count == MAX_COUNT))
             {
                 std::cout << min << std::endl;
             }
+            count++;
             last_pos = min;
         }
     }
