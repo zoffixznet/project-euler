@@ -120,6 +120,12 @@ test_calc_start(1000, 10+(100-10)*2+(1000-100)*3);
 
 my @seq_poses;
 
+sub _seq_cl
+{
+    shift(@seq_poses);
+    return;
+}
+
 {
     my %p;
     my $len = length($n);
@@ -283,14 +289,15 @@ while ($count <= $MAX_COUNT)
     # For within a number containing the full number:
 
     my $last_i;
-    my $which = '';
+    # Cleanup handler.
+    my $cl;
 
     if (@seq_poses)
     {
         if (!defined($min) or $seq_poses[0] < $min)
         {
             $min = $seq_poses[0];
-            $which = "seq_poses";
+            $cl = \&_seq_cl;
         }
     }
     while (my ($i, $rec) = each@mins)
@@ -309,7 +316,12 @@ while ($count <= $MAX_COUNT)
         {
             $last_i = $i;
             $min = $pos;
-            $which = 'contained';
+            $cl = sub {
+                $r->{'s'} = $r->{'next'}->next;
+                $r->{'p'} = undef;
+
+                return;
+            };
         }
     }
     if (defined($last_i) && ($last_i == $#mins))
@@ -346,7 +358,12 @@ while ($count <= $MAX_COUNT)
             if (!defined($min) || $pos < $min)
             {
                 $last_s = $start_new_pos;
-                $which = 'mid';
+                $cl = sub {
+                    $rec->{'s'} = $rec->{'next'}->next;
+                    $rec->{'p'} = undef;
+
+                    return;
+                };
                 $min = $pos;
             }
         }
@@ -377,7 +394,12 @@ while ($count <= $MAX_COUNT)
             if (!defined($min) || $pos < $min)
             {
                 $last_s = $start_new_pos;
-                $which = 'mid9';
+                $cl = sub {
+                    $rec->{c}++;
+                    $rec->{p} = undef;
+
+                    return;
+                };
                 $min = $pos;
             }
         }
@@ -407,40 +429,16 @@ while ($count <= $MAX_COUNT)
         if (!defined($min) || $c9_pos < $min)
         {
             $min = $c9_pos;
-            $which = 'c9';
+            $cl = sub {
+                $c9_pos = undef;
+                $count_9s++;
+
+                return;
+            };
         }
     }
 
-    if ($which eq 'seq_poses')
-    {
-        shift(@seq_poses);
-    }
-    elsif ($which eq 'c9')
-    {
-        $c9_pos = undef;
-        $count_9s++;
-    }
-    elsif ($which eq 'mid9')
-    {
-        my $rec = $mm_all_9s{$last_s};
-        $rec->{c}++;
-        $rec->{p} = undef();
-    }
-    else
-    {
-        my $rec;
-        if ($which eq 'mid')
-        {
-            $rec = $mm{$last_s};
-        }
-        else
-        {
-            $rec = $mins[$last_i]{'strs'};
-        }
-        $rec->{'s'} = $rec->{'next'}->next;
-        $rec->{'p'} = undef;
-    }
-
+    $cl->();
     if ($min > $last_pos)
     {
         print "$min\n";
