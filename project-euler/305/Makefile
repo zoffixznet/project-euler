@@ -4,7 +4,7 @@ buf.txt:
 	perl -E 'my $s = ""; $s .= $_ for 1 .. 1_000_000; say $s' > $@
 
 e305-debug.exe: euler-305-v1.cpp
-	g++ -std=gnu++11 -g -o $@ $<
+	g++ -Wall -std=gnu++11 -g -o $@ $<
 
 test: buf.txt
 	prove t/*.t

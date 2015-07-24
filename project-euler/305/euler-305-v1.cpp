@@ -193,7 +193,7 @@ static void _seq_cl()
     seq_poses.pop();
 }
 
-static inline ll length(std::string & s)
+static inline ll length(const std::string & s)
 {
     return s.size();
 }
@@ -213,7 +213,7 @@ bool is_count_9s = false;
 ll c9_pos = -1;
 ll c9_count_9s_in_n = -1;
 
-void _c9_cl(void)
+static void _c9_cl()
 {
     c9_pos = -1;
     count_9s++;
@@ -222,31 +222,34 @@ void _c9_cl(void)
 std::string count_9s_base;
 ll c9_foo = -1;
 
-#if 0
-
-
-sub _calc_mid_val
+static inline ll _calc_mid_val(const ll start_new_pos, const std::string & middle)
 {
-    my (start_new_pos, middle) = @_;
+    std::string prefix = n_s.substr(start_new_pos);
+    std::string suffix = n_s.substr(0, start_new_pos);
 
-    my prefix = substr(n, start_new_pos);
-    my suffix = substr(n, 0, start_new_pos);
+    ll prefix_i = std::stoll(prefix);
 
-    for my p (grep { _ >= 0 } prefix, prefix - 1)
+    for (int off=0; off >= -1; off--)
     {
-        my needle = p.middle.suffix;
-        my offset = length(p)+length(middle);
-
-        if (substr((needle . (needle+1)), offset, length(n)) eq n)
+        const ll p = prefix_i+off;
+        if (p >= 0)
         {
-            return calc_start(needle) + offset;
+            const std::string p_s = std::to_string(p);
+            const std::string needle = p_s + middle + suffix;
+            const ll offset = length(p_s) + length(middle);
+
+            const ll needle_i = std::stoll(needle);
+            const std::string both = needle + std::to_string(needle_i + 1);
+            if (both.substr(offset, n_len) == n_s)
+            {
+                return calc_start(needle_i) + offset;
+            }
         }
     }
 
     return -1;
 
 }
-#endif
 
 int main(int argc, char * argv[])
 {
