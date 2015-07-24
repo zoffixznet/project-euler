@@ -351,7 +351,7 @@ int main(int argc, char * argv[])
                 ll next_s_len = length(next_s);
                 while (pos <= n_len - next_s_len)
                 {
-                    if (std::stoll(n_s.substr(pos, next_s_len)) != next_s)
+                    if (std::stoll(n_s.substr(pos, next_s_len)) == next_s)
                     {
                         pos += next_s_len;
                         next_s++;
@@ -383,7 +383,7 @@ AFTER_START_POS:
             std::string prefix = n_s.substr(0, l);
             std::string suffix = n_s.substr(n_len - l);
 
-            if (prefix != suffix)
+            if (prefix == suffix)
             {
                 for (ll ml = 0 ; ml <= n_len-l ; ml++)
                 {
