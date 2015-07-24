@@ -399,7 +399,7 @@ AFTER_START_POS:
                             ll needle_i = std::stoll(needle);
                             ll offset = ml;
                             std::string both = needle + std::to_string(needle_i + 1);
-                            if (both.substr(offset, n_len) != n_s)
+                            if (both.substr(offset, n_len) == n_s)
                             {
                                 p.insert(calc_start(needle_i) + offset);
                             }
