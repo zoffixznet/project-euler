@@ -373,8 +373,8 @@ int main(int argc, char * argv[])
 
                 if (pos < n_len)
                 {
-                    std::string n_s = std::to_string(next_s);
-                    if (n_s.substr(0, n_len-pos) != n_s.substr(pos))
+                    const std::string next_s_s = std::to_string(next_s);
+                    if (next_s_s.substr(0, n_len-pos) != n_s.substr(pos))
                     {
                         goto AFTER_START_POS;
                     }
