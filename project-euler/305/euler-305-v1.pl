@@ -75,6 +75,7 @@ my @mins = ({ s => '', strs => {next => Nexter->new([0,0,0]), s => '',}});
 
 my @s_pos = (grep { substr($n, $_, 1) ne '0' } (1 .. length($n) -1));
 my %mm = (map { $_ => +{ next => Nexter->new([0,0,0]), s => '' } } @s_pos);
+my %mm_all_9s = (map { $_ => +{ c => 1, p => undef(), } } @s_pos);
 
 {
     my @c = (undef(), 1);
@@ -231,67 +232,134 @@ while ($count <= $MAX_COUNT)
     my $last_s;
     for my $start_new_pos (@s_pos)
     {
-        my $rec = $mm{$start_new_pos};
-
-        # So we want to do:
-        #
-        # N = XXXYYY
-        #
-        # Find:
-        # YYYMMMMXXX,YYY[MMMMXXX+1]
-        #
-        # Now if XXX !~ /9\z/ then everything is peachy.
-        #
-        # But what if it is?
-        #
-        # if MMMXXX =~ /[0-8]9\z/ then [MMMXXX+1] =~ /[1-9]0\z/ so it will
-        # still will not overflow.
-        #
-        # So what happens if MMMXXX is all-9s?
-        #
-        # We need:
-        # [YYY-1]MMMXXX,YYY[00000000]
-        my $pos = $rec->{p} //= sub {
-            my $prefix = substr($n, $start_new_pos);
-            my $middle = $rec->{'s'};
-            my $suffix = substr($n, 0, $start_new_pos);
-
-            my $needle = $prefix.$middle.$suffix;
-            my $offset = length($prefix)+length($middle);
-
-            {
-                my $both = $needle . ($needle+1);
-
-                if (substr($both, $offset, length($n)) eq $n)
-                {
-                    return calc_start($needle) + $offset;
-                }
-            }
-
-            {
-                my $p = ($prefix-1);
-                if ($p < 0)
-                {
-                    return -1;
-                }
-                my $needle = $p.$middle.$suffix;
-                $offset = length($p)+length($middle);
-
-                my $both = $needle . ($needle+1);
-                if (substr($both, $offset, length($n)) eq $n)
-                {
-                    return calc_start($needle) + $offset;
-                }
-            }
-
-            return -1;
-        }->();
-
-        if (!defined($min) || $pos < $min)
         {
-            $last_s = $start_new_pos;
-            $which = 'mid';
-            $min = $pos;
+            my $rec = $mm{$start_new_pos};
+
+            # So we want to do:
+            #
+            # N = XXXYYY
+            #
+            # Find:
+            # YYYMMMMXXX,YYY[MMMMXXX+1]
+            #
+            # Now if XXX !~ /9\z/ then everything is peachy.
+            #
+            # But what if it is?
+            #
+            # if MMMXXX =~ /[0-8]9\z/ then [MMMXXX+1] =~ /[1-9]0\z/ so it will
+            # still will not overflow.
+            #
+            # So what happens if MMMXXX is all-9s?
+            #
+            # We need:
+            # [YYY-1]MMMXXX,YYY[00000000]
+            my $pos = $rec->{p} //= sub {
+                my $prefix = substr($n, $start_new_pos);
+                my $middle = $rec->{'s'};
+                my $suffix = substr($n, 0, $start_new_pos);
+
+                my $needle = $prefix.$middle.$suffix;
+                my $offset = length($prefix)+length($middle);
+
+                {
+                    my $both = $needle . ($needle+1);
+
+                    if (substr($both, $offset, length($n)) eq $n)
+                    {
+                        return calc_start($needle) + $offset;
+                    }
+                }
+
+                {
+                    my $p = ($prefix-1);
+                    if ($p < 0)
+                    {
+                        return -1;
+                    }
+                    my $needle = $p.$middle.$suffix;
+                    $offset = length($p)+length($middle);
+
+                    my $both = $needle . ($needle+1);
+                    if (substr($both, $offset, length($n)) eq $n)
+                    {
+                        return calc_start($needle) + $offset;
+                    }
+                }
+
+                return -1;
+            }->();
+
+            if (!defined($min) || $pos < $min)
+            {
+                $last_s = $start_new_pos;
+                $which = 'mid';
+                $min = $pos;
+            }
+        }
+
+        {
+            my $rec = $mm_all_9s{$start_new_pos};
+
+            # So we want to do:
+            #
+            # N = XXXYYY
+            #
+            # Find:
+            # YYYMMMMXXX,YYY[MMMMXXX+1]
+            #
+            # Now if XXX !~ /9\z/ then everything is peachy.
+            #
+            # But what if it is?
+            #
+            # if MMMXXX =~ /[0-8]9\z/ then [MMMXXX+1] =~ /[1-9]0\z/ so it will
+            # still will not overflow.
+            #
+            # So what happens if MMMXXX is all-9s?
+            #
+            # We need:
+            # [YYY-1]MMMXXX,YYY[00000000]
+            my $pos = $rec->{p} //= sub {
+                my $prefix = substr($n, $start_new_pos);
+                my $middle = '9' x $rec->{'c'};
+                my $suffix = substr($n, 0, $start_new_pos);
+
+                my $needle = $prefix.$middle.$suffix;
+                my $offset = length($prefix)+length($middle);
+
+                {
+                    my $both = $needle . ($needle+1);
+
+                    if (substr($both, $offset, length($n)) eq $n)
+                    {
+                        return calc_start($needle) + $offset;
+                    }
+                }
+
+                {
+                    my $p = ($prefix-1);
+                    if ($p < 0)
+                    {
+                        return -1;
+                    }
+                    my $needle = $p.$middle.$suffix;
+                    $offset = length($p)+length($middle);
+
+                    my $both = $needle . ($needle+1);
+                    if (substr($both, $offset, length($n)) eq $n)
+                    {
+                        return calc_start($needle) + $offset;
+                    }
+                }
+
+                return -1;
+            }->();
+
+            if (!defined($min) || $pos < $min)
+            {
+                $last_s = $start_new_pos;
+                $which = 'mid9';
+                $min = $pos;
+            }
         }
     }
 
@@ -331,6 +399,12 @@ while ($count <= $MAX_COUNT)
     {
         $c9_pos = undef;
         $count_9s++;
+    }
+    elsif ($which eq 'mid9')
+    {
+        my $rec = $mm_all_9s{$last_s};
+        $rec->{c}++;
+        $rec->{p} = undef();
     }
     else
     {
