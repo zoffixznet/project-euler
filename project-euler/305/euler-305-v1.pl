@@ -252,6 +252,14 @@ my $is_count_9s;
 my $c9_pos;
 my $c9_count_9s_in_n;
 
+sub _c9_cl
+{
+    $c9_pos = undef;
+    $count_9s++;
+
+    return;
+}
+
 my $count_9s_base;
 my $c9_foo;
 
@@ -429,12 +437,7 @@ while ($count <= $MAX_COUNT)
         if (!defined($min) || $c9_pos < $min)
         {
             $min = $c9_pos;
-            $cl = sub {
-                $c9_pos = undef;
-                $count_9s++;
-
-                return;
-            };
+            $cl = \&_c9_cl;
         }
     }
 
