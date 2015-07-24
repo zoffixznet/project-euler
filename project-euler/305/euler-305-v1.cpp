@@ -144,7 +144,7 @@ struct Strs
     Nexter next;
     std::string s;
     ll p;
-    Strs() { p = -1; }
+    Strs() { p = 0; }
 };
 
 struct Mins
@@ -164,7 +164,7 @@ struct All_9s
     ll c;
     ll p;
 
-    All_9s() { c = 1 ; p = -1; }
+    All_9s() { c = 1 ; p = 0; }
 };
 
 std::vector<All_9s> mm_all_9s;
@@ -235,7 +235,7 @@ static inline ll _calc_mid_val(const ll start_new_pos, const std::string & middl
     for (int off=0; off >= -1; off--)
     {
         const ll p = prefix_i+off;
-        if (p >= 0)
+        if (p > 0)
         {
             const std::string p_s = std::to_string(p);
             const std::string needle = p_s + middle + suffix;
@@ -281,7 +281,7 @@ Strs * clear_strs_ptr;
 static void _clear_strs(void)
 {
     clear_strs_ptr->s = clear_strs_ptr->next.next();
-    clear_strs_ptr->p = -1;
+    clear_strs_ptr->p = 0;
 }
 
 ll all_9s_start_new_pos;
@@ -290,7 +290,7 @@ static void _clear_all_9s(void)
 {
     auto & rec = mm_all_9s[all_9s_start_new_pos];
     rec.c++;
-    rec.p = -1;
+    rec.p = 0;
 }
 
 int main(int argc, char * argv[])
@@ -494,7 +494,7 @@ AFTER_START_POS:
                 auto rec = mins[i];
                 auto & r = rec->strs;
 
-                if (r.p < 0)
+                if (r.p == 0)
                 {
                     const std::string prefix = rec->s;
                     const std::string suffix = r.s;
@@ -543,7 +543,7 @@ AFTER_START_POS:
                 // We need:
                 // [YYY-1]MMMXXX,YYY[00000000]
                 //
-                if (rec.p < 0)
+                if (rec.p == 0)
                 {
                     rec.p = _calc_mid_val(start_new_pos, rec.s);
                 }
@@ -559,6 +559,8 @@ AFTER_START_POS:
             {
                 auto & rec = mm_all_9s[start_new_pos];
 
+                if (rec.c < 30)
+                {
                 // So we want to do:
                 //
                 // N = XXXYYY
@@ -577,7 +579,7 @@ AFTER_START_POS:
                 //
                 // We need:
                 // [YYY-1]MMMXXX,YYY[00000000]
-                if (rec.p < 0)
+                if (rec.p == 0)
                 {
                     rec.p = _calc_mid_val(start_new_pos, std::string(rec.c, '9'));
                 }
@@ -587,6 +589,7 @@ AFTER_START_POS:
                 ))
                 {
                     all_9s_start_new_pos = start_new_pos;
+                }
                 }
             }
         }

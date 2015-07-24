@@ -94,6 +94,11 @@ sub calc_start
 {
     my $needle = shift;
 
+    if ($needle =~ /\A0/)
+    {
+        die "<$needle>";
+    }
+
     my $len = length($needle);
 
     return start_10($len) + ($needle - $P10[$len-1]) * $len;
@@ -277,7 +282,7 @@ sub _calc_mid_val
     my $prefix = substr($n, $start_new_pos);
     my $suffix = substr($n, 0, $start_new_pos);
 
-    for my $p (grep { $_ >= 0 } $prefix, $prefix - 1)
+    for my $p (grep { $_ > 0 } $prefix, $prefix - 1)
     {
         my $needle = $p.$middle.$suffix;
         my $offset = length($p)+length($middle);
@@ -289,7 +294,6 @@ sub _calc_mid_val
     }
 
     return -1;
-
 }
 
 while ($count <= $MAX_COUNT)
@@ -356,7 +360,6 @@ while ($count <= $MAX_COUNT)
     {
         {
             my $rec = $mm{$start_new_pos};
-
             # So we want to do:
             #
             # N = XXXYYY
@@ -389,6 +392,9 @@ while ($count <= $MAX_COUNT)
         {
             my $rec = $mm_all_9s{$start_new_pos};
 
+            if ($rec->{'c'} < 30)
+            {
+
             # So we want to do:
             #
             # N = XXXYYY
@@ -416,6 +422,7 @@ while ($count <= $MAX_COUNT)
                     return;
                 }
             );
+            }
         }
     }
 
