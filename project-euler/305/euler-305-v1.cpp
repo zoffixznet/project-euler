@@ -320,7 +320,7 @@ int main(int argc, char * argv[])
     start_10[0] = -1;
     start_10[1] = 1;
 
-    for (ll i = 1; i < 100 ; i++)
+    for (ll i = 2; i < 100 ; i++)
     {
         start_10[i] = (i-1) * (9*P10[i-2]) + start_10[i-1];
     }

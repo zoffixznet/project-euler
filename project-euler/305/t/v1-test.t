@@ -7,6 +7,13 @@ use Test::More tests => 18;
 
 use Test::Differences (qw( eq_or_diff ));
 
+my $which = $ENV{'WHICH_CMD'};
+
+my $CMD = ($which eq '1' ? 'perl euler-305-v1.pl' :
+    $which eq '2' ? './e305-debug.exe' :
+    (die "Unknown WHICH_CMD")
+);
+
 sub mytest
 {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
@@ -14,7 +21,7 @@ sub mytest
     my ($needle, $count, $blurb) = @_;
 
     return eq_or_diff(
-        scalar(`perl euler-305-v1.pl $needle $count`),
+        scalar(`$CMD $needle $count`),
         scalar(`bash good-results.bash $needle $count`),
         "$blurb - $needle $count",
     );

@@ -7,4 +7,5 @@ e305-debug.exe: euler-305-v1.cpp
 	g++ -Wall -std=gnu++11 -g -o $@ $<
 
 test: buf.txt
-	prove t/*.t
+	WHICH_CMD=1 prove t/*.t
+	WHICH_CMD=2 prove t/*.t
