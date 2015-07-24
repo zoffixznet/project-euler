@@ -173,6 +173,18 @@ my @seq_poses;
 my $last_pos = 0;
 my $count = 1;
 
+my $count_9s = 1;
+
+my $is_count_9s;
+my $c9_pos;
+
+my $count_9s_base;
+
+if (($count_9s_base) = ($n =~ /\A9+(.0*)\z/))
+{
+    $is_count_9s = 1;
+}
+
 while ($count <= $MAX_COUNT)
 {
     my $min;
@@ -249,9 +261,42 @@ while ($count <= $MAX_COUNT)
         }
     }
 
+    if ($is_count_9s)
+    {
+        COUNT9:
+        while (!defined $c9_pos)
+        {
+            my $c9 = $count_9s_base . '0' x $count_9s;
+            my $c9_minus_1 = $c9 - 1;
+            my $both = $c9_minus_1 . $c9;
+            if ($both =~ /\Q$n\E/g)
+            {
+                my $offset = pos($both) - length($n);
+                my $pos = calc_start($c9_minus_1) + $offset;
+
+                $c9_pos = $pos;
+                last COUNT9;
+            }
+        }
+        continue
+        {
+            $count_9s++;
+        }
+        if (!defined($min) || $c9_pos < $min)
+        {
+            $min = $c9_pos;
+            $which = 'c9';
+        }
+    }
+
     if ($which eq 'seq_poses')
     {
         shift(@seq_poses);
+    }
+    elsif ($which eq 'c9')
+    {
+        $c9_pos = undef;
+        $count_9s++;
     }
     else
     {
