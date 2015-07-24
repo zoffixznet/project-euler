@@ -142,6 +142,8 @@ struct Strs
 {
     Nexter next;
     std::string s;
+    ll p;
+    Strs() { p = -1; }
 };
 
 struct Mins
@@ -150,7 +152,7 @@ struct Mins
     Strs strs;
 };
 
-std::vector<Mins> mins;
+std::vector<Mins *> mins;
 ll next_mins = 1;
 
 std::vector<ll> s_pos;
@@ -168,7 +170,7 @@ std::vector<All_9s> mm_all_9s;
 
 ll start_10[100];
 
-static inline ll calc_start(ll needle, std::string & needle_s)
+static inline ll calc_start(ll needle, const std::string & needle_s)
 {
     ll len = needle_s.size();
 
@@ -177,11 +179,11 @@ static inline ll calc_start(ll needle, std::string & needle_s)
 
 static inline ll calc_start(ll needle)
 {
-    std::string s = std::to_string(needle);
+    const std::string s = std::to_string(needle);
     return calc_start(needle, s);
 }
 
-static inline ll calc_start(std::string & needle_s)
+static inline ll calc_start(const std::string & needle_s)
 {
     return calc_start(std::stoll(needle_s), needle_s);
 }
@@ -273,12 +275,20 @@ static inline bool s(const ll p, void (*cb)())
     }
 }
 
+Strs * clear_strs_ptr;
+
+static void _clear_strs(void)
+{
+    clear_strs_ptr->s = clear_strs_ptr->next.next();
+    clear_strs_ptr->p = -1;
+}
+
 int main(int argc, char * argv[])
 {
     n = atol(argv[1]);
     MAX_COUNT = atol(argv[2]);
 
-    Mins m;
+    Mins * m = new Mins;
     mins.push_back(m);
 
     n_s = std::to_string(n);
@@ -463,43 +473,39 @@ AFTER_START_POS:
         {
             s(seq_poses.front(), _seq_cl);
         }
-#if 0
 
-    {
-    my last_i;
-
-    while (my (i, rec) = each@mins)
-    {
-        my r = rec->{strs};
-        if (s->(
-                r->{p} //= do {
-
-                    my prefix = rec->{'s'};
-                    my suffix = r->{'s'};
-
-                    my needle = prefix.n.suffix;
-
-                    calc_start(needle) + length(prefix);
-                },
-                sub {
-                    r->{'s'} = r->{'next'}->next;
-                    r->{'p'} = undef;
-
-                    return;
-                }
-            ))
         {
-            last_i = i;
+            ll last_i = -1;
+            for(std::vector<int>::size_type i = 0; i != mins.size(); i++) {
+                auto rec = mins[i];
+                auto & r = rec->strs;
+
+                if (r.p < 0)
+                {
+                    const std::string prefix = rec->s;
+                    const std::string suffix = r.s;
+
+                    const std::string needle = prefix + n_s + suffix;
+
+                    r.p = calc_start(needle) + length(prefix);
+                }
+
+                if (s(r.p, _clear_strs))
+                {
+                    clear_strs_ptr = &(rec->strs);
+                    last_i = i;
+                }
+            }
+
+            if (last_i == (ll)(mins.size())-1)
+            {
+                Mins * m = new Mins;
+                m->s = next_mins++;
+                mins.push_back(m);
+            }
         }
-    }
 
-    if (defined(last_i) && (last_i == #mins))
-    {
-        push @mins, +{ s => (next_mins++), strs => {next => Nexter->new([0,0]), s => ''} };
-    }
-
-    }
-
+#if 0
     for my start_new_pos (@s_pos)
     {
         {
