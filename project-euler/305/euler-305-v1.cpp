@@ -7,6 +7,7 @@
 #include <set>
 
 #include <string.h>
+#include <stdlib.h>
 
 typedef long long ll;
 
@@ -296,6 +297,8 @@ int main(int argc, char * argv[])
 {
     n = atol(argv[1]);
     MAX_COUNT = atol(argv[2]);
+
+    const bool verbose = getenv("QUIET") ? false : true;
 
     Mins * m = new Mins;
     mins.push_back(m);
@@ -608,15 +611,15 @@ AFTER_START_POS:
             s(c9_pos, _c9_cl);
         }
 
-#if 0
-    cl->();
-    if (min > last_pos)
-    {
-        print "min\n";
-        count++;
-        last_pos = min;
-    }
-#endif
+        cl();
+        if (min > last_pos)
+        {
+            if (verbose || (count++ == MAX_COUNT))
+            {
+                std::cout << min << std::endl;
+            }
+            last_pos = min;
+        }
     }
 
     return 0;
