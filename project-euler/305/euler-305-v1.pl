@@ -13,6 +13,13 @@ use List::MoreUtils qw();
 
 STDOUT->autoflush(1);
 
+# Powers of ten.
+my @P10 = (1);
+for my $x (1 .. 100)
+{
+    push @P10, ($P10[-1] * 10);
+}
+
 package Nexter;
 
 sub new
@@ -27,7 +34,7 @@ sub next
 
     my $ret = sprintf("%0" . $self->[0] . 'd', ($self->[1]++));
 
-    if ($self->[1] == 10 ** $self->[0])
+    if ($self->[1] == $P10[$self->[0]])
     {
         $self->[0]++;
         $self->[1] = 0;
@@ -77,7 +84,7 @@ my %mm_all_9s = (map { $_ => +{ c => 1, p => undef(), } } @s_pos);
     {
         my $l = shift;
         return $c[$l] //= do {
-            ($l-1) * (9 * 10 ** ($l-2)) + start_10($l-1);
+            ($l-1) * (9 * $P10[$l-2]) + start_10($l-1);
         };
     }
 }
@@ -88,7 +95,7 @@ sub calc_start
 
     my $len = length($needle);
 
-    return start_10($len) + ($needle - (10 ** ($len-1))) * $len;
+    return start_10($len) + ($needle - $P10[$len-1]) * $len;
 }
 
 sub test_calc_start
