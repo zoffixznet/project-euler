@@ -168,6 +168,30 @@ my @seq_poses;
         }
     }
 
+    for my $l (1 .. $len-1)
+    {
+        my $prefix = substr($n, 0, $l);
+        my $suffix = substr($n, -$l);
+
+        if ($prefix eq $suffix)
+        {
+            for my $ml (0 .. $len-$l)
+            {
+                my $p = substr($n, -$ml-$l);
+                for my $el (0 .. $len-$l)
+                {
+                    my $e = substr($n, $l, $el);
+                    my $needle = $p.$e;
+                    my $offset = $ml;
+                    if (substr(($needle) . ($needle+1), $offset, length($n)) eq $n)
+                    {
+                        $p{calc_start($needle) + $offset} = 1;
+                    }
+                }
+            }
+        }
+    }
+
     @seq_poses = sort {$a <=> $b } keys(%p);
 }
 
