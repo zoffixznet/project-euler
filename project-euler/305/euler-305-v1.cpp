@@ -585,30 +585,30 @@ AFTER_START_POS:
                 }
             }
         }
-#if 0
 
-    if (is_count_9s)
-    {
-        COUNT9:
-        while (!defined c9_pos)
+        if (is_count_9s)
         {
-            my c9 = count_9s_base . '0' x count_9s;
-            my c9_minus_1 = c9 - 1;
-            my both = c9_minus_1 . c9;
-            if (both =~ /\Qn\E/)
+            while (c9_pos < 0)
             {
-                my offset = length(c9_minus_1) - c9_count_9s_in_n;
-                c9_pos = calc_start(c9_minus_1) + offset;
-                last COUNT9;
+                auto c9 = count_9s_base + std::string(count_9s, '0');
+                ll c9_minus_1 = std::stoll(c9) - 1;
+                std::string c9_minus_1_s = std::to_string(c9_minus_1);
+                std::string both = c9_minus_1_s + c9;
+                ll offset = length(c9_minus_1_s) - c9_count_9s_in_n;
+                if (both.substr(offset, n_len) == n_s)
+                {
+                    c9_pos = calc_start(c9_minus_1) + offset;
+                    break;
+                }
+                else
+                {
+                    count_9s++;
+                }
             }
+            s(c9_pos, _c9_cl);
         }
-        continue
-        {
-            count_9s++;
-        }
-        s->(c9_pos, \&_c9_cl);
-    }
 
+#if 0
     cl->();
     if (min > last_pos)
     {
