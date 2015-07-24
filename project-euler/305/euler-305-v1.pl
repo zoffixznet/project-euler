@@ -296,7 +296,6 @@ while ($count <= $MAX_COUNT)
     my $min;
     # For within a number containing the full number:
 
-    my $last_i;
     # Cleanup handler.
     my $cl;
 
@@ -308,6 +307,10 @@ while ($count <= $MAX_COUNT)
             $cl = \&_seq_cl;
         }
     }
+
+    {
+    my $last_i;
+
     while (my ($i, $rec) = each@mins)
     {
         my $r = $rec->{strs};
@@ -332,9 +335,12 @@ while ($count <= $MAX_COUNT)
             };
         }
     }
+
     if (defined($last_i) && ($last_i == $#mins))
     {
         push @mins, +{ s => ($next_mins++), strs => {next => Nexter->new([0,0]), s => ''} };
+    }
+
     }
 
     for my $start_new_pos (@s_pos)
