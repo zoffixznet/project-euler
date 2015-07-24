@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 18;
+use Test::More tests => 19;
 
 use Test::Differences (qw( eq_or_diff ));
 
@@ -11,6 +11,7 @@ my $which = $ENV{'WHICH_CMD'};
 
 my $CMD = ($which eq '1' ? 'perl euler-305-v1.pl' :
     $which eq '2' ? './e305-debug.exe' :
+    $which eq '3' ? './e305-prod.exe' :
     (die "Unknown WHICH_CMD")
 );
 
@@ -81,5 +82,8 @@ sub mytest
 
     # TEST
     mytest(1912, 100, "Euler 305");
+
+    # TEST
+    mytest(243, 100, "Euler 305");
 }
 

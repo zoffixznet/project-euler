@@ -349,7 +349,8 @@ int main(int argc, char * argv[])
                 if (start_pos > 0)
                 {
                     std::string prev = std::to_string(s-1);
-                    if (n_s.substr(0, start_pos) != prev.substr(prev.size()-start_pos))
+                    ll offset = prev.size()-start_pos;
+                    if (offset < 0 || n_s.substr(0, start_pos) != prev.substr(offset))
                     {
                         goto AFTER_START_POS;
                     }

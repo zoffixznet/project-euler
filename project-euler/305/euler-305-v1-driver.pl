@@ -19,7 +19,7 @@ my $power = $BASE;
 my $sum = 0;
 for my $k (1 .. 13)
 {
-    $sum += `perl euler-305-v1.pl "$power" "$power" | tail -1`;
+    $sum += `QUIET=1 ./e305-prod.exe "$power" "$power" | tail -1`;
     print "$k [ 3 ** k = $power ] : $sum\n";
 }
 continue
