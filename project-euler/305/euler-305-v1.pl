@@ -142,12 +142,12 @@ my @seq_poses;
             }
             my $pos = $start_pos + length($s);
             my $next_s = $s + 1;
-            while ($pos <= $len - length($s))
+            while ($pos <= $len - length($next_s))
             {
                 if (substr($n, $pos, length($next_s)) eq $next_s)
                 {
                     $pos += length($next_s);
-                    $s = $next_s++;
+                    $next_s++;
                 }
                 else
                 {
@@ -157,7 +157,7 @@ my @seq_poses;
 
             if ($pos < $len)
             {
-                if (substr($s+1, 0, $len-$pos) ne substr($n,$pos))
+                if (substr($next_s, 0, $len-$pos) ne substr($n,$pos))
                 {
                     next START_POS;
                 }
