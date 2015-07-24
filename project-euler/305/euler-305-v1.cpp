@@ -162,47 +162,29 @@ struct All_9s
 };
 
 std::vector<All_9s> mm_all_9s;
+
+ll start_10[100];
+
+static inline ll calc_start(ll needle, std::string & needle_s)
+{
+    ll len = needle_s.size();
+
+    return start_10[len] + (needle - P10[len-1]) * len;
+}
+
+static inline ll calc_start(ll needle)
+{
+    std::string s = std::to_string(needle);
+    return calc_start(needle, s);
+}
+
+static inline ll calc_start(std::string & needle_s)
+{
+    return calc_start(std::stoll(needle_s), needle_s);
+}
+
 #if 0
-{
-    my @c = (undef(), 1);
 
-    sub start_10
-    {
-        my l = shift;
-        return c[l] //= do {
-            (l-1) * (9 * P10[l-2]) + start_10(l-1);
-        };
-    }
-}
-
-sub calc_start
-{
-    my needle = shift;
-
-    my len = length(needle);
-
-    return start_10(len) + (needle - P10[len-1]) * len;
-}
-
-sub test_calc_start
-{
-    my (needle, want_pos) = @_;
-
-    my have_pos = calc_start(needle);
-    if (have_pos != want_pos)
-    {
-        die "For needle=needle got have_pos instead of want_pos";
-    }
-}
-
-test_calc_start(1, 1);
-test_calc_start(2, 2);
-test_calc_start(10, 10);
-test_calc_start(11, 12);
-test_calc_start(99, 10+(99-10)*2);
-test_calc_start(100, 10+(100-10)*2);
-test_calc_start(200, 10+(100-10)*2+(200-100)*3);
-test_calc_start(1000, 10+(100-10)*2+(1000-100)*3);
 
 my @seq_poses;
 
@@ -396,6 +378,15 @@ int main(int argc, char * argv[])
             mm[i] = Strs();
             mm_all_9s[i] = All_9s();
         }
+    }
+
+    // Initialize start_10
+    start_10[0] = -1;
+    start_10[1] = 1;
+
+    for (ll i = 1; i < 100 ; i++)
+    {
+        start_10[i] = (i-1) * (9*P10[i-2]) + start_10[i-1];
     }
 
 #if 0
