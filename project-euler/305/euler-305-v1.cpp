@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <stdexcept>
 #include <sstream>
 #include <iomanip>
 #include <vector>
@@ -232,6 +233,7 @@ static inline ll _calc_mid_val(const ll start_new_pos, const std::string & middl
 
     ll prefix_i = std::stoll(prefix);
 
+    try {
     for (int off=0; off >= -1; off--)
     {
         const ll p = prefix_i+off;
@@ -248,6 +250,10 @@ static inline ll _calc_mid_val(const ll start_new_pos, const std::string & middl
                 return calc_start(needle_i) + offset;
             }
         }
+    }
+    }
+    catch  (const std::out_of_range & e) {
+
     }
 
     return -1;
