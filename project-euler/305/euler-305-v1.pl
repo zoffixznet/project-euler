@@ -189,6 +189,45 @@ if (($c9_foo, $count_9s_base) = ($n =~ /\A(9+)([^0]0*)\z/))
     $is_count_9s = 1;
 }
 
+sub _calc_mid_val
+{
+    my ($start_new_pos, $middle) = @_;
+
+    my $prefix = substr($n, $start_new_pos);
+    my $suffix = substr($n, 0, $start_new_pos);
+
+    my $needle = $prefix.$middle.$suffix;
+    my $offset = length($prefix)+length($middle);
+
+    {
+        my $both = $needle . ($needle+1);
+
+        if (substr($both, $offset, length($n)) eq $n)
+        {
+            return calc_start($needle) + $offset;
+        }
+    }
+
+    {
+        my $p = ($prefix-1);
+        if ($p < 0)
+        {
+            return -1;
+        }
+        my $needle = $p.$middle.$suffix;
+        $offset = length($p)+length($middle);
+
+        my $both = $needle . ($needle+1);
+        if (substr($both, $offset, length($n)) eq $n)
+        {
+            return calc_start($needle) + $offset;
+        }
+    }
+
+    return -1;
+
+}
+
 while ($count <= $MAX_COUNT)
 {
     my $min;
@@ -253,41 +292,7 @@ while ($count <= $MAX_COUNT)
             #
             # We need:
             # [YYY-1]MMMXXX,YYY[00000000]
-            my $pos = $rec->{p} //= sub {
-                my $prefix = substr($n, $start_new_pos);
-                my $middle = $rec->{'s'};
-                my $suffix = substr($n, 0, $start_new_pos);
-
-                my $needle = $prefix.$middle.$suffix;
-                my $offset = length($prefix)+length($middle);
-
-                {
-                    my $both = $needle . ($needle+1);
-
-                    if (substr($both, $offset, length($n)) eq $n)
-                    {
-                        return calc_start($needle) + $offset;
-                    }
-                }
-
-                {
-                    my $p = ($prefix-1);
-                    if ($p < 0)
-                    {
-                        return -1;
-                    }
-                    my $needle = $p.$middle.$suffix;
-                    $offset = length($p)+length($middle);
-
-                    my $both = $needle . ($needle+1);
-                    if (substr($both, $offset, length($n)) eq $n)
-                    {
-                        return calc_start($needle) + $offset;
-                    }
-                }
-
-                return -1;
-            }->();
+            my $pos = $rec->{p} //= _calc_mid_val($start_new_pos, $rec->{'s'});
 
             if (!defined($min) || $pos < $min)
             {
@@ -318,41 +323,7 @@ while ($count <= $MAX_COUNT)
             #
             # We need:
             # [YYY-1]MMMXXX,YYY[00000000]
-            my $pos = $rec->{p} //= sub {
-                my $prefix = substr($n, $start_new_pos);
-                my $middle = '9' x $rec->{'c'};
-                my $suffix = substr($n, 0, $start_new_pos);
-
-                my $needle = $prefix.$middle.$suffix;
-                my $offset = length($prefix)+length($middle);
-
-                {
-                    my $both = $needle . ($needle+1);
-
-                    if (substr($both, $offset, length($n)) eq $n)
-                    {
-                        return calc_start($needle) + $offset;
-                    }
-                }
-
-                {
-                    my $p = ($prefix-1);
-                    if ($p < 0)
-                    {
-                        return -1;
-                    }
-                    my $needle = $p.$middle.$suffix;
-                    $offset = length($p)+length($middle);
-
-                    my $both = $needle . ($needle+1);
-                    if (substr($both, $offset, length($n)) eq $n)
-                    {
-                        return calc_start($needle) + $offset;
-                    }
-                }
-
-                return -1;
-            }->();
+            my $pos = $rec->{p} //= _calc_mid_val($start_new_pos, '9' x $rec->{'c'});
 
             if (!defined($min) || $pos < $min)
             {
