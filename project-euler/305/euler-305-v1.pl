@@ -177,11 +177,14 @@ my $count_9s = 1;
 
 my $is_count_9s;
 my $c9_pos;
+my $c9_count_9s_in_n;
 
 my $count_9s_base;
+my $c9_foo;
 
-if (($count_9s_base) = ($n =~ /\A9+([^0]0*)\z/))
+if (($c9_foo, $count_9s_base) = ($n =~ /\A(9+)([^0]0*)\z/))
 {
+    $c9_count_9s_in_n = length($c9_foo);
     $is_count_9s = 1;
 }
 
@@ -269,9 +272,9 @@ while ($count <= $MAX_COUNT)
             my $c9 = $count_9s_base . '0' x $count_9s;
             my $c9_minus_1 = $c9 - 1;
             my $both = $c9_minus_1 . $c9;
-            if ($both =~ /\Q$n\E/g)
+            if ($both =~ /\Q$n\E/)
             {
-                my $offset = pos($both) - length($n);
+                my $offset = length($c9_minus_1) - $c9_count_9s_in_n;
                 my $pos = calc_start($c9_minus_1) + $offset;
 
                 $c9_pos = $pos;
