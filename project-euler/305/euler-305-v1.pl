@@ -240,20 +240,33 @@ while ($count <= $MAX_COUNT)
 
             my $needle = $prefix.$middle.$suffix;
             my $offset = length($prefix)+length($middle);
-            if ($needle =~ /\A.?9+\z/)
+
+            {
+                my $both = $needle . ($needle+1);
+
+                if (substr($both, $offset, length($n)) eq $n)
+                {
+                    return calc_start($needle) + $offset;
+                }
+            }
+
             {
                 my $d = (substr($needle, 0, -1) - 1);
                 if ($d < 0)
                 {
                     return -1;
                 }
-                else
+                $needle = ($d . '9');
+                $offset = length($d);
+
+                my $both = $needle . ($needle+1);
+                if (substr($both, $offset, length($n)) eq $n)
                 {
-                    $needle = ($d . '9');
-                    $offset = length($d);
+                    return calc_start($needle) + $offset;
                 }
             }
-            return calc_start($needle) + $offset;
+
+            return -1;
         }->();
 
         if (!defined($min) || $pos < $min)
