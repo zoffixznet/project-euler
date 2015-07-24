@@ -196,29 +196,12 @@ sub _calc_mid_val
     my $prefix = substr($n, $start_new_pos);
     my $suffix = substr($n, 0, $start_new_pos);
 
-    my $needle = $prefix.$middle.$suffix;
-    my $offset = length($prefix)+length($middle);
-
+    for my $p (grep { $_ >= 0 } $prefix, $prefix - 1)
     {
-        my $both = $needle . ($needle+1);
-
-        if (substr($both, $offset, length($n)) eq $n)
-        {
-            return calc_start($needle) + $offset;
-        }
-    }
-
-    {
-        my $p = ($prefix-1);
-        if ($p < 0)
-        {
-            return -1;
-        }
         my $needle = $p.$middle.$suffix;
-        $offset = length($p)+length($middle);
+        my $offset = length($p)+length($middle);
 
-        my $both = $needle . ($needle+1);
-        if (substr($both, $offset, length($n)) eq $n)
+        if (substr(($needle . ($needle+1)), $offset, length($n)) eq $n)
         {
             return calc_start($needle) + $offset;
         }
