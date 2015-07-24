@@ -233,6 +233,24 @@ while ($count <= $MAX_COUNT)
     {
         my $rec = $mm{$start_new_pos};
 
+        # So we want to do:
+        #
+        # N = XXXYYY
+        #
+        # Find:
+        # YYYMMMMXXX,YYY[MMMMXXX+1]
+        #
+        # Now if XXX !~ /9\z/ then everything is peachy.
+        #
+        # But what if it is?
+        #
+        # if MMMXXX =~ /[0-8]9\z/ then [MMMXXX+1] =~ /[1-9]0\z/ so it will
+        # still will not overflow.
+        #
+        # So what happens if MMMXXX is all-9s?
+        #
+        # We need:
+        # [YYY-1]MMMXXX,YYY[00000000]
         my $pos = $rec->{p} //= sub {
             my $prefix = substr($n, $start_new_pos);
             my $middle = $rec->{'s'};
@@ -251,13 +269,13 @@ while ($count <= $MAX_COUNT)
             }
 
             {
-                my $d = (substr($needle, 0, -1) - 1);
-                if ($d < 0)
+                my $p = ($prefix-1);
+                if ($p < 0)
                 {
                     return -1;
                 }
-                $needle = ($d . '9');
-                $offset = length($d);
+                my $needle = $p.$middle.$suffix;
+                $offset = length($p)+length($middle);
 
                 my $both = $needle . ($needle+1);
                 if (substr($both, $offset, length($n)) eq $n)
