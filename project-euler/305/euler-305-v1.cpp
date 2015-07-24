@@ -414,7 +414,7 @@ AFTER_START_POS:
             if (n_s[pos_i] == '9')
             {
                 std::string suffix = n_s.substr(0, pos_i+1);
-                ll prefix_i = std::stoll(n_s.substr(n, pos_i+1)) - 1;
+                ll prefix_i = std::stoll(n_s.substr(pos_i+1)) - 1;
 
                 if (prefix_i > 0)
                 {
