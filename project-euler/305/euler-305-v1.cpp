@@ -283,6 +283,15 @@ static void _clear_strs(void)
     clear_strs_ptr->p = -1;
 }
 
+ll all_9s_start_new_pos;
+
+static void _clear_all_9s(void)
+{
+    auto & rec = mm_all_9s[all_9s_start_new_pos];
+    rec.c++;
+    rec.p = -1;
+}
+
 int main(int argc, char * argv[])
 {
     n = atol(argv[1]);
@@ -505,73 +514,78 @@ AFTER_START_POS:
             }
         }
 
+        for ( auto start_new_pos : s_pos)
+        {
+            {
+                auto & rec = mm[start_new_pos];
+
+                // So we want to do:
+                //
+                // N = XXXYYY
+                //
+                // Find:
+                // YYYMMMMXXX,YYY[MMMMXXX+1]
+                //
+                // Now if XXX !~ /9\z/ then everything is peachy.
+                //
+                // But what if it is?
+                //
+                // if MMMXXX =~ /[0-8]9\z/ then [MMMXXX+1] =~ /[1-9]0\z/ so it will
+                // still will not overflow.
+                //
+                // So what happens if MMMXXX is all-9s?
+                //
+                // We need:
+                // [YYY-1]MMMXXX,YYY[00000000]
+                //
+                if (rec.p < 0)
+                {
+                    rec.p = _calc_mid_val(start_new_pos, rec.s);
+                }
+                if (s(
+                    rec.p,
+                    _clear_strs
+                ))
+                {
+                    clear_strs_ptr = &rec;
+                }
+            }
+
+            {
+                auto & rec = mm_all_9s[start_new_pos];
+
+                // So we want to do:
+                //
+                // N = XXXYYY
+                //
+                // Find:
+                // YYYMMMMXXX,YYY[MMMMXXX+1]
+                //
+                // Now if XXX !~ /9\z/ then everything is peachy.
+                //
+                // But what if it is?
+                //
+                // if MMMXXX =~ /[0-8]9\z/ then [MMMXXX+1] =~ /[1-9]0\z/ so it will
+                // still will not overflow.
+                //
+                // So what happens if MMMXXX is all-9s?
+                //
+                // We need:
+                // [YYY-1]MMMXXX,YYY[00000000]
+                if (rec.p < 0)
+                {
+                    rec.p = _calc_mid_val(start_new_pos, std::string(rec.c, '9'));
+                }
+                if (s(
+                        rec.p,
+                        _clear_all_9s
+                ))
+                {
+                    all_9s_start_new_pos = start_new_pos;
+                }
+            }
+        }
 #if 0
-    for my start_new_pos (@s_pos)
-    {
-        {
-            my rec = mm{start_new_pos};
-
-            // So we want to do:
-            //
-            // N = XXXYYY
-            //
-            // Find:
-            // YYYMMMMXXX,YYY[MMMMXXX+1]
-            //
-            // Now if XXX !~ /9\z/ then everything is peachy.
-            //
-            // But what if it is?
-            //
-            // if MMMXXX =~ /[0-8]9\z/ then [MMMXXX+1] =~ /[1-9]0\z/ so it will
-            // still will not overflow.
-            //
-            // So what happens if MMMXXX is all-9s?
-            //
-            // We need:
-            // [YYY-1]MMMXXX,YYY[00000000]
-            s->(
-                ( rec->{p} //= _calc_mid_val(start_new_pos, rec->{'s'}) ),
-                sub {
-                    rec->{'s'} = rec->{'next'}->next;
-                    rec->{'p'} = undef;
-
-                    return;
-                }
-            );
-        }
-
-        {
-            my rec = mm_all_9s{start_new_pos};
-
-            // So we want to do:
-            //
-            // N = XXXYYY
-            //
-            // Find:
-            // YYYMMMMXXX,YYY[MMMMXXX+1]
-            //
-            // Now if XXX !~ /9\z/ then everything is peachy.
-            //
-            // But what if it is?
-            //
-            // if MMMXXX =~ /[0-8]9\z/ then [MMMXXX+1] =~ /[1-9]0\z/ so it will
-            // still will not overflow.
-            //
-            // So what happens if MMMXXX is all-9s?
-            //
-            // We need:
-            // [YYY-1]MMMXXX,YYY[00000000]
-            s->(
-                (rec->{p} //= _calc_mid_val(start_new_pos, '9' x rec->{'c'})),
-                sub {
-                    rec->{c}++;
-                    rec->{p} = undef;
-
-                    return;
-                }
-            );
-        }
-    }
 
     if (is_count_9s)
     {
