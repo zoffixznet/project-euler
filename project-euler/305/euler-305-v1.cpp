@@ -3,6 +3,8 @@
 #include <sstream>
 #include <iomanip>
 #include <vector>
+#include <queue>
+#include <set>
 
 #include <string.h>
 
@@ -132,6 +134,7 @@ class Nexter
 };
 
 ll n;
+ll n_len;
 std::string n_s;
 ll MAX_COUNT;
 
@@ -183,133 +186,25 @@ static inline ll calc_start(std::string & needle_s)
     return calc_start(std::stoll(needle_s), needle_s);
 }
 
+std::queue<ll> seq_poses;
+
+static void _seq_cl()
+{
+    seq_poses.pop();
+}
+
+static inline ll length(std::string & s)
+{
+    return s.size();
+}
+
+static inline ll length(ll i)
+{
+    std::string s = std::to_string(i);
+    return length(s);
+}
+
 #if 0
-
-
-my @seq_poses;
-
-sub _seq_cl
-{
-    shift(@seq_poses);
-    return;
-}
-
-{
-    my %p;
-    my len = length(n);
-    for my item_l (1 .. len)
-    {
-        START_POS:
-        for my start_pos (0 .. item_l-1)
-        {
-            if (substr(n, start_pos, 1) eq '0')
-            {
-                next START_POS;
-            }
-            my s = my init_s = substr(n, start_pos, item_l);
-            if (start_pos > 0)
-            {
-                my prev = s-1;
-                if (substr(n, 0, start_pos) ne substr(prev, -start_pos))
-                {
-                    next START_POS;
-                }
-            }
-            my pos = start_pos + length(s);
-            my next_s = s + 1;
-            while (pos <= len - length(next_s))
-            {
-                if (substr(n, pos, length(next_s)) eq next_s)
-                {
-                    pos += length(next_s);
-                    next_s++;
-                }
-                else
-                {
-                    next START_POS;
-                }
-            }
-
-            if (pos < len)
-            {
-                if (substr(next_s, 0, len-pos) ne substr(n,pos))
-                {
-                    next START_POS;
-                }
-            }
-            // Let's rock and roll.
-            p{calc_start(init_s) - start_pos} = 1;
-        }
-    }
-
-    for my l (1 .. len-1)
-    {
-        my prefix = substr(n, 0, l);
-        my suffix = substr(n, -l);
-
-        if (prefix eq suffix)
-        {
-            for my ml (0 .. len-l)
-            {
-                my p = substr(n, -ml-l);
-                if (p !~ /\A0/)
-                {
-                    for my el (0 .. len-l)
-                    {
-                        my e = substr(n, l, el);
-                        my needle = p.e;
-                        my offset = ml;
-                        if (substr((needle) . (needle+1), offset, length(n)) eq n)
-                        {
-                            p{calc_start(needle) + offset} = 1;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    for my p (0 .. len-2)
-    {
-        if (substr(n, p, 1) eq '9')
-        {
-            my suffix = substr(n, 0, p+1);
-            my prefix = substr(n, p+1) - 1;
-
-            if (prefix > 0)
-            {
-                for my common (0 .. min(length(prefix), length(suffix)))
-                {
-                    my pref_suf = substr(prefix, length(prefix)-common);
-                    my suf_pref = substr(suffix, 0, common);
-
-                    if (pref_suf eq suf_pref)
-                    {
-                        my needle =
-                            substr(prefix, 0, length(prefix)-common)
-                            . pref_suf
-                            . substr(suffix , common);
-
-                        my both = needle . (needle + 1);
-
-                        my start = calc_start(needle);
-
-                        for my x (
-                            map { start + _ }
-                            grep { substr(both, _, length(n)) eq n }
-                            (0 .. length(both) - length(n))
-                        )
-                        {
-                            p{x} = 1;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    @seq_poses = sort {a <=> b } keys(%p);
-}
 
 my last_pos = 0;
 my count = 1;
@@ -370,7 +265,8 @@ int main(int argc, char * argv[])
 
     n_s = std::to_string(n);
 
-    for (ll i = 1; i < n_s.size() ; i++)
+    n_len = n_s.size();
+    for (ll i = 1; i < n_len ; i++)
     {
         if (n_s[i] != '0')
         {
@@ -387,6 +283,134 @@ int main(int argc, char * argv[])
     for (ll i = 1; i < 100 ; i++)
     {
         start_10[i] = (i-1) * (9*P10[i-2]) + start_10[i-1];
+    }
+
+    {
+        std::set<ll> p;
+        ll n_len = length(n);
+        for (ll item_l = 1; item_l <= n_len ; item_l++)
+        {
+            for (ll start_pos = 0 ; start_pos <= item_l-1 ; start_pos++)
+            {
+                if (n_s[start_pos] == '0')
+                {
+                    goto AFTER_START_POS;
+                }
+                ll init_s = std::stoll(n_s.substr(start_pos, item_l));
+                ll s = init_s;
+                if (start_pos > 0)
+                {
+                    std::string prev = std::to_string(s-1);
+                    if (n_s.substr(0, start_pos) != prev.substr(prev.size()-start_pos))
+                    {
+                        goto AFTER_START_POS;
+                    }
+                }
+                ll pos = start_pos + length(s);
+                ll next_s = s + 1;
+                ll next_s_len = length(next_s);
+                while (pos <= n_len - next_s_len)
+                {
+                    if (std::stoll(n_s.substr(pos, next_s_len)) != next_s)
+                    {
+                        pos += next_s_len;
+                        next_s++;
+                        next_s_len = length(next_s);
+                    }
+                    else
+                    {
+                        goto AFTER_START_POS;
+                    }
+                }
+
+                if (pos < n_len)
+                {
+                    std::string n_s = std::to_string(next_s);
+                    if (n_s.substr(0, n_len-pos) != n_s.substr(pos))
+                    {
+                        goto AFTER_START_POS;
+                    }
+                }
+                // Let's rock and roll.
+                p.insert(calc_start(init_s) - start_pos);
+            }
+AFTER_START_POS:
+            ;
+        }
+
+        for (ll l = 1 ; l <= n_len-1 ; l++)
+        {
+            std::string prefix = n_s.substr(0, l);
+            std::string suffix = n_s.substr(n_len - l);
+
+            if (prefix != suffix)
+            {
+                for (ll ml = 0 ; ml <= n_len-l ; ml++)
+                {
+                    std::string pref2 = n_s.substr(n_len - ml - l);
+                    if (pref2[0] != '0')
+                    {
+                        for (ll el = 0 ; el <= n_len-l ; el++)
+                        {
+                            std::string e = n_s.substr(l, el);
+                            std::string needle = pref2 + e;
+                            ll needle_i = std::stoll(needle);
+                            ll offset = ml;
+                            std::string both = needle + std::to_string(needle_i + 1);
+                            if (both.substr(offset, n_len) != n_s)
+                            {
+                                p.insert(calc_start(needle_i) + offset);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        for (ll pos_i = 0 ; pos_i <= n_len-2 ; pos_i++)
+        {
+            if (n_s[pos_i] == '9')
+            {
+                std::string suffix = n_s.substr(0, pos_i+1);
+                ll prefix_i = std::stoll(n_s.substr(n, pos_i+1)) - 1;
+
+                if (prefix_i > 0)
+                {
+                    std::string prefix = std::to_string(prefix_i);
+                    for (ll common = 0 ; common <= std::min(length(prefix), length(suffix)) ; common++)
+                    {
+                        std::string pref_suf = prefix.substr(length(prefix)-common);
+                        std::string suf_pref = suffix.substr(0, common);
+
+                        if (pref_suf == suf_pref)
+                        {
+                            std::string needle =
+                                prefix.substr(0, length(prefix)-common)
+                                + pref_suf
+                                + suffix.substr(common);
+
+                            ll needle_i = std::stoll(needle);
+                            std::string both = needle + std::to_string(needle_i + 1);
+
+                            ll start = calc_start(needle_i);
+
+                            for (ll x = 0 ; x <= length(both) - n_len ; x++)
+                            {
+                                if (both.substr(x, n_len) == n_s)
+                                {
+                                    p.insert(x+start);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        for (auto x : p)
+        {
+            seq_poses.push(x);
+        }
     }
 
 #if 0
