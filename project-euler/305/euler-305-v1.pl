@@ -178,14 +178,17 @@ my @seq_poses;
             for my $ml (0 .. $len-$l)
             {
                 my $p = substr($n, -$ml-$l);
-                for my $el (0 .. $len-$l)
+                if ($p !~ /\A0/)
                 {
-                    my $e = substr($n, $l, $el);
-                    my $needle = $p.$e;
-                    my $offset = $ml;
-                    if (substr(($needle) . ($needle+1), $offset, length($n)) eq $n)
+                    for my $el (0 .. $len-$l)
                     {
-                        $p{calc_start($needle) + $offset} = 1;
+                        my $e = substr($n, $l, $el);
+                        my $needle = $p.$e;
+                        my $offset = $ml;
+                        if (substr(($needle) . ($needle+1), $offset, length($n)) eq $n)
+                        {
+                            $p{calc_start($needle) + $offset} = 1;
+                        }
                     }
                 }
             }
