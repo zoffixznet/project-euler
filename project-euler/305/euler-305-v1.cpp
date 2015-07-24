@@ -204,33 +204,26 @@ static inline ll length(ll i)
     return length(s);
 }
 
+ll last_pos = 0;
+ll count = 1;
+
+ll count_9s = 1;
+
+bool is_count_9s = false;
+ll c9_pos = -1;
+ll c9_count_9s_in_n = -1;
+
+void _c9_cl(void)
+{
+    c9_pos = -1;
+    count_9s++;
+}
+
+std::string count_9s_base;
+ll c9_foo = -1;
+
 #if 0
 
-my last_pos = 0;
-my count = 1;
-
-my count_9s = 1;
-
-my is_count_9s;
-my c9_pos;
-my c9_count_9s_in_n;
-
-sub _c9_cl
-{
-    c9_pos = undef;
-    count_9s++;
-
-    return;
-}
-
-my count_9s_base;
-my c9_foo;
-
-if ((c9_foo, count_9s_base) = (n =~ /\A(9+)([^0]0*)\z/))
-{
-    c9_count_9s_in_n = length(c9_foo);
-    is_count_9s = 1;
-}
 
 sub _calc_mid_val
 {
@@ -413,6 +406,29 @@ AFTER_START_POS:
         }
     }
 
+    {
+        ll e = n_len-1;
+        while (n_s[e] == '0')
+            e--;
+
+        count_9s_base = n_s.substr(e);
+        std::string c9_foo = n_s.substr(0, e);
+
+        ll x;
+        for (x = 0 ; x < length(c9_foo) ; x++)
+        {
+            if (c9_foo[x] != '9')
+            {
+                break;
+            }
+        }
+        if (x == length(c9_foo))
+        {
+            c9_count_9s_in_n = length(c9_foo);
+            c9_count_9s_in_n = length(c9_foo);
+            is_count_9s = true;
+        }
+    }
 #if 0
 while (count <= MAX_COUNT)
 {
