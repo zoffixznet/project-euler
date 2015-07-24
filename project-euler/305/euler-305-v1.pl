@@ -321,23 +321,23 @@ while ($count <= $MAX_COUNT)
     while (my ($i, $rec) = each@mins)
     {
         my $r = $rec->{strs};
-        my $pos = $r->{p} //= do {
+        if ($s->(
+                $r->{p} //= do {
 
-            my $prefix = $rec->{'s'};
-            my $suffix = $r->{'s'};
+                    my $prefix = $rec->{'s'};
+                    my $suffix = $r->{'s'};
 
-            my $needle = $prefix.$n.$suffix;
+                    my $needle = $prefix.$n.$suffix;
 
-            calc_start($needle) + length($prefix);
-        };
-        if ($s->($pos,
-            sub {
-                $r->{'s'} = $r->{'next'}->next;
-                $r->{'p'} = undef;
+                    calc_start($needle) + length($prefix);
+                },
+                sub {
+                    $r->{'s'} = $r->{'next'}->next;
+                    $r->{'p'} = undef;
 
-                return;
-            }
-        ))
+                    return;
+                }
+            ))
         {
             $last_i = $i;
         }
@@ -373,9 +373,8 @@ while ($count <= $MAX_COUNT)
             #
             # We need:
             # [YYY-1]MMMXXX,YYY[00000000]
-            my $pos = $rec->{p} //= _calc_mid_val($start_new_pos, $rec->{'s'});
-
-            $s->($pos,
+            $s->(
+                ( $rec->{p} //= _calc_mid_val($start_new_pos, $rec->{'s'}) ),
                 sub {
                     $rec->{'s'} = $rec->{'next'}->next;
                     $rec->{'p'} = undef;
@@ -406,9 +405,8 @@ while ($count <= $MAX_COUNT)
             #
             # We need:
             # [YYY-1]MMMXXX,YYY[00000000]
-            my $pos = $rec->{p} //= _calc_mid_val($start_new_pos, '9' x $rec->{'c'});
-
-            $s->($pos,
+            $s->(
+                ($rec->{p} //= _calc_mid_val($start_new_pos, '9' x $rec->{'c'})),
                 sub {
                     $rec->{c}++;
                     $rec->{p} = undef;
@@ -430,9 +428,7 @@ while ($count <= $MAX_COUNT)
             if ($both =~ /\Q$n\E/)
             {
                 my $offset = length($c9_minus_1) - $c9_count_9s_in_n;
-                my $pos = calc_start($c9_minus_1) + $offset;
-
-                $c9_pos = $pos;
+                $c9_pos = calc_start($c9_minus_1) + $offset;
                 last COUNT9;
             }
         }
