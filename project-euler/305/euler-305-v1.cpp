@@ -306,14 +306,16 @@ int main(int argc, char * argv[])
     n_s = std::to_string(n);
 
     n_len = n_s.size();
+    mm.push_back(Strs());
+    mm_all_9s.push_back(All_9s());
     for (ll i = 1; i < n_len ; i++)
     {
         if (n_s[i] != '0')
         {
             s_pos.push_back(i);
-            mm[i] = Strs();
-            mm_all_9s[i] = All_9s();
         }
+        mm.push_back(Strs());
+        mm_all_9s.push_back(All_9s());
     }
 
     // Initialize start_10
