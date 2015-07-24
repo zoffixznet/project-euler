@@ -294,18 +294,25 @@ sub _calc_mid_val
 while ($count <= $MAX_COUNT)
 {
     my $min;
-    # For within a number containing the full number:
-
     # Cleanup handler.
     my $cl;
 
+    # Set.
+    my $s = sub {
+        my ($p, $cb) = @_;
+
+        if (!defined($min) || $p < $min)
+        {
+            $min = $p;
+            $cl = $cb;
+            return 1;
+        }
+        return;
+    };
+
     if (@seq_poses)
     {
-        if (!defined($min) or $seq_poses[0] < $min)
-        {
-            $min = $seq_poses[0];
-            $cl = \&_seq_cl;
-        }
+        $s->($seq_poses[0], \&_seq_cl);
     }
 
     {
@@ -323,16 +330,16 @@ while ($count <= $MAX_COUNT)
 
             calc_start($needle) + length($prefix);
         };
-        if (!defined($min) || $pos < $min)
-        {
-            $last_i = $i;
-            $min = $pos;
-            $cl = sub {
+        if ($s->($pos,
+            sub {
                 $r->{'s'} = $r->{'next'}->next;
                 $r->{'p'} = undef;
 
                 return;
-            };
+            }
+        ))
+        {
+            $last_i = $i;
         }
     }
 
@@ -368,16 +375,14 @@ while ($count <= $MAX_COUNT)
             # [YYY-1]MMMXXX,YYY[00000000]
             my $pos = $rec->{p} //= _calc_mid_val($start_new_pos, $rec->{'s'});
 
-            if (!defined($min) || $pos < $min)
-            {
-                $cl = sub {
+            $s->($pos,
+                sub {
                     $rec->{'s'} = $rec->{'next'}->next;
                     $rec->{'p'} = undef;
 
                     return;
-                };
-                $min = $pos;
-            }
+                }
+            );
         }
 
         {
@@ -403,16 +408,14 @@ while ($count <= $MAX_COUNT)
             # [YYY-1]MMMXXX,YYY[00000000]
             my $pos = $rec->{p} //= _calc_mid_val($start_new_pos, '9' x $rec->{'c'});
 
-            if (!defined($min) || $pos < $min)
-            {
-                $cl = sub {
+            $s->($pos,
+                sub {
                     $rec->{c}++;
                     $rec->{p} = undef;
 
                     return;
-                };
-                $min = $pos;
-            }
+                }
+            );
         }
     }
 
@@ -437,11 +440,7 @@ while ($count <= $MAX_COUNT)
         {
             $count_9s++;
         }
-        if (!defined($min) || $c9_pos < $min)
-        {
-            $min = $c9_pos;
-            $cl = \&_c9_cl;
-        }
+        $s->($c9_pos, \&_c9_cl);
     }
 
     $cl->();
