@@ -337,7 +337,6 @@ while ($count <= $MAX_COUNT)
         push @mins, +{ s => ($next_mins++), strs => {next => Nexter->new([0,0]), s => ''} };
     }
 
-    my $last_s;
     for my $start_new_pos (@s_pos)
     {
         {
@@ -365,7 +364,6 @@ while ($count <= $MAX_COUNT)
 
             if (!defined($min) || $pos < $min)
             {
-                $last_s = $start_new_pos;
                 $cl = sub {
                     $rec->{'s'} = $rec->{'next'}->next;
                     $rec->{'p'} = undef;
@@ -401,7 +399,6 @@ while ($count <= $MAX_COUNT)
 
             if (!defined($min) || $pos < $min)
             {
-                $last_s = $start_new_pos;
                 $cl = sub {
                     $rec->{c}++;
                     $rec->{p} = undef;
