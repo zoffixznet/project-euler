@@ -6,7 +6,7 @@ use warnings;
 use integer;
 use bytes;
 
-use Math::BigInt lib => 'GMP', ':constant';
+# use Math::BigInt lib => 'GMP', ':constant';
 
 use List::Util qw(min sum);
 use List::MoreUtils qw();
@@ -25,20 +25,13 @@ sub next
 {
     my $self = shift;
 
-    my $skip_all_zeros = $self->[2];
+    my $ret = sprintf("%0" . $self->[0] . 'd', ($self->[1]++));
 
-    my $ret;
-
-    do
+    if ($self->[1] == 10 ** $self->[0])
     {
-        $ret = sprintf("%0" . $self->[0] . 'd', ($self->[1]++));
-
-        if ($self->[1] == 10 ** $self->[0])
-        {
-            $self->[0]++;
-            $self->[1] = 0;
-        }
-    } while($skip_all_zeros && $ret !~ /[1-9]/);
+        $self->[0]++;
+        $self->[1] = 0;
+    }
 
     return $ret;
 }
@@ -71,10 +64,10 @@ test_nexter(2, 99, '99', '000');
 my ($n, $MAX_COUNT) = @ARGV;
 
 my $next_mins = 1;
-my @mins = ({ s => '', strs => {next => Nexter->new([0,0,0]), s => '',}});
+my @mins = ({ s => '', strs => {next => Nexter->new([0,0]), s => '',}});
 
 my @s_pos = (grep { substr($n, $_, 1) ne '0' } (1 .. length($n) -1));
-my %mm = (map { $_ => +{ next => Nexter->new([0,0,0]), s => '' } } @s_pos);
+my %mm = (map { $_ => +{ next => Nexter->new([0,0]), s => '' } } @s_pos);
 my %mm_all_9s = (map { $_ => +{ c => 1, p => undef(), } } @s_pos);
 
 {
@@ -314,7 +307,7 @@ while ($count <= $MAX_COUNT)
     }
     if (defined($last_i) && ($last_i == $#mins))
     {
-        push @mins, +{ s => ($next_mins++), strs => {next => Nexter->new([0,0,0]), s => ''} };
+        push @mins, +{ s => ($next_mins++), strs => {next => Nexter->new([0,0]), s => ''} };
     }
 
     my $last_s;
