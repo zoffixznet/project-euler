@@ -22,7 +22,15 @@ sub factorial_factor_exp
 {
     my ($n , $f) = @_;
 
-    return 1;
+    if ($n < $f)
+    {
+        return 0;
+    }
+    else
+    {
+        my $div = $n / $f;
+        return $div + factorial_factor_exp($div, $f);
+    }
 }
 
 1;
