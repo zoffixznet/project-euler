@@ -38,8 +38,6 @@ sub find_exp_factorial
 {
     my ($f, $e, $bottom, $top) = @_;
 
-    print "[@_]\n";
-
     if ($bottom > $top)
     {
         return $top;
