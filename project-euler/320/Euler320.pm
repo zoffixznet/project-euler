@@ -36,33 +36,42 @@ sub factorial_factor_exp
 # Finds the minimal n-factorial whose exponent is larger than $e
 sub find_exp_factorial
 {
-    my ($f, $e, $bottom, $top) = @_;
+    my ($f, $e, $bb, $tt) = @_;
 
-    if ($bottom > $top)
-    {
-        return $top;
-    }
-    my $top_val = factorial_factor_exp($top, $f);
+    my $find;
 
-    if ($top_val < $e)
-    {
-        return find_exp_factorial($f, $e, $top, $top << 1);
-    }
-    my $bottom_val = factorial_factor_exp($bottom, $f);
-    if ($bottom_val < $e and ($top == $bottom + 1))
-    {
-        return $top;
-    }
+    $find = sub {
+        my ($bottom, $top) = @_;
+
+        if ($bottom > $top)
+        {
+            return $top;
+        }
+        my $top_val = factorial_factor_exp($top, $f);
+
+        if ($top_val < $e)
+        {
+            return $find->($top, $top << 1);
+        }
+        my $bottom_val = factorial_factor_exp($bottom, $f);
+        if ($bottom_val < $e and ($top == $bottom + 1))
+        {
+            return $top;
+        }
 
 
-    my $mid = (($bottom + $top) >> 1);
-    my $mid_val = factorial_factor_exp($mid, $f);
+        my $mid = (($bottom + $top) >> 1);
+        my $mid_val = factorial_factor_exp($mid, $f);
 
-    if ($mid_val < $e)
-    {
-        return find_exp_factorial($f, $e, $mid, $top);
-    }
-    return find_exp_factorial($f, $e, $bottom, $mid);
+        if ($mid_val < $e)
+        {
+            return $find->($mid, $top);
+        }
+        return $find->($bottom, $mid);
+    };
+
+    return $find->($bb, $tt);
 }
+
 1;
 
