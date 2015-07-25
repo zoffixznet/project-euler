@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 10;
+use Test::More tests => 11;
 
 use Euler320 qw(factorial_factor_exp find_exp_factorial);
 
@@ -97,5 +97,17 @@ use Euler320 qw(factorial_factor_exp find_exp_factorial);
         ),
         25,
         "find_exp 5,6 [1-100] ==> 25",
+    );
+
+    # TEST
+    is (
+        find_exp_factorial(
+            5,
+            5,
+            1,
+            100,
+        ),
+        25,
+        "find_exp 5,5 [skipping 5, 1-100] ==> 25",
     );
 }
