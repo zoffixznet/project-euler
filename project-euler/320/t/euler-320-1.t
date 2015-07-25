@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 4;
+use Test::More tests => 5;
 
 use Euler320 qw(factorial_factor_exp);
 
@@ -34,6 +34,13 @@ use Euler320 qw(factorial_factor_exp);
         factorial_factor_exp(16, 2),
         (8+4+2+1),
         "f 16,2 ==> correct",
+    );
+
+    # TEST
+    is (
+        factorial_factor_exp(17, 2),
+        (8+4+2+1),
+        "f 17,2 ==> correct",
     );
 }
 
