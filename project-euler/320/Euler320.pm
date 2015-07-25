@@ -138,8 +138,9 @@ sub sum_factorials
     for my $i (10 .. $n)
     {
         $read_line->();
-        $S += $tree->largest()->{'v'};
-        print "$i : S = $S ; Smod = " , ($S % $BASE), "\n";
+        my $L = $tree->largest();
+        $S += $L->{'v'};
+        print "$i : F = $L->{f} ; S = $S ; Smod = " , ($S % $BASE), "\n";
     }
 
     return $S;
