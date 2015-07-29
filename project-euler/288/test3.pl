@@ -4,8 +4,6 @@ use warnings;
 use integer;
 use bytes;
 
-use Math::BigInt lib => 'GMP', ':constant';
-
 use List::Util qw(sum);
 use List::MoreUtils qw();
 
@@ -32,7 +30,7 @@ for my $n (0 .. $N_LIM-1)
 my $sum = 0;
 for my $n ($N_LIM .. $LIM)
 {
-    $sum += $s;
+    $sum += ($s % $BASE);
     $s = (($s * $s) % 50515093);
 }
 
@@ -45,3 +43,5 @@ print sum(
     (map { f(Math::BigInt->new($BASE) ** $_) * $t_n[$_] } 1 .. $#t_n),
     $sum * f(Math::BigInt->new($BASE) ** $N_LIM)
 ) % (Math::BigInt->new($BASE) ** $N_LIM);
+print "\n";
+exit(0);
