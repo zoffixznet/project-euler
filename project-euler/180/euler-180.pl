@@ -182,7 +182,7 @@ for my $x_b (2 .. $K)
                     check($n, $x_a, $x_b, $y_a, $y_b);
                     check($n, $x_b, $x_a, $y_b, $y_a);
                 }
-            }   
+            }
         }
     }
 }

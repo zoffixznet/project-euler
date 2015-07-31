@@ -40,7 +40,7 @@ for my $n (2 .. $LIM)
         {
             my $prod = ($mult<<1);
             my $pos = 2;
-            
+
             while ($prod < $LIM)
             {
                 vec($vec, $pos, 64) = $factor;

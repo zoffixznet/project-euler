@@ -62,7 +62,7 @@ sub rec
                 {
                     if ($gcd % $d == 0)
                     {
-                        if (join('',sort { $a cmp $b } map { split//,$_ } 
+                        if (join('',sort { $a cmp $b } map { split//,$_ }
                                 ($d, map { $_ / $d } @n_s)) eq '0123456789')
                         {
                             print "Found «$in» : " . join(" + ", (map {"$d*".($_/$d) } @n_s)) . " \n";
@@ -74,7 +74,7 @@ sub rec
         }
         return;
     }
-    
+
     foreach my $place (keys@$out)
     {
         rec($in.$out->[$place], [ @$out[grep { $_ != $place } keys(@$out)] ]);

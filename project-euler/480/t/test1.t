@@ -20,7 +20,7 @@ use Euler480;
     );
 
     # TEST
-    is (Euler480::calc_P('aaaaaacd'), 8, 
+    is (Euler480::calc_P('aaaaaacd'), 8,
         'Test aaaaaacd');
 
     # TEST
@@ -62,7 +62,7 @@ use Euler480;
     is (Euler480::calc_P('euler'), '115246685191495243',
         'Test "euler"',
     );
-    
+
     # TEST
     is (Euler480::calc_P('euleoywuttttsss'), '115246685191495242',
         'Test "euleoywuttttsss"',
@@ -72,17 +72,17 @@ use Euler480;
     is (Euler480::calc_P('eulera'), '115246685191495244',
         'Test "eulera"',
     );
-    
+
     # TEST
     is (Euler480::calc_P('ywuuttttssssrrr'), '525069350231428029',
         'Test "ywuuttttssssrrr"',
     );
-    
+
     # TEST
     is (Euler480::calc_W('115246685191495243'), 'euler',
         'Test calc_W - "euler"',
     );
-    
+
     # TEST
     is (Euler480::calc_W( '525069350231428029' ), 'ywuuttttssssrrr',
         'Test calc_W - "ywuuttttssssrrr"',
