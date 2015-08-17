@@ -6,6 +6,8 @@ use warnings;
 use integer;
 use bytes;
 
+use DivideFsm;
+
 STDOUT->autoflush(1);
 
 sub solve_for_d
@@ -17,6 +19,9 @@ sub solve_for_d
     {
         return 0;
     }
+
+    my ($g) = DivideFsm::get_div_fsms($D);
+    my @A = @$g;
 
     my $rec;
     my $total = 0;
@@ -33,29 +38,37 @@ sub solve_for_d
         }
         else
         {
+            NEW:
             for my $new_d (
-                ((($count == 0) && ($i > 1)) ? 0 : 1)
+                ((($count == 0) && ($i < $D)) ? 0 : 1)
                     ..
                 9
             )
             {
-                my $n = $old.$new_d;
+                my $n = [$new_d, @$old];
 
-                my $new_count = $count +
-                (grep { substr($n, -$_) % $D == 0 } 1 .. $i)
-                ;
-
-                if ($new_count < 2)
+                # $nc == new_count
+                my $nc = $count;
+                # State.
+                my $s = 0;
+                for my $d (@$n)
                 {
-                    $rec->($i+1, $n, $new_count);
+                    if (($s = $A[$s][$d]) == 0)
+                    {
+                        if (++$nc >= 2)
+                        {
+                            next NEW;
+                        }
+                    }
                 }
+                $rec->($i+1, $n, $nc);
             }
         }
 
         return;
     };
 
-    $rec->(1, '', 0);
+    $rec->(1, [], 0);
 
     return $total;
 }
