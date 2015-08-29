@@ -35,12 +35,12 @@ while before_s < s:
     print "top = ", top
     t_sq = top * top
     if top <= SQ:
-        debug()
+        # debug()
         s += (((top + bottom) * (top + bottom) * (top-bottom-1)) >> 1);
     else:
         r = bottom * (bottom+1)
         while r <= MAX:
-            debug_n(r)
+            # debug_n(r)
             s += r
             r += bottom
     # for g in range(bottom+1,top):
@@ -50,13 +50,13 @@ while before_s < s:
     while r > MAX:
         r -= top
     while r > b_sq:
-        debug_n(r)
+        # debug_n(r)
         s += r
         r -= top
     r = bottom * (top + 1)
     l = min(t_sq-1, MAX)
     while r <= l:
-        debug_n(r)
+        # debug_n(r)
         s += r
         r += bottom
     bottom = top
