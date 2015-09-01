@@ -14,5 +14,8 @@ input.txt: euler-238-v1-step1.pl
 sums.txt: ./euler_238_v1.exe input.txt
 	./euler_238_v1.exe | tee $@
 
+Summary.txt: sums.txt summarize.pl
+	perl summarize.pl | tee $@
+
 clean:
 	rm -f *.exe bit_counts.h
