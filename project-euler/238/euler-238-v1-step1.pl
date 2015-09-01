@@ -2,6 +2,7 @@
 
 use strict;
 use warnings;
+use autodie;
 
 my @series;
 
@@ -27,11 +28,13 @@ for my $x (@series[0 .. $found{$elem}-1])
 print "\n";
 
 print "Repeat:\n";
+open my $out, '>', 'input.txt';
 for my $x (@series[$found{$elem} .. $#series])
 {
     print $x;
+    $out->print($x);
 }
 print "\n";
-
+close($out);
 
 

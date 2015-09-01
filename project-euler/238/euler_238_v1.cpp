@@ -9,6 +9,8 @@ const int MAX_SUM = 80846691;
 unsigned char digits[NUM_DIGITS];
 unsigned int p[MAX_SUM+1];
 
+unsigned int num_found = 0;
+
 int main(int argc, char * argv[])
 {
     memset(p, '\0', sizeof(p));
@@ -53,7 +55,13 @@ int main(int argc, char * argv[])
             if (! p[sum])
             {
                 p[sum] = p_val;
+                num_found++;
             }
+        }
+        std::cout << "Finished evaluating " << start << ": Found " << num_found << "/" << MAX_SUM << std::endl;
+        if (num_found == MAX_SUM+1)
+        {
+            break;
         }
     }
 
