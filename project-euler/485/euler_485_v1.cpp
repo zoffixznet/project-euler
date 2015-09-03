@@ -50,7 +50,9 @@ static inline void add(void)
     std::stringstream ls(l);
 
     ll n;
-    ls >> n;
+    char c;
+    // c is the ':'
+    ls >> n >> c;
     ll val = 1;
 
     ll i;
@@ -81,6 +83,7 @@ inline const typename T::key_type& last_key(const T& pMap)
 }
 
 ll sum = 0;
+
 static inline void update(void)
 {
     sum += last_key(T)->v;
