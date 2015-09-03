@@ -13,24 +13,28 @@ use List::MoreUtils qw();
 
 STDOUT->autoflush(1);
 
-my ($MAX, $STEP, $DISPLAY_STEP) = @ARGV;
+my ($MAX, $STEP, $DISPLAY_STEP, $THRESHOLD) = @ARGV;
 
-my $tree = Tree::AVL->new(
+my $DS = $DISPLAY_STEP;
+my $TH = $THRESHOLD;
+# A tree
+my $T = Tree::AVL->new(
     fcompare => sub {
         my ($A, $B) = @_;
-        return ($A->{v} <=> $B->{v}
+        return ($A->[1] <=> $B->[1]
                 or
-            $A->{n} <=> $B->{n})
+            $A->[0] <=> $B->[0])
     },
     fget_key => sub {
-        return shift->{v};
+        return shift->[1];
     },
     fget_data => sub {
-        return shift->{n};
+        return shift->[0];
     },
 );
 
-my @queue;
+# A queue.
+my @Q;
 
 open my $fh, sprintf("seq 1 '%d' | xargs factor |", $MAX+1);
 
@@ -53,9 +57,12 @@ sub add
         $val *= (1+$x);
     }
 
-    my $rec = { n => $n, v => $val };
-    push @queue, $rec;
-    $tree->insert($rec);
+    if ($val >= $TH)
+    {
+        my $rec = [$n,$val];
+        push @Q, $rec;
+        $T->insert($rec);
+    }
 
     return;
 }
@@ -67,17 +74,21 @@ for my $i (1 .. $STEP)
 
 sub update
 {
-    $sum += $tree->largest()->{v};
+    $sum += $T->largest()->[1];
     return;
 }
 
 update();
 for my $n ($STEP+1 .. $MAX)
 {
-    $tree->delete(shift @queue);
+    my $l = $n-$STEP;
+    while (@Q and $Q[0][0] <= $l)
+    {
+        $T->delete(shift @Q);
+    }
     add();
     update();
-    if ($n % $DISPLAY_STEP == 0)
+    if ($n % $DS == 0)
     {
         print "Reached $n : Sum = $sum\n";
     }
