@@ -8,3 +8,17 @@ e407-prod.exe: euler_407_v1.cpp
 
 test:
 	prove t/*.t
+
+MAX = 10000000
+
+data: seq.txt prods.txt prods_facts.txt
+
+seq.txt:
+	seq "$(MAX)" -1 1 > $@
+
+prods.txt: seq.txt
+	cat $< | perl -lanE 'print ($$_ * ($$_-1))' > $@
+
+prods_facts.txt: prods.txt
+	factor < $< > $@
+
