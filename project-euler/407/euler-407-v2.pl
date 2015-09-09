@@ -18,7 +18,7 @@ my $bitmask = '';
 
 my $dummy_line = <>;
 
-my $LIM = 10_000_000;
+my $LIM = 10_000;
 my $STEP = 10_000;
 
 my $count = 0;
@@ -46,8 +46,10 @@ while (my $l = <>)
             {
                 if (!vec($bitmask, $n, 1))
                 {
+                    print "f($n) = $A\n";
                     vec($bitmask, $n, 1) = 1;
                     $sum += $A;
+                    print "Sum[Intermediate] = $sum\n";
                     $count++;
                 }
             }
@@ -61,7 +63,7 @@ while (my $l = <>)
         }
         continue
         {
-            if (($n *= $p) >= $LIM)
+            if (($n *= $p) > $LIM)
             {
                 return;
             }
@@ -76,5 +78,5 @@ while (my $l = <>)
     }
 }
 
-$sum += 10_000_000 - $count;
+$sum += $LIM - $count;
 print "Sum = $sum\n";

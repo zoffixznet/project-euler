@@ -17,7 +17,8 @@ my $sum = 0;
 
 my $STEP = 1_000;
 my $print_at = $STEP;
-for my $n (1 .. 10_000_000)
+my $LIM = shift(@ARGV);
+for my $n (1 .. $LIM)
 {
     my $r = sub {
         for (my $x=$n-1;$x>1;$x--)
@@ -30,7 +31,7 @@ for my $n (1 .. 10_000_000)
         return 1;
     }->();
     print "f($n) = $r\n";
-    $sum += $n;
+    $sum += $r;
     if ($n == $print_at)
     {
         print "N=$n Sum = $sum\n";
