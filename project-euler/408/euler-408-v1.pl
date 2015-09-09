@@ -32,7 +32,7 @@ for my $path_len (1 .. $LIM)
     my $y = $path_len - 1;
     for my $x (1 .. $path_len - 1)
     {
-        if (vec($is_sq, $path_len, 1) && vec($is_sq, $x, 1) && vec($is_sq, ($y--), 1))
+        if (vec($is_sq, $path_len, 1) && vec($is_sq, $x, 1) && vec($is_sq, $y, 1))
         {
             push @$next, 0;
         }
@@ -41,7 +41,12 @@ for my $path_len (1 .. $LIM)
             push @$next, (($prev->[$x-1]+$prev->[$x]) % $MOD);
         }
     }
+    continue
+    {
+        $y--;
+    }
     push @$next, $prev->[-1];
+    print "Prev = [@$prev] ; Next = [@$next]\n";
     $prev = $next;
 }
 
@@ -52,7 +57,8 @@ for my $path_len ($LIM+1 .. (($LIM << 1)))
     my $y = $path_len - 1;
     for my $x (1 .. $max_x)
     {
-        if (vec($is_sq, $path_len, 1) && vec($is_sq, $x, 1) && vec($is_sq, ($y--), 1))
+        print "($x,$y,$path_len)\n";
+        if (vec($is_sq, $path_len, 1) && vec($is_sq, $x, 1) && vec($is_sq, $y, 1))
         {
             push @$next, 0;
         }
@@ -60,6 +66,10 @@ for my $path_len ($LIM+1 .. (($LIM << 1)))
         {
             push @$next, (($prev->[$x-1]+$prev->[$x]) % $MOD);
         }
+    }
+    continue
+    {
+        $y--;
     }
     $max_x--;
     print "Prev = [@$prev] ; Next = [@$next]\n";
