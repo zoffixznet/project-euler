@@ -78,5 +78,5 @@ while (my $l = <>)
     }
 }
 
-$sum += $LIM - $count;
+$sum += $LIM - 1 - $count;
 print "Sum = $sum\n";

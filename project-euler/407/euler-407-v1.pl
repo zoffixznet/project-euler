@@ -17,7 +17,7 @@ my $sum = 0;
 
 my $STEP = 1_000;
 my $print_at = $STEP;
-for my $n (1 .. 10_000_000)
+for my $n (2 .. 10_000_000)
 {
     $sum += sub {
         for (my $x=$n-1;$x>1;$x--)

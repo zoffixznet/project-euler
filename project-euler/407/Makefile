@@ -13,6 +13,8 @@ MAX = 10000000
 
 data: seq.txt prods.txt prods_facts.txt
 
+sol: sol.txt
+
 seq.txt:
 	seq "$(MAX)" -1 1 > $@
 
@@ -22,3 +24,5 @@ prods.txt: seq.txt
 prods_facts.txt: prods.txt
 	factor < $< > $@
 
+sol.txt: prods_facts.txt prods.txt seq.txt
+	paste seq.txt prods_facts.txt | tail -251000 | perl euler-407-v2.pl | tee sol.txt

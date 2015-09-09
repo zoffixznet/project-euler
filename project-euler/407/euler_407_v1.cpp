@@ -22,7 +22,7 @@ int main(int argc, char * argv[])
 
     ll print_at = STEP;
 
-    for (ll n=1;n<=10000000;n++)
+    for (ll n=2;n<=10000000;n++)
     {
         sum += calc(n);
         if (n == print_at)
