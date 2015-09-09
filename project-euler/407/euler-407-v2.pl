@@ -16,9 +16,9 @@ STDOUT->autoflush(1);
 
 my $bitmask = '';
 
-my $dummy_line = <>;
+my $lim_line = <>;
 
-my $LIM = 10_000;
+my ($LIM) = $lim_line =~ /([0-9]+)/g;
 my $STEP = 10_000;
 
 my $count = 0;
@@ -46,10 +46,10 @@ while (my $l = <>)
             {
                 if (!vec($bitmask, $n, 1))
                 {
-                    print "f($n) = $A\n";
+                    # print "f($n) = $A\n";
                     vec($bitmask, $n, 1) = 1;
                     $sum += $A;
-                    print "Sum[Intermediate] = $sum\n";
+                    # print "Sum[Intermediate] = $sum\n";
                     $count++;
                 }
             }
