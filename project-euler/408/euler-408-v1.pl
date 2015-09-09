@@ -24,32 +24,44 @@ my $p = $STEP;
 
 # $prev maps ($x) => P($x, $path_len-$x)
 my $prev = [1];
+
+sub gen
+{
+    my ($path_len, $min_x, $max_x, $y) = @_;
+
+    my @r;
+    my $i = 0;
+    if (vec($is_sq, $path_len, 1))
+    {
+        for my $x ($min_x .. $max_x)
+        {
+            push @r, (
+                (vec($is_sq, $x, 1) && vec($is_sq, $y, 1))
+                ? 0
+                : (($prev->[$i]+$prev->[$i+1]) % $MOD)
+            );
+        }
+        continue
+        {
+            $y--;
+            $i++;
+        }
+    }
+    else
+    {
+        for my $i (0 .. $max_x-$min_x)
+        {
+            push @r, (($prev->[$i]+$prev->[$i+1]) % $MOD);
+        }
+    }
+    return \@r;
+}
+
 for my $path_len (1 .. $LIM)
 {
-    my $next = [];
-    for my $x (0)
-    {
-        push @$next, $prev->[0];
-    }
-    my $y = $path_len - 1;
-    for my $x (1 .. $path_len - 1)
-    {
-        if (vec($is_sq, $path_len, 1) && vec($is_sq, $x, 1) && vec($is_sq, $y, 1))
-        {
-            push @$next, 0;
-        }
-        else
-        {
-            push @$next, (($prev->[$x-1]+$prev->[$x]) % $MOD);
-        }
-    }
-    continue
-    {
-        $y--;
-    }
-    push @$next, $prev->[-1];
+    my @N = ($prev->[0], @{gen($path_len, 1, ($path_len-1) x 2)}, $prev->[-1]);
     # print "Prev = [@$prev] ; Next = [@$next]\n";
-    $prev = $next;
+    $prev = \@N;
 
     if ($p == $path_len) { print "Reached $path_len\n"; $p += $STEP; }
 }
@@ -59,29 +71,10 @@ my $max_y = $LIM;
 my $min_x = 1;
 for my $path_len ($LIM+1 .. (($LIM << 1)))
 {
-    my $next = [];
-    my $y = $max_y;
-    my $i = 1;
-    for my $x ($min_x .. $max_x)
-    {
-        # print "($x,$y,@{[$x+$y,$path_len]})\n";
-        if (vec($is_sq, $path_len, 1) && vec($is_sq, $x, 1) && vec($is_sq, $y, 1))
-        {
-            push @$next, 0;
-        }
-        else
-        {
-            push @$next, (($prev->[$i-1]+$prev->[$i]) % $MOD);
-        }
-    }
-    continue
-    {
-        $i++;
-        $y--;
-    }
+    my $N = gen($path_len, $min_x, $max_x, $max_y);
     $min_x++;
     # print "Prev = [@$prev] ; Next = [@$next]\n";
-    $prev = $next;
+    $prev = $N;
     if ($p == $path_len) { print "Reached $path_len\n"; $p += $STEP; }
 }
 
