@@ -46,7 +46,7 @@ for my $path_len (1 .. $LIM)
 }
 
 my $max_x = $LIM;
-for my $path_len ($LIM+1 .. (($LIM << 1) - 1))
+for my $path_len ($LIM+1 .. (($LIM << 1)))
 {
     my $next = [];
     my $y = $path_len - 1;
