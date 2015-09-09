@@ -19,6 +19,8 @@ for my $x (0 .. sqrt(2*$LIM))
 {
     vec($is_sq, $x*$x, 1) = 1;
 }
+my $STEP = 1_000;
+my $p = $STEP;
 
 # $prev maps ($x) => P($x, $path_len-$x)
 my $prev = [1];
@@ -48,6 +50,8 @@ for my $path_len (1 .. $LIM)
     push @$next, $prev->[-1];
     # print "Prev = [@$prev] ; Next = [@$next]\n";
     $prev = $next;
+
+    if ($p == $path_len) { print "Reached $path_len\n"; $p += $STEP; }
 }
 
 my $max_x = $LIM;
@@ -78,6 +82,7 @@ for my $path_len ($LIM+1 .. (($LIM << 1)))
     $min_x++;
     # print "Prev = [@$prev] ; Next = [@$next]\n";
     $prev = $next;
+    if ($p == $path_len) { print "Reached $path_len\n"; $p += $STEP; }
 }
 
 print "Result = ", $prev->[0], "\n";
