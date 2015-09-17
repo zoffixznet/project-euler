@@ -16,10 +16,10 @@ my @is_prime = (0, 0, (map { my $p = $_; (none { $p % $_ == 0 } 2 .. $p-1) ? 1 :
 
 my @p_letter = (map { $_ ? 'P' : 'N' } @is_prime);
 
-my @init_probab = (0, (map { Math::BigRat->new('1/500') } 1 .. 500) , 0);
+my @init_probab = (0, ( ( Math::BigRat->new('1/500') ) x 500 ) , 0);
 
-my @up_step_probab = (0, 1, (map { Math::BigRat->new('1/2') } 2 .. 499) , 0 , 0);
-my @down_step_probab = (0, 0, (map { Math::BigRat->new('1/2') } 2 .. 499) , 1, 0 );
+my @up_step_probab = (0, 1, (( Math::BigRat->new('1/2') ) x 498), 0 , 0);
+my @down_step_probab = (0, 0, (( Math::BigRat->new('1/2') ) x 498), 1, 0 );
 my $s = 'PPPPNNPPPNPPNPN';
 
 my @probab = @init_probab;
