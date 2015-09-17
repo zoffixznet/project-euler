@@ -35,4 +35,12 @@ for my $k (split//, $s)
     @probab = @next_probab;
 }
 
+my $sum = Math::BigRat->new('0,1');
+
+foreach my $x (@probab)
+{
+    $sum += $x;
+}
+
+print $sum;
 
