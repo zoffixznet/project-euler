@@ -12,7 +12,7 @@ use List::MoreUtils qw(none);
 
 STDOUT->autoflush(1);
 
-my @is_prime = (0, 0, map { my $p = $_; (none { $p % $_ == 0 } 2 .. $p-1) ? 1 : 0 } 2 .. 500);
+my @is_prime = (0, 0, (map { my $p = $_; (none { $p % $_ == 0 } 2 .. $p-1) ? 1 : 0 } 2 .. 500), 0);
 
 my @p_letter = (map { $_ ? 'P' : 'N' } @is_prime);
 
@@ -26,12 +26,25 @@ my @probab = @init_probab;
 my $T_frac = Math::BigRat->new('2/3');
 my $F_frac = Math::BigRat->new('1/3');
 
+sub f
+{
+    my ($k, $idx, $step) = @_;
+
+    return
+    (
+        $step->[$idx] * $probab[$idx]
+        * ($k eq $p_letter[$idx] ? $T_frac : $F_frac)
+    );
+}
+
 for my $k (split//, $s)
 {
     my @next_probab = (0, (map { my $i = $_;
-            ($up_step_probab[$i-1] * $probab[$i-1]
-            + $down_step_probab[$i+1] * $probab[$i+1])
-            * (($k eq $p_letter[$i]) ? $T_frac : $F_frac)
+                (
+                f($k, $i-1, \@up_step_probab)
+                +
+                f($k, $i+1, \@down_step_probab)
+                );
         } 1 .. 500), 0);
 
     @probab = @next_probab;
