@@ -12,7 +12,7 @@ use List::MoreUtils qw(none);
 
 STDOUT->autoflush(1);
 
-my @is_prime = (0, 0, map { my $p = $_; (none { $_ % $p == 0 } 2 .. $p-1) ? 1 : 0 } 2 .. 500);
+my @is_prime = (0, 0, map { my $p = $_; (none { $p % $_ == 0 } 2 .. $p-1) ? 1 : 0 } 2 .. 500);
 
 my @init_probab = (0, (map { Math::BigRat->new('1/500') } 1 .. 500) , 0);
 
@@ -35,12 +35,12 @@ for my $k (split//, $s)
     @probab = @next_probab;
 }
 
-my $sum = Math::BigRat->new('0,1');
+my $sum = Math::BigRat->new('0/1');
 
 foreach my $x (@probab)
 {
     $sum += $x;
 }
 
-print $sum;
+print $sum, "\n";
 
