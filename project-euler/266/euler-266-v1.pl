@@ -27,6 +27,9 @@ my $max = 1;
 
 my @s = (0);
 
+# Count limit
+my $L = 1;
+
 sub rec
 {
     # Depth and product (multiplication)
@@ -34,7 +37,8 @@ sub rec
 
     if ($m > $sq)
     {
-        return;
+        print "[G]Found $max [ " . join('*', @p_s[@s[0 .. $d]]) . " ]\n";
+        return 0;
     }
 
     if ($m > $max)
@@ -45,24 +49,36 @@ sub rec
 
     my $D = $d+1;
 
-    if ($D == @p)
+    if ($D == $L)
     {
-        return;
+        return 1;
     }
 
+    my $x = 0;
     for my $n ($s[$d]+1 .. $#p)
     {
         $s[$D] = $n;
-        rec($D, $m*$p[$n]);
+        if (! rec($D, $m * $p[$n]))
+        {
+            return $x;
+        }
+    }
+    continue
+    {
+        $x++;
     }
 
-    return;
+    return $x;
 }
 
-for my $initial (0 .. $#p)
+for my $limit (reverse (1 .. @p))
 {
-    $s[0] = $initial;
-    rec(0, $p[$initial]);
+    $L = $limit;
+    for my $initial (0 .. $#p)
+    {
+        $s[0] = $initial;
+        rec(0, $p[$initial]);
+    }
 }
 
 print "Max = $max\n";
