@@ -7,9 +7,10 @@ use Math::GMP;
 use bytes;
 
 use JSON::MaybeXS qw(decode_json encode_json);
+use Path::Tiny qw/path/;
 
 use List::Util qw(sum);
-use List::MoreUtils qw();
+use List::MoreUtils qw(any);
 
 STDOUT->autoflush(1);
 
@@ -37,7 +38,7 @@ sub product
 
 my $N = product(@p);
 
-my $SQ = $n->bsqrt;
+my $SQ = $N->bsqrt;
 
 sub my_eval
 {
@@ -56,14 +57,14 @@ sub my_eval
     return
     +{
         coords => [@$coords],
-        prod => (product(@$coords) . ''),
+        prod => (product(@p[@$coords]) . ''),
     }
 }
 
 my $fn = './266_DATA.json';
 my $fh = path($fn);
 my $data = (-e $fn) ? decode_json($fh->slurp_utf8()) : +{
-    upper => [my_eval([keys@p]))],
+    upper => [my_eval([keys@p])],
     lower => [my_eval([])],
 };
 
@@ -81,7 +82,7 @@ sub add
             die "Upper Product is smaller than the pivot";
         }
 
-        if ($ep > gn($data->{upper}->[-1]->{prod}))
+        if ($ep >= gn($data->{upper}->[-1]->{prod}))
         {
             die "Upper Product does not improve on the limit.";
         }
@@ -97,7 +98,7 @@ sub add
             die "Lower Product is larger than the pivot";
         }
 
-        if ($ep < gn($data->{lower}->[-1]->{prod}))
+        if ($ep <= gn($data->{lower}->[-1]->{prod}))
         {
             die "Lower Product does not improve on the limit.";
         }
@@ -113,7 +114,17 @@ sub add
     $fh->spew_utf8(encode_json($data));
 }
 
-$DB::trace = 1;
+# Summary.
+sub S
+{
+    return [
+        { l => $data->{lower}->[-1] },
+        { u => $data->{upper}->[-1] },
+        { PIVOT => "$SQ" },
+    ];
+}
+
+$DB::single = 1;
 
 while (1)
 {
