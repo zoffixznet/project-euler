@@ -180,7 +180,7 @@ sub get__m_is_5__cache
     my $MOD = $args->{'MOD'};
 
     return $A_m_is_5_mod__caches{$MOD} //= sub {
-        my $x = 1;
+        my $x = A_m_is_4_mod({m => 4, n => 1, MOD => $MOD, PREFIX => 0}) % $MOD;
         my @seq = ($x);
         my %cache = ($x => $#seq);
 
