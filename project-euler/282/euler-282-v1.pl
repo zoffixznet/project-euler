@@ -189,35 +189,109 @@ sub hyperexp_modulo
 {
     my ($base, $exp, $mod, $prefix, $DEFAULT_RET) = @_;
 
+    my $Map = sub {
+        my $x = shift;
+        return (($x < $prefix) ? $x : (($x-$prefix) % $mod + $prefix));
+    };
+
+    my $ret;
+
     if ($exp == 1)
     {
-        return ($base % $mod);
+        $ret = $Map->($base);
+        # return $base;
     }
-    if (($mod == 1) and ($prefix == 0))
+    elsif (($mod == 1) and ($prefix == 0))
     {
-        return $DEFAULT_RET;
+        $ret = $Map->($DEFAULT_RET);
     }
-
-    my $mod1 = $base;
-    my $e = -1;
-
-    my %cache;
-    while (!exists($cache{$mod1}))
+    else
     {
-        $cache{$mod1} = ++$e;
-        ($mod1 *= $base) %= $mod;
+        my $mod1 = 1;
+        my $e = 0;
+
+        my %cache;
+
+        my $T = sub {
+            return $Map->(shift(@_) * $base);
+        };
+
+        while (!exists($cache{$mod1}))
+        {
+            $cache{$mod1} = $e++;
+            $mod1 = $T->($mod1);
+        }
+
+        my $PREFIX = $cache{$mod1};
+        my $LEN = $e - $PREFIX;
+
+        my $mod_recurse = hyperexp_modulo($base, $exp-1, $LEN, $PREFIX, $base);
+
+        # Verification code - remove later.
+        if (1)
+        {
+            my $d = Math::GMP->new($base);
+
+            for my $i (1 .. $exp-1-1)
+            {
+                $d = $base ** $d;
+            }
+
+            if ((($d < $PREFIX) ? $d : (($d-$PREFIX) % $LEN + $PREFIX))
+                != $mod_recurse)
+            {
+                if (! $ENV{D})
+                {
+                    die "Incorrect result (hyperexp_modulo($base, $exp-1, $LEN, $PREFIX, $base); !";
+                }
+            }
+        }
+        $ret = 1;
+        for my $i (1 .. $mod_recurse)
+        {
+            $ret = $T->($ret);
+        }
+        # TODO : Disable.
+        if (1)
+        {
+            my $d = Math::GMP->new($base);
+
+            for my $i (1 .. $exp-1)
+            {
+                $d = $base ** $d;
+            }
+
+            if ((($d < $prefix) ? $d : (($d-$prefix) % $mod + $prefix))
+                != $ret)
+            {
+                if (! $ENV{D})
+                {
+                    die "Incorrect result CHECK-INNER (hyperexp_modulo(@_); !";
+                }
+            }
+        }
     }
 
-    my $PREFIX = $cache{$mod1};
-    my $LEN = $e - $PREFIX;
-
-    my $mod_recurse = hyperexp_modulo($base, $exp-1, $LEN, $PREFIX, $base);
-
-    my $ret = 1;
-    for my $i (1 .. $mod_recurse)
+    # TODO : Disable.
+    if (1)
     {
-        ($ret *= $base) %= $mod;
+        my $d = Math::GMP->new($base);
+
+        for my $i (1 .. $exp-1)
+        {
+            $d = $base ** $d;
+        }
+
+        if ((($d < $prefix) ? $d : (($d-$prefix) % $mod + $prefix))
+                != $ret)
+        {
+            if (! $ENV{D})
+            {
+                die "Incorrect result CHECK (hyperexp_modulo(@_); !";
+            }
+        }
     }
+
     return $ret;
 }
 
