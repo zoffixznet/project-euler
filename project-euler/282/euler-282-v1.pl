@@ -199,14 +199,12 @@ sub hyperexp_modulo
     }
 
     my $mod1 = $base;
-    my $e = 0;
+    my $e = -1;
 
-    my %cache = ($mod1 => $e);
-    ($mod1 *= $base) %= $mod;
-
+    my %cache;
     while (!exists($cache{$mod1}))
     {
-        $cache{$mod1} = $e++;
+        $cache{$mod1} = ++$e;
         ($mod1 *= $base) %= $mod;
     }
 
