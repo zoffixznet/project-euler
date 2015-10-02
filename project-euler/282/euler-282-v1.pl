@@ -87,10 +87,6 @@ sub get_cache
         }
 
         my $NEW_PREFIX = $cache{$x};
-        if ($NEW_PREFIX == 1)
-        {
-            $DB::single = 1;
-        }
         return +{
             NEW_PREFIX => $NEW_PREFIX,
             NEW_MOD => @seq - $NEW_PREFIX,
@@ -165,7 +161,7 @@ sub A_m_is_4_mod
         }
     }->();
 
-    if ($ret <= 0)
+    if ($ret < 0 or (!defined $ret))
     {
         die "A_m_is_4_mod($m,$n)!";
     }
@@ -203,7 +199,7 @@ sub get__m_is_5__cache
         my $NEW_PREFIX = $cache{$x};
         return +{
             NEW_PREFIX => $NEW_PREFIX,
-            NEW_MOD => $#seq - $NEW_PREFIX,
+            NEW_MOD => @seq - $NEW_PREFIX,
             seq => \@seq,
         };
     }->();
@@ -233,10 +229,6 @@ sub A_m_is_5_mod
         {
             return ((Math::GMP->new('1') << (Math::GMP->new("$n") + 3)) - 3);
         }
-        elsif ($n == 0)
-        {
-            return A($m-1,1);
-        }
         elsif ($m == 4)
         {
             return A_m_is_4_mod($args);
@@ -261,13 +253,17 @@ sub A_m_is_5_mod
                 return (($r - $PREFIX) % $MOD + $PREFIX);
             }
         }
+        elsif ($n == 0)
+        {
+            return A($m-1,1);
+        }
         else
         {
             return $c{"$m"}{"$n"} //= A($m-1, A($m,$n-1));
         }
     }->();
 
-    if ($ret <= 0)
+    if ($ret < 0 or (!defined $ret))
     {
         die "A_m_is_5_mod($m,$n)!";
     }
