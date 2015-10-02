@@ -233,6 +233,13 @@ sub A_m_is_5_mod
         {
             return A_m_is_4_mod($args);
         }
+        elsif ($n == 0)
+        {
+            my %pass = %$args;
+            $pass{'m'}--;
+            $pass{'n'} = 1;
+            return A_m_is_4_mod(\%pass);
+        }
         elsif ($m == 5)
         {
             my $MOD = $args->{'MOD'};
@@ -252,10 +259,6 @@ sub A_m_is_5_mod
             {
                 return (($r - $PREFIX) % $MOD + $PREFIX);
             }
-        }
-        elsif ($n == 0)
-        {
-            return A($m-1,1);
         }
         else
         {
