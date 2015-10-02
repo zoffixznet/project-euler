@@ -65,14 +65,11 @@ my @m_cache;
 
 sub get__m__cache
 {
-    my $args = shift;
+    my ($m, $MOD, $PREFIX) = @_;
 
-    my $MOD = $args->{'MOD'};
-    my $m = $args->{'m'};
-
-    return $m_cache[$m]{$MOD} //= sub {
+    return @{ $m_cache[$m]{$MOD}{$PREFIX} //= sub {
         my $m_ = $m - 2;
-        my @f = ($MOD, 0);
+        my @f = ($MOD, $PREFIX);
         my $next = sub {
             return A_mod($m_, scalar(shift(@_)),@f);
         };
@@ -94,12 +91,8 @@ sub get__m__cache
         }
 
         my $NEW_PREFIX = $cache{$x};
-        return +{
-            NEW_PREFIX => $NEW_PREFIX,
-            NEW_MOD => @seq - $NEW_PREFIX,
-            seq => \@seq,
-        };
-    }->();
+        return [ (@seq - $NEW_PREFIX), $NEW_PREFIX, \@seq ];
+    }->() };
 }
 
 sub A_mod
@@ -129,11 +122,7 @@ sub A_mod
         }
         elsif ($m <= 6)
         {
-            my $CACHE_RET = get__m__cache({ m => $m, MOD => $MOD});
-
-            my $NEW_PREFIX = $CACHE_RET->{NEW_PREFIX};
-            my $NEW_MOD = $CACHE_RET->{NEW_MOD};
-            my $seq = $CACHE_RET->{seq};
+            my ($NEW_MOD, $NEW_PREFIX, $seq) = get__m__cache($m, $MOD, $PREFIX);
 
             if (($NEW_PREFIX == 0) and ($NEW_MOD == 1))
             {
