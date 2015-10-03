@@ -74,19 +74,15 @@ sub get__m__cache
             return A_mod($m_, scalar(shift(@_)),@f);
         };
 
-        my $x = $next->(1);
-        my @seq = ($x);
-        my %cache = ($x => $#seq);
-
-        $x = $next->($x);
+        # my $x = 1;
+        my $x = A_mod($m-1, 0, @f);
+        my @seq;
+        my %cache;
 
         while (!exists($cache{$x}))
         {
             push @seq, $x;
             $cache{$x} = $#seq;
-        }
-        continue
-        {
             $x = $next->($x);
         }
 
@@ -99,23 +95,33 @@ sub A_mod
 {
     my ($m, $n, $MOD, $PREFIX) = @_;
 
+    if (($PREFIX == 0) and ($MOD == 1))
+    {
+        return 0;
+    }
+
+    my $Map = sub {
+        my $x = shift;
+        return (($x < $PREFIX) ? $x : (($x-$PREFIX) % $MOD + $PREFIX));
+    };
+
     my $ret = sub {
         if ($m == 0)
         {
-            return (($n+1)%$MOD);
+            return $Map->($n+1);
         }
         elsif ($m == 1)
         {
-            return (($n+2)%$MOD);
+            return $Map->($n+2);
         }
         elsif ($m == 2)
         {
-            return ((($n<<1)+3)%$MOD);
+            return $Map->(($n<<1)+3);
         }
         # elsif (0)
         elsif ($m == 3)
         {
-            return ((((Math::GMP->new('1') << (Math::GMP->new("$n") + 3)) - 3)%$MOD) . '');
+            return $Map->((Math::GMP->new('1') << (Math::GMP->new("$n") + 3)) - 3) . '';
         }
         elsif ($n == 0)
         {
@@ -125,24 +131,12 @@ sub A_mod
         {
             my ($NEW_MOD, $NEW_PREFIX, $seq) = get__m__cache($m, $MOD, $PREFIX);
 
-            if (($NEW_PREFIX == 0) and ($NEW_MOD == 1))
-            {
-                print "Seq  = [@$seq]\n";
-                return $seq->[0];
-            }
-            my $ret = A_mod($m, ($n-1), $NEW_MOD, $NEW_PREFIX);
+            my $r_idx = A_mod($m, ($n-1), $NEW_MOD, $NEW_PREFIX);
 
             # my $r = $cache{$ret};
-            my $r = $seq->[$ret];
+            # my $r = $seq->[$r_idx];
 
-            if ($r < $PREFIX)
-            {
-                return $r;
-            }
-            else
-            {
-                return (($r - $PREFIX) % $MOD + $PREFIX);
-            }
+            return $seq->[$r_idx];
         }
         else
         {
@@ -153,6 +147,16 @@ sub A_mod
     if ($ret < 0 or (!defined $ret))
     {
         die "A_mod($m,$n)!";
+    }
+
+    if (0)
+    {
+        my $want = $Map->(A($m,$n));
+
+        if ($want != $ret)
+        {
+            die "A_mod($m,$n, $MOD, $PREFIX)!";
+        }
     }
 
     # print "A($m,$n) = $ret\n";
@@ -216,20 +220,19 @@ sub hyperexp_modulo
         };
 
         my $_calc = sub {
-            my $mod1 = 1;
-            my $e = 0;
+            my $x = 1;
             my %cache;
             my @seq;
 
-            while (!exists($cache{$mod1}))
+            while (!exists($cache{$x}))
             {
-                $cache{$mod1} = $e++;
-                push @seq, $mod1;
-                $mod1 = $T->($mod1);
+                push @seq, $x;
+                $cache{$x} = $#seq;
+                $x = $T->($x);
             }
 
-            my $PREFIX = $cache{$mod1};
-            return [$PREFIX, $e-$PREFIX, \@seq];
+            my $PREFIX = $cache{$x};
+            return [$PREFIX, (@seq-$PREFIX), \@seq];
         };
 
         my ($PREFIX, $LEN, $SEQ) = @{
