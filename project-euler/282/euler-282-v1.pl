@@ -185,9 +185,13 @@ sub exp_mod
     return $ret;
 }
 
+{
+    my %Cache1;
 sub hyperexp_modulo
 {
-    my ($base, $exp, $mod, $prefix, $DEFAULT_RET) = @_;
+    my ($base, $exp, $mod, $prefix) = @_;
+
+    my $DEFAULT_RET = 0;
 
     my $Map = sub {
         my $x = shift;
@@ -203,32 +207,39 @@ sub hyperexp_modulo
     }
     elsif (($mod == 1) and ($prefix == 0))
     {
-        $ret = $Map->($DEFAULT_RET);
+        $ret = $DEFAULT_RET;
     }
     else
     {
-        my $mod1 = 1;
-        my $e = 0;
-
-        my %cache;
-
         my $T = sub {
             return $Map->(shift(@_) * $base);
         };
 
-        while (!exists($cache{$mod1}))
-        {
-            $cache{$mod1} = $e++;
-            $mod1 = $T->($mod1);
-        }
+        my $_calc = sub {
+            my $mod1 = 1;
+            my $e = 0;
+            my %cache;
+            my @seq;
 
-        my $PREFIX = $cache{$mod1};
-        my $LEN = $e - $PREFIX;
+            while (!exists($cache{$mod1}))
+            {
+                $cache{$mod1} = $e++;
+                push @seq, $mod1;
+                $mod1 = $T->($mod1);
+            }
 
-        my $mod_recurse = hyperexp_modulo($base, $exp-1, $LEN, $PREFIX, $base);
+            my $PREFIX = $cache{$mod1};
+            return [$PREFIX, $e-$PREFIX, \@seq];
+        };
 
-        # Verification code - remove later.
-        if (1)
+        my ($PREFIX, $LEN, $SEQ) = @{
+            $Cache1{$base}{$exp}{$prefix}{$mod} //= $_calc->()
+        };
+
+        my $mod_recurse = hyperexp_modulo($base, $exp-1, $LEN, $PREFIX);
+
+        # TODO : Verification code - remove later.
+        if (0)
         {
             my $d = Math::GMP->new($base);
 
@@ -246,13 +257,9 @@ sub hyperexp_modulo
                 }
             }
         }
-        $ret = 1;
-        for my $i (1 .. $mod_recurse)
-        {
-            $ret = $T->($ret);
-        }
+        $ret = $SEQ->[$mod_recurse];
         # TODO : Disable.
-        if (1)
+        if (0)
         {
             my $d = Math::GMP->new($base);
 
@@ -273,7 +280,7 @@ sub hyperexp_modulo
     }
 
     # TODO : Disable.
-    if (1)
+    if (0)
     {
         my $d = Math::GMP->new($base);
 
@@ -294,19 +301,23 @@ sub hyperexp_modulo
 
     return $ret;
 }
+}
 
-my $TEST_MOD = 37;
+my $TEST_MOD = $ULTIMATE_MOD;
+# my $TEST_MOD = 37;
+# my $TEST_MOD = 305607;
+
 for my $m (4)
 {
     for my $n (0 .. 2)
     {
         # print "A($m,$n) = ", (A($m,$n) % $ULTIMATE_MOD), "\n";
         print "A($m,$n) = ", (A($m,$n) % $TEST_MOD), "\n";
-        print "A[t]($m,$n) = ", ((hyperexp_modulo(2, $n+3, $TEST_MOD, 0, [0 .. $TEST_MOD-1]) + $TEST_MOD - 3) % $TEST_MOD), "\n";
+        print "A[t]($m,$n) = ", ((hyperexp_modulo(2, $n+3, $TEST_MOD, 0) + $TEST_MOD - 3) % $TEST_MOD), "\n";
     }
     for my $n (3 .. 10)
     {
-        print "A($m,$n) = ", ((hyperexp_modulo(2, $n+3, $TEST_MOD, 0, [0 .. $TEST_MOD-1]) + $TEST_MOD - 3) % $TEST_MOD), "\n";
+        print "A($m,$n) = ", ((hyperexp_modulo(2, $n+3, $TEST_MOD, 0) + $TEST_MOD - 3) % $TEST_MOD), "\n";
     }
 }
 
