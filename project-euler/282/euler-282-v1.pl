@@ -10,7 +10,7 @@ use Math::GMP;
 use integer;
 use bytes;
 
-use List::Util qw(sum);
+use List::Util qw(first sum);
 use List::MoreUtils qw();
 
 STDOUT->autoflush(1);
@@ -76,6 +76,9 @@ sub get__m__cache
 
         # my $x = 1;
         my $x = A_mod($m-1, 0, @f);
+
+=begin More Correct Solution.
+
         my @seq;
         my %cache;
 
@@ -88,8 +91,38 @@ sub get__m__cache
 
         my $NEW_PREFIX = $cache{$x};
         return [ (@seq - $NEW_PREFIX), $NEW_PREFIX, \@seq ];
+
+=end More Correct Solution.
+
+=cut
+
+        my $seq = '';
+        my $L = '';
+        my $i = 0;
+
+        while (! vec($L, $x, 1))
+        {
+            vec( $seq, $i++, 32 ) = $x;
+            vec( $L, $x, 1 ) = 1;
+            $x = $next->($x);
+        }
+
+        my $NEW_PREFIX = first { vec($seq, $_, 32) == $x } 0 .. $i;
+        return [ ($i - $NEW_PREFIX), $NEW_PREFIX, \$seq ];
+
     }->() };
 }
+
+=begin foo
+
+sub A_mod
+{
+    return A_mod_proto(map { Math::GMP->new($_) } @_[0 .. 3]);
+}
+
+=end foo
+
+=cut
 
 sub A_mod
 {
@@ -136,7 +169,7 @@ sub A_mod
             # my $r = $cache{$ret};
             # my $r = $seq->[$r_idx];
 
-            return $seq->[$r_idx];
+            return vec(${$seq}, $r_idx, 32);
         }
         else
         {
@@ -316,11 +349,11 @@ for my $m (4)
     {
         # print "A($m,$n) = ", (A($m,$n) % $ULTIMATE_MOD), "\n";
         print "A($m,$n) = ", (A($m,$n) % $TEST_MOD), "\n";
-        print "A[t]($m,$n) = ", ((hyperexp_modulo(2, $n+3, $TEST_MOD, 0) + $TEST_MOD - 3) % $TEST_MOD), "\n";
+        # print "A[t]($m,$n) = ", ((hyperexp_modulo(2, $n+3, $TEST_MOD, 0) + $TEST_MOD - 3) % $TEST_MOD), "\n";
     }
     for my $n (3 .. 10)
     {
-        print "A($m,$n) = ", ((hyperexp_modulo(2, $n+3, $TEST_MOD, 0) + $TEST_MOD - 3) % $TEST_MOD), "\n";
+        # print "A[t]($m,$n) = ", ((hyperexp_modulo(2, $n+3, $TEST_MOD, 0) + $TEST_MOD - 3) % $TEST_MOD), "\n";
     }
 }
 
