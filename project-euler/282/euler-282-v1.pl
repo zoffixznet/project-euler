@@ -100,11 +100,27 @@ sub get__m__cache
         my $L = '';
         my $i = 0;
 
-        while (! vec($L, $x, 1))
+        if ($m_ == 1)
         {
-            vec( $seq, $i++, 32 ) = $x;
-            vec( $L, $x, 1 ) = 1;
-            $x = $next->($x);
+            while (! vec($L, $x, 1))
+            {
+                vec( $seq, $i++, 32 ) = $x;
+                vec( $L, $x, 1 ) = 1;
+
+                if (($x += 2) >= $PREFIX+$MOD)
+                {
+                    $x = (($x - $PREFIX) % $MOD + $PREFIX);
+                }
+            }
+        }
+        else
+        {
+            while (! vec($L, $x, 1))
+            {
+                vec( $seq, $i++, 32 ) = $x;
+                vec( $L, $x, 1 ) = 1;
+                $x = $next->($x);
+            }
         }
 
         my $NEW_PREFIX = first { vec($seq, $_, 32) == $x } 0 .. $i;
@@ -135,7 +151,7 @@ sub A_mod
 
     my $Map = sub {
         my $x = shift;
-        return (($x < $PREFIX) ? $x : (($x-$PREFIX) % $MOD + $PREFIX));
+        return (($x < $PREFIX + $MOD) ? $x : (($x-$PREFIX) % $MOD + $PREFIX));
     };
 
     my $ret = sub {
@@ -154,7 +170,42 @@ sub A_mod
         # elsif (0)
         elsif ($m == 3)
         {
-            return $Map->((Math::GMP->new('1') << (Math::GMP->new("$n") + 3)) - 3) . '';
+            # my $ret1 = $Map->((Math::GMP->new('1') << (Math::GMP->new("$n") + 3)) - 3) . '';
+            my $ret2;
+            if ($PREFIX == 0)
+            {
+                 $ret2 = $Map->(exp_mod(2, $n+3, $MOD) + $MOD*4 - 3);
+            }
+            else
+            {
+                my $verdict = 0;
+                {
+                    no integer;
+                    if (log($PREFIX)/log(2) < $n + 2)
+                    {
+                        $verdict = 1;
+                    }
+                }
+
+                if ($verdict)
+                {
+                    $ret2 = exp_mod(2, $n+3, $MOD);
+                    if ($ret2 < $PREFIX)
+                    {
+                        $ret2 += $MOD;
+                    }
+                    $ret2 = $Map->($ret2 + $MOD*4 - 3);
+                }
+                else
+                {
+                    $ret2 = $Map->((Math::GMP->new('1') << (Math::GMP->new("$n") + 3)) - 3) . '';
+                }
+            }
+            if (0) # if ($ret2 != $ret1)
+            {
+                # die "Incorrect $ret1 / $ret2 ret1/ret2!";
+            }
+            return $ret2;
         }
         elsif ($n == 0)
         {
@@ -197,13 +248,6 @@ sub A_mod
     return $ret;
 }
 
-for my $m (0 .. 3)
-{
-    for my $n (0 .. 100)
-    {
-        print "A($m,$n) = ", A($m,$n), "\n";
-    }
-}
 
 sub exp_mod
 {
@@ -342,6 +386,22 @@ sub hyperexp_modulo
 my $TEST_MOD = $ULTIMATE_MOD;
 # my $TEST_MOD = 37;
 # my $TEST_MOD = 305607;
+
+for my $m (0 .. 3)
+{
+    for my $n (0 .. 100)
+    {
+        print "A($m,$n) = ", ( A($m,$n) % $ULTIMATE_MOD ), "\n";
+    }
+}
+
+for my $m (3)
+{
+    for my $n (0 .. 100)
+    {
+        print "A_mod($m,$n) = ", A_mod($m, $n, $ULTIMATE_MOD, 0), "\n";
+    }
+}
 
 for my $m (4)
 {
