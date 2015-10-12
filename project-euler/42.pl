@@ -23,7 +23,7 @@ sub is_triangle
     }
 }
 
-my $text = io("/home/shlomi/words.txt")->slurp();
+my $text = io("./words.txt")->slurp();
 
 my @words = ($text =~ m{([A-Z]+)}g);
 print scalar(grep { is_triangle(sum(map { ord($_) - ord('A')+1 } split //, $_)) }@words), "\n";
