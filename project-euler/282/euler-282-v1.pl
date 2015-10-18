@@ -142,11 +142,18 @@ sub A_mod
 
 sub A_mod
 {
-    my ($m, $n, $MOD, $PREFIX) = @_;
+    my ($m, $n, $MOD, $ORIG_PREFIX) = @_;
 
-    if (($PREFIX == 0) and ($MOD == 1))
+    if (($ORIG_PREFIX == 0) and ($MOD == 1))
     {
         return 0;
+    }
+
+    my $PREFIX = $ORIG_PREFIX;
+    my $ORIG_ME = ($m > 3);
+    if ($ORIG_ME and $PREFIX)
+    {
+        $PREFIX = 0;
     }
 
     my $Map = sub {
@@ -231,6 +238,11 @@ sub A_mod
     if ($ret < 0 or (!defined $ret))
     {
         die "A_mod($m,$n)!";
+    }
+
+    if ($ORIG_ME and $ORIG_PREFIX and ($ret < $ORIG_PREFIX))
+    {
+        $ret += $MOD;
     }
 
     if (0)
