@@ -14,7 +14,12 @@ const ll MOD = 1000000000LL;
 const int NUM_PRIMES = 78500;
 unsigned char cache[SIZ];
 
-ll aft_primes[NUM_PRIMES];
+struct aft_prime_t
+{
+    ll p, product;
+};
+
+aft_prime_t aft_primes[NUM_PRIMES];
 
 int main(int argc, char * argv[])
 {
@@ -25,7 +30,8 @@ int main(int argc, char * argv[])
 
     for (int i = 0; i < NUM_PRIMES ; i++)
     {
-        fscanf(f, "%lld", &aft_primes[i]);
+        fscanf(f, "%lld", &(aft_primes[i].p));
+        aft_primes[i].product = aft_primes[i].p;
     }
     pclose(f);
 
@@ -61,10 +67,10 @@ int main(int argc, char * argv[])
     while (1)
     {
         {
-            auto p = aft_primes[max_p_idx];
+            auto p = aft_primes[max_p_idx].p;
             while (p*p < end)
             {
-                p = aft_primes[++max_p_idx];
+                p = aft_primes[++max_p_idx].p;
             }
         }
 
@@ -79,10 +85,14 @@ int main(int argc, char * argv[])
             {
                 for (size_t p_idx = 0 ; p_idx < max_p_idx ; p_idx++)
                 {
-                    auto p = aft_primes[p_idx];
-                    if (n % p == 0)
+                    auto & p = aft_primes[p_idx];
+                    while (p.product < n)
                     {
-                        smpf = p;
+                        p.product += p.p;
+                    }
+                    if (p.product == n)
+                    {
+                        smpf = p.p;
                         break;
                     }
                 }
