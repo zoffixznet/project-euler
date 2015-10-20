@@ -126,17 +126,11 @@ sub calc
 
     if (!exists ($for_n{$n}))
     {
-        if ($n & 0x1)
-        {
-            calc($n-1);
-            inc($n-1);
-        }
-        else
-        {
-            my $x = ($n >> 1);
-            calc($x);
-            double($x);
-        }
+        my $rec = ($n & 0x1) ? +{ 'x' => ($n-1), cb => \&inc }
+            : +{ 'x' => ($n >> 1), cb => \&double };
+        my $x = $rec->{'x'};
+        calc($x);
+        $rec->{cb}->($x);
     }
 
     return;
