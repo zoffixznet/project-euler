@@ -85,27 +85,27 @@ sub double
     my $new_rec = [];
 
     # cd == count_digits
-    foreach my $cd_low (0 .. $COUNT_DIGITS)
+    foreach my $low_cd (0 .. $COUNT_DIGITS)
     {
-        my $mod_counts_low = $old_rec->[$cd_low];
+        my $low_mod_counts = $old_rec->[$low_cd];
 
-        foreach my $mod_low (0 .. $HIGH_MOD)
+        foreach my $low_mod (0 .. $HIGH_MOD)
         {
-            my $low_count = $mod_counts_low->[$mod_low] // 0;
+            my $low_count = $low_mod_counts->[$low_mod] // 0;
 
-            foreach my $cd_high (0 .. $COUNT_DIGITS-$cd_low)
+            foreach my $high_cd (0 .. $COUNT_DIGITS-$low_cd)
             {
-                my $mod_counts_high = $old_rec->[$cd_high];
+                my $high_mod_counts = $old_rec->[$high_cd];
 
-                foreach my $proto_mod_high (0 .. $HIGH_MOD)
+                foreach my $proto_high_mod (0 .. $HIGH_MOD)
                 {
-                    my $high_count = $mod_counts_high->[$proto_mod_high] // 0;
+                    my $high_count = $high_mod_counts->[$proto_high_mod] // 0;
 
                     (($new_rec->[
-                                $cd_low + $cd_high
+                                $low_cd + $high_cd
                             ]
                             ->[
-                                ($mod_low + $BASE_MOD * $proto_mod_high)
+                                ($low_mod + $BASE_MOD * $proto_high_mod)
                                 %
                                 23
                             ] //= 0) += ($high_count * $low_count))
