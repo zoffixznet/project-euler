@@ -145,11 +145,6 @@ sub lookup
     return ($for_n{$n}[23][0] // 0);
 }
 
-# for my $n (1 .. 42)
-# {
-#    inc($n-1);
-# }
-#
 print "Result[9] = @{[lookup(9)]}\n";
 print "Result[42] = @{[lookup(42)]}\n";
 
