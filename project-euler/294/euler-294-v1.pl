@@ -37,6 +37,10 @@ sub exp_mod
 }
 
 my $RESULT_MOD = 1_000_000_000;
+my $COUNT_DIGITS = 23;
+my $BASE = 23;
+my $HIGH_MOD = $BASE - 1;
+
 
 sub inc
 {
@@ -44,16 +48,16 @@ sub inc
 
     my $new_rec = [];
 
-    my $BASE_MOD = exp_mod(23, 10, $n+1);
+    my $BASE_MOD = exp_mod($BASE, 10, $n+1);
 
     while (my ($old_count_digits, $old_mod_counts) = each (@$old_rec))
     {
-        while (my ($old_mod, $old_count) = each(@$old_mod_counts))
+        for my $new_digit (0 .. min(9, $COUNT_DIGITS-$old_count_digits))
         {
-            for my $new_digit (0 .. min(9, 23-$old_count_digits))
+            while (my ($old_mod, $old_count) = each(@$old_mod_counts))
             {
                 (($new_rec->[$old_count_digits + $new_digit]
-                        ->[($old_mod + $BASE_MOD * $new_digit) % 23]
+                        ->[($old_mod + $BASE_MOD * $new_digit) % $BASE]
                         //= 0) += $old_count)
                 %= $RESULT_MOD;
             }
@@ -63,14 +67,11 @@ sub inc
     return $new_rec;
 }
 
-my $COUNT_DIGITS = 23;
-my $HIGH_MOD = 22;
-
 sub double
 {
     my ($n, $old_rec) = @_;
 
-    my $BASE_MOD = exp_mod(23, 10, $n);
+    my $BASE_MOD = exp_mod($BASE, 10, $n);
 
     my $new_rec = [];
 
@@ -97,7 +98,7 @@ sub double
                             ->[
                                 ($low_mod + $BASE_MOD * $proto_high_mod)
                                 %
-                                23
+                                $BASE
                             ] //= 0) += ($high_count * $low_count))
                     %= $RESULT_MOD
                     ;
@@ -126,7 +127,7 @@ sub lookup
 {
     my ($n) = @_;
 
-    return (calc($n)->[23][0] // 0);
+    return (calc($n)->[$COUNT_DIGITS][0] // 0);
 }
 
 print "Result[9] = @{[lookup(9)]}\n";
