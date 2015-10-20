@@ -40,15 +40,11 @@ my $RESULT_MOD = 1_000_000_000;
 
 sub inc
 {
-    my ($n) = @_;
-
-    my $old_rec = $for_n{$n};
-
-    my $new_n = $n + 1;
+    my ($n, $old_rec) = @_;
 
     my $new_rec = [];
 
-    my $BASE_MOD = exp_mod(23, 10, $new_n);
+    my $BASE_MOD = exp_mod(23, 10, $n+1);
 
     while (my ($old_count_digits, $old_mod_counts) = each (@$old_rec))
     {
@@ -64,9 +60,7 @@ sub inc
         }
     }
 
-    $for_n{$new_n} = $new_rec;
-
-    return;
+    return $new_rec;
 }
 
 my $COUNT_DIGITS = 23;
@@ -74,11 +68,7 @@ my $HIGH_MOD = 22;
 
 sub double
 {
-    my ($n) = @_;
-
-    my $new_n = ($n << 1);
-
-    my $old_rec = $for_n{$n};
+    my ($n, $old_rec) = @_;
 
     my $BASE_MOD = exp_mod(23, 10, $n);
 
@@ -117,9 +107,7 @@ sub double
         }
     }
 
-    $for_n{$new_n} = $new_rec;
-
-    return;
+    return $new_rec;
 }
 
 sub calc
@@ -132,7 +120,7 @@ sub calc
             : +{ 'x' => ($n >> 1), cb => \&double };
         my $x = $rec->{'x'};
         calc($x);
-        $rec->{cb}->($x);
+        $for_n{$n} = $rec->{cb}->($x, $for_n{$x});
     }
 
     return;
