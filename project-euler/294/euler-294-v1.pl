@@ -132,6 +132,7 @@ sub lookup
 print "Result[9] = @{[lookup(9)]}\n";
 print "Result[42] = @{[lookup(42)]}\n";
 
-my $SOUGHT = 11 ** 12;
+my $SOUGHT_EXPR = '11 ** 12';
+my $SOUGHT = eval $SOUGHT_EXPR;
 
-print "Result[11 ** 12] = @{[lookup($SOUGHT)]}\n";
+print "Result[$SOUGHT_EXPR] = @{[lookup($SOUGHT)]}\n";
