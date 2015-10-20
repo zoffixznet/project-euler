@@ -13,7 +13,19 @@ use List::MoreUtils qw();
 
 STDOUT->autoflush(1);
 
-my %for_n = (0 => [[1]],);
+my $RESULT_MOD = 1_000_000_000;
+my $DIGITS_SUM = 23;
+my $BASE = 23;
+my $HIGH_MOD = $BASE - 1;
+
+sub _new
+{
+    return [ map { [(0) x $BASE] } (0 .. $DIGITS_SUM)];
+}
+
+my $rec0 = _new();
+$rec0->[0][0] = 1;
+my %for_n = (0 => $rec0,);
 
 sub exp_mod
 {
@@ -36,17 +48,11 @@ sub exp_mod
     return ($ret % $MOD);
 }
 
-my $RESULT_MOD = 1_000_000_000;
-my $DIGITS_SUM = 23;
-my $BASE = 23;
-my $HIGH_MOD = $BASE - 1;
-
-
 sub inc
 {
     my ($n, $old_rec) = @_;
 
-    my $new_rec = [];
+    my $new_rec = _new();
 
     my $BASE_MOD = exp_mod($BASE, 10, $n+1);
 
@@ -58,7 +64,7 @@ sub inc
             {
                 (($new_rec->[$old_digits_sum + $new_digit]
                         ->[($old_mod + $BASE_MOD * $new_digit) % $BASE]
-                        //= 0) += $old_count)
+                        ) += $old_count)
                 %= $RESULT_MOD;
             }
         }
@@ -73,7 +79,7 @@ sub double
 
     my $BASE_MOD = exp_mod($BASE, 10, $n);
 
-    my $new_rec = [];
+    my $new_rec = _new();
 
     # ds == digits_sum
     foreach my $low_ds (0 .. $DIGITS_SUM)
@@ -82,7 +88,7 @@ sub double
 
         foreach my $low_mod (0 .. $HIGH_MOD)
         {
-            my $low_count = $low_mod_counts->[$low_mod] // 0;
+            my $low_count = $low_mod_counts->[$low_mod];
 
             foreach my $high_ds (0 .. $DIGITS_SUM-$low_ds)
             {
@@ -90,7 +96,7 @@ sub double
 
                 foreach my $proto_high_mod (0 .. $HIGH_MOD)
                 {
-                    my $high_count = $high_mod_counts->[$proto_high_mod] // 0;
+                    my $high_count = $high_mod_counts->[$proto_high_mod];
 
                     (($new_rec->[
                                 $low_ds + $high_ds
@@ -99,7 +105,7 @@ sub double
                                 ($low_mod + $BASE_MOD * $proto_high_mod)
                                 %
                                 $BASE
-                            ] //= 0) += ($high_count * $low_count))
+                            ]) += ($high_count * $low_count))
                     %= $RESULT_MOD
                     ;
 
