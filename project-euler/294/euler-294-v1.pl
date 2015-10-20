@@ -13,7 +13,7 @@ use List::MoreUtils qw();
 
 STDOUT->autoflush(1);
 
-my %for_n = (0 => {0 => {0 => 1}});
+my %for_n = (0 => [[1]],);
 
 sub exp_mod
 {
@@ -44,18 +44,18 @@ sub inc
 
     my $new_n = $n + 1;
 
-    my $new_rec = +{};
+    my $new_rec = [];
 
     my $BASE_MOD = exp_mod(23, 10, $new_n);
 
-    while (my ($old_count_digits, $old_mod_counts) = each (%{$old_rec}))
+    while (my ($old_count_digits, $old_mod_counts) = each (@$old_rec))
     {
-        while (my ($old_mod, $old_count) = each(%$old_mod_counts))
+        while (my ($old_mod, $old_count) = each(@$old_mod_counts))
         {
             for my $new_digit (0 .. min(9, 23-$old_count_digits))
             {
-                (($new_rec->{$old_count_digits + $new_digit}
-                        ->{($old_mod + $BASE_MOD * $new_digit) % 23}
+                (($new_rec->[$old_count_digits + $new_digit]
+                        ->[($old_mod + $BASE_MOD * $new_digit) % 23]
                         //= 0) += $old_count)
                 %= 1_000_000_000;
             }
@@ -80,33 +80,33 @@ sub double
 
     my $BASE_MOD = exp_mod(23, 10, $n);
 
-    my $new_rec = +{};
+    my $new_rec = [];
 
     # cd == count_digits
     foreach my $cd_low (0 .. $COUNT_DIGITS)
     {
-        my $mod_counts_low = $old_rec->{$cd_low};
+        my $mod_counts_low = $old_rec->[$cd_low];
 
         foreach my $mod_low (0 .. $HIGH_MOD)
         {
-            my $low_count = $mod_counts_low->{$mod_low} // 0;
+            my $low_count = $mod_counts_low->[$mod_low] // 0;
 
             foreach my $cd_high (0 .. $COUNT_DIGITS-$cd_low)
             {
-                my $mod_counts_high = $old_rec->{$cd_high};
+                my $mod_counts_high = $old_rec->[$cd_high];
 
                 foreach my $proto_mod_high (0 .. $HIGH_MOD)
                 {
-                    my $high_count = $mod_counts_high->{$proto_mod_high} // 0;
+                    my $high_count = $mod_counts_high->[$proto_mod_high] // 0;
 
-                    (($new_rec->{
+                    (($new_rec->[
                                 $cd_low + $cd_high
-                            }
-                            ->{
+                            ]
+                            ->[
                                 ($mod_low + $BASE_MOD * $proto_mod_high)
                                 %
                                 23
-                            } //= 0) += ($high_count * $low_count))
+                            ] //= 0) += ($high_count * $low_count))
                     %= 1_000_000_000
                     ;
 
@@ -144,10 +144,10 @@ sub calc
 calc(42);
 calc(9);
 
-print "Result[9] = $for_n{9}{23}{0}\n";
-print "Result[42] = $for_n{42}{23}{0}\n";
+print "Result[9] = $for_n{9}[23][0]\n";
+print "Result[42] = $for_n{42}[23][0]\n";
 
 my $SOUGHT = 11 ** 12;
 calc( $SOUGHT );
 
-print "Result[11 ** 12] = $for_n{$SOUGHT}{23}{0}\n";
+print "Result[11 ** 12] = $for_n{$SOUGHT}[23][0]\n";
