@@ -136,18 +136,23 @@ sub calc
     return;
 }
 
+sub lookup
+{
+    my ($n) = @_;
+
+    calc($n);
+
+    return ($for_n{$n}[23][0] // 0);
+}
+
 # for my $n (1 .. 42)
 # {
 #    inc($n-1);
 # }
 #
-calc(42);
-calc(9);
-
-print "Result[9] = $for_n{9}[23][0]\n";
-print "Result[42] = $for_n{42}[23][0]\n";
+print "Result[9] = @{[lookup(9)]}\n";
+print "Result[42] = @{[lookup(42)]}\n";
 
 my $SOUGHT = 11 ** 12;
-calc( $SOUGHT );
 
-print "Result[11 ** 12] = $for_n{$SOUGHT}[23][0]\n";
+print "Result[11 ** 12] = @{[lookup($SOUGHT)]}\n";
