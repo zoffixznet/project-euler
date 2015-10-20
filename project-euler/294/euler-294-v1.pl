@@ -36,6 +36,8 @@ sub exp_mod
     return ($ret % $MOD);
 }
 
+my $RESULT_MOD = 1_000_000_000;
+
 sub inc
 {
     my ($n) = @_;
@@ -57,7 +59,7 @@ sub inc
                 (($new_rec->[$old_count_digits + $new_digit]
                         ->[($old_mod + $BASE_MOD * $new_digit) % 23]
                         //= 0) += $old_count)
-                %= 1_000_000_000;
+                %= $RESULT_MOD;
             }
         }
     }
@@ -107,7 +109,7 @@ sub double
                                 %
                                 23
                             ] //= 0) += ($high_count * $low_count))
-                    %= 1_000_000_000
+                    %= $RESULT_MOD
                     ;
 
                 }
