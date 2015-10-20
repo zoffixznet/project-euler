@@ -114,25 +114,19 @@ sub calc
 {
     my ($n) = @_;
 
-    if (!exists ($for_n{$n}))
-    {
+    return $for_n{$n} //= do {
         my $rec = ($n & 0x1) ? +{ 'x' => ($n-1), cb => \&inc }
             : +{ 'x' => ($n >> 1), cb => \&double };
         my $x = $rec->{'x'};
-        calc($x);
-        $for_n{$n} = $rec->{cb}->($x, $for_n{$x});
-    }
-
-    return;
+        $rec->{cb}->($x, calc($x));
+    };
 }
 
 sub lookup
 {
     my ($n) = @_;
 
-    calc($n);
-
-    return ($for_n{$n}[23][0] // 0);
+    return (calc($n)->[23][0] // 0);
 }
 
 print "Result[9] = @{[lookup(9)]}\n";
