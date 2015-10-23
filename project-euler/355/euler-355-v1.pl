@@ -6,7 +6,7 @@ use warnings;
 use bytes;
 
 use List::Util qw(sum);
-use List::MoreUtils qw(uniq);
+use List::MoreUtils qw(none uniq);
 
 STDOUT->autoflush(1);
 
@@ -42,6 +42,18 @@ my @remaining3 = (grep {
             )
         } @remaining2);
 
+my %rem3 = (map { $_ => 1 } @remaining3);
+
+my @definitely_included1 = (grep {
+        my $n = $_;
+        $factors[$n][0] == $n and
+        none { exists($rem3{$_*$n}) } 2 .. int($MAX/$n)
+        ;
+    } @remaining3);
+
+my %def_inc1 = (map { $_ => 1 } @definitely_included1);
+
+my @remaining4 = (grep { !exists($def_inc1{$_}) } @remaining3);
 # for my $n (reverse(2 .. $MAX))
 N:
 for my $n (2 .. $MAX)
