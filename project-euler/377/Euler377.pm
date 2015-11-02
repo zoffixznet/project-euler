@@ -12,7 +12,7 @@ sub calc_multiplier
 {
     my ($sum) = @_;
 
-    return ($mult_cache{$sum} //= sub {
+    return ($mult_cache{$sum} = sub {
             return 200;
     }->());
 }
