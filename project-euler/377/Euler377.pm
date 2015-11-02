@@ -44,15 +44,6 @@ sub gen_empty_matrix
     return [map { [ map { 0 } @DIGITS] } @DIGITS];
 }
 
-sub assign
-{
-    my ($m, $m_t, $to, $from, $val) = @_;
-
-    $m->[$to]->[$from] = $m_t->[$from]->[$to] = $val;
-
-    return;
-}
-
 sub multiply
 {
     my ($m1, $m2_t) = @_;
@@ -71,22 +62,10 @@ sub multiply
             {
                 ($sum += $m1_row->[$i] * $m2_col->[$i]) %= 1_000_000_000;
             }
-            assign($ret, $ret_t, $row_idx, $col_idx, $sum);
         }
     }
     return {normal => $ret, transpose => $ret_t };
 }
-
-my $matrix1 = gen_empty_matrix();
-my $matrix1_t = gen_empty_matrix();
-
-for my $i (1 .. $MAX_DIGIT)
-{
-    assign($matrix1, $matrix1_t, $i, $i-1, 1);
-    assign($matrix1, $matrix1_t, 0, $i-1, 1);
-}
-
-$count_cache{1} = {normal => $matrix1, transpose => $matrix1_t};
 
 sub calc_count_matrix
 {
