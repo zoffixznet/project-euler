@@ -283,34 +283,4 @@ sub recurse_below
     return $ret;
 }
 
-sub recurse_brute_force
-{
-    my ($TARGET, $n, $sum) = @_;
-
-    if ($sum == $TARGET)
-    {
-        return $n;
-    }
-
-    my $ret = 0;
-    NEW:
-    foreach my $new_digit (1 .. $MAX_DIGIT)
-    {
-        if ($sum + $new_digit > $TARGET)
-        {
-            last NEW;
-        }
-        $ret += recurse_brute_force($TARGET, $new_digit.$n, $sum + $new_digit);
-        $ret %= 1_000_000_000;
-    }
-    return $ret;
-}
-
-sub calc_using_brute_force
-{
-    my ($TARGET) = @_;
-
-    return recurse_brute_force($TARGET , '', 0);
-}
-
 1;
