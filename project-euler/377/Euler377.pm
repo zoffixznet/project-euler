@@ -32,11 +32,10 @@ sub calc_multiplier
 
 sub recurse_digits
 {
-    my ($count, $digits, $sum) = @_;
+    my ($sum) = @_;
 
     if (1)
     {
-        print "Trace: ", (map { ($_->[0]) x $_->[1] } @$digits), "\n";
         my $multiplier = calc_multiplier($sum);
 
         my $digit_base = 0;
@@ -50,8 +49,6 @@ sub calc_result_above
     foreach my $new_digit (1 .. 2)
     {
         recurse_digits(
-            1,
-            [[$new_digit, 1]],
             $new_digit,
         );
     }
