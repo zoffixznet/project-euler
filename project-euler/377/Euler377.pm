@@ -10,11 +10,6 @@ our $NUM_DIGITS = 10;
 our $MAX_DIGIT = $NUM_DIGITS - 1;
 our @DIGITS = (0 .. $MAX_DIGIT);
 
-sub gen_empty_matrix
-{
-    return [map { [ map { 0 } @DIGITS] } @DIGITS];
-}
-
 our $BASE = 13;
 
 our @N_s = ($BASE);
