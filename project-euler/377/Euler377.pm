@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+package Euler377;
 
 use strict;
 use warnings;
@@ -15,9 +15,10 @@ STDOUT->autoflush(1);
 
 my %count_cache;
 
-my $NUM_DIGITS = 10;
-my $MAX_DIGIT = $NUM_DIGITS - 1;
-my @DIGITS = (0 .. $MAX_DIGIT);
+our $NUM_DIGITS = 10;
+our $MAX_DIGIT = $NUM_DIGITS - 1;
+our @DIGITS = (0 .. $MAX_DIGIT);
+
 sub gen_empty_matrix
 {
     return [map { [ map { 0 } @DIGITS] } @DIGITS];
@@ -118,3 +119,5 @@ print calc_count(5);
 
 print_rows(calc_count_matrix(1)->{normal});
 print_rows(calc_count_matrix(1)->{transpose});
+
+1;
