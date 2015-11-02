@@ -34,7 +34,7 @@ sub recurse_digits
 {
     my ($sum) = @_;
 
-    my $multiplier = calc_multiplier($sum);
+    calc_multiplier($sum);
 
     my $digit_base = 0;
 
