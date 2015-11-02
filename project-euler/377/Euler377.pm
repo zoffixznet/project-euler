@@ -6,18 +6,7 @@ use warnings;
 use integer;
 use bytes;
 
-our $NUM_DIGITS = 10;
-our $MAX_DIGIT = $NUM_DIGITS - 1;
-our @DIGITS = (0 .. $MAX_DIGIT);
-
 our $BASE = 13;
-
-our @N_s = ($BASE);
-
-for my $i (2 .. 17)
-{
-    push @N_s, $N_s[-1] * $BASE;
-}
 
 my %mult_cache;
 

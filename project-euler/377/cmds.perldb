@@ -1,6 +1,6 @@
 b Euler377::calc_multiplier
 c
-b 39
+b 28
 c
 x \%mult_cache
 c
