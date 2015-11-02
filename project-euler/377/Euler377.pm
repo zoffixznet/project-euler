@@ -8,9 +8,6 @@ use bytes;
 
 # use Math::GMP ':constant';
 
-use List::Util qw(sum);
-use List::MoreUtils qw();
-
 STDOUT->autoflush(1);
 
 =head1 The Plan.
@@ -121,17 +118,6 @@ sub calc_count
 
     return ($n == 0) ? 1 : calc_count_matrix($n)->{normal}->[0]->[0];
 }
-
-sub print_rows
-{
-    my ($mat) = @_;
-
-    foreach my $row (@$mat)
-    {
-        print "Row = ", sum(@$row), "\n";
-    }
-}
-
 
 our $BASE = 13;
 
