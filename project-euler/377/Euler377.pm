@@ -28,11 +28,11 @@ We start with the 0-vector of:
 
 And we multiply it repetitively by the transformation matrix:
 
+The first row is [(1) x 9 , 0]
 The second row is [1 , 0, 0 ... 0]
 The third row is [0, 1, 0...]
 The final row is [0 ... 0 1 0]
 
-The first row is [(1) x 9 , 0]
 
 =cut
 

@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 4;
+use Test::More tests => 5;
 
 use List::MoreUtils qw/all/;
 
@@ -52,6 +52,16 @@ sub gen_id_mat
 
     # TEST
     is (''.Euler377::calc_count(2), 2, "count(2) is correct.");
+
+    # TEST
+    is (''.Euler377::calc_count(3), scalar(@{[
+                    qw(
+                    111
+                    12
+                    21
+                    3
+                    )
+                ]}), "count(2) is correct.");
 
     # TEST
     is (''.Euler377::calc_count(5), 16, "count(5) is correct.");
