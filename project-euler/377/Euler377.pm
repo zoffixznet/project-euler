@@ -39,7 +39,7 @@ sub recurse_digits
 {
     my ($count, $digits, $sum) = @_;
 
-    if ($count == $MAX_DIGIT)
+    if (1)
     {
         print "Trace: ", (map { ($_->[0]) x $_->[1] } @$digits), "\n";
         my $multiplier = calc_multiplier($sum);
@@ -47,33 +47,6 @@ sub recurse_digits
         my $digit_base = 0;
 
         return 0;
-    }
-    else
-    {
-        my ($last_digit, $last_digit_count) = @{$digits->[-1]};
-
-        my $ret = 0;
-
-        $ret += recurse_digits($count+1, [
-                @$digits[0 .. $#$digits-1],
-                [$last_digit, $last_digit_count+1],
-            ],
-            $sum + $last_digit
-        );
-
-        $ret %= 1_000_000_000;
-
-        foreach my $new_digit ($last_digit + 1 .. 9)
-        {
-            $ret += recurse_digits(
-                $count+1,
-                [@$digits, [$new_digit, 1]],
-                $sum + $new_digit,
-            );
-            $ret %= 1_000_000_000;
-        }
-
-        return $ret;
     }
 }
 
