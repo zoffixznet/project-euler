@@ -57,4 +57,6 @@ sub calc_result_above
     }
 }
 
+calc_result_above();
+
 1;
