@@ -244,9 +244,4 @@ sub calc_result_above
     return $result;
 }
 
-sub calc_result
-{
-    return calc_result_above();
-}
-
 1;
