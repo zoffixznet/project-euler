@@ -3,9 +3,6 @@ package Euler377;
 use strict;
 use warnings;
 
-use integer;
-use bytes;
-
 my %mult_cache;
 
 sub calc_multiplier
