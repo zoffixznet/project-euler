@@ -18,8 +18,6 @@ sub recurse_digits
 
     calc_multiplier($n);
 
-    my $digit_base = 0;
-
     return;
 }
 
