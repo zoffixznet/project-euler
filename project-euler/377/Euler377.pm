@@ -148,7 +148,7 @@ sub calc_multiplier
 {
     my ($sum) = @_;
 
-    return $mult_cache{$sum} //= sub {
+    return ($mult_cache{$sum} //= sub {
         my $ret = 0;
 
         for my $n (@N_s)
@@ -161,7 +161,7 @@ sub calc_multiplier
         }
 
         return $ret;
-    }->();
+    }->());
 }
 
 my @FACTs = (1);
