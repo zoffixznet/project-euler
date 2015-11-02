@@ -10,18 +10,16 @@ my %mult_cache;
 
 sub calc_multiplier
 {
-    my ($sum) = @_;
+    my ($n) = @_;
 
-    return ($mult_cache{$sum} = sub {
-            return 200;
-    }->());
+    return ($mult_cache{$n} = 200);
 }
 
 sub recurse_digits
 {
-    my ($sum) = @_;
+    my ($n) = @_;
 
-    calc_multiplier($sum);
+    calc_multiplier($n);
 
     my $digit_base = 0;
 
