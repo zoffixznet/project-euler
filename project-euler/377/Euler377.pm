@@ -171,22 +171,7 @@ sub recurse_digits
 
         my $digit_base = 0;
 
-        # my $count_variations = $FACTs[9]->gmp_copy;
-        my $count_variations = $FACTs[9] + 0;
-
-        for my $digit (@$digits)
-        {
-            $count_variations /= $FACTs[$digit->[1]];
-        }
-        for my $digit (@$digits)
-        {
-            $digit_base += $count_variations * $digit->[1] * $digit->[0];
-        }
-        $digit_base /= $count;
-
-        my $ret = ($digit_base * 111_111_111 * $multiplier) % 1_000_000_000;
-
-        return $ret;
+        return 0;
     }
     else
     {
