@@ -139,13 +139,6 @@ sub calc_multiplier
     }->());
 }
 
-my @FACTs = (1);
-
-for my $i (1 .. 9)
-{
-    push @FACTs, $i*$FACTs[-1];
-}
-
 sub recurse_digits
 {
     my ($count, $digits, $sum) = @_;
