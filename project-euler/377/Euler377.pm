@@ -171,7 +171,6 @@ for my $i (1 .. 9)
     push @FACTs, $i*$FACTs[-1];
 }
 
-our $result = 0;
 sub recurse_digits
 {
     my ($count, $digits, $sum) = @_;
@@ -196,44 +195,67 @@ sub recurse_digits
         }
         $digit_base /= $count;
 
-        $result += ($digit_base * 111_111_111 * $multiplier);
-        $result %= 1_000_000_000;
+        my $ret = ($digit_base * 111_111_111 * $multiplier) % 1_000_000_000;
+
+        return $ret;
     }
     else
     {
         my ($last_digit, $last_digit_count) = @{$digits->[-1]};
-        recurse_digits($count+1, [
+
+        my $ret = 0;
+
+        $ret += recurse_digits($count+1, [
                 @$digits[0 .. $#$digits-1],
                 [$last_digit, $last_digit_count+1],
             ],
             $sum + $last_digit
         );
 
+        $ret %= 1_000_000_000;
+
         foreach my $new_digit ($last_digit + 1 .. 9)
         {
-            recurse_digits(
+            $ret += recurse_digits(
                 $count+1,
                 [@$digits, [$new_digit, 1]],
                 $sum + $new_digit,
             );
+            $ret %= 1_000_000_000;
         }
+
+        return $ret;
     }
-    return;
 }
 
-sub calc_result
+sub calc_result_above
 {
+    my $result = 0;
     foreach my $new_digit (1 .. 9)
     {
-        recurse_digits(
+        $result += recurse_digits(
             1,
             [[$new_digit, 1]],
             $new_digit,
         );
+        $result %= 1_000_000_000;
     }
-    ($result += recurse_below('', 0)) %= 1_000_000_000;
 
-    return;
+    return $result;
+}
+
+sub calc_result_below
+{
+    return recurse_below('', 0);
+}
+
+sub calc_result
+{
+    my $ret = calc_result_above() + calc_result_below();
+
+    $ret %= 1_000_000_000;
+
+    return $ret;
 }
 
 # Calculate the sum of the numbers below 1e9 whose sum-of-digits equal 13.
@@ -283,6 +305,7 @@ sub recurse_brute_force
             last NEW;
         }
         $ret += recurse_brute_force($TARGET, $new_digit.$n, $sum + $new_digit);
+        $ret %= 1_000_000_000;
     }
     return $ret;
 }
