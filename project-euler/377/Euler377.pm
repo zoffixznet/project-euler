@@ -6,8 +6,6 @@ use warnings;
 use integer;
 use bytes;
 
-our $BASE = 13;
-
 my %mult_cache;
 
 sub calc_multiplier
