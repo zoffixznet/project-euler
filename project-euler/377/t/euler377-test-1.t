@@ -72,7 +72,7 @@ sub gen_id_mat
     # TEST
     is (
         Euler377::calc_result(),
-        (Euler377::recurse_brute_force(13, '', 0) % 1_000_000_000),
+        (Euler377::calc_using_brute_force(13) % 1_000_000_000),
         "Good calc_result for 13.",
     );
 }
@@ -83,7 +83,7 @@ sub gen_id_mat
     # TEST
     is (
         Euler377::calc_result(),
-        (Euler377::recurse_brute_force(14, '', 0) % 1_000_000_000),
+        (Euler377::calc_using_brute_force(14) % 1_000_000_000),
         "Good calc_result for 14.",
     );
 }

@@ -310,4 +310,11 @@ sub recurse_brute_force
     return $ret;
 }
 
+sub calc_using_brute_force
+{
+    my ($TARGET) = @_;
+
+    return recurse_brute_force($TARGET , '', 0);
+}
+
 1;
