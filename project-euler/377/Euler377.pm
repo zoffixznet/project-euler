@@ -6,35 +6,6 @@ use warnings;
 use integer;
 use bytes;
 
-# use Math::GMP ':constant';
-
-STDOUT->autoflush(1);
-
-=head1 The Plan.
-
-We want to calculate the $n-vector where the top element is the count of 1-9
-strings of $n and the rest are of $n-1 $n-2 $n-3, etc.
-
-We start with the 0-vector of:
-
-[ 1 ]
-[ 0 ]
-[ 0 ]
-..
-[ 0 ]
-
-And we multiply it repetitively by the transformation matrix:
-
-The first row is [(1) x 9 , 0]
-The second row is [1 , 0, 0 ... 0]
-The third row is [0, 1, 0...]
-The final row is [0 ... 0 1 0]
-
-
-=cut
-
-my %count_cache;
-
 our $NUM_DIGITS = 10;
 our $MAX_DIGIT = $NUM_DIGITS - 1;
 our @DIGITS = (0 .. $MAX_DIGIT);
