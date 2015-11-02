@@ -34,14 +34,11 @@ sub recurse_digits
 {
     my ($sum) = @_;
 
-    if (1)
-    {
-        my $multiplier = calc_multiplier($sum);
+    my $multiplier = calc_multiplier($sum);
 
-        my $digit_base = 0;
+    my $digit_base = 0;
 
-        return 0;
-    }
+    return;
 }
 
 sub calc_result_above
