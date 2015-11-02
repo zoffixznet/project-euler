@@ -5,4 +5,9 @@ use warnings;
 
 use Euler377;
 
-Euler377::calc_result_above();
+foreach my $new_digit (1 .. 2)
+{
+    Euler377::recurse_digits(
+        $new_digit,
+    );
+}

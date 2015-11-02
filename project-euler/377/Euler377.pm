@@ -28,16 +28,4 @@ sub recurse_digits
     return;
 }
 
-sub calc_result_above
-{
-    foreach my $new_digit (1 .. 2)
-    {
-        recurse_digits(
-            $new_digit,
-        );
-    }
-}
-
-calc_result_above();
-
 1;
