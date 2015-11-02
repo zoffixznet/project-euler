@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 2;
+use Test::More tests => 4;
 
 use List::MoreUtils qw/all/;
 
@@ -47,6 +47,12 @@ sub gen_id_mat
 }
 
 {
+    # TEST
+    is (''.Euler377::calc_count(1), 1, "count(1) is correct.");
+
+    # TEST
+    is (''.Euler377::calc_count(2), 2, "count(2) is correct.");
+
     # TEST
     is (''.Euler377::calc_count(5), 16, "count(5) is correct.");
 }

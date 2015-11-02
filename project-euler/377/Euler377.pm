@@ -137,7 +137,7 @@ sub print_rows
 
 print calc_count(5);
 
-print_rows(calc_count_matrix(1)->{normal});
-print_rows(calc_count_matrix(1)->{transpose});
+print_rows(calc_count_matrix(5)->{normal});
+print_rows(calc_count_matrix(5)->{transpose});
 
 1;
