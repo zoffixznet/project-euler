@@ -52,18 +52,14 @@ sub recurse_digits
 
 sub calc_result_above
 {
-    my $result = 0;
     foreach my $new_digit (1 .. 2)
     {
-        $result += recurse_digits(
+        recurse_digits(
             1,
             [[$new_digit, 1]],
             $new_digit,
         );
-        $result %= 1_000_000_000;
     }
-
-    return $result;
 }
 
 1;
