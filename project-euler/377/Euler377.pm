@@ -251,11 +251,7 @@ sub calc_result_below
 
 sub calc_result
 {
-    my $ret = calc_result_above() + calc_result_below();
-
-    $ret %= 1_000_000_000;
-
-    return $ret;
+    return calc_result_above();
 }
 
 # Calculate the sum of the numbers below 1e9 whose sum-of-digits equal 13.
