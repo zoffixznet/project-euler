@@ -132,14 +132,10 @@ sub print_rows
     }
 }
 
-print calc_count(5);
 
-print_rows(calc_count_matrix(5)->{normal});
-print_rows(calc_count_matrix(5)->{transpose});
+our $BASE = 13;
 
-my $BASE = 13;
-
-my @N_s = ($BASE);
+our @N_s = ($BASE);
 
 for my $i (2 .. 17)
 {
@@ -175,7 +171,7 @@ for my $i (1 .. 9)
     push @FACTs, $i*$FACTs[-1];
 }
 
-my $result = 0;
+our $result = 0;
 sub recurse_digits
 {
     my ($count, $digits, $sum) = @_;
@@ -225,13 +221,19 @@ sub recurse_digits
     return;
 }
 
-foreach my $new_digit (1 .. 9)
+sub calc_result
 {
-    recurse_digits(
-        1,
-        [[$new_digit, 1]],
-        $new_digit,
-    );
+    foreach my $new_digit (1 .. 9)
+    {
+        recurse_digits(
+            1,
+            [[$new_digit, 1]],
+            $new_digit,
+        );
+    }
+    ($result += recurse_below('', 0)) %= 1_000_000_000;
+
+    return;
 }
 
 # Calculate the sum of the numbers below 1e9 whose sum-of-digits equal 13.
@@ -263,7 +265,26 @@ sub recurse_below
     return $ret;
 }
 
-($result += recurse_below('', 0)) %= 1_000_000_000;
+sub recurse_brute_force
+{
+    my ($TARGET, $n, $sum) = @_;
 
-printf "Result = %09d\n", $result;
+    if ($sum == $TARGET)
+    {
+        return $n;
+    }
+
+    my $ret = 0;
+    NEW:
+    foreach my $new_digit (1 .. $MAX_DIGIT)
+    {
+        if ($sum + $new_digit > $TARGET)
+        {
+            last NEW;
+        }
+        $ret += recurse_brute_force($TARGET, $new_digit.$n, $sum + $new_digit);
+    }
+    return $ret;
+}
+
 1;
