@@ -15,9 +15,12 @@ STDOUT->autoflush(1);
 
 my %count_cache;
 
+my $NUM_DIGITS = 10;
+my $MAX_DIGIT = $NUM_DIGITS - 1;
+my @DIGITS = (0 .. $MAX_DIGIT);
 sub gen_empty_matrix
 {
-    return [map { [ map { 0 } 1 .. 10] } 1 .. 10];
+    return [map { [ map { 0 } @DIGITS] } @DIGITS];
 }
 
 sub assign
@@ -36,18 +39,18 @@ sub multiply
     my $ret = gen_empty_matrix();
     my $ret_t = gen_empty_matrix();
 
-    foreach my $ret_from (0 .. 9)
+    foreach my $row_idx (@DIGITS)
     {
-        my $m1_row = $m1->[$ret_from];
-        foreach my $ret_to (0 .. 9)
+        my $m1_row = $m1->[$row_idx];
+        foreach my $col_idx (@DIGITS)
         {
             my $sum = 0;
-            my $m2_col = $m2_t->[$ret_to];
-            foreach my $i (0 .. 9)
+            my $m2_col = $m2_t->[$col_idx];
+            foreach my $i (@DIGITS)
             {
                 $sum += $m1_row->[$i] * $m2_col->[$i];
             }
-            assign($ret, $ret_t, $ret_from, $ret_to, $sum);
+            assign($ret, $ret_t, $row_idx, $col_idx, $sum);
         }
     }
     return {normal => $ret, transpose => $ret_t };
@@ -56,13 +59,13 @@ sub multiply
 my $matrix1 = gen_empty_matrix();
 my $matrix1_t = gen_empty_matrix();
 
-for my $i (1 .. 9)
+for my $i (1 .. $MAX_DIGIT)
 {
     my $from = $i;
     my $to = $i - 1;
 
     assign($matrix1, $matrix1_t, $to, $from, 1);
-    assign($matrix1, $matrix1_t, 9, $to, 1);
+    assign($matrix1, $matrix1_t, $MAX_DIGIT, $to, 1);
 }
 
 $count_cache{1} = {normal => $matrix1, transpose => $matrix1_t};
