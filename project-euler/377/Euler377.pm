@@ -44,60 +44,6 @@ sub gen_empty_matrix
     return [map { [ map { 0 } @DIGITS] } @DIGITS];
 }
 
-sub multiply
-{
-    my ($m1, $m2_t) = @_;
-
-    my $ret = gen_empty_matrix();
-    my $ret_t = gen_empty_matrix();
-
-    foreach my $row_idx (@DIGITS)
-    {
-        my $m1_row = $m1->[$row_idx];
-        foreach my $col_idx (@DIGITS)
-        {
-            my $sum = 0;
-            my $m2_col = $m2_t->[$col_idx];
-            foreach my $i (@DIGITS)
-            {
-                ($sum += $m1_row->[$i] * $m2_col->[$i]) %= 1_000_000_000;
-            }
-        }
-    }
-    return {normal => $ret, transpose => $ret_t };
-}
-
-sub calc_count_matrix
-{
-    my ($n) = @_;
-
-    return $count_cache{"$n"} //= sub {
-    # return $count_cache{"$n"} // sub {
-        # Extract the lowest bit.
-        my $recurse_n = $n - ($n & ($n-1));
-        my $second_recurse_n = $n - $recurse_n;
-
-        if ($recurse_n == 0)
-        {
-            ($recurse_n, $second_recurse_n) = ($second_recurse_n, $recurse_n);
-        }
-
-        if ($second_recurse_n == 0)
-        {
-            $recurse_n = $second_recurse_n = ($n >> 1);
-        }
-
-        return multiply(calc_count_matrix($recurse_n)->{normal}, calc_count_matrix($second_recurse_n)->{transpose});
-    }->();
-}
-
-sub calc_count
-{
-    my ($n) = @_;
-
-    return ($n == 0) ? 1 : calc_count_matrix($n)->{normal}->[0]->[0];
-}
-
 our $BASE = 13;
 
 our @N_s = ($BASE);
