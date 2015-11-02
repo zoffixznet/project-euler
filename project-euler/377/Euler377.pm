@@ -53,7 +53,7 @@ sub recurse_digits
 sub calc_result_above
 {
     my $result = 0;
-    foreach my $new_digit (1 .. 9)
+    foreach my $new_digit (1 .. 2)
     {
         $result += recurse_digits(
             1,
