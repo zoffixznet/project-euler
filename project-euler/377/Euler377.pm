@@ -6,7 +6,7 @@ use warnings;
 use integer;
 use bytes;
 
-use Math::GMP ':constant';
+# use Math::GMP ':constant';
 
 use List::Util qw(sum);
 use List::MoreUtils qw();
@@ -72,7 +72,7 @@ sub multiply
             my $m2_col = $m2_t->[$col_idx];
             foreach my $i (@DIGITS)
             {
-                $sum += $m1_row->[$i] * $m2_col->[$i];
+                ($sum += $m1_row->[$i] * $m2_col->[$i]) %= 1_000_000_000;
             }
             assign($ret, $ret_t, $row_idx, $col_idx, $sum);
         }
@@ -96,11 +96,11 @@ sub calc_count_matrix
     my ($n) = @_;
 
     return $count_cache{"$n"} //= sub {
+    # return $count_cache{"$n"} // sub {
         # Extract the lowest bit.
         my $recurse_n = $n - ($n & ($n-1));
         my $second_recurse_n = $n - $recurse_n;
 
-        print "Before : n=$n recurse_n=$recurse_n second_recurse_n=$second_recurse_n\n";
         if ($recurse_n == 0)
         {
             ($recurse_n, $second_recurse_n) = ($second_recurse_n, $recurse_n);
@@ -111,10 +111,7 @@ sub calc_count_matrix
             $recurse_n = $second_recurse_n = ($n >> 1);
         }
 
-        {
-            print "n=$n recurse_n=$recurse_n second_recurse_n=$second_recurse_n\n";
-            return multiply(calc_count_matrix($recurse_n)->{normal}, calc_count_matrix($second_recurse_n)->{transpose});
-        }
+        return multiply(calc_count_matrix($recurse_n)->{normal}, calc_count_matrix($second_recurse_n)->{transpose});
     }->();
 }
 
@@ -122,7 +119,7 @@ sub calc_count
 {
     my ($n) = @_;
 
-    return calc_count_matrix($n)->{normal}->[0]->[0];
+    return ($n == 0) ? 1 : calc_count_matrix($n)->{normal}->[0]->[0];
 }
 
 sub print_rows
@@ -140,4 +137,102 @@ print calc_count(5);
 print_rows(calc_count_matrix(5)->{normal});
 print_rows(calc_count_matrix(5)->{transpose});
 
+my $BASE = 13;
+
+my @N_s = ($BASE);
+
+for my $i (2 .. 17)
+{
+    push @N_s, $N_s[-1] * $BASE;
+}
+
+my %mult_cache;
+
+sub calc_multiplier
+{
+    my ($sum) = @_;
+
+    return $mult_cache{$sum} //= sub {
+        my $ret = 0;
+
+        for my $n (@N_s)
+        {
+            # print "calc_multiplier for $n\n";
+            if ($n >= $sum)
+            {
+                $ret += calc_count($n-$sum);
+            }
+        }
+
+        return $ret;
+    }->();
+}
+
+my @FACTs = (1);
+
+for my $i (1 .. 9)
+{
+    push @FACTs, $i*$FACTs[-1];
+}
+
+my $result = 0;
+sub recurse_digits
+{
+    my ($count, $digits, $sum) = @_;
+
+    if ($count == $MAX_DIGIT)
+    {
+        print "Trace: ", (map { ($_->[0]) x $_->[1] } @$digits), "\n";
+        my $multiplier = calc_multiplier($sum);
+
+        my $digit_base = 0;
+
+        # my $count_variations = $FACTs[9]->gmp_copy;
+        my $count_variations = $FACTs[9] + 0;
+
+        for my $digit (@$digits)
+        {
+            $count_variations /= $FACTs[$digit->[1]];
+        }
+        for my $digit (@$digits)
+        {
+            $digit_base += $count_variations * $digit->[1] * $digit->[0];
+        }
+        $digit_base /= $count;
+
+        $result += ($digit_base * 111_111_111 * $multiplier);
+        $result %= 1_000_000_000;
+    }
+    else
+    {
+        my ($last_digit, $last_digit_count) = @{$digits->[-1]};
+        recurse_digits($count+1, [
+                @$digits[0 .. $#$digits-1],
+                [$last_digit, $last_digit_count+1],
+            ],
+            $sum + $last_digit
+        );
+
+        foreach my $new_digit ($last_digit + 1 .. 9)
+        {
+            recurse_digits(
+                $count+1,
+                [@$digits, [$new_digit, 1]],
+                $sum + $new_digit,
+            );
+        }
+    }
+    return;
+}
+
+foreach my $new_digit (1 .. 9)
+{
+    recurse_digits(
+        1,
+        [[$new_digit, 1]],
+        $new_digit,
+    );
+}
+
+printf "Result = %09d\n", $result;
 1;
