@@ -234,5 +234,36 @@ foreach my $new_digit (1 .. 9)
     );
 }
 
+# Calculate the sum of the numbers below 1e9 whose sum-of-digits equal 13.
+# as it is absent from the total sum.
+
+sub recurse_below
+{
+    my ($n, $sum) = @_;
+
+    if (length($n) == 9)
+    {
+        return 0;
+    }
+    if ($sum == $BASE)
+    {
+        return $n;
+    }
+
+    my $ret = 0;
+    NEW:
+    foreach my $new_digit (1 .. $MAX_DIGIT)
+    {
+        if ($sum + $new_digit > $BASE)
+        {
+            last NEW;
+        }
+        $ret += recurse_below($new_digit.$n, $sum + $new_digit);
+    }
+    return $ret;
+}
+
+($result += recurse_below('', 0)) %= 1_000_000_000;
+
 printf "Result = %09d\n", $result;
 1;
