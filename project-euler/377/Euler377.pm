@@ -261,6 +261,11 @@ sub calc_result_below
 {
     my ($self) = @_;
 
+    if ($self->BASE() > 9*9)
+    {
+        return 0;
+    }
+
     return $self->recurse_below('', 0);
 }
 

@@ -13,10 +13,17 @@ STDOUT->autoflush(1);
 
 use Euler377;
 
-print calc_count(5);
+printf "Result = %09d\n", Euler377->new->calc_result;
 
-print_rows(calc_count_matrix(5)->{normal});
-print_rows(calc_count_matrix(5)->{transpose});
+my $ret = 0;
+for my $exp (1 .. 17)
+{
+    my $BASE = 13 ** $exp;
+    my $obj = Euler377->new({BASE => $BASE, N_s => [$BASE]});
 
-Euler377::calc_result();
-printf "Result = %09d\n", $Euler377::result;
+    $ret += $obj->calc_result();
+
+    $ret %= 1_000_000_000;
+}
+
+printf "ResultLoop = %09d\n", $ret;
