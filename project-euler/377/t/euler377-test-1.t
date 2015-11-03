@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 8;
+use Test::More tests => 9;
 
 use List::MoreUtils qw/all/;
 
@@ -90,4 +90,7 @@ sub test_single_calc_result
 
     # TEST
     test_single_calc_result(15, "Good calc result for 15");
+
+    # TEST
+    test_single_calc_result(16, "Good calc result for 16");
 }
