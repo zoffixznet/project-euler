@@ -73,9 +73,10 @@ sub test_single_calc_result
 
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
+    my $obj = Euler377->new({BASE => $BASE, N_s => [$BASE]});
     return is (
-        Euler377->new({BASE => $BASE, N_s => [$BASE]})->calc_result(),
-        (Euler377->new({BASE => $BASE, N_s => [$BASE]})->calc_using_brute_force($BASE) % 1_000_000_000),
+        $obj->calc_result(),
+        ($obj->calc_using_brute_force($BASE) % 1_000_000_000),
         $blurb,
     );
 }
