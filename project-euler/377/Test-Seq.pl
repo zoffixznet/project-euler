@@ -7,7 +7,7 @@ use Euler377;
 
 STDOUT->autoflush(1);
 
-my $BASE = 1;
+my $BASE = shift(@ARGV) || 1;
 
 while (1)
 {

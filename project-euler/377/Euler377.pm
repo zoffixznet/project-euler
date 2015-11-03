@@ -206,6 +206,8 @@ sub recurse_digits
 
         my $ret = ($digit_base * 111_111_111 * $multiplier) % 1_000_000_000;
 
+        # print "Trace[have]: ", (map { ($_->[0]) x $_->[1] } @$digits), " += $ret\n";
+
         return $ret;
     }
     else
@@ -286,6 +288,7 @@ sub recurse_below
     }
     if ($sum == $self->BASE())
     {
+        # print "Trace[have]: ", (sort { $a <=> $b } split//,$n), " += $n\n";
         return $n;
     }
 
@@ -302,13 +305,26 @@ sub recurse_below
     return $ret;
 }
 
+sub _mod
+{
+    my ($n) = @_;
+
+    my $ret = substr($n, -9);
+
+    $ret =~ s/\A0+//;
+
+    return $ret;
+}
+
 sub recurse_brute_force
 {
     my ($TARGET, $n, $sum) = @_;
 
     if ($sum == $TARGET)
     {
-        return $n;
+        my $ret = _mod($n);
+        # print "Trace[want]: ", (sort { $a <=> $b } split//,$ret), " += $ret\n";
+        return $ret;
     }
 
     my $ret = 0;
@@ -320,7 +336,7 @@ sub recurse_brute_force
             last NEW;
         }
         $ret += recurse_brute_force($TARGET, $new_digit.$n, $sum + $new_digit);
-        $ret %= 1_000_000_000;
+        $ret = _mod($ret);
     }
     return $ret;
 }
