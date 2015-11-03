@@ -78,6 +78,7 @@ sub gen_id_mat
 }
 
 {
+    Euler377::reset_caches();
     local $Euler377::BASE = 14;
     @Euler377::N_s = (14);
     # TEST

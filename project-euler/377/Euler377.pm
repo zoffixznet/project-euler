@@ -89,7 +89,7 @@ for my $i (1 .. $MAX_DIGIT)
     assign($matrix1, $matrix1_t, 0, $i-1, 1);
 }
 
-$count_cache{1} = {normal => $matrix1, transpose => $matrix1_t};
+my %init_count_cache = (1 => +{normal => $matrix1, transpose => $matrix1_t});
 
 sub calc_count_matrix
 {
@@ -157,12 +157,23 @@ sub calc_multiplier
             if ($n >= $sum)
             {
                 $ret += calc_count($n-$sum);
+                $ret %= 1_000_000_000;
             }
         }
 
         return $ret;
     }->());
 }
+
+sub reset_caches
+{
+    %mult_cache = ();
+    %count_cache = %init_count_cache;
+
+    return;
+}
+
+reset_caches();
 
 my @FACTs = (1);
 
