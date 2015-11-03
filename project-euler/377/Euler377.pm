@@ -186,7 +186,7 @@ sub recurse_digits
 
     if ($count == $MAX_DIGIT)
     {
-        print "Trace: ", (map { ($_->[0]) x $_->[1] } @$digits), "\n";
+        # print "Trace: ", (map { ($_->[0]) x $_->[1] } @$digits), "\n";
         my $multiplier = $self->calc_multiplier($sum);
 
         my $digit_base = 0;
