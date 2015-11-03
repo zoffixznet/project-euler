@@ -67,21 +67,23 @@ sub gen_id_mat
     is (''.Euler377->new->calc_count(5), 16, "count(5) is correct.");
 }
 
+sub test_single_calc_result
 {
-    @Euler377::N_s = (13);
-    # TEST
-    is (
-        Euler377->new({BASE => 13, N_s => [13]})->calc_result(),
-        (Euler377->new({BASE => 13, N_s => [13]})->calc_using_brute_force(13) % 1_000_000_000),
-        "Good calc_result for 13.",
+    my ($BASE, $blurb) = @_;
+
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+
+    return is (
+        Euler377->new({BASE => $BASE, N_s => [$BASE]})->calc_result(),
+        (Euler377->new({BASE => $BASE, N_s => [$BASE]})->calc_using_brute_force($BASE) % 1_000_000_000),
+        $blurb,
     );
 }
 
 {
     # TEST
-    is (
-        Euler377->new({BASE => 14, N_s => [14]})->calc_result(),
-        (Euler377->new({BASE => 14, N_s => [14]})->calc_using_brute_force(14) % 1_000_000_000),
-        "Good calc_result for 14.",
-    );
+    test_single_calc_result(13, "Good calc result for 13");
+
+    # TEST
+    test_single_calc_result(14, "Good calc result for 14");
 }
