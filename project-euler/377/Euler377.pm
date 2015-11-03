@@ -6,6 +6,8 @@ use warnings;
 use integer;
 use bytes;
 
+use Moo;
+
 # use Math::GMP ':constant';
 
 use List::Util qw(sum);
@@ -36,7 +38,6 @@ The final row is [0 ... 0 1 0]
 
 =cut
 
-my %count_cache;
 
 our $NUM_DIGITS = 10;
 our $MAX_DIGIT = $NUM_DIGITS - 1;
@@ -91,11 +92,13 @@ for my $i (1 .. $MAX_DIGIT)
 
 my %init_count_cache = (1 => +{normal => $matrix1, transpose => $matrix1_t});
 
+has 'count_cache' => (is => 'rw', default => sub { return +{%init_count_cache}; });
+
 sub calc_count_matrix
 {
-    my ($n) = @_;
+    my ($self, $n) = @_;
 
-    return $count_cache{"$n"} //= sub {
+    return $self->count_cache->{"$n"} //= sub {
     # return $count_cache{"$n"} // sub {
         # Extract the lowest bit.
         my $recurse_n = $n - ($n & ($n-1));
@@ -111,15 +114,15 @@ sub calc_count_matrix
             $recurse_n = $second_recurse_n = ($n >> 1);
         }
 
-        return multiply(calc_count_matrix($recurse_n)->{normal}, calc_count_matrix($second_recurse_n)->{transpose});
+        return multiply($self->calc_count_matrix($recurse_n)->{normal}, $self->calc_count_matrix($second_recurse_n)->{transpose});
     }->();
 }
 
 sub calc_count
 {
-    my ($n) = @_;
+    my ($self, $n) = @_;
 
-    return ($n == 0) ? 1 : calc_count_matrix($n)->{normal}->[0]->[0];
+    return ($n == 0) ? 1 : $self->calc_count_matrix($n)->{normal}->[0]->[0];
 }
 
 sub print_rows
@@ -133,30 +136,35 @@ sub print_rows
 }
 
 
-our $BASE = 13;
+has 'BASE' => (is => 'rw', default => sub { return 13;},);
+has 'N_s' => (is => 'rw', default => sub {
+        my ($self) = @_;
+        our @N_s = ($self->BASE());
 
-our @N_s = ($BASE);
+        for my $i (2 .. 17)
+        {
+            push @N_s, $N_s[-1] * $self->BASE();
+        }
+        return \@N_s;
+    }
+);
 
-for my $i (2 .. 17)
-{
-    push @N_s, $N_s[-1] * $BASE;
-}
 
-my %mult_cache;
+has 'mult_cache' => (is => 'rw', default => sub { return +{}; });
 
 sub calc_multiplier
 {
-    my ($sum) = @_;
+    my ($self, $sum) = @_;
 
-    return ($mult_cache{$sum} //= sub {
+    return ($self->mult_cache->{$sum} //= sub {
         my $ret = 0;
 
-        for my $n (@N_s)
+        for my $n (@{$self->N_s()})
         {
             # print "calc_multiplier for $n\n";
             if ($n >= $sum)
             {
-                $ret += calc_count($n-$sum);
+                $ret += $self->calc_count($n-$sum);
                 $ret %= 1_000_000_000;
             }
         }
@@ -164,16 +172,6 @@ sub calc_multiplier
         return $ret;
     }->());
 }
-
-sub reset_caches
-{
-    %mult_cache = ();
-    %count_cache = %init_count_cache;
-
-    return;
-}
-
-reset_caches();
 
 my @FACTs = (1);
 
@@ -184,12 +182,12 @@ for my $i (1 .. 9)
 
 sub recurse_digits
 {
-    my ($count, $digits, $sum) = @_;
+    my ($self, $count, $digits, $sum) = @_;
 
     if ($count == $MAX_DIGIT)
     {
         print "Trace: ", (map { ($_->[0]) x $_->[1] } @$digits), "\n";
-        my $multiplier = calc_multiplier($sum);
+        my $multiplier = $self->calc_multiplier($sum);
 
         my $digit_base = 0;
 
@@ -216,7 +214,7 @@ sub recurse_digits
 
         my $ret = 0;
 
-        $ret += recurse_digits($count+1, [
+        $ret += $self->recurse_digits($count+1, [
                 @$digits[0 .. $#$digits-1],
                 [$last_digit, $last_digit_count+1],
             ],
@@ -227,7 +225,7 @@ sub recurse_digits
 
         foreach my $new_digit ($last_digit + 1 .. 9)
         {
-            $ret += recurse_digits(
+            $ret += $self->recurse_digits(
                 $count+1,
                 [@$digits, [$new_digit, 1]],
                 $sum + $new_digit,
@@ -241,10 +239,12 @@ sub recurse_digits
 
 sub calc_result_above
 {
+    my ($self) = @_;
+
     my $result = 0;
     foreach my $new_digit (1 .. 9)
     {
-        $result += recurse_digits(
+        $result += $self->recurse_digits(
             1,
             [[$new_digit, 1]],
             $new_digit,
@@ -257,12 +257,16 @@ sub calc_result_above
 
 sub calc_result_below
 {
-    return recurse_below('', 0);
+    my ($self) = @_;
+
+    return $self->recurse_below('', 0);
 }
 
 sub calc_result
 {
-    my $ret = calc_result_above() + calc_result_below();
+    my ($self) = @_;
+
+    my $ret = $self->calc_result_above() + $self->calc_result_below();
 
     $ret %= 1_000_000_000;
 
@@ -274,13 +278,13 @@ sub calc_result
 
 sub recurse_below
 {
-    my ($n, $sum) = @_;
+    my ($self, $n, $sum) = @_;
 
     if (length($n) == 9)
     {
         return 0;
     }
-    if ($sum == $BASE)
+    if ($sum == $self->BASE())
     {
         return $n;
     }
@@ -289,11 +293,11 @@ sub recurse_below
     NEW:
     foreach my $new_digit (1 .. $MAX_DIGIT)
     {
-        if ($sum + $new_digit > $BASE)
+        if ($sum + $new_digit > $self->BASE())
         {
             last NEW;
         }
-        $ret += recurse_below($new_digit.$n, $sum + $new_digit);
+        $ret += $self->recurse_below($new_digit.$n, $sum + $new_digit);
     }
     return $ret;
 }
@@ -323,7 +327,7 @@ sub recurse_brute_force
 
 sub calc_using_brute_force
 {
-    my ($TARGET) = @_;
+    my ($self, $TARGET) = @_;
 
     return recurse_brute_force($TARGET , '', 0);
 }

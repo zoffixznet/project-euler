@@ -48,13 +48,13 @@ sub gen_id_mat
 
 {
     # TEST
-    is (''.Euler377::calc_count(1), 1, "count(1) is correct.");
+    is (''.Euler377->new->calc_count(1), 1, "count(1) is correct.");
 
     # TEST
-    is (''.Euler377::calc_count(2), 2, "count(2) is correct.");
+    is (''.Euler377->new->calc_count(2), 2, "count(2) is correct.");
 
     # TEST
-    is (''.Euler377::calc_count(3), scalar(@{[
+    is (''.Euler377->new->calc_count(3), scalar(@{[
                     qw(
                     111
                     12
@@ -64,27 +64,24 @@ sub gen_id_mat
                 ]}), "count(2) is correct.");
 
     # TEST
-    is (''.Euler377::calc_count(5), 16, "count(5) is correct.");
+    is (''.Euler377->new->calc_count(5), 16, "count(5) is correct.");
 }
 
 {
     @Euler377::N_s = (13);
     # TEST
     is (
-        Euler377::calc_result(),
-        (Euler377::calc_using_brute_force(13) % 1_000_000_000),
+        Euler377->new({BASE => 13, N_s => [13]})->calc_result(),
+        (Euler377->new({BASE => 13, N_s => [13]})->calc_using_brute_force(13) % 1_000_000_000),
         "Good calc_result for 13.",
     );
 }
 
 {
-    Euler377::reset_caches();
-    local $Euler377::BASE = 14;
-    @Euler377::N_s = (14);
     # TEST
     is (
-        Euler377::calc_result(),
-        (Euler377::calc_using_brute_force(14) % 1_000_000_000),
+        Euler377->new({BASE => 14, N_s => [14]})->calc_result(),
+        (Euler377->new({BASE => 14, N_s => [14]})->calc_using_brute_force(14) % 1_000_000_000),
         "Good calc_result for 14.",
     );
 }
