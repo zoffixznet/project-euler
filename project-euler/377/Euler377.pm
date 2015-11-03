@@ -139,7 +139,7 @@ sub print_rows
 has 'BASE' => (is => 'rw', default => sub { return 13;},);
 has 'N_s' => (is => 'rw', default => sub {
         my ($self) = @_;
-        our @N_s = ($self->BASE());
+        my @N_s = ($self->BASE());
 
         for my $i (2 .. 17)
         {
@@ -204,7 +204,7 @@ sub recurse_digits
         }
         $digit_base /= $count;
 
-        my $ret = ($digit_base * 111_111_111 * $multiplier) % 1_000_000_000;
+        my $ret = ((($digit_base * 111_111_111) % 1_000_000_000) * $multiplier) % 1_000_000_000;
 
         # print "Trace[have]: ", (map { ($_->[0]) x $_->[1] } @$digits), " += $ret\n";
 
