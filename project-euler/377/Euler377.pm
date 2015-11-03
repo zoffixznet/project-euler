@@ -6,6 +6,8 @@ use warnings;
 use integer;
 use bytes;
 
+use Math::GMP;
+
 use Moo;
 
 # use Math::GMP ':constant';
@@ -204,11 +206,11 @@ sub recurse_digits
         }
         $digit_base /= $count;
 
-        my $ret = ((($digit_base * 111_111_111) % 1_000_000_000) * $multiplier) % 1_000_000_000;
+        my $ret = (((Math::GMP->new($digit_base) * Math::GMP->new(111_111_111))  * Math::GMP->new($multiplier)) % 1_000_000_000);
 
-        # print "Trace[have]: ", (map { ($_->[0]) x $_->[1] } @$digits), " += $ret\n";
+        # print "Trace: ", (map { ($_->[0]) x $_->[1] } @$digits), " += $ret\n";
 
-        return $ret;
+        return $ret . '';
     }
     else
     {
