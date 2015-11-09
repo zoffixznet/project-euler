@@ -43,3 +43,4 @@ def find_sum_up_to_n(n):
     return ret
 
 print ("Sigma[z](999999) =", find_sum_up_to_n(999999))
+print ("Solution =", find_sum_up_to_n(fib_limit))
