@@ -6,7 +6,7 @@ use warnings;
 use integer;
 use bytes;
 
-use Math::GMP (qw(:constant));
+use Math::GMP; # (qw(:constant));
 
 use List::Util qw(min sum);
 use List::MoreUtils qw();
@@ -29,6 +29,7 @@ sub rec
 
     if ($h == $N)
     {
+        # printf "t=%s\n", $t++;
         $t++;
     }
     else
@@ -60,7 +61,7 @@ sub solve
     my ($new_N, $new_w) = @_;
 
     $N = $new_N;
-    $t = 0;
+    $t = Math::GMP->new(0);
 
     if ($new_w == $new_N-1)
     {
@@ -75,7 +76,7 @@ sub solve
 
 {
     my $n = shift(@ARGV);
-    my $total = 0;
+    my $total = Math::GMP->new(0);
 
     for my $w (0 .. $n-1)
     {
