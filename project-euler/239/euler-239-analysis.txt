@@ -1,0 +1,12 @@
+There are 25 primes between 1 and 100. As a result, exactly 3 primes are in
+their right place.
+
+Let's say that $i = the number of primes out of the 22 that are found in
+non-prime positions.
+
+If $i = 0 :
+-----------
+
+All primes are in prime-numbered positions, just not in the correct place.
+The lowest of these primes has 21 options to be placed in. The prime that it
+was placed at can be placed
