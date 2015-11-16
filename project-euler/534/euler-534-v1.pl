@@ -16,7 +16,7 @@ STDOUT->autoflush(1);
 my $N;
 my $L;
 
-my $t = 0;
+my $t;
 
 sub rec
 {
