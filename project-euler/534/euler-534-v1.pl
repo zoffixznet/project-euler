@@ -6,6 +6,7 @@ use warnings;
 use integer;
 use bytes;
 
+use Storable qw/dclone/;
 use Math::GMP; # (qw(:constant));
 
 use List::Util qw(min sum);
@@ -34,19 +35,31 @@ sub rec
     }
     else
     {
+        my $row = shift(@$b);
+
+        X_LOOP:
         for my $x (0 .. $N-1)
         {
-            if (!vec($b, $h*$N+$x,1))
+            if (!$row->{p}->[$x])
             {
-                my $q = $b;
-                for my $y (1 .. min($L, $N-$h-1))
+                my $q = dclone($b);
+                my $x1 = $x-1;
+                my $x2 = $x+1;
+                foreach my $mod_row (@$q[0 .. min($L-1, $N-$h-2)])
                 {
                     for my $xx (
                         grep { $_ >= 0 and $_ <= $N-1 }
-                        ($x-$y,$x,$x+$y)
+                        ($x1--,$x,$x2++)
                     )
                     {
-                        vec($q, ($y+$h)*$N+$xx, 1) = 1;
+                        if (!$mod_row->{p}->[$xx])
+                        {
+                            $mod_row->{p}->[$xx] = 1;
+                            if (not --$mod_row->{c})
+                            {
+                                next X_LOOP;
+                            }
+                        }
                     }
                 }
                 rec($h+1,$q);
@@ -70,7 +83,8 @@ sub solve
 
     $L = $N - 1 - $new_w;
 
-    rec(0,'');
+    rec(0,[map { +{ c => $N, p => [(0)x$N] } } (1 .. $N)]);
+
     return $t;
 }
 
