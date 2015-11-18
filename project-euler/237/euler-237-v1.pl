@@ -11,6 +11,8 @@ use Math::BigInt lib => 'GMP', ':constant';
 use List::Util qw(sum);
 use List::MoreUtils qw(any none indexes);
 
+use Cpanel::JSON::XS;
+
 STDOUT->autoflush(1);
 
 my %one_wide_components =
@@ -25,15 +27,11 @@ my $RIGHT = 1;
 my $DOWN = 2;
 my $LEFT = 3;
 
+my $coder = Cpanel::JSON::XS->new->canonical(1);
+
 sub pack_
 {
-    my ($sq) = @_;
-    my $ret = eval { join('#', map { sum(map { 1 << $_ } @$_) } @$sq); };
-    if ($@)
-    {
-        die $@;
-    }
-    return $ret;
+    return $coder->encode(shift);
 }
 
 sub insert
