@@ -113,48 +113,60 @@ class FracSeq:
                 print ("Reached %d" % t)
                 t += 1000000000
             (r_s, r_e) = f.n_r()
+            if r_s == r_e:
+                root = long(math.sqrt(r_s))
+                if root >= cnt:
+                    ret += a.sum(cnt)
+                    fc += cnt
+                    cnt = 0
+                else:
+                    c_delta = root + 1
+                    ret += a.sum(root) + r_s
+                    cnt -= c_delta
+                    fc += c_delta
+            else:
 
-            # print ("r_s,r_e=%d,%d" % (r_s, r_e))
+                # print ("r_s,r_e=%d,%d" % (r_s, r_e))
 
-            # Bottom root.
-            bottom = r_s
-            bottom_root = long(math.sqrt(r_s))
-            next_root = bottom_root + 1
-            next_sq = next_root * next_root - 1
-
-            end_t = r_e
-            end_b = bottom
-            end = end_t
-            c = 0
-            while cnt > 0 and bottom <= end:
-                top = (next_sq if next_sq < end else end)
-
-                # print ("top=%d" % (top))
-
-                c_delta1 = (top-bottom+1)
-                root_sum = c_delta1 * bottom_root
-                c_delta = root_sum + c_delta1
-
-                if (c_delta > cnt):
-                    end_t = end
-                    end = ((end_t+end_b)>>1)
-                    continue
-                elif (c_delta < cnt and end < r_e):
-                    end_b = end
-                    end = ((end_t+end_b)>>1)
-                    continue
-
-                ret += a.sum(root_sum) + ((c_delta1*(top+bottom)) >> 1)
-
-                cnt -= c_delta
-                fc += c_delta
-
-                print (("_sum_old=%d ; sum=%d ; fc=%d ; cnt=%d") % (FracSeq()._sum_old(fc), ret, fc , cnt))
-
-                bottom = next_sq + 1
-                bottom_root += 1
-                next_root += 1
+                # Bottom root.
+                bottom = r_s
+                bottom_root = long(math.sqrt(r_s))
+                next_root = bottom_root + 1
                 next_sq = next_root * next_root - 1
+
+                end_t = r_e
+                end_b = bottom
+                end = end_t
+                c = 0
+                while cnt > 0 and bottom <= end:
+                    top = (next_sq if next_sq < end else end)
+
+                    # print ("top=%d" % (top))
+
+                    c_delta1 = (top-bottom+1)
+                    root_sum = c_delta1 * bottom_root
+                    c_delta = root_sum + c_delta1
+
+                    if (c_delta > cnt):
+                        end_t = end
+                        end = ((end_t+end_b)>>1)
+                        continue
+                    elif (c_delta < cnt and end < r_e):
+                        end_b = end
+                        end = ((end_t+end_b)>>1)
+                        continue
+
+                    ret += a.sum(root_sum) + ((c_delta1*(top+bottom)) >> 1)
+
+                    cnt -= c_delta
+                    fc += c_delta
+
+                    print (("_sum_old=%d ; sum=%d ; fc=%d ; cnt=%d") % (FracSeq()._sum_old(fc), ret, fc , cnt))
+
+                    bottom = next_sq + 1
+                    bottom_root += 1
+                    next_root += 1
+                    next_sq = next_root * next_root - 1
         return ret
 
 
