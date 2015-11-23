@@ -104,14 +104,15 @@ class FracSeq:
     def sum_by_range(self, cnt):
         ret = long(0)
         # Trace
-        t = 1000000000
+        S = long('10000000000000')
+        t = S
         fc = 0
         f = FracSeq()
         a = ArithSeq()
         while (cnt > 0):
             while (fc > t):
                 print ("Reached %d" % t)
-                t += 1000000000
+                t += S
             (r_s, r_e) = f.n_r()
             if r_s == r_e:
                 root = long(math.sqrt(r_s))
@@ -147,21 +148,50 @@ class FracSeq:
                     root_sum = c_delta1 * bottom_root
                     c_delta = root_sum + c_delta1
 
-                    if (c_delta > cnt):
-                        end_t = end
-                        end = ((end_t+end_b)>>1)
-                        continue
-                    elif (c_delta < cnt and end < r_e):
-                        end_b = end
-                        end = ((end_t+end_b)>>1)
-                        continue
+                    check = False
 
-                    ret += a.sum(root_sum) + ((c_delta1*(top+bottom)) >> 1)
+                    if (c_delta > cnt):
+                        end_t = end-1
+                        print (("{f}c_delta=%d ; cnt=%d") % (c_delta, cnt))
+                        if end_b > end_t:
+                            check = True
+                            print (("{g}c_delta=%d ; cnt=%d") % (c_delta, cnt))
+                            while c_delta > cnt:
+                                print (("c_delta=%d") % (c_delta))
+                                c_delta1 -= 1
+                                root_sum = c_delta1 * bottom_root
+                                c_delta = root_sum + c_delta1
+                                print (("{d}c_delta=%d ; cnt=%d") % (c_delta, cnt))
+                        else:
+                            end = ((end_t+end_b)>>1)
+                            continue
+                    elif (c_delta < cnt and end < r_e):
+                        print (("{b}c_delta=%d ; cnt=%d") % (c_delta, cnt))
+                        if end_b > end_t:
+                            check = True
+                            print (("{G}c_delta=%d ; cnt=%d") % (c_delta, cnt))
+                            while False: # while c_delta > cnt:
+                                print (("C_delta=%d") % (c_delta))
+                                c_delta1 -= 1
+                                root_sum = c_delta1 * bottom_root
+                                c_delta = root_sum + c_delta1
+                                print (("{D}c_delta=%d ; cnt=%d") % (c_delta, cnt))
+                        else:
+                            end_b = end+1
+                            end = ((end_t+end_b)>>1)
+                            continue
+
+                    ret += a.sum(root_sum) + ((c_delta1*((bottom<<1) + c_delta1-1)) >> 1)
+
+                    if check:
+                        ret += a.sum(cnt - c_delta)
+                        c_delta = cnt
 
                     cnt -= c_delta
                     fc += c_delta
 
-                    print (("_sum_old=%d ; sum=%d ; fc=%d ; cnt=%d") % (FracSeq()._sum_old(fc), ret, fc , cnt))
+                    # print (("_sum_old=%d ; sum=%d ; fc=%d ; cnt=%d") % (FracSeq()._sum_old(fc), ret, fc , cnt))
+                    # print (("sum=%d ; fc=%d ; cnt=%d") % (ret, fc , cnt))
 
                     bottom = next_sq + 1
                     bottom_root += 1
@@ -176,7 +206,13 @@ def frac_sum(n):
 def debug_sum(n):
     print ("T(%d) = %d\n" % (n, frac_sum(n)))
 
+def debug_sum_w_old(n):
+    print ("T(%d) = %d ; %d\n" % (n, frac_sum(n), FracSeq()._sum_old(n)))
+
+# debug_sum_w_old(long(sys.argv[1]))
+# exit(0)
 debug_sum(20)
 debug_sum(1000)
 debug_sum(1000000000)
+
 debug_sum(long('1000000000000000000'))
