@@ -133,18 +133,18 @@ class FracSeq:
                 if (c_delta > cnt):
                     end_t = end
                     end = ((end_t+end_b)>>1)
-                    next
+                    continue
                 elif (c_delta < cnt and end < r_e):
                     end_b = end
                     end = ((end_t+end_b)>>1)
-                    next
+                    continue
 
                 ret += a.sum(root_sum) + ((c_delta1*(top+bottom)) >> 1)
 
                 cnt -= c_delta
                 fc += c_delta
 
-                # print (("_sum_old=%d ; sum=%d ; fc=%d") % (FracSeq()._sum_old(fc), ret, fc))
+                # print (("_sum_old=%d ; sum=%d ; fc=%d ; cnt=%d") % (FracSeq()._sum_old(fc), ret, fc , cnt))
 
                 bottom = next_sq + 1
                 bottom_root += 1
