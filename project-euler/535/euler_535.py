@@ -39,8 +39,19 @@ class FracSeq:
         else:
             return peek
 
+    def sum(self, cnt):
+        ret = long(0)
+        for i in range(0,cnt):
+            ret += self.n()
+        return ret
 
-f = FracSeq()
 
-for i in range(0,20):
-    print (f.n())
+def frac_sum(n):
+    return FracSeq().sum(n)
+
+def debug_sum(n):
+    print ("T(%d) = %d\n" % (n, frac_sum(n)))
+
+debug_sum(20)
+debug_sum(1000)
+debug_sum(1000000000)
