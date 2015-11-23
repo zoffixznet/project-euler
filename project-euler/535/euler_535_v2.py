@@ -18,17 +18,22 @@ class ArithSeq:
         self.i += 1
         return ret
 
-    def sum(self, cnt):
+    # Advance
+    def _adv(self, c):
+        self.i += c
+        return
+
+    def sum(self, c):
         bottom = self.i
-        self.i += cnt
+        self._adv(c)
         top = self.i - 1
-        return (((long(top) + long(bottom)) * long(cnt)) >> 1)
+        return (((long(top) + long(bottom)) * long(c)) >> 1)
 
 class FracSeq:
     def __init__(self):
         self._a = ArithSeq()
         self._q = [['a',1,self._a.p()],['f',1,1]]
-        self._a.sum(1)
+        self._a._adv(1)
         self._f = False
 
     def _append(self):
@@ -38,7 +43,7 @@ class FracSeq:
         new_peek = self._f.n()
         c = long(math.sqrt(new_peek))
         self._q.append(['a', c , self._a.p()])
-        self._a.sum(c)
+        self._a._adv(c)
         self._q.append(['f', 1, new_peek])
         return
 
@@ -144,7 +149,7 @@ class FracSeq:
                 cnt -= c_delta
                 fc += c_delta
 
-                # print (("_sum_old=%d ; sum=%d ; fc=%d ; cnt=%d") % (FracSeq()._sum_old(fc), ret, fc , cnt))
+                print (("_sum_old=%d ; sum=%d ; fc=%d ; cnt=%d") % (FracSeq()._sum_old(fc), ret, fc , cnt))
 
                 bottom = next_sq + 1
                 bottom_root += 1
