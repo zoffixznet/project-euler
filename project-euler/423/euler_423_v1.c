@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 #define min(a,b) (((a)<(b))?(a):(b))
 
@@ -39,13 +40,57 @@ int main()
 
     fclose(f);
 
+    memset(one, '\0', sizeof(one));
+    memset(two, '\0', sizeof(two));
+
     one[0] = 6;
-    one[1] = 0;
     current = one;
     next = two;
     int pi = 0;
 
-    for (int n=1 ; n < after_lim ; n++)
+    int was_set = 0;
+    int n = 1;
+    int prev_n;
+    while (1)
+    {
+        char fn[300];
+        sprintf(fn, "DUMPS/%d.bin", dump_at);
+
+        FILE * fh = fopen(fn, "rb");
+
+        if (! fh)
+        {
+            n = prev_n;
+            break;
+        }
+        if (! was_set)
+        {
+            {
+                temp = current;
+                current = next;
+                next = temp;
+            }
+            was_set = 1;
+        }
+        fread (current, sizeof(*current), sizeof(one)/sizeof(one[0]), fh);
+
+        fclose(fh);
+
+        dump_at += DUMP_STEP;
+        prev_n = n;
+        n = dump_at;
+    }
+
+    /* Restore p_p */
+    for (int i = 1; i <= n; i++)
+    {
+        if (*(p_p) == i)
+        {
+            pi++;
+            p_p++;
+        }
+    }
+    for (; n < after_lim ; n++)
     {
         if (dump_at == n)
         {
@@ -62,7 +107,6 @@ int main()
         {
             next[i] = ((current[i]*5+current[i-1]) % MOD);
         }
-        next[my_top_idx+1] = 0;
 
         if (*(p_p) == n)
         {
