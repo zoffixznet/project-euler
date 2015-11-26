@@ -16,6 +16,7 @@ primes = [int(p) for p in (str(primes_s)).split("\n") if len(p) > 0] + [-1]
 current = [6]
 pi = 0
 for n in range(1,50000000+1):
+    print "n = ", n, " ; curr = " , current
     next_ = [(5 * current[0]) % MOD]
     current.append(0)
     for i in range(1,n+1):
