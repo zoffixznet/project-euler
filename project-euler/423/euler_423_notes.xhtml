@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN"
+"http://www.w3.org/Math/DTD/mathml2/xhtml-math11-f.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US">
+<head>
+<title>Euler #423 Notes</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="author" content="Shlomi Fish" />
+</head>
+<body>
+<h1>Bugs in a Square (MathML Enabled Version)</h1>
+<script type="text/javascript" src="http://localhost/shlomif/homepage-local/js/MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+<p>
+\[
+
+x = 6
+
+x_{i=1,n} = 5^{n-1} \cdot x
+
+x_{i=2,n=2} = x_{i=1,n=1} = 5^n = 5^1 \cdot x
+
+x_{i=i',n=n'} = x_{i=i'-1,n=n'-1} + 5*x_{i=i'-1,n=n'}
+
+x_{i=2,n=3} = 5^1 \cdot 5 + 5^2 = 2 \cdot 5^2 \cdot x
+
+x_{i=2,n=4} = 2 \cdot 5^2 \cdot 5 + 5^3 = 3 \cdot 5^3 \cdot x
+
+x_{n,i=2} = n \cdot 5^{n-1} \cdot x
+\]
+</p>
+</body>
+</html>
