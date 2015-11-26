@@ -15,6 +15,9 @@ project-euler/209/connectivity.png
 project-euler/238/input.txt
 project-euler/258/.*\.exe
 project-euler/258/CACHE/[A-F0-9]+.bin
+project-euler/423/DUMPS/[0-9]+\.bin
+project-euler/423/primes.txt
+project-euler/423/423.exe
 project-euler/455/RESULTS/(?:ten)?\d+.result
 project-euler/466/_Inline
 project-euler/75/euler-75
