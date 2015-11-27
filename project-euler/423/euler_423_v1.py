@@ -10,13 +10,17 @@ MOD = 1000000007
 
 s_n = 0
 
-primes_s = subprocess.Popen(["primes", "2", "50000000"], stdout=subprocess.PIPE).communicate()[0]
+primes_s = open("primes.txt").read()
 primes = [int(p) for p in (str(primes_s)).split("\n") if len(p) > 0] + [-1]
 
 current = [6]
 pi = 0
 for n in range(1,50000000+1):
-    print "n = ", n, " ; curr = " , current
+    print ("n = ", n, " ; curr = " , current)
+    sums = [current[0]]
+    for x in current[1:len(current)]:
+        sums.append(sums[-1] + x)
+    print ("n = ", n, " ; sums = " , [x//6 for x in sums])
     next_ = [(5 * current[0]) % MOD]
     current.append(0)
     for i in range(1,n+1):
