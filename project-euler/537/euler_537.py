@@ -30,10 +30,7 @@ def next_row(k,p):
         return counts
     r = []
     for n in range(0,MAX+1):
-        ret = 0
-        for i in range(0,n+1):
-            ret += counts[i] * p[n-i]
-        r.append(ret % BASE)
+        r.append(sum([counts[i] * p[n-i] for i in range(0,n+1)]) % BASE)
     return r
 
 def p_calc(n,k,r):
