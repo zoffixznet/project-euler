@@ -23,20 +23,39 @@ for i in range(0,20001):
 
 pipe.close()
 
-def calc(n,k):
-    p = (n,k)
-    if n == 0:
-        return 1
+MAX = 1001
+# p = prev.
+def next_row(k,p):
     if k == 0:
-        return (1 if n == 0 else 0)
-    if not (p in cache):
+        return counts
+    r = []
+    for n in range(0,MAX+1):
         ret = 0
         for i in range(0,n+1):
-            ret += counts[i] * calc(n-i,k-1)
-        cache[p] = ret % BASE
-    return cache[p]
+            ret += counts[i] * p[n-i]
+        r.append(ret % BASE)
+    return r
 
-def p_calc(n,k):
-    print ("T(%d,%d) = %d" % (n,k,calc(n,k)))
+def p_calc(n,k,r):
+    print ("T(%d,%d) = %d" % (n,k,r[n]))
 
-p_calc(10,10)
+r = []
+k = 0
+while k < 3:
+    r = next_row(k,r)
+    k += 1
+
+p_calc(3,3,r)
+
+while k < 10:
+    r = next_row(k,r)
+    k += 1
+
+p_calc(10,10,r)
+
+while k < 1000:
+    r = next_row(k,r)
+    k += 1
+    print ("Reached k=%d" % (k))
+
+p_calc(1000,1000,r)
