@@ -28,10 +28,10 @@ MAX = 1001
 def next_row(k,p):
     if k == 0:
         return counts
-    r = []
-    for n in range(0,MAX+1):
-        r.append(sum([counts[i] * p[n-i] for i in range(0,n+1)]) % BASE)
-    return r
+    return [
+            sum([counts[i] * p[n-i] for i in range(0,n+1)]) % BASE
+            for n in range(0, MAX+1)
+            ]
 
 def p_calc(n,k,r):
     print ("T(%d,%d) = %d" % (n,k,r[n]))
