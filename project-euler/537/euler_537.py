@@ -23,7 +23,7 @@ for i in range(0,20001):
 
 pipe.close()
 
-MAX = 1001
+MAX = 20000
 # p = prev.
 def next_row(k,p):
     if k == 0:
@@ -50,9 +50,9 @@ while k < 10:
 
 p_calc(10,10,r)
 
-while k < 1000:
+while k < MAX:
     r = next_row(k,r)
     k += 1
     print ("Reached k=%d" % (k))
 
-p_calc(1000,1000,r)
+p_calc(MAX,MAX,r)
