@@ -200,3 +200,7 @@ if True:
         print (("S : i=%d got = %d expected = %d") % (i, got, expected))
         if got != expected:
             raise BaseException
+
+myMAX = long('1000000000000000000')
+myRES = fast_S(myMAX)
+print ("S(%d) = %d (mod = %d)" % (myMAX, myRES, myRES % 987654321))
