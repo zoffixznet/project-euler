@@ -70,6 +70,8 @@ def P(n):
     return 1 + P_l(i)
 
 def S(MAX):
+    if (MAX == 0):
+        return 0
     reset()
     s = long(0)
     for i in xrange(2,MAX,2):
@@ -124,7 +126,7 @@ def prefix_S_from_2power_to_next(prefix, exp):
         b_pow <<= 2
 
     b_pow = 1
-    while b_pow < mymask:
+    while b_pow <= mymask:
         b_pow <<= 1
 
     mymask &= (~(b_pow >> 1));
@@ -139,7 +141,7 @@ if False:
 
 reset()
 if True:
-    for i in xrange(1, 15):
+    for i in xrange(0, 15):
         expected = S((1 << (1+i))-1) - S((1 << (i))-1)
         got = S_from_2power_to_next(i)
         print (("i=%d got = %d expected = %d") % (i, got, expected))
@@ -148,10 +150,41 @@ if True:
         # print (("P(%d) = %d ; P2(%d) = %d ;" % (i, P_l(i), i, P_l2(i))))
     # print_S(1000000000)
 
-for prefix in [0b11,0b101,0b1001,0b1101,0b111,0b1011,0b1111]:
-    for exp in xrange(1,15):
-        expected = prefix_S_from_2power_to_next(prefix, exp)
-        got = brute_force__prefix_S_from_2power_to_next(prefix, exp)
-        print (("prefix=%d exp=%d got=%d expected=%d") % (prefix, exp, got, expected))
+if True:
+    for prefix in [0b10, 0b100, 0b11,0b101,0b1001,0b1101,0b111,0b1011,0b1111]:
+        for exp in xrange(1,15):
+            expected = brute_force__prefix_S_from_2power_to_next(prefix, exp)
+            got = prefix_S_from_2power_to_next(prefix, exp)
+            print (("prefix=%d exp=%d got=%d expected=%d") % (prefix, exp, got, expected))
+            if got != expected:
+                raise BaseException
+
+def fast_S(MAX):
+    s = long(S(1))
+    mymin = long(2)
+    mymax = long(3)
+    b_exp = long(1)
+    while mymax < MAX:
+        s += S_from_2power_to_next(b_exp)
+        mymin <<= 1
+        b_exp += 1
+        mymax = ((mymin << 1) - 1)
+
+    digit = mymin >> 1
+    b_exp -= 1
+    while mymin < MAX:
+        if ((mymin | digit) <= MAX):
+            s += prefix_S_from_2power_to_next(mymin >> b_exp, b_exp)
+            mymin |= digit
+        digit >>= 1
+        b_exp -= 1
+
+    return s
+
+if True:
+    for i in xrange(5, 1000):
+        expected = S(i)
+        got = fast_S(i)
+        print (("S : i=%d got = %d expected = %d") % (i, got, expected))
         if got != expected:
             raise BaseException
