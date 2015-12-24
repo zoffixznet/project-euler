@@ -22,8 +22,45 @@ def P_list(l, is_left):
                 )
     )
 
-def P_l(l):
+def P_l2(l):
     return P_list(l, 1)
+
+ar = []
+for i in xrange(1,64):
+    mask = 0b1
+    for offset in xrange(0, i-1, 2):
+        mask |= (0b1 << offset)
+    ar.append((1 << i, (~(1 << (i-1))), mask))
+
+# Array index.
+a = -1
+# Top
+t = 0
+# high-bitmask
+h = 0
+# or-bitmask
+o = 0
+
+def extract():
+    global a
+    global t, h, o
+    a += 1
+    (t, h, o) = ar[a]
+    return;
+
+def reset():
+    global a
+    a = -1
+    extract()
+    return
+
+reset()
+
+def P_l(l):
+    global t, h, o
+    while (l >= t):
+        extract()
+    return ((l & h) | o)
 
 def P(n):
     if n == 1:
@@ -49,4 +86,9 @@ def S(MAX):
 def print_S(MAX):
     print (("S(%d) = %d") % (MAX, S(MAX)))
 
-print_S(1000000000)
+for i in xrange(2,100001):
+    if P_l(i) != P_l2(i):
+        print (("P(%d) = %d ; P2(%d) = %d ;" % (i, P_l(i), i, P_l2(i))))
+        raise BaseException
+    # print (("P(%d) = %d ; P2(%d) = %d ;" % (i, P_l(i), i, P_l2(i))))
+# print_S(1000000000)
