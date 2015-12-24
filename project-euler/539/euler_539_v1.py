@@ -70,14 +70,15 @@ def P(n):
     return 1 + P_l(i)
 
 def S(MAX):
+    reset()
     s = long(0)
     for i in xrange(2,MAX,2):
-        s += P_l(i)
+        s += P_l2(i)
 
     s <<= 1
 
     if ((MAX & 0x1) == 0):
-        s += P_l(MAX)
+        s += P_l2(MAX)
 
     s += MAX
 
@@ -86,9 +87,32 @@ def S(MAX):
 def print_S(MAX):
     print (("S(%d) = %d") % (MAX, S(MAX)))
 
-for i in xrange(2,100001):
-    if P_l(i) != P_l2(i):
-        print (("P(%d) = %d ; P2(%d) = %d ;" % (i, P_l(i), i, P_l2(i))))
+def S_from_2power_to_next(exp):
+    mymin = 1 << exp
+    mymax = ((1 << (exp+1)) - 1)
+
+    cnt = (mymax - mymin + 1)
+    naive_sum = ( (((mymax&(~mymin))+0) * cnt) >> 1 )
+    s = naive_sum
+    for b_exp in xrange(0, exp, 2):
+        b_pow = 1 << b_exp
+        s += ((b_pow * cnt) >> 1)
+
+    # The P... are always -1.
+    return s + cnt
+
+if False:
+    for i in xrange(2,100001):
+        if P_l(i) != P_l2(i):
+            print (("P(%d) = %d ; P2(%d) = %d ;" % (i, P_l(i), i, P_l2(i))))
+            raise BaseException
+
+reset()
+for i in xrange(3, 15):
+    expected = S((1 << (1+i))-1) - S((1 << (i))-1)
+    got = S_from_2power_to_next(i)
+    print (("i=%d got = %d expected = %d") % (i, got, expected))
+    if got != expected:
         raise BaseException
     # print (("P(%d) = %d ; P2(%d) = %d ;" % (i, P_l(i), i, P_l2(i))))
 # print_S(1000000000)
