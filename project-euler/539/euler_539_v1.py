@@ -73,12 +73,12 @@ def S(MAX):
     reset()
     s = long(0)
     for i in xrange(2,MAX,2):
-        s += P_l2(i)
+        s += P_l(i)
 
     s <<= 1
 
     if ((MAX & 0x1) == 0):
-        s += P_l2(MAX)
+        s += P_l(MAX)
 
     s += MAX
 
@@ -101,6 +101,36 @@ def S_from_2power_to_next(exp):
     # The P... are always -1.
     return s + cnt
 
+def brute_force__prefix_S_from_2power_to_next(prefix, exp):
+    mymin = prefix << exp
+    mymax = mymin + ((1 << exp) - 1)
+    return S(mymax) - S(mymin-1)
+
+def prefix_S_from_2power_to_next(prefix, exp):
+    mymin = prefix << exp
+    mymax = mymin + ((1 << exp) - 1)
+
+    cnt = (mymax - mymin + 1)
+
+    mymask = mymin
+    b_exp = 0
+    b_pow = 1
+    while b_exp < exp:
+        b_exp += 2
+        b_pow <<= 2
+    while b_pow < mymin:
+        mymask |= b_pow
+        b_exp += 2
+        b_pow <<= 2
+
+    b_pow = 1
+    while b_pow < mymask:
+        b_pow <<= 1
+
+    mymask &= (~(b_pow >> 1));
+
+    return S_from_2power_to_next(exp) + mymask * cnt
+
 if False:
     for i in xrange(2,100001):
         if P_l(i) != P_l2(i):
@@ -108,11 +138,20 @@ if False:
             raise BaseException
 
 reset()
-for i in xrange(3, 15):
-    expected = S((1 << (1+i))-1) - S((1 << (i))-1)
-    got = S_from_2power_to_next(i)
-    print (("i=%d got = %d expected = %d") % (i, got, expected))
-    if got != expected:
-        raise BaseException
-    # print (("P(%d) = %d ; P2(%d) = %d ;" % (i, P_l(i), i, P_l2(i))))
-# print_S(1000000000)
+if True:
+    for i in xrange(1, 15):
+        expected = S((1 << (1+i))-1) - S((1 << (i))-1)
+        got = S_from_2power_to_next(i)
+        print (("i=%d got = %d expected = %d") % (i, got, expected))
+        if got != expected:
+            raise BaseException
+        # print (("P(%d) = %d ; P2(%d) = %d ;" % (i, P_l(i), i, P_l2(i))))
+    # print_S(1000000000)
+
+for prefix in [0b11,0b101,0b1001,0b1101,0b111,0b1011,0b1111]:
+    for exp in xrange(1,15):
+        expected = prefix_S_from_2power_to_next(prefix, exp)
+        got = brute_force__prefix_S_from_2power_to_next(prefix, exp)
+        print (("prefix=%d exp=%d got=%d expected=%d") % (prefix, exp, got, expected))
+        if got != expected:
+            raise BaseException
