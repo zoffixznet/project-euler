@@ -150,7 +150,7 @@ if True:
         # print (("P(%d) = %d ; P2(%d) = %d ;" % (i, P_l(i), i, P_l2(i))))
     # print_S(1000000000)
 
-if True:
+if False:
     for prefix in [0b10, 0b100, 0b11,0b101,0b1001,0b1101,0b111,0b1011,0b1111]:
         for exp in xrange(1,15):
             expected = brute_force__prefix_S_from_2power_to_next(prefix, exp)
@@ -170,14 +170,26 @@ def fast_S(MAX):
         b_exp += 1
         mymax = ((mymin << 1) - 1)
 
+    reset()
+    s += 1 + P_l(mymin)
+
     digit = mymin >> 1
     b_exp -= 1
+    # mymin is what we reached.
     while mymin < MAX:
         if ((mymin | digit) <= MAX):
-            s += prefix_S_from_2power_to_next(mymin >> b_exp, b_exp)
+            prev_mymin = mymin
             mymin |= digit
+            res = prefix_S_from_2power_to_next(prev_mymin >> b_exp, b_exp)
+            s += res
+            reset()
+            s += P_l(mymin) - P_l(prev_mymin)
         digit >>= 1
         b_exp -= 1
+
+    if mymin < MAX:
+        reset()
+        s += 1 + P_l(MAX)
 
     return s
 
