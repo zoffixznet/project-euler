@@ -22,24 +22,24 @@ prefix_S_from_2power_to_next prefix exp = ((sum_from_2power_to_next exp) + (cnt 
     mymax = mymin + ((1 `shiftL` exp) - 1)
     cnt = mymax - mymin + 1
 
-    (init_b_exp,init_b_pow) = mywhile (0,1) where
-        mywhile (b_exp,b_pow) = if (b_exp >= exp) then (b_exp, b_pow) else mywhile ((b_exp+2),(b_pow `shiftL` 2))
+    (init_b_exp,init_b_pow) = w (0,1) where
+        w (b_exp,b_pow) = if (b_exp >= exp) then (b_exp, b_pow) else w ((b_exp+2),(b_pow `shiftL` 2))
 
-    (b_exp2,b_pow2,mymask2) = mywhile (init_b_exp,init_b_pow,mymin) where
-        mywhile (b_exp,b_pow,mymask) = if (b_pow >= mymin) then (b_exp,b_pow,mymask) else mywhile (b_exp+2,(b_pow `shiftL`2),(mymask .|. b_pow))
+    (b_exp2,b_pow2,mymask2) = w (init_b_exp,init_b_pow,mymin) where
+        w (b_exp,b_pow,mymask) = if (b_pow >= mymin) then (b_exp,b_pow,mymask) else w (b_exp+2,(b_pow `shiftL`2),(mymask .|. b_pow))
 
-    b_pow3 = mywhile 1 where
-        mywhile b_pow = if b_pow > mymask2 then b_pow else mywhile (b_pow `shiftL` 1)
+    b_pow3 = w 1 where
+        w b_pow = if b_pow > mymask2 then b_pow else w (b_pow `shiftL` 1)
 
 fast_S :: Integer -> Integer
 fast_S myMAX = s1 + s2 + s3 where -- s1 + s2 + s3 where
-    (mymin1,mymax1,b_exp1,s1) = mywhile (2,3,1,1) where
-        mywhile (mymin,mymax,b_exp,s) = if mymax >= myMAX then (mymin,mymax,b_exp-1,s) else mywhile (new_mymin, ((new_mymin `shiftL` 1)-1), b_exp+1, s+sum_from_2power_to_next(b_exp)) where
+    (mymin1,mymax1,b_exp1,s1) = w (2,3,1,1) where
+        w (mymin,mymax,b_exp,s) = if mymax >= myMAX then (mymin,mymax,b_exp-1,s) else w (new_mymin, ((new_mymin `shiftL` 1)-1), b_exp+1, s+sum_from_2power_to_next(b_exp)) where
                 new_mymin = mymin `shiftL` 1
     p x = p_l x 1
     s2 = 1 + (p mymin1)
-    s3 = mywhile (mymin1,b_exp1,(mymin1 `shiftR` 1),0) where
-        mywhile (mymin,b_exp,digit,s) = if (mymin >= myMAX) then s else mywhile (new_mymin,b_exp-1,(digit `shiftR` 1),s+delta_s) where
+    s3 = w (mymin1,b_exp1,(mymin1 `shiftR` 1),0) where
+        w (mymin,b_exp,digit,s) = if (mymin >= myMAX) then s else w (new_mymin,b_exp-1,(digit `shiftR` 1),s+delta_s) where
             myminer = (mymin .|. digit)
             cond = (myminer <= myMAX)
             new_mymin = if cond then myminer else mymin
