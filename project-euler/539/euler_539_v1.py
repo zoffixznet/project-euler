@@ -177,13 +177,13 @@ def fast_S(MAX):
     b_exp -= 1
     # mymin is what we reached.
     while mymin < MAX:
-        if ((mymin | digit) <= MAX):
-            prev_mymin = mymin
-            mymin |= digit
-            res = prefix_S_from_2power_to_next(prev_mymin >> b_exp, b_exp)
+        new_mymin = (mymin | digit)
+        if (new_mymin <= MAX):
+            res = prefix_S_from_2power_to_next(mymin >> b_exp, b_exp)
             s += res
             reset()
-            s += P_l(mymin) - P_l(prev_mymin)
+            s += P_l(new_mymin) - P_l(mymin)
+            mymin = new_mymin
         digit >>= 1
         b_exp -= 1
 
