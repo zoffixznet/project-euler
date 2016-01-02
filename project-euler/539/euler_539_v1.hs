@@ -38,8 +38,8 @@ fast_S myMAX = s1 + s2 + s3 where -- s1 + s2 + s3 where
                 new_mymin = mymin `shiftL` 1
     p x = p_l x 1
     s2 = 1 + (p mymin1)
-    (mymin3,b_exp3,digit3,s3) = mywhile (mymin1,b_exp1,(mymin1 `shiftR` 1),0) where
-        mywhile (mymin,b_exp,digit,s) = if (mymin >= myMAX) then (mymin,b_exp,digit,s) else mywhile (new_mymin,b_exp-1,(digit `shiftR` 1),s+delta_s) where
+    s3 = mywhile (mymin1,b_exp1,(mymin1 `shiftR` 1),0) where
+        mywhile (mymin,b_exp,digit,s) = if (mymin >= myMAX) then s else mywhile (new_mymin,b_exp-1,(digit `shiftR` 1),s+delta_s) where
             myminer = (mymin .|. digit)
             cond = (myminer <= myMAX)
             new_mymin = if cond then myminer else mymin
