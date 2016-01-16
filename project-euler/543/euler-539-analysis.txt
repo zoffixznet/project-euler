@@ -1,0 +1,11 @@
+Based on https://en.wikipedia.org/wiki/Goldbach's_conjecture , we can see
+that P(i,2) = 1 for every i so that i % 2 = 0 and i >= 4. Similarly, since
+we can add the prime number "2" to any even number, yielding a sum of a higher
+rank, then P(i,3) = 1 for every even i >= 6 , P(i,4) = 1 for every i >= 8,
+etc.
+
+By mathematical induction, we can see that P(2n,m) = 1 iff 2n >= 2m => n>=m.
+
+P(n, 1) = 1 iff n is prime. So their sum is the count of primes up to F(k).
+
+
