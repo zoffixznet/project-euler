@@ -18,6 +18,8 @@ def calc_s(n):
         return len([2,3])
     if n == 5:
         return len([2,3,5,2+2,2+3])
+    if n == 8:
+        return len([2,3,5,7,2+2,2+3,2+5,3+3,3+5,2+2+2,2+2+3,2+3+3,2+2+2+2])
     # Calc s[k=1].
     s_1 = count_primes_up_to(n)
     # Calc s[k=2] for i odd.
