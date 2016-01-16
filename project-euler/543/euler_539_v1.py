@@ -13,11 +13,11 @@ def count_primes_up_to(n):
 
 def calc_s(n):
     if n == 2:
-        return 1
+        return len([2])
     if n == 3:
-        return 2
+        return len([2,3])
     if n == 5:
-        return 3 + 1
+        return len([2,3,5,2+2,2+3])
     # Calc s[k=1].
     s_1 = count_primes_up_to(n)
     # Calc s[k=2] for i odd.
