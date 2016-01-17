@@ -1,0 +1,8 @@
+x' = sqrt(x^2 - w^2)    # The height of x on the wall
+y' = sqrt(y^2 - w^2)    # The height of y on the wall
+
+h / y' + h / x' = 1     # Due to w's proportions.
+
+h * ( 1 / sqrt(x^2-w^2) + 1 / sqrt(y^2-w^2) ) = 1
+
+
