@@ -8,7 +8,7 @@ use bytes;
 
 use Math::BigInt lib => 'GMP'; #, ':constant';
 
-package DataObj;
+package SigData;
 
 use Cpanel::JSON::XS;
 my $coder = Cpanel::JSON::XS->new->canonical(1);
@@ -22,9 +22,6 @@ use MooX qw/late/;
 
 # The data.
 has 'data' => (is => 'ro', required => 1);
-# The values.
-has 'records' => (is => 'rw', required => 1);
-
 has 'sig' => (is => 'lazy');
 
 sub _build_sig
@@ -32,12 +29,21 @@ sub _build_sig
     return pack_(shift->data);
 }
 
+package DataObj;
+
+use MooX qw/late/;
+
+has 'd' => (is => 'ro', required => 1);
+# The values.
+has 'records' => (is => 'rw', required => 1);
+
+
 sub place_in
 {
     my ($class, $hash, $data, $records) = @_;
 
-    my $obj = $class->new({ data => $data, records => $records});
-    my $sig = $obj->sig;
+    my $obj = $class->new({ d => $data, records => $records});
+    my $sig = $obj->d->sig;
     if (exists($hash->{$sig}))
     {
         return $hash->{$sig}->records;
@@ -48,6 +54,7 @@ sub place_in
         return $obj->records;
     }
 }
+
 package main;
 
 use List::Util qw(sum);
@@ -94,9 +101,10 @@ sub insert
     }
 
     my $h1 = $one_wide_components{$type};
-    my $h2 = DataObj->place_in($h1, $squares, +{});
-    my $h3 = DataObj->place_in($h2, $squares, +{});
-    my $count = DataObj->place_in($h3, (\@fcc), Math::BigInt->new('0'));
+    my $d = SigData->new({ data => $squares });
+    my $h2 = DataObj->place_in($h1, $d, +{});
+    my $h3 = DataObj->place_in($h2, $d, +{});
+    my $count = DataObj->place_in($h3, SigData->new({data => (\@fcc)}), Math::BigInt->new('0'));
     $count++;
 
     return;
@@ -222,7 +230,7 @@ sub merge_middle
 
                     my %fcc;
 
-                    foreach my $f (@{$left_fcc_obj->data})
+                    foreach my $f (@{$left_fcc_obj->d->data})
                     {
                         for my $i (0 .. $#$f)
                         {
@@ -232,7 +240,7 @@ sub merge_middle
                             }
                         }
                     }
-                    foreach my $f (@{$right_fcc_obj->data})
+                    foreach my $f (@{$right_fcc_obj->d->data})
                     {
                         for my $i (0 .. $#$f)
                         {
@@ -243,8 +251,8 @@ sub merge_middle
                         }
                     }
                     {
-                        my $l = $left_r_obj->data;
-                        my $r = $right_l_obj->data;
+                        my $l = $left_r_obj->d->data;
+                        my $r = $right_l_obj->d->data;
 
                         for my $i (0 .. 3)
                         {
@@ -314,9 +322,9 @@ sub merge_middle
                         return;
                     }
                     my $h1 = $sum_mid;
-                    my $h2 = DataObj->place_in($h1, $left_l_obj->data, +{});
-                    my $h3 = DataObj->place_in($h2, $right_r_obj->data, +{});
-                    my $count = DataObj->place_in($h3, (\@ret_fcc), Math::BigInt->new('0'));
+                    my $h2 = DataObj->place_in($h1, $left_l_obj->d, +{});
+                    my $h3 = DataObj->place_in($h2, $right_r_obj->d, +{});
+                    my $count = DataObj->place_in($h3, SigData->new({data => (\@ret_fcc)}), Math::BigInt->new('0'));
                     $count += $left_fcc_obj->records * $right_fcc_obj->records;
                 }
             );
