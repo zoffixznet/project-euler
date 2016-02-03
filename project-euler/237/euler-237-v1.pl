@@ -30,6 +30,22 @@ sub sig
     return pack_(shift->data);
 }
 
+sub place_in
+{
+    my ($class, $hash, $data, $records) = @_;
+
+    my $obj = $class->new({ data => $data, records => $records});
+    my $sig = $obj->sig;
+    if (exists($hash->{$sig}))
+    {
+        return $hash->{$sig}->records;
+    }
+    else
+    {
+        $hash->{$sig} = $obj;
+        return $obj->records;
+    }
+}
 package main;
 
 use List::Util qw(sum);
@@ -75,29 +91,11 @@ sub insert
         @$f = (sort {$a <=> $b } map { $_, $_+4 } @$f);
     }
 
-    my $sq_obj = DataObj->new({ data => $squares, records => {}});
     my $h1 = $one_wide_components{$type};
-    if (!exists($h1->{$sq_obj->sig}))
-    {
-        $h1->{$sq_obj->sig} = $sq_obj;
-    }
-    my $h2 = $h1->{$sq_obj->sig}{records};
-    $sq_obj = DataObj->new({ data => $squares, records => {}});
-
-    if (!exists($h2->{$sq_obj->sig}))
-    {
-        $h2->{$sq_obj->sig} = $sq_obj;
-    }
-
-    my $h3 = $h2->{$sq_obj->sig}{records};
-
-    my $fcc_obj = DataObj->new({ data => (\@fcc), records => Math::BigInt->new('0')});
-    if (!exists($h3->{$fcc_obj->sig}))
-    {
-        $h3->{$fcc_obj->sig} = $fcc_obj;
-    }
-
-    $h3->{$fcc_obj->sig}{records}++;
+    my $h2 = DataObj->place_in($h1, $squares, +{});
+    my $h3 = DataObj->place_in($h2, $squares, +{});
+    my $count = DataObj->place_in($h3, (\@fcc), Math::BigInt->new('0'));
+    $count++;
 
     return;
 }
@@ -313,32 +311,11 @@ sub merge_middle
                     {
                         return;
                     }
-                    # Yay! We have the @ret_fcc.
-                    my $sq_obj = DataObj->new({ data => $left_l_obj->data, records => {}});
                     my $h1 = $sum_mid;
-                    if (!exists($h1->{$sq_obj->sig}))
-                    {
-                        $h1->{$sq_obj->sig} = $sq_obj;
-                    }
-                    my $h2 = $h1->{$sq_obj->sig}{records};
-                    $sq_obj = DataObj->new({ data => $right_r_obj->data, records => {}});
-
-                    if (!exists($h2->{$sq_obj->sig}))
-                    {
-                        $h2->{$sq_obj->sig} = $sq_obj;
-                    }
-
-                    my $h3 = $h2->{$sq_obj->sig}{records};
-
-                    my $ret_fcc_obj = DataObj->new({ data => (\@ret_fcc), records => Math::BigInt->new('0')});
-                    if (!exists($h3->{$ret_fcc_obj->sig}))
-                    {
-                        $h3->{$ret_fcc_obj->sig} = $ret_fcc_obj;
-                    }
-
-                    $h3->{$ret_fcc_obj->sig}{records} +=
-                        $left_fcc_obj->records * $right_fcc_obj->records
-                        ;
+                    my $h2 = DataObj->place_in($h1, $left_l_obj->data, +{});
+                    my $h3 = DataObj->place_in($h2, $right_r_obj->data, +{});
+                    my $count = DataObj->place_in($h3, (\@ret_fcc), Math::BigInt->new('0'));
+                    $count += $left_fcc_obj->records * $right_fcc_obj->records;
                 }
             );
         }
