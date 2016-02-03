@@ -25,7 +25,9 @@ has 'data' => (is => 'ro', required => 1);
 # The values.
 has 'records' => (is => 'rw', required => 1);
 
-sub sig
+has 'sig' => (is => 'lazy');
+
+sub _build_sig
 {
     return pack_(shift->data);
 }
