@@ -70,14 +70,19 @@ sub insert
         pop(@fcc);
     }
 
+    foreach my $f (@fcc)
+    {
+        @$f = (sort {$a <=> $b } map { $_, $_+4 } @$f);
+    }
+
     my $sq_obj = DataObj->new({ data => $squares, records => {}});
     my $h1 = $one_wide_components{$type};
     if (!exists($h1->{$sq_obj->sig}))
     {
         $h1->{$sq_obj->sig} = $sq_obj;
     }
-    $sq_obj = DataObj->new({ data => $squares, records => {}});
     my $h2 = $h1->{$sq_obj->sig}{records};
+    $sq_obj = DataObj->new({ data => $squares, records => {}});
 
     if (!exists($h2->{$sq_obj->sig}))
     {
@@ -207,10 +212,133 @@ sub merge_middle
         );
     };
 
+    my $sum = $left_l + $right_l;
+    my $sum_mid = $mid{$sum} = {};
+
     $iter3->($mid{$left_l}, sub {
             my ($left_l_obj, $left_r_obj, $left_fcc_obj) = @_;
             $iter3->($mid{$right_l}, sub {
                     my ($right_l_obj, $right_r_obj, $right_fcc_obj) = @_;
+
+                    my %fcc;
+
+                    foreach my $f (@{$left_fcc_obj->data})
+                    {
+                        for my $i (0 .. $#$f)
+                        {
+                            for my $j (0 .. $#$f)
+                            {
+                                $fcc{"l$i"}{"l$j"} = 1;
+                            }
+                        }
+                    }
+                    foreach my $f (@{$right_fcc_obj->data})
+                    {
+                        for my $i (0 .. $#$f)
+                        {
+                            for my $j (0 .. $#$f)
+                            {
+                                $fcc{"r$i"}{"r$j"} = 1;
+                            }
+                        }
+                    }
+                    {
+                        my $l = $left_r_obj->data;
+                        my $r = $right_l_obj->data;
+
+                        for my $i (0 .. 3)
+                        {
+                            my $l_bool = any { $_ == $RIGHT } @{$l->[$i]};
+                            my $r_bool = any { $_ == $LEFT } @{$r->[$i]};
+                            if ($l_bool xor $r_bool)
+                            {
+                                return;
+                            }
+                            if ($l_bool)
+                            {
+                                my $l_k = 'l' . ($i+4);
+                                my $r_k = 'r' . $i;
+                                $fcc{$l_k}{$r_k} = $fcc{$r_k}{$l_k} = 1;
+                            }
+                        }
+                    }
+
+                    my @nodes = (map {; "l$_", "r$_" } 0 .. 7);
+                    my %found = (map { $_ => +{ $_ => 1 } } @nodes);
+
+                    FIND:
+                    while (1)
+                    {
+                        my $changed = 0;
+                        foreach my $node (@nodes)
+                        {
+                            my %node_fcc = %{$found{$node}};
+                            my $init_count = scalar keys %node_fcc;
+                            foreach my $link (keys(%{$fcc{$node}}))
+                            {
+                                %node_fcc = (%node_fcc, %{$found{$link}});
+                            }
+                            if (scalar keys %node_fcc > $init_count)
+                            {
+                                $changed = 1;
+                                foreach my $link (keys(%node_fcc))
+                                {
+                                    $found{$link} = {%node_fcc};
+                                }
+                            }
+                        }
+                        if (! $changed)
+                        {
+                            last FIND;
+                        }
+                    }
+
+                    my @ret_fcc;
+                    my @ret_nodes = qw(l0 l1 l2 l3 r4 r5 r6 r7);
+                    my %ret_nodes_lookup = (map { $ret_nodes[$_] => $_ } keys @ret_nodes);
+                    foreach my $node (@ret_nodes)
+                    {
+                        if (exists($found{$node}))
+                        {
+                            my @links = keys(%{$found{$node}});
+                            push @ret_fcc, [sort { $a <=> $b } @ret_nodes_lookup{grep { exists($ret_nodes_lookup{$_}) } @links}];
+
+                            foreach my $link (@links)
+                            {
+                                delete($found{$link});
+                            }
+                        }
+                    }
+                    if (scalar keys %found)
+                    {
+                        return;
+                    }
+                    # Yay! We have the @ret_fcc.
+                    my $sq_obj = DataObj->new({ data => $left_l_obj->data, records => {}});
+                    my $h1 = $sum_mid;
+                    if (!exists($h1->{$sq_obj->sig}))
+                    {
+                        $h1->{$sq_obj->sig} = $sq_obj;
+                    }
+                    my $h2 = $h1->{$sq_obj->sig}{records};
+                    $sq_obj = DataObj->new({ data => $right_r_obj->data, records => {}});
+
+                    if (!exists($h2->{$sq_obj->sig}))
+                    {
+                        $h2->{$sq_obj->sig} = $sq_obj;
+                    }
+
+                    my $h3 = $h2->{$sq_obj->sig}{records};
+
+                    my $ret_fcc_obj = DataObj->new({ data => (\@ret_fcc), records => Math::BigInt->new('0')});
+                    if (!exists($h3->{$ret_fcc_obj->sig}))
+                    {
+                        $h3->{$ret_fcc_obj->sig} = $ret_fcc_obj;
+                    }
+
+                    $h3->{$ret_fcc_obj->sig}{records} +=
+                        $left_fcc_obj->records * $right_fcc_obj->records
+                        ;
                 }
             );
         }
