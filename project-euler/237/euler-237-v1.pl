@@ -6,12 +6,35 @@ use warnings 'FATAL' => 'all';
 use integer;
 use bytes;
 
-use Math::BigInt lib => 'GMP', ':constant';
+use Math::BigInt lib => 'GMP'; #, ':constant';
+
+package DataObj;
+
+use Cpanel::JSON::XS;
+my $coder = Cpanel::JSON::XS->new->canonical(1);
+
+sub pack_
+{
+    return $coder->encode(shift);
+}
+
+use MooX qw/late/;
+
+# The data.
+has 'data' => (is => 'ro', required => 1);
+# The values.
+has 'records' => (is => 'rw', required => 1);
+
+sub sig
+{
+    return pack_(shift->data);
+}
+
+package main;
 
 use List::Util qw(sum);
 use List::MoreUtils qw(any none indexes);
 
-use Cpanel::JSON::XS;
 
 STDOUT->autoflush(1);
 
@@ -26,13 +49,6 @@ my $UP = 0;
 my $RIGHT = 1;
 my $DOWN = 2;
 my $LEFT = 3;
-
-my $coder = Cpanel::JSON::XS->new->canonical(1);
-
-sub pack_
-{
-    return $coder->encode(shift);
-}
 
 sub insert
 {
@@ -54,37 +70,29 @@ sub insert
         pop(@fcc);
     }
 
-    my $sq_sig = pack_($squares);
+    my $sq_obj = DataObj->new({ data => $squares, records => {}});
     my $h1 = $one_wide_components{$type};
-    if (!exists($h1->{$sq_sig}))
+    if (!exists($h1->{$sq_obj->sig}))
     {
-        $h1->{$sq_sig} = +{
-            expanded => $squares,
-            records => +{},
-        };
+        $h1->{$sq_obj->sig} = $sq_obj;
     }
-    my $h2 = $h1->{$sq_sig}{records};
+    $sq_obj = DataObj->new({ data => $squares, records => {}});
+    my $h2 = $h1->{$sq_obj->sig}{records};
 
-    if (!exists($h2->{$sq_sig}))
+    if (!exists($h2->{$sq_obj->sig}))
     {
-        $h2->{$sq_sig} = +{
-            expanded => $squares,
-            records => +{},
-        };
+        $h2->{$sq_obj->sig} = $sq_obj;
     }
 
-    my $h3 = $h2->{$sq_sig}{records};
+    my $h3 = $h2->{$sq_obj->sig}{records};
 
-    my $fcc_sig = pack_(\@fcc);
-    if (!exists($h3->{$fcc_sig}))
+    my $fcc_obj = DataObj->new({ data => (\@fcc), records => Math::BigInt->new('0')});
+    if (!exists($h3->{$fcc_obj->sig}))
     {
-        $h3->{$fcc_sig} = +{
-            expanded => \@fcc,
-            count => 0,
-        };
+        $h3->{$fcc_obj->sig} = $fcc_obj;
     }
 
-    $h3->{$fcc_sig}{count}++;
+    $h3->{$fcc_obj->sig}{records}++;
 
     return;
 }
@@ -168,9 +176,9 @@ sub merge_middle
 
         foreach my $k (keys%$h)
         {
-            my $rec = $h->{$k};
+            my $obj = $h->{$k};
 
-            $cb->($k, $rec->{expanded}, $rec);
+            $cb->($obj);
         }
     };
 
@@ -178,19 +186,18 @@ sub merge_middle
         my ($h, $cb) = @_;
 
         $iter1->($h, sub {
-                my ($l_sig, $l_exp, $l_rec) = @_;
-                $iter1->($l_rec->{records},
+                my ($l_obj) = @_;
+                $iter1->($l_obj->records,
                     sub {
-                        my ($r_sig, $r_exp, $r_rec) = @_;
+                        my ($r_obj) = @_;
                         $iter1->(
-                            $r_rec->{records},
+                            $r_obj->records,
                             sub {
-                                my ($fcc_sig, $fcc_exp, $fcc_rec) = @_;
+                                my ($fcc_obj) = @_;
                                 return $cb->(
-                                    $l_sig, $l_exp,
-                                    $r_sig, $r_exp,
-                                    $fcc_sig, $fcc_exp,
-                                    $fcc_rec->{count}
+                                    $l_obj,
+                                    $r_obj,
+                                    $fcc_obj,
                                 );
                             }
                         );
@@ -201,20 +208,9 @@ sub merge_middle
     };
 
     $iter3->($mid{$left_l}, sub {
-            my (
-                $left_l_sig, $left_l_exp,
-                $left_r_sig, $left_r_exp,
-                $left_fcc_sig, $left_fcc_exp,
-                $left_count
-            ) = @_;
+            my ($left_l_obj, $left_r_obj, $left_fcc_obj) = @_;
             $iter3->($mid{$right_l}, sub {
-                    my (
-                        $right_l_sig, $right_l_exp,
-                        $right_r_sig, $right_r_exp,
-                        $right_fcc_sig, $right_fcc_exp,
-                        $right_count
-                    ) = @_;
-
+                    my ($right_l_obj, $right_r_obj, $right_fcc_obj) = @_;
                 }
             );
         }
