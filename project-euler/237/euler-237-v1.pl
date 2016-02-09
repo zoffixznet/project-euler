@@ -180,6 +180,113 @@ print Dumper(\%one_wide_components);
 
 my %mid;
 
+my %C;
+
+sub calc_ret_fcc
+{
+    my ($left_fcc_sig, $right_fcc_sig, $left_r_sig, $right_l_sig) = @_;
+
+    return $C{$left_fcc_sig->sig}{$right_fcc_sig->sig}{$left_r_sig->sig}{$right_l_sig->sig} //= (sub {
+            my %fcc;
+
+            print "Trace " . (++$::mytrace) . "\n";
+            foreach my $f (@{$left_fcc_sig->data})
+            {
+                for my $i (0 .. $#$f)
+                {
+                    for my $j (0 .. $#$f)
+                    {
+                        $fcc{"l$i"}{"l$j"} = 1;
+                    }
+                }
+            }
+            foreach my $f (@{$right_fcc_sig->data})
+            {
+                for my $i (0 .. $#$f)
+                {
+                    for my $j (0 .. $#$f)
+                    {
+                        $fcc{"r$i"}{"r$j"} = 1;
+                    }
+                }
+            }
+            {
+                my $l = $left_r_sig->data;
+                my $r = $right_l_sig->data;
+
+                for my $i (0 .. 3)
+                {
+                    my $l_bool = any { $_ == $RIGHT } @{$l->[$i]};
+                    my $r_bool = any { $_ == $LEFT } @{$r->[$i]};
+                    if ($l_bool xor $r_bool)
+                    {
+                        return 0;
+                    }
+                    if ($l_bool)
+                    {
+                        my $l_k = 'l' . ($i+4);
+                        my $r_k = 'r' . $i;
+                        $fcc{$l_k}{$r_k} = $fcc{$r_k}{$l_k} = 1;
+                    }
+                }
+            }
+
+            my @nodes = (map {; "l$_", "r$_" } 0 .. 7);
+            my %found = (map { $_ => +{ $_ => 1 } } @nodes);
+
+            FIND:
+            while (1)
+            {
+                my $changed = 0;
+                foreach my $node (@nodes)
+                {
+                    my %node_fcc = %{$found{$node}};
+                    my $init_count = scalar keys %node_fcc;
+                    foreach my $link (keys(%{$fcc{$node}}))
+                    {
+                        %node_fcc = (%node_fcc, %{$found{$link}});
+                    }
+                    if (scalar keys %node_fcc > $init_count)
+                    {
+                        $changed = 1;
+                        foreach my $link (keys(%node_fcc))
+                        {
+                            $found{$link} = {%node_fcc};
+                        }
+                    }
+                }
+                if (! $changed)
+                {
+                    last FIND;
+                }
+            }
+
+            my @ret_fcc;
+            my @ret_nodes = qw(l0 l1 l2 l3 r4 r5 r6 r7);
+            my %ret_nodes_lookup = (map { $ret_nodes[$_] => $_ } keys @ret_nodes);
+            foreach my $node (@ret_nodes)
+            {
+                if (exists($found{$node}))
+                {
+                    my @links = keys(%{$found{$node}});
+                    push @ret_fcc, [sort { $a <=> $b } @ret_nodes_lookup{grep { exists($ret_nodes_lookup{$_}) } @links}];
+
+                    foreach my $link (@links)
+                    {
+                        delete($found{$link});
+                    }
+                }
+            }
+            if (scalar keys %found)
+            {
+                return 0;
+            }
+
+            return SigData->new({data => \@ret_fcc});
+
+        }->());
+}
+
 sub merge_middle
 {
     my ($left_l, $right_l) = @_;
@@ -228,103 +335,22 @@ sub merge_middle
             $iter3->($mid{$right_l}, sub {
                     my ($right_l_obj, $right_r_obj, $right_fcc_obj) = @_;
 
-                    my %fcc;
+                    my $ret_fcc = calc_ret_fcc(
+                        $left_fcc_obj->d,
+                        $right_fcc_obj->d,
+                        $left_r_obj->d,
+                        $right_l_obj->d,
+                    );
 
-                    foreach my $f (@{$left_fcc_obj->d->data})
-                    {
-                        for my $i (0 .. $#$f)
-                        {
-                            for my $j (0 .. $#$f)
-                            {
-                                $fcc{"l$i"}{"l$j"} = 1;
-                            }
-                        }
-                    }
-                    foreach my $f (@{$right_fcc_obj->d->data})
-                    {
-                        for my $i (0 .. $#$f)
-                        {
-                            for my $j (0 .. $#$f)
-                            {
-                                $fcc{"r$i"}{"r$j"} = 1;
-                            }
-                        }
-                    }
-                    {
-                        my $l = $left_r_obj->d->data;
-                        my $r = $right_l_obj->d->data;
-
-                        for my $i (0 .. 3)
-                        {
-                            my $l_bool = any { $_ == $RIGHT } @{$l->[$i]};
-                            my $r_bool = any { $_ == $LEFT } @{$r->[$i]};
-                            if ($l_bool xor $r_bool)
-                            {
-                                return;
-                            }
-                            if ($l_bool)
-                            {
-                                my $l_k = 'l' . ($i+4);
-                                my $r_k = 'r' . $i;
-                                $fcc{$l_k}{$r_k} = $fcc{$r_k}{$l_k} = 1;
-                            }
-                        }
-                    }
-
-                    my @nodes = (map {; "l$_", "r$_" } 0 .. 7);
-                    my %found = (map { $_ => +{ $_ => 1 } } @nodes);
-
-                    FIND:
-                    while (1)
-                    {
-                        my $changed = 0;
-                        foreach my $node (@nodes)
-                        {
-                            my %node_fcc = %{$found{$node}};
-                            my $init_count = scalar keys %node_fcc;
-                            foreach my $link (keys(%{$fcc{$node}}))
-                            {
-                                %node_fcc = (%node_fcc, %{$found{$link}});
-                            }
-                            if (scalar keys %node_fcc > $init_count)
-                            {
-                                $changed = 1;
-                                foreach my $link (keys(%node_fcc))
-                                {
-                                    $found{$link} = {%node_fcc};
-                                }
-                            }
-                        }
-                        if (! $changed)
-                        {
-                            last FIND;
-                        }
-                    }
-
-                    my @ret_fcc;
-                    my @ret_nodes = qw(l0 l1 l2 l3 r4 r5 r6 r7);
-                    my %ret_nodes_lookup = (map { $ret_nodes[$_] => $_ } keys @ret_nodes);
-                    foreach my $node (@ret_nodes)
-                    {
-                        if (exists($found{$node}))
-                        {
-                            my @links = keys(%{$found{$node}});
-                            push @ret_fcc, [sort { $a <=> $b } @ret_nodes_lookup{grep { exists($ret_nodes_lookup{$_}) } @links}];
-
-                            foreach my $link (@links)
-                            {
-                                delete($found{$link});
-                            }
-                        }
-                    }
-                    if (scalar keys %found)
+                    if (not $ret_fcc)
                     {
                         return;
                     }
+
                     my $h1 = $sum_mid;
                     my $h2 = DataObj->place_in($h1, $left_l_obj->d, +{});
                     my $h3 = DataObj->place_in($h2, $right_r_obj->d, +{});
-                    my $count = DataObj->place_in($h3, SigData->new({data => (\@ret_fcc)}), Math::BigInt->new('0'));
+                    my $count = DataObj->place_in($h3, $ret_fcc, Math::BigInt->new('0'));
                     $count += $left_fcc_obj->records * $right_fcc_obj->records;
                 }
             );
