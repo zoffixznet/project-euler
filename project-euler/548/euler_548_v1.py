@@ -52,8 +52,11 @@ def calc_num_chains(sig):
         cache[sig_s] = real_calc_num_chains(sig)
     return cache[sig_s]
 
+def calc_g(n):
+    return calc_num_chains(factor_sig(n))
+
 def check_num_chains(n, good):
-    if calc_num_chains(factor_sig(n)) != good:
+    if calc_g(n) != good:
         print ("calc_num_chains %d is not good" % (n));
         raise BaseException
     return
@@ -61,3 +64,38 @@ def check_num_chains(n, good):
 check_num_chains(12, 8)
 check_num_chains(48, 48)
 check_num_chains(120, 132)
+
+LIM = long('1' + ('0' * 16))
+
+found = set()
+found.add(long(1))
+
+def iter_over_sigs(length):
+    if calc_num_chains([1] * length) > LIM:
+        return False
+    def helper(so_far):
+        if len(so_far) == length:
+            ret = calc_num_chains(list(reversed(so_far)))
+            if ret > LIM:
+                return False
+            if (ret == calc_g(ret)):
+                found.add(ret)
+            return True
+        for x in xrange(1,so_far[-1]+1):
+            if not helper(so_far + [x]):
+                if x == 1:
+                    return False
+        return True
+    first = 1
+    while True:
+        if not helper([first]):
+            break
+        first += 1
+    return True
+
+length = 1
+while (iter_over_sigs(length)):
+    print ("Finished len = %d" % (length))
+    length += 1
+
+print ("Result = %d" % (sum(found)))
