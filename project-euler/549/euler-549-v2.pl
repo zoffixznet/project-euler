@@ -10,8 +10,8 @@ STDOUT->autoflush(1);
 
 use List::Util qw/max min/;
 
-# my $MAX = 100_000_000;
-my $MAX = 100;
+my $MAX = 100_000_000;
+# my $MAX = 100;
 my $buf = '';
 
 my @primes = `primesieve -p 2 $MAX`;
