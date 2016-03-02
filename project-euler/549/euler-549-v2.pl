@@ -30,7 +30,6 @@ foreach my $p (@primes)
         }
     }
 
-    my $pow = $p;
     $powers[0][1] += $powers[0][0];
     my $this_e = 1;
     my $prev_e = 0;
@@ -40,6 +39,7 @@ foreach my $p (@primes)
     {
         if ($e == $prev_e + 1)
         {
+            my $pow = $powers[$e-1][0];
             my $i = $pow;
             while ($i <= $MAX)
             {
@@ -56,7 +56,6 @@ foreach my $p (@primes)
     }
     continue
     {
-        $pow *= $p;
         if ($e == $this_e)
         {
             $mul += $p;
