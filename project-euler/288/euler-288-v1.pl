@@ -4,6 +4,8 @@ use warnings;
 use integer;
 use bytes;
 
+use IO::All qw/io/;
+
 use List::Util qw(sum);
 use List::MoreUtils qw();
 
@@ -38,6 +40,40 @@ sub f
 {
     return factorial_factor_exp(shift(), Math::BigInt->new($BASE)) % (Math::BigInt->new($BASE) ** $N_LIM);
 }
+
+io->file("test.p6")->print(<<"EOF");
+use v6;
+
+sub factorial_factor_exp(\$n , \$f)
+{
+    if (\$n < \$f)
+    {
+        return 0;
+    }
+    else
+    {
+        my \$div = \$n / \$f;
+        return \$div + factorial_factor_exp(\$div, \$f);
+    }
+}
+
+my \$BASE = $BASE;
+my \@t_n = (@{[join",",@t_n]});
+
+my \$N_LIM = $N_LIM;
+
+my \$sum = $sum;
+
+sub f(\$n)
+{
+    return factorial_factor_exp(\$n, (\$BASE)) % ((\$BASE) ** \$N_LIM);
+}
+
+say "Solution == ", (([+] (
+    (map { f((\$BASE) ** \$_) * \@t_n[\$_] }, 1 .. \@t_n-1),
+    \$sum * f((\$BASE) ** \$N_LIM)
+)) % ((\$BASE) ** \$N_LIM));
+EOF
 
 print sum(
     (map { f(Math::BigInt->new($BASE) ** $_) * $t_n[$_] } 1 .. $#t_n),
