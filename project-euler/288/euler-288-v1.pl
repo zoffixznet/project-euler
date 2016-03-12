@@ -75,6 +75,52 @@ say "Solution == ", (([+] (
 )) % ((\$BASE) ** \$N_LIM));
 EOF
 
+io->file("test-good.pl")->print(<<"EOF");
+use strict;
+use warnings;
+
+use List::Util qw(sum);
+use List::MoreUtils qw();
+
+STDOUT->autoflush(1);
+
+use Math::BigInt lib => "GMP";
+
+sub factorial_factor_exp
+{
+    my (\$n , \$f) = \@_;
+
+    if (\$n < \$f)
+    {
+        return 0;
+    }
+    else
+    {
+        my \$div = \$n / \$f;
+        return \$div + factorial_factor_exp(\$div, \$f);
+    }
+}
+
+my \$BASE = $BASE;
+my \@t_n = (@{[join",",@t_n]});
+
+my \$N_LIM = $N_LIM;
+
+my \$sum = $sum;
+
+sub f
+{
+    return factorial_factor_exp(shift(), Math::BigInt->new(\$BASE)) % (Math::BigInt->new(\$BASE) ** \$N_LIM);
+}
+
+print sum(
+    (map { f(Math::BigInt->new(\$BASE) ** \$_) * \$t_n[\$_] } 1 .. \$#t_n),
+    \$sum * f(Math::BigInt->new(\$BASE) ** \$N_LIM)
+) % (Math::BigInt->new(\$BASE) ** \$N_LIM);
+print "\n";
+
+EOF
+
 print sum(
     (map { f(Math::BigInt->new($BASE) ** $_) * $t_n[$_] } 1 .. $#t_n),
     $sum * f(Math::BigInt->new($BASE) ** $N_LIM)
