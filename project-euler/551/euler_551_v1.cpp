@@ -13,6 +13,7 @@ static inline void print_n()
         printf("%d", digits[i]);
     }
     printf("\n");
+    fflush(stdout);
 }
 
 int main()
