@@ -2,26 +2,34 @@
 
 #define NUM_DIGITS 10000
 int num_digits = 1;
+long long idx = 1;
 int digits[NUM_DIGITS] = {0};
 
 static inline void print_n()
 {
+    printf("a[%lld] = ", idx);
     for (int i = num_digits-1; i >= 0 ; i--)
     {
         printf("%d", digits[i]);
     }
+    printf("\n");
 }
 
 int main()
 {
     digits[0] = 1;
-    long long idx = 1;
 
-    const long long LIM = 1000000;
-    const long long STEP = 1000000;
+    const long long LIM = 1000000000000000;
+    const long long STEP = 1000000000;
+    long long checkpoint = STEP;
 
     for (;idx < LIM;idx++)
     {
+        if (idx == checkpoint)
+        {
+            print_n();
+            checkpoint += STEP;
+        }
         long long sum = 0;
         for (int i = 0; i < num_digits; i++)
         {
@@ -48,9 +56,7 @@ int main()
         }
     }
 
-    printf("a[%lld] = ", idx);
     print_n();
-    printf("\n");
 
     return 0;
 }
