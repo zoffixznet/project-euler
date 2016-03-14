@@ -69,7 +69,7 @@ sub f(\$n)
     return factorial_factor_exp(\$n, (\$BASE)) % ((\$BASE) ** \$N_LIM);
 }
 
-say "Solution == ", (([+] (
+say "Solution == ", (([+] flat(
     (map { f((\$BASE) ** \$_) * \@t_n[\$_] }, 1 .. \@t_n-1),
     \$sum * f((\$BASE) ** \$N_LIM)
 )) % ((\$BASE) ** \$N_LIM));
