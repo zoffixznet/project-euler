@@ -81,8 +81,8 @@ while idx < LIM:
         lookup = cache[d_s][i]
         if sub_s in lookup:
             start_arr_i = lookup[sub_s]
+            prefix = _format(calced_arr[start_arr_i])[:i]
             end_arr_i = start_arr_i + 1
-            prefix = a_s[:i]
             while end_arr_i < len(calced_arr) and _format(calced_arr[end_arr_i])[:i] == prefix:
                 end_arr_i += 1
             end_arr_i -= 1
