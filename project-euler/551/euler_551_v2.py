@@ -66,7 +66,8 @@ calc_next()
 ins(a_n, d_s, idx)
 cache_delta()
 
-LIM = long(1000000)
+# LIM = long(1000000)
+LIM = long(1000000000000000)
 
 def _print_me():
     global a_n, idx, d_s
