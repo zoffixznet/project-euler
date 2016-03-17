@@ -82,13 +82,17 @@ while idx < LIM:
         if sub_s in lookup:
             start_arr_i = lookup[sub_s]
             prefix = _format(calced_arr[start_arr_i])[:i]
+            base_idx = idx - calced_arr[start_arr_i]['i']
             end_arr_i = start_arr_i + 1
-            while end_arr_i < len(calced_arr) and _format(calced_arr[end_arr_i])[:i] == prefix:
+            new_idx = base_idx + calced_arr[end_arr_i]['i']
+            while end_arr_i < len(calced_arr) and _format(calced_arr[end_arr_i])[:i] == prefix and new_idx <= LIM:
                 end_arr_i += 1
+                new_idx = base_idx + calced_arr[end_arr_i]['i']
             end_arr_i -= 1
+            new_idx = base_idx + calced_arr[end_arr_i]['i']
             if end_arr_i > start_arr_i:
                 a_n += calced_arr[end_arr_i]['n'] - calced_arr[start_arr_i]['n']
-                idx += calced_arr[end_arr_i]['i'] - calced_arr[start_arr_i]['i']
+                idx = new_idx
                 d_s = calced_arr[end_arr_i]['s']
                 to_proc = False
                 break
