@@ -16,8 +16,13 @@ a_n = A0
 
 LIM = long(1000000)
 
+def _print_me():
+    global idx, a_n
+    print (("a[%d] = %d") % (idx, a_n))
+
 while idx < LIM:
+    _print_me()
     a_n += sum(int(x) for x in str(a_n))
     idx += 1
 
-print (("a[%d] = %d") % (idx, a_n))
+_print_me()

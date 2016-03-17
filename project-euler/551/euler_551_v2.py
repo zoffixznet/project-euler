@@ -59,7 +59,7 @@ def cache_delta():
     e_digits = _format(e)
     l = _common_len(s_digits, e_digits)
     for i in xrange(1, l+1):
-        cache[s['s']][i][s_digits[:i]] = my_i
+        cache[s['s']][i][s_digits[i:]] = my_i
     return
 
 calc_next()
@@ -76,20 +76,22 @@ while idx < LIM:
     _print_me()
     a_s = _format_n(a_n)
     to_proc = True
-    for i in xrange(NUM_DIGITS,0,-1):
-        sub_s = a_s[:i]
+    for i in xrange(1, NUM_DIGITS):
+        sub_s = a_s[i:]
         lookup = cache[d_s][i]
         if sub_s in lookup:
             start_arr_i = lookup[sub_s]
             end_arr_i = start_arr_i + 1
-            while end_arr_i < len(calced_arr) and _format(calced_arr[end_arr_i])[:i] == sub_s:
+            prefix = a_s[:i]
+            while end_arr_i < len(calced_arr) and _format(calced_arr[end_arr_i])[:i] == prefix:
                 end_arr_i += 1
             end_arr_i -= 1
-            a_n += calced_arr[end_arr_i]['n'] - calced_arr[start_arr_i]['n']
-            idx += calced_arr[end_arr_i]['i'] - calced_arr[start_arr_i]['i']
-            d_s = calced_arr[end_arr_i]['s']
-            to_proc = False
-            break
+            if end_arr_i > start_arr_i:
+                a_n += calced_arr[end_arr_i]['n'] - calced_arr[start_arr_i]['n']
+                idx += calced_arr[end_arr_i]['i'] - calced_arr[start_arr_i]['i']
+                d_s = calced_arr[end_arr_i]['s']
+                to_proc = False
+                break
 
     if to_proc:
         calc_next()
