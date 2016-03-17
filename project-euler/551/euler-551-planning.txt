@@ -1,0 +1,22 @@
+We start from 1 and add its digits sum to itself and so 10**15-1 times.
+
+Let's keep an array of the numbers we generate where each array element
+contains:
+
+    #. The number itself.
+
+    #. Its sum of digits.
+
+    #. Its absolute sequence index in the sequence (e.g: 1 => 0, 2 => 1, 4 =>
+    2, 8 => 3, etc.). We need this because we sometimes skip numbers.
+
+Now we'll also have a lookup/map/dictionary/hash of:
+
+    «digits_sum => number_of_invariant_digits => invariant_digits
+        => pos_in_array »
+
+When calculating a new position based on an old one (last from the array),
+we first try to find it in the lookup, based on the digits sum and a
+decreasing number_of_invariant_digits and then we step in the array.
+
+
