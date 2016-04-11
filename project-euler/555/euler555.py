@@ -51,7 +51,7 @@ class S_func:
         self.p = p
         self.m = m
 
-    def calc(self):
+    def _old_calc(self):
         """docstring for calc"""
         ret = long(0)
         m = self.m
@@ -59,6 +59,29 @@ class S_func:
             print (("k=%d") % k)
             for s in xrange(1, k):
                 ret += _calc_SF(m, k, s)
+        return ret
+
+    def calc(self):
+        """docstring for calc"""
+        ret = long(0)
+        m = self.m
+        for k in xrange(2, self.p+1):
+            print (("k=%d") % k)
+            s = 1
+            wavelen = k - s
+            d = wavelen - s
+            min_ = m - s + 1
+            max_ = m + min(d, 0)
+            for s in xrange(1, k):
+                if ((d % wavelen) == 0):
+                    ret += ((long(min_+max_)*(max_-min_+1)) >> 1)
+                wavelen -= 1
+                min_ -= 1
+                d -= 2
+                if d < 0:
+                    max_ -= 1
+                    if d < -1:
+                        max_ -= 1
         return ret
 
 def main():
