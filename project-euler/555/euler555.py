@@ -4,6 +4,7 @@ class M_func:
         self.m = m
         self.k = k
         self.s = s
+        self._c = [None] * (m+1)
         return
 
     def calc(self, n):
@@ -11,7 +12,9 @@ class M_func:
         if n > self.m:
             return n - self.s
         else:
-            return self.calc(self.calc(n + self.k))
+            if self._c[n] == None:
+                self._c[n] = self.calc(self.calc(n + self.k))
+            return self._c[n]
 
     def calc_F(self):
         return [x for x in xrange(0,self.m+1) if self.calc(x) == x]
