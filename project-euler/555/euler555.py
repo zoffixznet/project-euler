@@ -38,17 +38,12 @@ class M_func:
         return (((min_+max_)*(max_-min_+1)) >> 1)
 
 def _calc_SF(m, k, s):
-    # Short for wavelen
-    w = k - s
-    # Short for delta
-    d = w - s
-    # Since w > d and w > 0 then the only possible options are:
-    # 1. d == 0 -> k == 2*s.
-    # 2. d < 0 && |w| <= |d| -> s > k/2 ; k-s <= -(k-2s) -> 2k <= 3s -> s >= 2/3*k
-    if ((d % w) != 0):
+    m_m = m + k - (s << 1)
+    wavelen = k - s
+    min_ = m_m - wavelen + 1
+    min_pos = m - wavelen + 1
+    if (((min_pos - min_) % wavelen) != 0):
         return long(0)
-    m_m = m + d
-    min_ = m_m - w + 1
     max_ = min(m_m, m)
     return ((long(min_+max_)*(max_-min_+1)) >> 1)
 
@@ -63,8 +58,7 @@ class S_func:
         m = self.m
         for k in xrange(2, self.p+1):
             print (("k=%d") % k)
-            ret += _calc_SF(m, k, k >> 1)
-            for s in xrange((k << 1)/3, k):
+            for s in xrange(1, k):
                 ret += _calc_SF(m, k, s)
         return ret
 
