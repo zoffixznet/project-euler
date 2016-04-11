@@ -14,7 +14,7 @@ class M_func:
             return self.calc(self.calc(n + self.k))
 
     def calc_F(self):
-        return [x for x in range(0,self.m+1) if self.calc(x) == x]
+        return [x for x in xrange(0,self.m+1) if self.calc(x) == x]
 
     def calc_SF(self):
         """docstring for calc_SF"""
@@ -29,7 +29,7 @@ class S_func:
     def calc(self):
         """docstring for calc"""
         ret = 0
-        for k in range(2, self.p+1):
-            for s in range(1, k):
+        for k in xrange(2, self.p+1):
+            for s in xrange(1, k):
                 ret += M_func(self.m, k, s).calc_SF()
         return ret
