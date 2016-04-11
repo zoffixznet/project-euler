@@ -40,7 +40,7 @@ class M_func:
 def _calc_SF(m, k, s):
     wavelen = k - s
     d = wavelen - s
-    if (((-d) % wavelen) != 0):
+    if ((d % wavelen) != 0):
         return long(0)
     m_m = m + d
     min_ = m - s + 1
