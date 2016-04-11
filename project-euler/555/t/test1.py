@@ -9,7 +9,7 @@ from TAP.Simple import *
 
 from euler555 import M_func, S_func
 
-plan( 5 )
+plan( 6 )
 
 def main():
     M_91 = M_func(100,11,10)
@@ -28,6 +28,9 @@ def main():
 
     # TEST
     ok(S_func(10, 10).calc() == long(225), "S(10,10)");
+
+    # TEST
+    ok(S_func(1000, 1000).calc() == long(208724467), "S(1000,1000)");
 
 #----------------------------------------------------------------------
 
