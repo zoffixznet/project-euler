@@ -1,0 +1,14 @@
+Theorem: if s = k - 1 then M(n) = m + 1 - s for n <= m, k >= 2
+
+Proof:
+
+    M(m) = M(M(m+k)) = M(m+k-s) = M(m+1) = m + 1 -s
+    M(m-1) = M(M(m+k-1)) = M(m+k-s-1) = M(m) = m + 1 - s
+    M(m-2) = k == 2 => M(M(m)) = M(m + 1 - s) = M(m + 1 - 1) = M(m)
+           = k > 2 => M(M(m + k - 2)) = M(m + k - s - 2) = M(m-1) = M(m)
+
+    In general, for m > d >= 2 if we assumed that M(m' > m-d) = m+1-s
+    then:
+        M(m-d) = if k <= d → M(m-d) = M(M(m-d+k)) = M(M(m)) = M(m)
+                 if k > d -> M(m-d) = M(M(m-d+k)) = M(m-d+k-s) = M(m-d+1) =
+                 M(m) # Because of the induction.
