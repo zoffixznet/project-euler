@@ -68,14 +68,16 @@ class S_func:
         for k in xrange(2, self.p+1):
             print (("k=%d") % k)
             s = 1
-            wavelen = k - s
-            d = wavelen - s
+            # Short for wavelen
+            w = k - s
+            # Short for delta
+            d = w - s
             min_ = m - s + 1
             max_ = m + min(d, 0)
             for s in xrange(1, k):
-                if ((d % wavelen) == 0):
+                if ((d % w) == 0):
                     ret += ((long(min_+max_)*(max_-min_+1)) >> 1)
-                wavelen -= 1
+                w -= 1
                 min_ -= 1
                 d -= 2
                 if d < 0:
