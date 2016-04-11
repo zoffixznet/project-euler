@@ -13,3 +13,6 @@ class M_func:
         else:
             return self.calc(self.calc(n + self.k))
 
+    def calc_F(self):
+        return [x for x in range(0,self.m+1) if self.calc(x) == x]
+
