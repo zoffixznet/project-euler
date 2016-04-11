@@ -22,11 +22,20 @@ class M_func:
 
     def calc_SF(self):
         """docstring for calc_SF"""
-        ret = long(sum(self.calc_F()))
-        print ("s=%d k=%d" % (self.s, self.k))
-        print self._c
-        return ret
-
+        # ret = long(sum(self.calc_F()))
+        # print ("s=%d k=%d" % (self.s, self.k))
+        # print self._c
+        m_m = self.m + self.k - (self.s << 1)
+        wavelen = self.k - self.s
+        min_ = m_m - wavelen + 1
+        if min_ > self.m:
+            return long(0)
+        min_pos = self.m - wavelen + 1
+        val_at_min = min_ + (min_pos - min_)%wavelen
+        if val_at_min != min_:
+            return long(0)
+        max_ = min(m_m, self.m)
+        return (((min_+max_)*(max_-min_+1)) >> 1)
 
 class S_func:
     def __init__(self, p, m):
