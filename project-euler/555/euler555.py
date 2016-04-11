@@ -42,9 +42,8 @@ def _calc_SF(m, k, s):
     d = wavelen - s
     if ((d % wavelen) != 0):
         return long(0)
-    m_m = m + d
     min_ = m - s + 1
-    max_ = min(m_m, m)
+    max_ = m + min(d, 0)
     return ((long(min_+max_)*(max_-min_+1)) >> 1)
 
 class S_func:
