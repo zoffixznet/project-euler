@@ -23,7 +23,7 @@ For s < k-1:
 
 -----------------------
 
-Theorem : For k-s >= 2 M(n-(k-s)) = M(n) if n - (k-s) >= 1 and naturally
+Theorem : For k-s >= 2: M(n-(k-s)) = M(n) if n - (k-s) >= 1 and naturally
 n <= m.
 
 Proof:
@@ -33,4 +33,12 @@ Proof:
     We can provide similar proofs for M(n-(k-s)) = M(n) for m-s < n <= m :
 
     M(m-s+1-(k-s)) = M(m+1-k) = M(M(m+1-k+k)) = M(M(m+1)) = M(m-s+1)
+
+    Notice that m-s+1-(k-s) = m-(k-1) so we only have to prove for n <= m-k.
+
+    M(m-d-(k-s)) = M(M(m-d-(k-s)+k)) = M(M(m-d+s))
+
+    Since m - d + s > m - d - k + s then based on the induction steps for
+    n > m-d we can show that M(m-d+s) = M(m-d+s+(k-s)) and as a result
+    M(M(m-d+s)) = M(M(m-d+s+(k-s)))
 

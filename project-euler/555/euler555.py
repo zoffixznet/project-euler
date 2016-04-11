@@ -23,8 +23,8 @@ class M_func:
     def calc_SF(self):
         """docstring for calc_SF"""
         ret = long(sum(self.calc_F()))
-        # print ("s=%d k=%d" % (self.s, self.k))
-        # print self._c
+        print ("s=%d k=%d" % (self.s, self.k))
+        print self._c
         return ret
 
 
