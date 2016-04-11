@@ -18,7 +18,7 @@ class M_func:
 
     def calc_SF(self):
         """docstring for calc_SF"""
-        return sum(self.calc_F())
+        return long(sum(self.calc_F()))
 
 
 class S_func:
@@ -28,7 +28,7 @@ class S_func:
 
     def calc(self):
         """docstring for calc"""
-        ret = 0
+        ret = long(0)
         for k in xrange(2, self.p+1):
             for s in xrange(1, k):
                 ret += M_func(self.m, k, s).calc_SF()

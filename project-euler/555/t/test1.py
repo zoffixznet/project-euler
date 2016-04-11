@@ -24,10 +24,10 @@ def main():
     ok(M_91.calc_F() == [91], "calc_F");
 
     # TEST
-    is_ok(M_91.calc_SF(), 91, "calc_SF");
+    ok(M_91.calc_SF() == long(91), "calc_SF");
 
     # TEST
-    is_ok(S_func(10, 10).calc(), 225, "S(10,10)");
+    ok(S_func(10, 10).calc() == long(225), "S(10,10)");
 
 #----------------------------------------------------------------------
 
