@@ -55,6 +55,10 @@ def main():
     p = 1000
     print (("S(%d,%d) = %d") % (p,m,S_func(p,m).calc()))
 
+    m = 1000000
+    p = 1000000
+    print (("S(%d,%d) = %d") % (p,m,S_func(p,m).calc()))
+
 if __name__ == "__main__":
     main()
 
