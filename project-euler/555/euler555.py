@@ -4,6 +4,7 @@ class M_func:
         self.m = m
         self.k = k
         self.s = s
+        self._c = None
         return
 
     def calc(self, n):
@@ -12,7 +13,7 @@ class M_func:
             return n - self.s
         else:
             if not self._c:
-                self._c = [None] * (m+1)
+                self._c = [None] * (self.m+1)
             if self._c[n] == None:
                 self._c[n] = self.calc(self.calc(n + self.k))
             return self._c[n]
@@ -36,6 +37,17 @@ class M_func:
         max_ = min(m_m, self.m)
         return (((min_+max_)*(max_-min_+1)) >> 1)
 
+def _calc_SF(m, k, s):
+    m_m = m + k - (s << 1)
+    wavelen = k - s
+    min_ = m_m - wavelen + 1
+    min_pos = m - wavelen + 1
+    val_at_min = min_ + (min_pos - min_)%wavelen
+    if val_at_min != min_:
+        return long(0)
+    max_ = min(m_m, m)
+    return ((long(min_+max_)*(max_-min_+1)) >> 1)
+
 class S_func:
     def __init__(self, p, m):
         self.p = p
@@ -44,10 +56,11 @@ class S_func:
     def calc(self):
         """docstring for calc"""
         ret = long(0)
+        m = self.m
         for k in xrange(2, self.p+1):
             print (("k=%d") % k)
             for s in xrange(1, k):
-                ret += M_func(self.m, k, s).calc_SF()
+                ret += _calc_SF(m, k, s)
         return ret
 
 def main():
