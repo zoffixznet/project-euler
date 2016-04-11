@@ -84,6 +84,8 @@ class S_func:
                     max_ -= 1
                     if d < -1:
                         max_ -= 1
+                    if max_ < min_:
+                        break
         return ret
 
 def main():
