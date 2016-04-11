@@ -68,24 +68,38 @@ class S_func:
         for k in xrange(2, self.p+1):
             print (("k=%d") % k)
             s = 1
+            if ((k & 0x1) == 0):
+                s = (k >> 1)
+                # Short for wavelen
+                w = k - s
+                # Short for delta
+                d = w - s
+                min_ = m
+                max_ = m + min(d, 0)
+                ret += ((long(min_+max_)*(max_-min_+1)) >> 1)
+                s += 1
+            s = max(s, int((2*k) / 3)-1)
             # Short for wavelen
             w = k - s
             # Short for delta
             d = w - s
-            min_ = m
+            min_ = m - s + 1
             max_ = m + min(d, 0)
-            for s in xrange(1, k):
-                if ((d % w) == 0):
-                    ret += ((long(min_+max_)*(max_-min_+1)) >> 1)
-                w -= 1
-                min_ -= 1
-                d -= 2
-                if d < 0:
-                    max_ -= 1
-                    if d < -1:
+            if max_ >= min_:
+                for i in xrange(s, k):
+                    if ((d % w) == 0):
+                        d_s = ((long(min_+max_)*(max_-min_+1)) >> 1)
+                        print ("d_s = %d" % d_s)
+                        ret += d_s
+                    w -= 1
+                    min_ -= 1
+                    d -= 2
+                    if d < 0:
                         max_ -= 1
-                    if max_ < min_:
-                        break
+                        if d < -1:
+                            max_ -= 1
+                        if max_ < min_:
+                            break
         return ret
 
 def main():

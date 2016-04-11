@@ -11,6 +11,12 @@ from euler555 import M_func, S_func
 
 plan( 6 )
 
+def eq_ok(have,want,blurb):
+    ret = ok(have == want, blurb)
+    if (not ret):
+        diag("(have = '%s', want = '%s')" % (have, want))
+    return ret
+
 def main():
     M_91 = M_func(100,11,10)
 
@@ -27,10 +33,10 @@ def main():
     ok(M_91.calc_SF() == long(91), "calc_SF");
 
     # TEST
-    ok(S_func(10, 10).calc() == long(225), "S(10,10)");
+    eq_ok(S_func(10, 10).calc(), long(225), "S(10,10)");
 
     # TEST
-    ok(S_func(1000, 1000).calc() == long(208724467), "S(1000,1000)");
+    eq_ok(S_func(1000, 1000).calc(), long(208724467), "S(1000,1000)");
 
 #----------------------------------------------------------------------
 
