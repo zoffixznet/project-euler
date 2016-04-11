@@ -72,7 +72,7 @@ class S_func:
             w = k - s
             # Short for delta
             d = w - s
-            min_ = m - s + 1
+            min_ = m
             max_ = m + min(d, 0)
             for s in xrange(1, k):
                 if ((d % w) == 0):
