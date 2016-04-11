@@ -17,11 +17,15 @@ class M_func:
             return self._c[n]
 
     def calc_F(self):
-        return [x for x in xrange(0,self.m+1) if self.calc(x) == x]
+        # We iterate in reverse because the function is calculated this way.
+        return [x for x in xrange(self.m, 0, -1) if self.calc(x) == x]
 
     def calc_SF(self):
         """docstring for calc_SF"""
-        return long(sum(self.calc_F()))
+        ret = long(sum(self.calc_F()))
+        # print ("s=%d k=%d" % (self.s, self.k))
+        # print self._c
+        return ret
 
 
 class S_func:
