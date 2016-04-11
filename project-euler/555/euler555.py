@@ -4,7 +4,6 @@ class M_func:
         self.m = m
         self.k = k
         self.s = s
-        self._c = [None] * (m+1)
         return
 
     def calc(self, n):
@@ -12,6 +11,8 @@ class M_func:
         if n > self.m:
             return n - self.s
         else:
+            if not self._c:
+                self._c = [None] * (m+1)
             if self._c[n] == None:
                 self._c[n] = self.calc(self.calc(n + self.k))
             return self._c[n]
