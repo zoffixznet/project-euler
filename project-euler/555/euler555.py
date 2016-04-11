@@ -30,6 +30,16 @@ class S_func:
         """docstring for calc"""
         ret = long(0)
         for k in xrange(2, self.p+1):
+            print (("k=%d") % k)
             for s in xrange(1, k):
                 ret += M_func(self.m, k, s).calc_SF()
         return ret
+
+def main():
+    m = 1000
+    p = 1000
+    print (("S(%d,%d) = %d") % (p,m,S_func(p,m).calc()))
+
+if __name__ == "__main__":
+    main()
+
