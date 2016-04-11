@@ -7,9 +7,9 @@ sys.path.insert(0, '.')
 
 from TAP.Simple import *
 
-from euler555 import M_func
+from euler555 import M_func, S_func
 
-plan(4)
+plan( 5 )
 
 def main():
     M_91 = M_func(100,11,10)
@@ -25,6 +25,9 @@ def main():
 
     # TEST
     is_ok(M_91.calc_SF(), 91, "calc_SF");
+
+    # TEST
+    is_ok(S_func(10, 10).calc(), 225, "S(10,10)");
 
 #----------------------------------------------------------------------
 

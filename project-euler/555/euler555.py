@@ -19,3 +19,17 @@ class M_func:
     def calc_SF(self):
         """docstring for calc_SF"""
         return sum(self.calc_F())
+
+
+class S_func:
+    def __init__(self, p, m):
+        self.p = p
+        self.m = m
+
+    def calc(self):
+        """docstring for calc"""
+        ret = 0
+        for k in range(2, self.p+1):
+            for s in range(1, k):
+                ret += M_func(self.m, k, s).calc_SF()
+        return ret
