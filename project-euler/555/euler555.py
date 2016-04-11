@@ -53,7 +53,7 @@ class S_func:
 
     def _old_calc(self):
         """docstring for calc"""
-        ret = long(0)
+        ret = 0
         m = self.m
         for k in xrange(2, self.p+1):
             print (("k=%d") % k)
@@ -62,8 +62,8 @@ class S_func:
         return ret
 
     def calc(self):
-        """docstring for calc"""
-        ret = long(0)
+        # Short for ret.
+        r = 0
         m = self.m
         for k in xrange(2, self.p+1):
             print (("k=%d") % k)
@@ -76,30 +76,31 @@ class S_func:
                 d = w - s
                 min_ = m - s + 1
                 max_ = m + min(d, 0)
-                ret += ((long(min_+max_)*(max_-min_+1)) >> 1)
+                r += (((min_+max_)*(max_-min_+1)))
                 s += 1
             s = max(s, int((2*k) / 3))
             # Short for wavelen
             w = k - s
             # Short for delta
             d = w - s
-            min_ = m - s + 1
-            max_ = m + min(d, 0)
-            if max_ >= min_:
+            # Short for bottom
+            b = m - s + 1
+            # Short for top
+            t = m + min(d, 0)
+            if t >= b:
                 for i in xrange(s, k):
                     if ((d % w) == 0):
-                        d_s = ((long(min_+max_)*(max_-min_+1)) >> 1)
-                        ret += d_s
+                        r += (((b+t)*(t-b+1)))
                     w -= 1
-                    min_ -= 1
+                    b -= 1
                     d -= 2
                     if d < 0:
-                        max_ -= 1
+                        t -= 1
                         if d < -1:
-                            max_ -= 1
-                        if max_ < min_:
+                            t -= 1
+                        if t < b:
                             break
-        return ret
+        return (r >> 1)
 
 def main():
     m = 1000
