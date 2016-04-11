@@ -12,3 +12,25 @@ Proof:
         M(m-d) = if k <= d → M(m-d) = M(M(m-d+k)) = M(M(m)) = M(m)
                  if k > d -> M(m-d) = M(M(m-d+k)) = M(m-d+k-s) = M(m-d+1) =
                  M(m) # Because of the induction.
+
+-----------------------
+
+M(m) = M(M(m+k)) = M(m+k-s) = m + k - 2*s
+
+For s < k-1:
+
+    M(m-1) = M(M(m+k-1)) = M(m+k-1-s) = m + k - 2*s - 1 = M(m)-1
+
+-----------------------
+
+Theorem : For k-s >= 2 M(n-(k-s)) = M(n) if n - (k-s) >= 1 and naturally
+n <= m.
+
+Proof:
+    M(m-(k-s)) = M(M(m-(k-s)+k)) = M(M(m+s)) = M(m+s-s) = M(m)
+    M(m-1-(k-s)) = M(M(m-1-(k-s)+k)) = M(M(m+s-1)) = M(m+s-s-1) = M(m-1)
+
+    We can provide similar proofs for M(n-(k-s)) = M(n) for m-s < n <= m :
+
+    M(m-s+1-(k-s)) = M(m+1-k) = M(M(m+1-k+k)) = M(M(m+1)) = M(m-s+1)
+
