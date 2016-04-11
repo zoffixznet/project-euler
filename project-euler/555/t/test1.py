@@ -9,7 +9,7 @@ from TAP.Simple import *
 
 from euler555 import M_func
 
-plan(3)
+plan(4)
 
 def main():
     M_91 = M_func(100,11,10)
@@ -22,6 +22,9 @@ def main():
 
     # TEST
     ok(M_91.calc_F() == [91], "calc_F");
+
+    # TEST
+    is_ok(M_91.calc_SF(), 91, "calc_SF");
 
 #----------------------------------------------------------------------
 

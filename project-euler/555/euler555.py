@@ -16,3 +16,6 @@ class M_func:
     def calc_F(self):
         return [x for x in range(0,self.m+1) if self.calc(x) == x]
 
+    def calc_SF(self):
+        """docstring for calc_SF"""
+        return sum(self.calc_F())
