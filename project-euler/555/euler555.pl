@@ -53,30 +53,18 @@ sub factorize
 
 sub divisors
 {
-    my @factors = @{factorize(shift)};
-    my $rec;
-
-    $rec = sub {
-        my $l = shift;
-        if ($l == @factors)
+    my $ret = [1];
+    foreach my $f (@{factorize(shift)})
+    {
+        my ($b, $e) = @$f;
+        my @d = (1);
+        for my $i (1 .. $e)
         {
-            return 1;
+            push @d, $d[-1]*$b;
         }
-        else
-        {
-            my @d = (1);
-            for my $i (1 .. $factors[$l][1])
-            {
-                push @d, $d[-1]*$factors[$l][0];
-            }
-            return map { my $x = $_; map { $_ * $x } @d } $rec->($l+1);
-        }
-    };
-
-    my @ret = $rec->(0);
-    $rec = undef;
-
-    return @ret;
+        $ret = [map { my $x = $_; map { $_ * $x } @d } @$ret];
+    }
+    return $ret;
 }
 
 sub faulhaber1
@@ -93,7 +81,7 @@ sub sum
 
     foreach my $s (1 .. $p-1)
     {
-        foreach my $d (divisors($s))
+        foreach my $d (@{divisors($s)})
         {
             my $k = $s + $d;
             if ($k <= $p)
