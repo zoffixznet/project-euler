@@ -9,41 +9,40 @@ use integer;
 
 use List::Util qw(reduce);
 
-my @Cache = (undef, []);
-
 sub factorize_helper
 {
     my ($n, $start_from) = @_;
 
     my $limit = int(sqrt($n));
 
-    if (! defined($Cache[$n]))
+    if ($n == 1)
     {
-        my $d = $n;
-        while ($d % $start_from)
-        {
-            if (++$start_from > $limit)
-            {
-                return $Cache[$n] = [[$n,1]];
-            }
-        }
-
-        $d /= $start_from;
-
-        my @n_factors = (map { [@$_] } @{factorize_helper($d, $start_from)});
-
-        if (@n_factors && $n_factors[0][0] == $start_from)
-        {
-            $n_factors[0][1]++;
-        }
-        else
-        {
-            unshift @n_factors, ([$start_from, 1]);
-        }
-
-        $Cache[$n] = \@n_factors;
+        return [];
     }
-    return $Cache[$n];
+
+    my $d = $n;
+    while ($d % $start_from)
+    {
+        if (++$start_from > $limit)
+        {
+            return [[$n,1]];
+        }
+    }
+
+    $d /= $start_from;
+
+    my @n_factors = (map { [@$_] } @{factorize_helper($d, $start_from)});
+
+    if (@n_factors && $n_factors[0][0] == $start_from)
+    {
+        $n_factors[0][1]++;
+    }
+    else
+    {
+        unshift @n_factors, ([$start_from, 1]);
+    }
+
+    return \@n_factors;
 }
 
 sub factorize
@@ -74,7 +73,10 @@ sub divisors
         }
     };
 
-    return $rec->(0);
+    my @ret = $rec->(0);
+    $rec = undef;
+
+    return @ret;
 }
 
 sub faulhaber1
