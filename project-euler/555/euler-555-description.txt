@@ -1,0 +1,33 @@
+McCarthy 91 function
+
+The McCarthy 91 function is defined as follows:
+M91(n)={n−10M91(M91(n+11))if n>100if 0≤n≤100
+
+We can generalize this definition by abstracting away the constants into new variables:
+Mm,k,s(n)={n−sMm,k,s(Mm,k,s(n+k))if n>mif 0≤n≤m
+
+This way, we have M91=M100,11,10
+
+.
+
+Let Fm,k,s
+be the set of fixed points of Mm,k,s. That is,
+Fm,k,s={n∈N|Mm,k,s(n)=n}
+
+For example, the only fixed point of M91
+is n=91. In other words, F100,11,10={91}
+
+.
+
+Now, define SF(m,k,s)
+as the sum of the elements in Fm,k,s and let S(p,m)=∑1≤s<k≤pSF(m,k,s)
+
+.
+
+For example, S(10,10)=225
+and S(1000,1000)=208724467
+
+.
+
+Find S(106,106)
+.
