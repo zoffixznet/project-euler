@@ -9,7 +9,7 @@ use Pentagonal;
 
 use IO::Handle;
 
-STDOUT->autoflush();
+STDOUT->autoflush(1);
 
 # Some analysis. The difference between two consecutive P[n] is:
 # P[n+1]-P[n] = [(n+1)(3n+2)-n(3n-1)]/2 = [3n+2n+2+n]/2 = (6n+2)/2 = 3n+1
