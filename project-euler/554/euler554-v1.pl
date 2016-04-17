@@ -80,6 +80,20 @@ sub calc_C
                 if ($y + 1 == $n)
                 {
                     ++$ret;
+                    if (1)
+                    {
+                        my @board = (map { [(' ') x ($n << 1)] } 1 .. ($n << 1));
+                        foreach my $p (@p)
+                        {
+                            $board[$p->[1]][$p->[0]] = '*';
+                        }
+                        print '-' x (($n+1) << 1), "\n";
+                        foreach my $row (@board)
+                        {
+                            print '|' . (join'',@$row). "|\n";
+                        }
+                        print '-' x (($n+1) << 1), "\n";
+                    }
                     # printf "Ret = %d\n", ++$ret;
                 }
                 else
