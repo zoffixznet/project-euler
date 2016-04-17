@@ -22,7 +22,7 @@ sub is_prime2
 
 =begin verification
 
-This function throws an exception due to a bug in bsg-games' primes.
+This function throws an exception due to a bug in bsd-games' primes.
 
 sub is_prime
 {
