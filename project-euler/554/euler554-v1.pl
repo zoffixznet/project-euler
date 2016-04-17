@@ -17,6 +17,7 @@ STDOUT->autoflush(1);
 my @OFFSETS = ([0,0],[0,1],[1,0],[1,1]);
 
 my @ATTACKS;
+my @A;
 
 foreach my $x (-2 .. 2)
 {
@@ -28,6 +29,7 @@ foreach my $x (-2 .. 2)
         )
         {
             push @ATTACKS, [$x,$y];
+            $A[$x+6][$y+6] = 1;
         }
     }
 }
@@ -58,7 +60,7 @@ sub calc_C
             my $check = sub {
                 my ($off) = @_;
                 my $cent = $p[$i-$off];
-                return (exists($A{join',', $cent->[0]-$nx,$cent->[1]-$ny}));
+                return $A[$cent->[0]-$nx+6][$cent->[1]-$ny+6];
             };
 
             if ($x > 0 && $check->(1)
