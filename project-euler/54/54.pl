@@ -1,13 +1,14 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 use strict;
 use warnings;
+use autodie;
 
 use Games::Cards::Poker qw(:all);
 
-open I, "<", "../poker.txt";
+open my $in, '<', '../poker.txt';
 my $count = 0;
-while (<I>)
+while (<$in>)
 {
     chomp;
     my @cards = split;
@@ -16,5 +17,5 @@ while (<I>)
         $count++;
     }
 }
-close(I);
+close($in);
 print "$count\n";
