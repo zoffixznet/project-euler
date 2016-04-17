@@ -38,8 +38,6 @@ sub calc_C
 {
     my ($n) = @_;
 
-    my @POS = (grep { $_ & 0b1 == 0 } 0 .. (($n << 1)-1));
-
     my $cb;
     my $ret = 0;
 
@@ -79,7 +77,8 @@ sub calc_C
             {
                 if ($y + 1 == $n)
                 {
-                    printf "Ret = %d\n", ++$ret;
+                    ++$ret;
+                    # printf "Ret = %d\n", ++$ret;
                 }
                 else
                 {
@@ -109,4 +108,6 @@ sub print_C
 
 print_C(1);
 print_C(2);
+print_C(3);
+print_C(4);
 print_C(10);
