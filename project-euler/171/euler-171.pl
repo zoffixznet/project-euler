@@ -155,6 +155,8 @@ sub square_sum_combinations
         $trailing_sq_sum,
     );
 
+    undef ($trail_cb);
+
     return;
 }
 
