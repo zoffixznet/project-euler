@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-# We return the area multiplies by 2 for convenience.
+# We return the area multiplied by 2 for convenience.
 sub triangle_area
 {
     my ($xa, $ya, $xb, $yb, $xc, $yc) = @_;
