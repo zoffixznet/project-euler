@@ -25,9 +25,10 @@ my $min_w = 3;
 my $min_h = 2;
 my $min_num = get_num_inner_rectangles($min_w, $min_h);
 
+W:
 for my $w (2 .. 2_000_000)
 {
-    for my $h (1 .. $w-1)
+    for my $h (1 .. $w)
     {
         my $num = get_num_inner_rectangles($w, $h);
 
@@ -37,6 +38,10 @@ for my $w (2 .. 2_000_000)
             $min_h = $h;
             $min_num = $num;
             print "Found $min_w,$min_h, @{[$min_w*$min_h]}\n"
+        }
+        elsif ($num > 2_000_000 and $h == 1)
+        {
+            last W;
         }
     }
 }

@@ -1,7 +1,17 @@
 #!/bin/bash
 
+count()
+{
+    perl -0777 -ln -E '$count = tr/[A-Z]//d; say $count'
+}
+
+input()
+{
+    cat "../roman.txt"
+}
+
 (
-(cat "../roman.txt" |
+    (input |
     perl -pe '
         s/^(M*)/$1,/;
         s/,(CM|DCCCC)/CM,/;
@@ -22,7 +32,8 @@
         s/VIV,/IX,/;
         s/,(I{0,3})/$1,/;
         s/,$//;
-    ' |
-    perl -0777 -ln -E '$count = tr/[A-Z]//d; say $count' )
-    (cat "../roman.txt" | perl -0777 -ln -E '$count = tr/[A-Z]//d; say $count') ) |
+    ' | count
+    )
+    (input | count )
+) | \
     (read AFTER ; read BEFORE ; echo $((BEFORE - AFTER)))
