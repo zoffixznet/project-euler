@@ -1,0 +1,11 @@
+The Floor's Revenge
+
+Define fk(n) = ∑ni=0
+fk(⌊ik⌋) where fk(0) = 1 and ⌊x⌋
+
+denotes the floor function.
+
+For example, f5(10) = 18, f7(100) = 1003, and f2(103) = 264830889564.
+
+Find (∑10k=2
+fk(1014)) mod (109+7).
