@@ -2,13 +2,8 @@
 
 use strict;
 use warnings;
-
 use 5.010;
-
 use List::Util qw(sum min);
-use Math::BigInt lib => 'GMP';
-
-no warnings 'recursion';
 
 my @sums;
 
