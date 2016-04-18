@@ -3,6 +3,8 @@
 use strict;
 use warnings;
 
+use IO::All qw/ io /;
+
 use List::Util (qw(sum));
 use List::MoreUtils (qw(all));
 
@@ -43,27 +45,13 @@ if (! -e "$limit.bitmask")
         }
     }
 
-    open O, ">", "$limit.bitmask";
-    binmode O;
-    print O $primes_bitmask;
-    close(O);
-
-    open O, ">", "$limit.list";
-    binmode O;
-    print O $primes_list;
-    close(O);
+    io->file("$limit.bitmask")->binmode(1)->print($primes_bitmask);
+    io->file("$limit.list")->binmode(1)->print($primes_list);
 }
 else
 {
-    local $/;
-    open I, "<", "$limit.bitmask";
-    binmode(I);
-    $primes_bitmask = <I>;
-    close(I);
-    open I, "<", "$limit.list";
-    binmode(I);
-    $primes_list = <I>;
-    close(I);
+    $primes_bitmask = io->file("$limit.bitmask")->binmode(1)->all;
+    $primes_list = io->file("$limit.list")->binmode(1)->all;
     $num_primes = (length($primes_list)>>2);
 }
 
