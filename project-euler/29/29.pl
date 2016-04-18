@@ -16,4 +16,4 @@ for my $base (2 .. 100)
     }
 }
 
-print keys(%numbers);
+print +(scalar keys%numbers), "\n";
