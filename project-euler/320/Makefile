@@ -9,7 +9,7 @@ e320-prod.exe: euler_320_v1.cpp
 	g++ -std=gnu++11 -O3 -Wall -flto -fwhole-program -fvisibility=hidden -fomit-frame-pointer -march=native -o $@ $< -lm -lgmp -lgmpxx
 
 $(FFILE):
-	seq 2 1000000 | xargs factor | perl -lane 's/.*?: //; my %x; $$x{$$_}++ for split/\s+/;print join(",", %x)' > $@
+	seq 2 1000000 | factor | perl -lane 's/.*?: //; my %x; $$x{$$_}++ for split/\s+/;print join(",", %x)' > $@
 
 test:
 	prove t/*.t
