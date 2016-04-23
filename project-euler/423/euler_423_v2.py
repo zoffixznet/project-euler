@@ -13,13 +13,12 @@ def pascal_sum(n,p):
     global MOD
     b = 6 * (long(5) ** (n-1))
     l = 1
-    # C = ((b*l) % MOD)
-    C = 0
-    for k in range(p+1):
+    C = ((b*l) % MOD)
+    for k in range(p):
+        b /= 5
+        l = l * (n-1-k) / (k+1)
         C += b*l
         C %= MOD
-        b /= 5
-        l = l * (n-k) / (k+2)
     return C
 
 if __name__ == "__main__":
