@@ -16,18 +16,24 @@ s_n = 0
 primes_s = open("primes.txt").read()
 primes = [int(p) for p in (str(primes_s)).split("\n") if len(p) > 0] + [-1]
 
+def base6(n):
+    if n == 0:
+        return ''
+    return base6(n/6) + str(n%6)
+
 sums = [6, 6, 6]
 pi = 0
-STEP = 100
-at = STEP
-PS = 1000
+# PS = 1000
+PS = 1
 pa = PS
+# for n in range(1,50+1):
 for n in range(1,50000000+1):
     # n_sums → new_sums
-    n_sums = [5*sums[0]]
+    n_sums = [(5*sums[0])%MOD]
     for i in range(1,n+1):
-        n_sums.append(sums[i]*5+sums[i-1])
+        n_sums.append((sums[i]*5+sums[i-1])%MOD)
     n_sums.append(n_sums[-1])
+    print (["0[6]" + base6(x) for x in n_sums])
     # print ("n = ", n, " ; sums = " , [x//6 for x in sums])
     if primes[0] == n:
         primes.pop(0)
@@ -35,12 +41,9 @@ for n in range(1,50000000+1):
 
     C = sums[pi]
     s_n += C
-    if n == at:
-        at += STEP
-        sums = [x%MOD for x in n_sums]
-        if n == pa:
-            pa += PS
-            print ("C(%d) = %d; S = %d" % (n,C,s_n))
-    else:
-        sums = n_sums
+    s_n %= MOD
+    if n == pa:
+        pa += PS
+        print ("C(%d) = %d; S = %d" % (n,C,s_n))
+    sums = n_sums
 
