@@ -15,7 +15,7 @@ while len(E) < 3001136:
 def pascal_sum(n,p):
     global MOD
     b = n
-    l = 1
+    l = long(1)
     C = E[b] * l
     for k in range(p):
         b -= 1
@@ -48,9 +48,7 @@ if __name__ == "__main__":
             primes.pop(0)
             pi += 1
 
-        C = 0
-        if pi > 0:
-            C = pascal_sum(n, pi)
+        C = pascal_sum(n, pi)
         s_n += C
         s_n %= MOD
         if n == pa:
