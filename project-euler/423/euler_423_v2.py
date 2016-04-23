@@ -8,18 +8,20 @@ if sys.version_info > (3,):
 
 MOD = 1000000007
 
+E = [0, 6]
+while len(E) < 3001136:
+    E.append((E[-1] * 5) % MOD)
 
 def pascal_sum(n,p):
     global MOD
-    b = 6 * (long(5) ** (n-1))
+    b = n
     l = 1
-    C = ((b*l) % MOD)
+    C = E[b] * l
     for k in range(p):
-        b /= 5
+        b -= 1
         l = l * (n-1-k) / (k+1)
-        C += b*l
-        C %= MOD
-    return C
+        C += E[b] * l
+    return C%MOD
 
 if __name__ == "__main__":
     s_n = 0
