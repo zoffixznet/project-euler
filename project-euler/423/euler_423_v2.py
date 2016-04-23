@@ -19,7 +19,7 @@ def pascal_sum(n,p):
         C += b*l
         C %= MOD
         b /= 5
-        l = l * (n-k) / (k+1)
+        l = l * (n-k) / (k+2)
     return C
 
 if __name__ == "__main__":

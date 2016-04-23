@@ -8,7 +8,10 @@ def check_sum(n, p, val):
     if not ok (ret == val, "pascal_sum(%d,%d)" % (n,p)):
         diag("got = %d ; expected = %d" % (ret, val))
 
-plan(1)
+plan(2)
 
 # TEST
 check_sum(2,0,30)
+
+# TEST
+check_sum(2,1,36)
