@@ -49,8 +49,8 @@ int main()
     int pi = 0;
 
     int was_set = 0;
-    int n = 1;
-    int prev_n;
+    int n;
+    int prev_n = 1;
     while (1)
     {
         char fn[300];

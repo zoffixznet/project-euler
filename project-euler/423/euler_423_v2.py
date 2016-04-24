@@ -21,7 +21,7 @@ def pascal_sum(n,p):
         b -= 1
         l = l * (n-1-k) / (k+1)
         C += E[b] * l
-    return C%MOD
+    return int(C%MOD)
 
 if __name__ == "__main__":
     s_n = 0
