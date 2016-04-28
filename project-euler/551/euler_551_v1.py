@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 
-import math
-import re
 import sys
-from subprocess import Popen, PIPE
 
 if sys.version_info > (3,):
     long = int
@@ -16,9 +13,10 @@ a_n = A0
 
 LIM = long(1000000)
 
+
 def _print_me():
     global idx, a_n
-    print (("a[%d] = %d") % (idx, a_n))
+    print(("a[%d] = %d") % (idx, a_n))
 
 while idx < LIM:
     _print_me()
