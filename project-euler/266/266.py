@@ -12,7 +12,7 @@ for p in [79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131,
 
 prods1.sort()
 prods2.sort(reverse=True)
-target = (prods1[-1]*prods2[0])**0.5
+target = (prods1[-1] * prods2[0]) ** 0.5
 l1, l2 = len(prods1), len(prods2)
 
 i = j = best = 0
