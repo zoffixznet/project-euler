@@ -25,4 +25,4 @@ while i < l1 and j < l2:
             best = current
         i += 1
 
-print best % (10 ** 16)
+print(best % (10 ** 16))
