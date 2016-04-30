@@ -1,32 +1,37 @@
-def P_list(l, is_left):
+import sys
+
+if sys.version_info > (3,):
+    long = int
+    xrange = range
+
+
+def P_list__old(l, is_left):
     if l == 1:
         return 0
-    return ((1 if (is_left or ((l & 0x1) != 0)) else 0) + \
+    return ((1 if (is_left or ((l & 0x1) != 0)) else 0) +
+            (
                 (
-                    (
-                        P_list( (l >> 1), (not is_left) )
-                    )
-                    << 1
-                )
-    )
+                    P_list((l >> 1), (not is_left))
+                ) << 1
+            ))
+
 
 def P_list(l, is_left):
     if l == 1:
         return 0
-    return ((l & 0x1) | is_left | \
+    return ((l & 0x1) | is_left |
+            (
                 (
-                    (
-                        P_list( (l >> 1), (is_left^0x1) )
-                    )
-                    << 1
-                )
-    )
+                    P_list((l >> 1), (is_left ^ 0x1))
+                ) << 1
+            ))
+
 
 def P_l2(l):
     return P_list(l, 1)
 
 ar = []
-for i in xrange(1,64):
+for i in xrange(1, 64):
     mask = 0b1
     for offset in xrange(0, i-1, 2):
         mask |= (0b1 << offset)
@@ -41,12 +46,14 @@ h = 0
 # or-bitmask
 o = 0
 
+
 def extract():
     global a
     global t, h, o
     a += 1
     (t, h, o) = ar[a]
-    return;
+    return
+
 
 def reset():
     global a
@@ -56,11 +63,13 @@ def reset():
 
 reset()
 
+
 def P_l(l):
     global t, h, o
     while (l >= t):
         extract()
     return ((l & h) | o)
+
 
 def P(n):
     if n == 1:
@@ -69,12 +78,13 @@ def P(n):
         return P(n-1)
     return 1 + P_l(i)
 
+
 def S(MAX):
     if (MAX == 0):
         return 0
     reset()
     s = long(0)
-    for i in xrange(2,MAX,2):
+    for i in xrange(2, MAX, 2):
         s += P_l(i)
 
     s <<= 1
@@ -86,15 +96,17 @@ def S(MAX):
 
     return s
 
+
 def print_S(MAX):
-    print (("S(%d) = %d") % (MAX, S(MAX)))
+    print(("S(%d) = %d") % (MAX, S(MAX)))
+
 
 def S_from_2power_to_next(exp):
     mymin = 1 << exp
     mymax = ((1 << (exp+1)) - 1)
 
     cnt = (mymax - mymin + 1)
-    naive_sum = ( (((mymax&(~mymin))+0) * cnt) >> 1 )
+    naive_sum = ((((mymax & (~mymin)) + 0) * cnt) >> 1)
     s = naive_sum
     for b_exp in xrange(0, exp, 2):
         b_pow = 1 << b_exp
@@ -103,10 +115,12 @@ def S_from_2power_to_next(exp):
     # The P... are always -1.
     return s + cnt
 
+
 def brute_force__prefix_S_from_2power_to_next(prefix, exp):
     mymin = prefix << exp
     mymax = mymin + ((1 << exp) - 1)
     return S(mymax) - S(mymin-1)
+
 
 def prefix_S_from_2power_to_next(prefix, exp):
     mymin = prefix << exp
@@ -129,14 +143,14 @@ def prefix_S_from_2power_to_next(prefix, exp):
     while b_pow <= mymask:
         b_pow <<= 1
 
-    mymask &= (~(b_pow >> 1));
+    mymask &= (~(b_pow >> 1))
 
     return S_from_2power_to_next(exp) + mymask * cnt
 
 if False:
-    for i in xrange(2,100001):
+    for i in xrange(2, 100001):
         if P_l(i) != P_l2(i):
-            print (("P(%d) = %d ; P2(%d) = %d ;" % (i, P_l(i), i, P_l2(i))))
+            print(("P(%d) = %d ; P2(%d) = %d ;" % (i, P_l(i), i, P_l2(i))))
             raise BaseException
 
 reset()
@@ -144,20 +158,23 @@ if True:
     for i in xrange(0, 15):
         expected = S((1 << (1+i))-1) - S((1 << (i))-1)
         got = S_from_2power_to_next(i)
-        print (("i=%d got = %d expected = %d") % (i, got, expected))
+        print(("i=%d got = %d expected = %d") % (i, got, expected))
         if got != expected:
             raise BaseException
-        # print (("P(%d) = %d ; P2(%d) = %d ;" % (i, P_l(i), i, P_l2(i))))
+        # print(("P(%d) = %d ; P2(%d) = %d ;" % (i, P_l(i), i, P_l2(i))))
     # print_S(1000000000)
 
 if False:
-    for prefix in [0b10, 0b100, 0b11,0b101,0b1001,0b1101,0b111,0b1011,0b1111]:
-        for exp in xrange(1,15):
+    for prefix in [0b10, 0b100, 0b11, 0b101, 0b1001, 0b1101,
+                   0b111, 0b1011, 0b1111]:
+        for exp in xrange(1, 15):
             expected = brute_force__prefix_S_from_2power_to_next(prefix, exp)
             got = prefix_S_from_2power_to_next(prefix, exp)
-            print (("prefix=%d exp=%d got=%d expected=%d") % (prefix, exp, got, expected))
+            print(("prefix=%d exp=%d got=%d expected=%d") %
+                  (prefix, exp, got, expected))
             if got != expected:
                 raise BaseException
+
 
 def fast_S(MAX):
     s = long(S(1))
@@ -197,10 +214,10 @@ if True:
     for i in xrange(5, 1000):
         expected = S(i)
         got = fast_S(i)
-        print (("S : i=%d got = %d expected = %d") % (i, got, expected))
+        print(("S : i=%d got = %d expected = %d") % (i, got, expected))
         if got != expected:
             raise BaseException
 
 myMAX = long('1000000000000000000')
 myRES = fast_S(myMAX)
-print ("S(%d) = %d (mod = %d)" % (myMAX, myRES, myRES % 987654321))
+print("S(%d) = %d (mod = %d)" % (myMAX, myRES, myRES % 987654321))
