@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
-import math
+
 import sys
-import subprocess
 
 if sys.version_info > (3,):
     long = int
@@ -12,7 +11,8 @@ E = [0, 6]
 while len(E) < 3001136:
     E.append((E[-1] * 5) % MOD)
 
-def pascal_sum(n,p):
+
+def pascal_sum(n, p):
     global MOD
     b = n
     l = long(1)
@@ -21,7 +21,7 @@ def pascal_sum(n,p):
         b -= 1
         l = l * (n-1-k) / (k+1)
         C += E[b] * l
-    return int(C%MOD)
+    return int(C % MOD)
 
 if __name__ == "__main__":
     s_n = 0
@@ -35,7 +35,7 @@ if __name__ == "__main__":
     def base6(n):
         if n == 0:
             return ''
-        return base6(n/6) + str(n%6)
+        return base6(n/6) + str(n % 6)
 
     sums = [6, 6, 6]
     pi = 0
@@ -43,7 +43,7 @@ if __name__ == "__main__":
     PS = 1
     pa = PS
     # for n in range(1,50+1):
-    for n in range(1,50000000+1):
+    for n in range(1, 50000000 + 1):
         if primes[0] == n:
             primes.pop(0)
             pi += 1
@@ -53,5 +53,4 @@ if __name__ == "__main__":
         s_n %= MOD
         if n == pa:
             pa += PS
-            print ("C(%d) = %d; S = %d" % (n,C,s_n))
-
+            print("C(%d) = %d; S = %d" % (n, C, s_n))
