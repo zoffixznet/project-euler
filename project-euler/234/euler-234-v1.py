@@ -15,15 +15,17 @@ b_sq = bottom * bottom
 top = -1
 t_sq = -1
 
+
 def debug_n(n):
     if n > MAX:
         raise "Foobar"
-    print "Found[] = ", n
+    print("Found[] = ", n)
+
 
 def debug():
-    for g in range(bottom+1,top):
-        debug_n( g*top )
-        debug_n( g*bottom )
+    for g in range(bottom+1, top):
+        debug_n(g*top)
+        debug_n(g*bottom)
 
 # Sum
 before_s = -1
@@ -32,11 +34,11 @@ while before_s < s:
     before_s = s
     l = pipe.stdout.readline()
     top = int(l.rstrip())
-    print "top = ", top
+    print("top = ", top)
     t_sq = top * top
     if top <= SQ:
         # debug()
-        s += (((top + bottom) * (top + bottom) * (top-bottom-1)) >> 1);
+        s += (((top + bottom) * (top + bottom) * (top-bottom-1)) >> 1)
     else:
         r = bottom * (bottom+1)
         while r <= MAX:
@@ -67,10 +69,10 @@ if False:
     while d*bottom <= MAX or d*top <= MAX:
         if d*bottom <= MAX:
             debug_n(d*bottom)
-            s+= d*bottom
+            s += d*bottom
         if d*top <= MAX:
             debug_n(d*top)
-            s+= d*top
+            s += d*top
         d += 1
 
-print "s = ", s
+print("s = ", s)
