@@ -43,14 +43,15 @@ int main()
     memset(one, '\0', sizeof(one));
     memset(two, '\0', sizeof(two));
 
-    one[0] = 6;
+    one[0] = one[1] = one[2] = 6;
     current = one;
     next = two;
     int pi = 0;
 
     int was_set = 0;
-    int n;
+    int n = 1;
     int prev_n = 1;
+#if 0
     while (1)
     {
         char fn[300];
@@ -80,6 +81,7 @@ int main()
         prev_n = n;
         n = dump_at;
     }
+#endif
 
     /* Restore p_p */
     for (int i = 1; i <= n; i++)
@@ -103,10 +105,12 @@ int main()
         }
         next[0] = (5 * current[0]) % MOD;
         const int my_top_idx = min(n, NUM_PRIMES_MIN_1);
-        for (int i = 1; i <= my_top_idx; i++)
+        int i;
+        for (i = 1; i <= my_top_idx; i++)
         {
             next[i] = ((current[i]*5+current[i-1]) % MOD);
         }
+        next[i] = next[i-1];
 
         if (*(p_p) == n)
         {
@@ -114,13 +118,17 @@ int main()
             p_p++;
         }
 
+#if 0
         LL C = 0;
         for (int i = 0; i <= pi; i++)
         {
             C += current[i];
         }
+#else
+        const LL C = current[pi];
+#endif
         s_n = ((s_n + C) % MOD);
-        printf ("C(%d) = %lld; S = %lld\n", n, C, s_n);
+        printf ("C(%d) = %lld; S = %lld [pi=%lld]\n", n, C, s_n, (LL)pi);
 
         {
             temp = current;
