@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <iostream>
 
 #define min(a,b) (((a)<(b))?(a):(b))
 
@@ -21,7 +22,7 @@ ui s_n = 0;
 #define lim 50000000
 #define after_lim (lim+1)
 
-ui one[NUM_PRIMES], two[NUM_PRIMES];
+ui one[NUM_PRIMES+1], two[NUM_PRIMES+1];
 
 ui * current , * next, * temp;
 
@@ -64,10 +65,10 @@ int main()
     next = two;
     int pi = 0;
 
-    int was_set = 0;
     int n = 1;
-    int prev_n = 1;
 #if 0
+    int was_set = 0;
+    int prev_n = 1;
     while (1)
     {
         char fn[300];
@@ -150,7 +151,7 @@ int main()
         {
             s_n -= MOD;
         }
-        printf ("C(%d) = %lld; S = %lld [pi=%d]\n", n, C, s_n, pi);
+        std::cout << "C(" << n << ") = " << C << "; S = " << s_n << std::endl;
 
         {
             temp = current;
