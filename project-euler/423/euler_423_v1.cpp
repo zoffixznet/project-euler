@@ -110,6 +110,7 @@ int main()
     }
     for (; n < after_lim ; n++)
     {
+#if 0
         if (dump_at == n)
         {
             char fn[300];
@@ -119,6 +120,7 @@ int main()
             fclose(fh);
             dump_at += DUMP_STEP;
         }
+#endif
         next[0] = lookup_5_prod_mods[current[0]];
         const int my_top_idx = min(n, NUM_PRIMES_MIN_1);
         int i;
