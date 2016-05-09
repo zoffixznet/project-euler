@@ -1,25 +1,29 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #define min(a,b) (((a)<(b))?(a):(b))
 
 typedef long long LL;
-const LL MOD = 1000000007;
+typedef unsigned int ui;
+#define MOD_PROTO 1000000007
+const ui MOD = MOD_PROTO;
 
+ui * lookup_5_prod_mods = NULL;
 #define NUM_PRIMES_MIN_1 3001134
 #define NUM_PRIMES (NUM_PRIMES_MIN_1 + 1)
 
 int primes[NUM_PRIMES];
 int * p_p;
 
-LL s_n = 0;
+ui s_n = 0;
 
 #define lim 50000000
 #define after_lim (lim+1)
 
-LL one[NUM_PRIMES], two[NUM_PRIMES];
+ui one[NUM_PRIMES], two[NUM_PRIMES];
 
-LL * current , * next, * temp;
+ui * current , * next, * temp;
 
 const int DUMP_STEP = 100000;
 
@@ -27,6 +31,18 @@ int dump_at;
 
 int main()
 {
+    {
+        lookup_5_prod_mods = (ui *)malloc(sizeof(lookup_5_prod_mods[0]) * MOD);
+        ui m = 0;
+        for (ui i = 0 ; i < MOD; i++)
+        {
+            lookup_5_prod_mods[i] = m;
+            if ((m += 5) >= MOD)
+            {
+                m -= MOD;
+            }
+        }
+    }
     dump_at = DUMP_STEP;
     FILE * f = fopen ("primes.txt", "rt");
 
@@ -103,12 +119,13 @@ int main()
             fclose(fh);
             dump_at += DUMP_STEP;
         }
-        next[0] = (5 * current[0]) % MOD;
+        next[0] = lookup_5_prod_mods[current[0]];
         const int my_top_idx = min(n, NUM_PRIMES_MIN_1);
         int i;
         for (i = 1; i <= my_top_idx; i++)
         {
-            next[i] = ((current[i]*5+current[i-1]) % MOD);
+            const ui my_next = lookup_5_prod_mods[current[i]] + current[i-1];
+            next[i] = my_next >= MOD ? my_next - MOD : my_next;
         }
         next[i] = next[i-1];
 
@@ -125,10 +142,13 @@ int main()
             C += current[i];
         }
 #else
-        const LL C = current[pi];
+        const ui C = current[pi];
 #endif
-        s_n = ((s_n + C) % MOD);
-        printf ("C(%d) = %lld; S = %lld [pi=%lld]\n", n, C, s_n, (LL)pi);
+        if ((s_n += C) >= MOD)
+        {
+            s_n -= MOD;
+        }
+        printf ("C(%d) = %lld; S = %lld [pi=%d]\n", n, C, s_n, pi);
 
         {
             temp = current;
