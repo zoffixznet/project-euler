@@ -36,17 +36,17 @@ package Euler424_v1::Cell;
 use Moose;
 
 has 'gray' => (is => 'rw', isa => 'Bool');
-has ['horiz_hint', 'vert_hint'] => (is => 'rw', 'isa' => 'Maybe[Euler424_v1::Hint]');
+has ['x_hint', 'y_hint'] => (is => 'rw', 'isa' => 'Maybe[Euler424_v1::Hint]');
 has 'digit' => (is => 'rw', isa => 'Maybe[Str]');
-has ['horiz_affecting_sum', 'vert_affecting_sum'] => (is => 'rw', 'isa' => 'Maybe[Euler424_v1::Coord]');
+has ['x_affecting_sum', 'y_affecting_sum'] => (is => 'rw', 'isa' => 'Maybe[Euler424_v1::Coord]');
 
 sub set_gray
 {
     my ($self) = @_;
 
     $self->gray(1);
-    $self->horiz_hint(undef());
-    $self->vert_hint(undef());
+    $self->x_hint(undef());
+    $self->y_hint(undef());
     $self->digit(undef());
 
     return;
@@ -68,10 +68,10 @@ sub set_hints
 
     $self->gray(1);
     my $h = $args->{h};
-    $self->horiz_hint(defined($h) ? Euler424_v1::Hint->new({ sum => $h }) : $h);
+    $self->x_hint(defined($h) ? Euler424_v1::Hint->new({ sum => $h }) : $h);
 
     my $v = $args->{v};
-    $self->vert_hint(defined($v) ? Euler424_v1::Hint->new({ sum => $v }) : $v);
+    $self->y_hint(defined($v) ? Euler424_v1::Hint->new({ sum => $v }) : $v);
 
     return;
 }
@@ -154,25 +154,23 @@ sub populate_from_string
             {
                 foreach my $rec (
                     {
-                        dir => 'x',
+                        d => 'x',
                         lim => 'width',
-                        d => 'horiz',
                     },
                     {
-                        dir => 'y',
+                        d => 'y',
                         lim => 'height',
-                        d => 'vert',
                     }
                 )
                 {
-                    my $hint_meth = $rec->{d} . '_hint';
+                    my $dir = $rec->{d};
+                    my $hint_meth = $dir . '_hint';
                     if (defined(my $hint = $cell->$hint_meth))
                     {
-                        my $dir = $rec->{dir};
                         my $next_meth = 'next_' . $dir;
                         my $next_coord = $coord->$next_meth;
                         my $lim = $rec->{lim};
-                        my $sum_meth = $rec->{d} . '_affecting_sum';
+                        my $sum_meth = $dir . '_affecting_sum';
                         NEXT_X:
                         while ($next_coord->$dir < $self->$lim)
                         {
