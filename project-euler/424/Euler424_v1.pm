@@ -86,9 +86,9 @@ has 'grid' => (is => 'rw', lazy => 1, default => sub {
 
 sub cell
 {
-    my ($self,$y,$x) = @_;
+    my ($self,$coord) = @_;
 
-    return $self->grid->[$y]->[$x];
+    return $self->grid->[$coord->y]->[$coord->x];
 }
 
 sub populate_from_string
@@ -101,7 +101,7 @@ sub populate_from_string
     {
         foreach my $x (0 .. $self->width - 1)
         {
-            my $cell = $self->cell($y, $x);
+            my $cell = $self->cell(Euler424_v1::Coord->new({y => $y, x => $x}));
             if ($s =~ s#\AX,##)
             {
                 $cell->set_gray;
@@ -135,7 +135,7 @@ sub populate_from_string
         foreach my $x (0 .. $self->width - 1)
         {
             my $coord = Euler424_v1::Coord->new({x => $x, y => $y});
-            my $cell = $self->cell($y, $x);
+            my $cell = $self->cell($coord);
             if ($cell->gray)
             {
                 if (defined(my $hint = $cell->horiz_hint))
@@ -144,13 +144,14 @@ sub populate_from_string
                     NEXT_X:
                     while ($next_x < $self->width)
                     {
-                        my $next_cell = $self->cell($y, $next_x);
+                        my $next_coord = Euler424_v1::Coord->new({x => $next_x, y => $y});
+                        my $next_cell = $self->cell($next_coord);
                         if ($next_cell->gray)
                         {
                             last NEXT_X;
                         }
                         $next_cell->horiz_affecting_sum($coord);
-                        push @{$hint->affected_cells}, Euler424_v1::Coord->new({x => $next_x, y => $y});
+                        push @{$hint->affected_cells}, $next_coord;
                     }
                     continue
                     {
