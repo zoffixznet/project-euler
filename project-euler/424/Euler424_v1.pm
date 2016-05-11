@@ -3,6 +3,12 @@ package Euler424_v1;
 use strict;
 use warnings;
 
+package Euler424_v1::Coord;
+
+use Moose;
+
+has ['x', 'y'] => (is => 'ro', isa => 'Int', required => 1);
+
 package Euler424_v1::Hint;
 
 use Moose;
@@ -18,7 +24,7 @@ use Moose;
 has 'gray' => (is => 'rw', isa => 'Bool');
 has ['horiz_hint', 'vert_hint'] => (is => 'rw', 'isa' => 'Maybe[Euler424_v1::Hint]');
 has 'digit' => (is => 'rw', isa => 'Maybe[Str]');
-has ['horiz_affecting_sum', 'vert_affecting_sum'] => (is => 'rw', 'isa' => 'Maybe[ArrayRef]');
+has ['horiz_affecting_sum', 'vert_affecting_sum'] => (is => 'rw', 'isa' => 'Maybe[Euler424_v1::Coord]');
 
 sub set_gray
 {
@@ -124,6 +130,36 @@ sub populate_from_string
         die "Junk in line - <<$s>>!";
     }
     # TODO: cross-reference the sums and the hints.
+    foreach my $y (0 .. $self->height - 1)
+    {
+        foreach my $x (0 .. $self->width - 1)
+        {
+            my $coord = Euler424_v1::Coord->new({x => $x, y => $y});
+            my $cell = $self->cell($y, $x);
+            if ($cell->gray)
+            {
+                if (defined(my $hint = $cell->horiz_hint))
+                {
+                    my $next_x = $x + 1;
+                    NEXT_X:
+                    while ($next_x < $self->width)
+                    {
+                        my $next_cell = $self->cell($y, $next_x);
+                        if ($next_cell->gray)
+                        {
+                            last NEXT_X;
+                        }
+                        $next_cell->horiz_affecting_sum($coord);
+                        push @{$hint->affected_cells}, Euler424_v1::Coord->new({x => $next_x, y => $y});
+                    }
+                    continue
+                    {
+                        $next_x++;
+                    }
+                }
+            }
+        }
+    }
     return;
 }
 
