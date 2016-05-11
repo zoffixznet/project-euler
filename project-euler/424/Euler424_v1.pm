@@ -285,7 +285,7 @@ sub solve
                                 );
 
                                 # A sanity check.
-                                if (1)
+                                if (0)
                                 {
                                     foreach my $row (@{$self->grid})
                                     {
