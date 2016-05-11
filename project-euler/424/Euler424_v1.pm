@@ -95,21 +95,22 @@ sub populate_from_string
     {
         foreach my $x (0 .. $self->width - 1)
         {
+            my $cell = $self->cell($y, $x);
             if ($s =~ s#\AX,##)
             {
-                $self->cell($y,$x)->set_gray;
+                $cell->set_gray;
             }
             elsif ($s =~ s#\AO,##)
             {
-                $self->cell($y, $x)->set_digit('');
+                $cell->set_digit('');
             }
             elsif ($s =~ s#\A([A-J]),##)
             {
-                $self->cell($y, $x)->set_digit($1);
+                $cell->set_digit($1);
             }
             elsif ($s =~ s#\A\((?:h([A-J]{1,2}))?,?(?:v([A-J]{1,2}))?\),##)
             {
-                $self->cell($y, $x)->set_hints({ h => ($1 || undef()), v => ($2 || undef())});
+                $cell->set_hints({ h => ($1 || undef()), v => ($2 || undef())});
             }
             else
             {
