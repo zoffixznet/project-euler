@@ -246,7 +246,6 @@ sub solve
                             {
                                 my $digit = $min;
 
-                                print "Matching $letter=$digit\n";
                                 $already_handled{$letter} = 1;
                                 $self->_mark_as_yes($l_i, $digit);
 
@@ -360,6 +359,8 @@ sub _mark_as_yes
 {
     my ($self, $l_i, $digit) = @_;
 
+    my $letter = chr(ord('A') + $l_i);
+    print "Matching $letter=$digit\n";
     $self->truth_table->[$l_i]->[$digit] = $Y;
 
     foreach my $d (0 .. 9)
@@ -374,7 +375,6 @@ sub _mark_as_yes
         }
     }
 
-    my $letter = chr(ord('A') + $l_i);
     $self->loop(
         sub {
             my (undef,$c) = @_;
