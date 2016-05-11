@@ -197,6 +197,8 @@ sub loop
     return;
 }
 
+use v5.16;
+
 sub solve
 {
     my $self = shift;
@@ -364,6 +366,50 @@ sub solve
             }
         }
     }
+
+    # Output the current layout:
+    use Text::Table;
+
+    my $tb = Text::Table->new((map { ; "Col", \' | '; } 2 .. $self->x_lim), "Col");
+
+    my $transform = sub {
+        my $item = shift;
+
+        if (! defined($item)) {
+            return '';
+        }
+        elsif (ref$item eq '') {
+            return $item =~ s#([A-J])#
+                my $l = $1;
+                my $l_i = ord($l)-ord('A');
+                "{$l=[" . join('', grep { $self->truth_table->[$l_i]->[$_] == $EMPTY } 0 .. 9) . "]}"
+            #egr;
+        }
+        elsif ($item->can('sum')) {
+            return __SUB__->($item->sum);
+        }
+        else
+        {
+            die "PinkiePie";
+        }
+    };
+    $tb->load(
+        map
+        {
+            my $y = $_;
+            [ map {
+                    my $x = $_;
+                    my $coord = Euler424_v1::Coord->new({x => $x, y => $y});
+                    my $cell = $self->cell($coord);
+                    $cell->gray ? $transform->($cell->y_hint) . " \\ " . $transform->($cell->x_hint) : $transform->($cell->digit);
+                } 0 .. $self->x_lim - 1
+            ],
+        }
+        (0 .. $self->y_lim-1)
+    );
+
+    print "Current State == <<\n$tb\n>>\n";
+
     return;
 }
 
