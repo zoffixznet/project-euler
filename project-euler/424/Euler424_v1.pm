@@ -297,16 +297,11 @@ sub solve
                                 }
                                 else
                                 {
-                                    my %l = (map { $_ => 1 } $min .. $max);
-
-                                    foreach my $d (0 .. 9)
-                                    {
-                                        if (!exists $l{$d})
-                                        {
-                                            $self->_mark_as_not($l_i, $d);
-                                        }
-                                    }
+                                    $self->_mark_as_not_out_of_range(
+                                        $l_i, $min, $max
+                                    );
                                 }
+
                                 if ($len == 1)
                                 {
                                     my $partial_sum = 0;
@@ -357,16 +352,9 @@ sub solve
                                         $partial_sum += shift@digits;
                                     }
 
-                                    my %l = (map { $_ => 1 } $partial_sum .. $max);
-
-                                    foreach my $d (0 .. 9)
-                                    {
-                                        if (!exists $l{$d})
-                                        {
-                                            $self->_mark_as_not($l_i, $d);
-                                        }
-                                    }
-
+                                    $self->_mark_as_not_out_of_range(
+                                        $l_i, $partial_sum, $max
+                                    );
                                 }
                             }
                         }
@@ -443,6 +431,22 @@ sub _output_layout
 
     print "Current State == <<\n$tb\n>>\n";
 
+    return;
+}
+
+sub _mark_as_not_out_of_range
+{
+    my ($self, $l_i, $min, $max) = @_;
+
+    my %l = (map { $_ => 1 } $min .. $max);
+
+    foreach my $d (0 .. 9)
+    {
+        if (!exists $l{$d})
+        {
+            $self->_mark_as_not($l_i, $d);
+        }
+    }
     return;
 }
 
