@@ -204,6 +204,8 @@ sub solve
 {
     my $self = shift;
 
+    $self->_output_layout;
+
     my %already_handled;
 
     my $run_once = 1;
@@ -355,7 +357,7 @@ sub solve
                                         $partial_sum += shift@digits;
                                     }
 
-                                    my %l = (map { $_ => 1 } $partial_sum+1 .. $max);
+                                    my %l = (map { $_ => 1 } $partial_sum .. $max);
 
                                     foreach my $d (0 .. 9)
                                     {
@@ -391,6 +393,14 @@ sub solve
     }
 
     # Output the current layout:
+    $self->_output_layout;
+    return;
+}
+
+sub _output_layout
+{
+    my $self = shift;
+
     use Text::Table;
 
     my $tb = Text::Table->new((map { ; "Col", \' | '; } 2 .. $self->x_lim), "Col");
@@ -435,6 +445,7 @@ sub solve
 
     return;
 }
+
 
 sub _enqueue
 {
