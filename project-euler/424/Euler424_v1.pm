@@ -267,7 +267,7 @@ sub solve
                                 }
                                 else
                                 {
-                                    $max = 9;
+                                    $max = (first { $self->truth_table->[$l_i]->[$_] == $EMPTY } reverse 0 .. 9);
                                 }
                                 print "Matching $letter [$min..$max]\n";
 
@@ -320,6 +320,7 @@ sub solve
                                     my %d = (map { $_ => 1 } @digits);
                                     my $num_empty = 0;
                                     my @to_trim;
+
                                     foreach my $c_ (map { $self->cell($_) } @{$hint->affected_cells})
                                     {
                                         if (defined (my $d_ = $c_->digit))
