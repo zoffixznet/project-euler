@@ -417,8 +417,13 @@ sub _mark_as_yes
     my ($self, $l_i, $digit) = @_;
 
     my $letter = chr(ord('A') + $l_i);
+    my $v_ref = \($self->truth_table->[$l_i]->[$digit]);
+    if ($$v_ref == $Y)
+    {
+        return;
+    }
     print "Matching $letter=$digit\n";
-    $self->truth_table->[$l_i]->[$digit] = $Y;
+    $$v_ref = $Y;
     $self->_found_letters->{$l_i} = $digit;
 
     foreach my $d (0 .. 9)
