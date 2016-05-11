@@ -221,7 +221,11 @@ sub solve
                             );
 
                             my $min = $len == 2 ? max(1, int ( $min_val / 10)) : min(9, $min_val);
-                            my $max = ((9 + 9 - $cells_count + 1)*$cells_count);
+                            my $max =
+                            (
+                                ((9 + 9 - $cells_count + 1)*$cells_count)
+                                >> 1
+                            );
                             if (length$max == $len)
                             {
                                 $max = substr($max, 0, 1);
