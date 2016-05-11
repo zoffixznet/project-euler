@@ -143,7 +143,6 @@ sub populate_from_string
     {
         die "Junk in line - <<$s>>!";
     }
-    # TODO: cross-reference the sums and the hints.
     foreach my $y (0 .. $self->y_lim - 1)
     {
         foreach my $x (0 .. $self->x_lim - 1)
@@ -183,6 +182,118 @@ sub populate_from_string
     }
     return;
 }
+
+use List::Util qw/ max min /;
+
+sub loop
+{
+    my ($self, $cb) = @_;
+
+    foreach my $y (0 .. $self->y_lim - 1)
+    {
+        foreach my $x (0 .. $self->x_lim - 1)
+        {
+            my $coord = Euler424_v1::Coord->new({x => $x, y => $y});
+            $cb->($coord, $self->cell($coord));
+        }
+    }
+    return;
+}
+
+sub solve
+{
+    my $self = shift;
+
+    foreach my $y (0 .. $self->y_lim - 1)
+    {
+        foreach my $x (0 .. $self->x_lim - 1)
+        {
+            my $coord = Euler424_v1::Coord->new({x => $x, y => $y});
+            my $cell = $self->cell($coord);
+            if ($cell->gray)
+            {
+                foreach my $dir (qw(x y))
+                {
+                    my $hint_meth = $dir . '_hint';
+                    if (defined(my $hint = $cell->$hint_meth))
+                    {
+                        my $sum = $hint->sum;
+                        if (my ($letter) = $sum =~ /\A([A-J])/)
+                        {
+                            my $l_i = ord($letter)-ord('A');
+                            my $len = length($sum);
+                            my $cells_count = scalar @{$hint->affected_cells};
+
+                            my $min_val =
+                            (
+                                ((1 + $cells_count)*$cells_count)
+                                >> 1
+                            );
+
+                            my $min = $len == 2 ? max(1, int ( $min_val / 10)) : min(9, $min_val);
+                            my $max = ((9 + 9 - $cells_count + 1)*$cells_count);
+                            if (length$max == $len)
+                            {
+                                $max = substr($max, 0, 1);
+                            }
+                            else
+                            {
+                                $max = 9;
+                            }
+                            print "Matching $letter [$min..$max]\n";
+
+                            if ($min == $max)
+                            {
+                                my $digit = $min;
+
+                                print "Matching $letter=$digit\n";
+                                foreach my $d (0 .. 9)
+                                {
+                                    $self->truth_table->[$l_i]->[$d] =
+                                        ($d == $digit) ? $Y : $X;
+                                    $self->truth_table->[$d]->[$digit] =
+                                        ($d == $l_i) ? $Y : $X;
+                                }
+
+                                $self->loop(
+                                    sub {
+                                        my (undef,$c) = @_;
+                                        if ($c->gray)
+                                        {
+                                            foreach my $dir (qw(x y))
+                                            {
+                                                my $hint_meth = $dir . '_hint';
+                                                if (defined(my $hint = $cell->$hint_meth))
+                                                {
+                                                    $hint->sum(
+                                                        $hint->sum =~ s#\Q$letter\E#$digit#gr
+                                                    );
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (defined $c->digit)
+                                            {
+                                                $c->digit(
+                                                    $c->digit =~ s#\Q$letter\E#$digit#gr
+                                                );
+                                            }
+                                        }
+                                        return;
+                                    },
+                                );
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return;
+}
+
 
 
 1;
