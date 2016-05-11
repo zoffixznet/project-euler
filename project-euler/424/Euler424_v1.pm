@@ -87,6 +87,7 @@ my $Y = 2;
 
 my $NUM_DIGITS = 10;
 
+has _dirty => (is => 'rw', isa => 'Bool', default => sub { return 0; });
 has _found_letters => (is => 'ro', isa => 'HashRef', default => sub { return +{}; });
 has _found_digits => (is => 'ro', isa => 'HashRef', default => sub { return +{}; });
 has _queue => (is => 'ro', isa => 'ArrayRef', default => sub { return []; });
@@ -214,10 +215,13 @@ sub solve
     while ($run_once ||
         (
             (keys (%{$self->_found_letters}) != 10)
+                and
+            $self->_dirty
         )
     )
     {
         $run_once = 0;
+        $self->_dirty(0);
         $self->loop(sub {
                 my (undef, $cell) = @_;
                 if ($cell->gray)
@@ -252,7 +256,14 @@ sub solve
                                 );
                                 if (length$max == $len)
                                 {
-                                    $max = substr($max, 0, 1);
+                                    my $max_digit = (first { $self->truth_table->[$l_i]->[$_] == $EMPTY } reverse 0 .. 9);
+                                    my $new_sum = $sum =~ s#\Q$letter\E#$max_digit#gr;
+                                    my $new_max = substr($max, 0, 1);
+                                    if ($new_sum !~ /[A-J]/ and $new_max eq substr($new_sum, 0, 1) and $max < $new_sum)
+                                    {
+                                        $new_max--;
+                                    }
+                                    $max = $new_max;
                                 }
                                 else
                                 {
@@ -374,10 +385,6 @@ sub solve
             }
         );
 
-        if (! @{$self->_queue})
-        {
-            last MAIN;
-        }
         while (defined (my $task = shift(@{$self->_queue})))
         {
             if ($task->{type} eq '_mark_as_yes')
@@ -481,6 +488,7 @@ sub _mark_as_not
     {
         return;
     }
+    $self->_dirty(1);
 
     $$v_ref = $X;
 
@@ -531,6 +539,7 @@ sub _mark_as_yes
     {
         return;
     }
+    $self->_dirty(1);
     print "Matching $letter=$digit\n";
     $$v_ref = $Y;
     $self->_found_letters->{$l_i} = $digit;
