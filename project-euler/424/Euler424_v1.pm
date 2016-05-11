@@ -87,6 +87,7 @@ my $Y = 2;
 
 my $NUM_DIGITS = 10;
 
+has _found_letters => (is => 'ro', isa => 'HashRef', default => sub { return +{}; });
 has _queue => (is => 'ro', isa => 'ArrayRef', default => sub { return []; });
 has 'y_lim' => (is => 'ro', isa => 'Int', required => 1);
 has 'x_lim' => (is => 'ro', isa => 'Int', required => 1);
@@ -201,114 +202,168 @@ sub solve
     my $self = shift;
 
     my %already_handled;
-    $self->loop(sub {
-            my (undef, $cell) = @_;
-            if ($cell->gray)
-            {
-                foreach my $dir (qw(x y))
+
+    my $run_once = 1;
+
+    MAIN:
+    while ($run_once ||
+        (
+            (keys (%{$self->_found_letters}) != 10)
+        )
+    )
+    {
+        $run_once = 0;
+        $self->loop(sub {
+                my (undef, $cell) = @_;
+                if ($cell->gray)
                 {
-                    my $hint_meth = $dir . '_hint';
-                    if (defined(my $hint = $cell->$hint_meth))
+                    foreach my $dir (qw(x y))
                     {
-                        my $sum = $hint->sum;
-                        if (my ($letter) = $sum =~ /\A([A-J])/)
+                        my $hint_meth = $dir . '_hint';
+                        if (defined(my $hint = $cell->$hint_meth))
                         {
-                            if (exists $already_handled{$letter})
+                            my $sum = $hint->sum;
+                            if (my ($letter) = $sum =~ /\A([A-J])/)
                             {
-                                die "Twilly";
-                            }
-                            my $l_i = ord($letter)-ord('A');
-                            my $len = length($sum);
-                            my $cells_count = scalar @{$hint->affected_cells};
-
-                            my $min_val =
-                            (
-                                ((1 + $cells_count)*$cells_count)
-                                >> 1
-                            );
-
-                            my $min = $len == 2 ? max(1, int ( $min_val / 10)) : min(9, $min_val);
-                            my $max =
-                            (
-                                ((9 + 9 - $cells_count + 1)*$cells_count)
-                                >> 1
-                            );
-                            if (length$max == $len)
-                            {
-                                $max = substr($max, 0, 1);
-                            }
-                            else
-                            {
-                                $max = 9;
-                            }
-                            print "Matching $letter [$min..$max]\n";
-
-                            if ($min == $max)
-                            {
-                                my $digit = $min;
-
-                                $already_handled{$letter} = 1;
-                                $self->_mark_as_yes($l_i, $digit);
-
-
-                                # A sanity check.
-                                if (0)
+                                if (exists $already_handled{$letter})
                                 {
-                                    foreach my $row (@{$self->grid})
+                                    die "Twilly";
+                                }
+                                my $l_i = ord($letter)-ord('A');
+                                my $len = length($sum);
+                                my $cells_count = scalar @{$hint->affected_cells};
+
+                                my $min_val =
+                                (
+                                    ((1 + $cells_count)*$cells_count)
+                                    >> 1
+                                );
+
+                                my $min = $len == 2 ? max(1, int ( $min_val / 10)) : min(9, $min_val);
+                                my $max =
+                                (
+                                    ((9 + 9 - $cells_count + 1)*$cells_count)
+                                    >> 1
+                                );
+                                if (length$max == $len)
+                                {
+                                    $max = substr($max, 0, 1);
+                                }
+                                else
+                                {
+                                    $max = 9;
+                                }
+                                print "Matching $letter [$min..$max]\n";
+
+                                if ($min == $max)
+                                {
+                                    my $digit = $min;
+
+                                    $already_handled{$letter} = 1;
+                                    $self->_mark_as_yes($l_i, $digit);
+
+
+                                    # A sanity check.
+                                    if (0)
                                     {
-                                        foreach my $c (@$row)
+                                        foreach my $row (@{$self->grid})
                                         {
-                                            if ($c->gray)
+                                            foreach my $c (@$row)
                                             {
-                                                foreach my $dir (qw(x y))
+                                                if ($c->gray)
                                                 {
-                                                    my $hint_meth = $dir . '_hint';
-                                                    if (defined(my $hint = $c->$hint_meth))
+                                                    foreach my $dir (qw(x y))
                                                     {
-                                                        if ($hint->sum =~ /$letter/)
-                                                        # if ($hint->sum =~ /B/)
+                                                        my $hint_meth = $dir . '_hint';
+                                                        if (defined(my $hint = $c->$hint_meth))
                                                         {
-                                                            die "Foobar";
+                                                            if ($hint->sum =~ /$letter/)
+                                                            # if ($hint->sum =~ /B/)
+                                                            {
+                                                                die "Foobar";
+                                                            }
                                                         }
                                                     }
                                                 }
                                             }
                                         }
+                                        print "Sanity check ok.\n";
                                     }
-                                    print "Sanity check ok.\n";
                                 }
-                            }
-                            else
-                            {
-                                my %l = (map { $_ => 1 } $min .. $max);
-
-                                foreach my $d (0 .. 9)
+                                else
                                 {
-                                    if (!exists $l{$d})
+                                    my %l = (map { $_ => 1 } $min .. $max);
+
+                                    foreach my $d (0 .. 9)
                                     {
-                                        $self->_mark_as_not($l_i, $d);
+                                        if (!exists $l{$d})
+                                        {
+                                            $self->_mark_as_not($l_i, $d);
+                                        }
                                     }
+                                }
+                                if ($len == 1)
+                                {
+                                    my $partial_sum = 0;
+                                    foreach my $c_ (map { $self->cell($_) } @{$hint->affected_cells})
+                                    {
+                                        if (defined (my $d_ = $c_->digit))
+                                        {
+                                            my $d2;
+                                            if ($d_ =~ /\A[0-9]\z/)
+                                            {
+                                                $d2 = $d_;
+                                            }
+                                            else
+                                            {
+                                                my $l_i = ord($d_)-ord('A');
+                                                V:
+                                                foreach my $v (0 .. 9)
+                                                {
+                                                    if ($self->truth_table->[$l_i]->[$v] == $EMPTY)
+                                                    {
+                                                        $d2 = $v;
+                                                        last V;
+                                                    }
+                                                }
+                                            }
+                                            $partial_sum += $d2;
+                                        }
+                                    }
+                                    my %l = (map { $_ => 1 } $partial_sum+1 .. $max);
+
+                                    foreach my $d (0 .. 9)
+                                    {
+                                        if (!exists $l{$d})
+                                        {
+                                            $self->_mark_as_not($l_i, $d);
+                                        }
+                                    }
+
                                 }
                             }
                         }
                     }
                 }
             }
-        }
-    );
+        );
 
-    while (defined (my $task = shift(@{$self->_queue})))
-    {
-        if ($task->{type} eq '_mark_as_yes')
+        if (! @{$self->_queue})
         {
-            $self->_mark_as_yes($task->{l}, $task->{d});
+            last MAIN;
         }
-        else
+        while (defined (my $task = shift(@{$self->_queue})))
         {
-            die "Unknown task type";
+            if ($task->{type} eq '_mark_as_yes')
+            {
+                $self->_mark_as_yes($task->{l}, $task->{d});
+            }
+            else
+            {
+                die "Unknown task type";
+            }
         }
     }
-
     return;
 }
 
@@ -364,6 +419,7 @@ sub _mark_as_yes
     my $letter = chr(ord('A') + $l_i);
     print "Matching $letter=$digit\n";
     $self->truth_table->[$l_i]->[$digit] = $Y;
+    $self->_found_letters->{$l_i} = $digit;
 
     foreach my $d (0 .. 9)
     {
