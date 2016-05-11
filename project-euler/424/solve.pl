@@ -15,5 +15,6 @@ use IO::All qw / io /;
         my $puz = Euler424_v1::Puzzle->new({y_lim => $len, x_lim => $len,});
         $puz->populate_from_string($line);
         $puz->solve;
+        print "==NEXT PUZZLE==\n";
     }
 }

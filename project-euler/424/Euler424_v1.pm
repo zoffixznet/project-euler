@@ -198,6 +198,7 @@ sub solve
 {
     my $self = shift;
 
+    my %already_handled;
     $self->loop(sub {
             my (undef, $cell) = @_;
             if ($cell->gray)
@@ -210,6 +211,10 @@ sub solve
                         my $sum = $hint->sum;
                         if (my ($letter) = $sum =~ /\A([A-J])/)
                         {
+                            if (exists $already_handled{$letter})
+                            {
+                                die "Twilly";
+                            }
                             my $l_i = ord($letter)-ord('A');
                             my $len = length($sum);
                             my $cells_count = scalar @{$hint->affected_cells};
@@ -241,6 +246,7 @@ sub solve
                                 my $digit = $min;
 
                                 print "Matching $letter=$digit\n";
+                                $already_handled{$letter} = 1;
                                 foreach my $d (0 .. 9)
                                 {
                                     $self->truth_table->[$l_i]->[$d] =
@@ -257,7 +263,7 @@ sub solve
                                             foreach my $dir (qw(x y))
                                             {
                                                 my $hint_meth = $dir . '_hint';
-                                                if (defined(my $hint = $cell->$hint_meth))
+                                                if (defined(my $hint = $c->$hint_meth))
                                                 {
                                                     $hint->sum(
                                                         $hint->sum =~ s#\Q$letter\E#$digit#gr
@@ -277,6 +283,48 @@ sub solve
                                         return;
                                     },
                                 );
+
+                                # A sanity check.
+                                if (1)
+                                {
+                                    foreach my $row (@{$self->grid})
+                                    {
+                                        foreach my $c (@$row)
+                                        {
+                                            if ($c->gray)
+                                            {
+                                                foreach my $dir (qw(x y))
+                                                {
+                                                    my $hint_meth = $dir . '_hint';
+                                                    if (defined(my $hint = $c->$hint_meth))
+                                                    {
+                                                        if ($hint->sum =~ /$letter/)
+                                                        # if ($hint->sum =~ /B/)
+                                                        {
+                                                            die "Foobar";
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    print "Sanity check ok.\n";
+                                }
+                            }
+                            else
+                            {
+                                my %l = (map { $_ => 1 } $min .. $max);
+
+                                foreach my $d (0 .. 9)
+                                {
+                                    if (!exists $l{$d})
+                                    {
+                                        $self->truth_table->[$l_i]->[$d] = $X;
+                                        print "Remaining values for digit=$d : " ,
+                                            (join ',', (grep { $self->truth_table->[$_]->[$d] == $EMPTY } 0 .. 9)),
+                                            "\n";
+                                    }
+                                }
                             }
                         }
                     }
