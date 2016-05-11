@@ -9,6 +9,20 @@ use Moose;
 
 has ['x', 'y'] => (is => 'ro', isa => 'Int', required => 1);
 
+sub next_x
+{
+    my $self = shift;
+
+    return Euler424_v1::Coord->new({x => $self->x + 1, y => $self->y});
+}
+
+sub next_y
+{
+    my $self = shift;
+
+    return Euler424_v1::Coord->new({x => $self->x, y => $self->y + 1});
+}
+
 package Euler424_v1::Hint;
 
 use Moose;
@@ -140,11 +154,10 @@ sub populate_from_string
             {
                 if (defined(my $hint = $cell->horiz_hint))
                 {
-                    my $next_x = $x + 1;
+                    my $next_coord = $coord->next_x;
                     NEXT_X:
-                    while ($next_x < $self->width)
+                    while ($next_coord->x < $self->width)
                     {
-                        my $next_coord = Euler424_v1::Coord->new({x => $next_x, y => $y});
                         my $next_cell = $self->cell($next_coord);
                         if ($next_cell->gray)
                         {
@@ -155,7 +168,7 @@ sub populate_from_string
                     }
                     continue
                     {
-                        $next_x++;
+                        $next_coord = $next_coord->next_x;
                     }
                 }
             }
