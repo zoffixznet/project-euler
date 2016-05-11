@@ -111,11 +111,9 @@ sub populate_from_string
 
     $s =~ s#\r?\n?\z#,#;
 
-    foreach my $y (0 .. $self->y_lim - 1)
-    {
-        foreach my $x (0 .. $self->x_lim - 1)
-        {
-            my $cell = $self->cell(Euler424_v1::Coord->new({y => $y, x => $x}));
+    $self->loop(sub {
+            my (undef, $cell) = @_;
+
             if ($s =~ s#\AX,##)
             {
                 $cell->set_gray;
@@ -137,18 +135,14 @@ sub populate_from_string
                 die "Unknown format for string <<$s>>!";
             }
         }
-    }
+    );
 
     if ($s ne '')
     {
         die "Junk in line - <<$s>>!";
     }
-    foreach my $y (0 .. $self->y_lim - 1)
-    {
-        foreach my $x (0 .. $self->x_lim - 1)
-        {
-            my $coord = Euler424_v1::Coord->new({x => $x, y => $y});
-            my $cell = $self->cell($coord);
+    $self->loop(sub {
+            my ($coord, $cell) = @_;
             if ($cell->gray)
             {
                 foreach my $dir (qw(x y))
@@ -179,7 +173,7 @@ sub populate_from_string
                 }
             }
         }
-    }
+    );
     return;
 }
 
@@ -204,12 +198,8 @@ sub solve
 {
     my $self = shift;
 
-    foreach my $y (0 .. $self->y_lim - 1)
-    {
-        foreach my $x (0 .. $self->x_lim - 1)
-        {
-            my $coord = Euler424_v1::Coord->new({x => $x, y => $y});
-            my $cell = $self->cell($coord);
+    $self->loop(sub {
+            my (undef, $cell) = @_;
             if ($cell->gray)
             {
                 foreach my $dir (qw(x y))
@@ -289,7 +279,7 @@ sub solve
                 }
             }
         }
-    }
+    );
 
     return;
 }
