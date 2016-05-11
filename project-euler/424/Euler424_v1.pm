@@ -87,13 +87,13 @@ my $Y = 2;
 
 my $NUM_DIGITS = 10;
 
-has 'height' => (is => 'ro', isa => 'Int', required => 1);
-has 'width' => (is => 'ro', isa => 'Int', required => 1);
+has 'y_lim' => (is => 'ro', isa => 'Int', required => 1);
+has 'x_lim' => (is => 'ro', isa => 'Int', required => 1);
 has 'truth_table' => (is => 'rw', default => sub { return [map { [($EMPTY) x $NUM_DIGITS]} (1 .. $NUM_DIGITS)]; });
 has 'grid' => (is => 'rw', lazy => 1, default => sub {
         my $self = shift;
-        return [map { [map { Euler424_v1::Cell->new; } 1 .. $self->width] }
-            1 .. $self->height
+        return [map { [map { Euler424_v1::Cell->new; } 1 .. $self->x_lim] }
+            1 .. $self->y_lim
         ]
     }
 );
@@ -111,9 +111,9 @@ sub populate_from_string
 
     $s =~ s#\r?\n?\z#,#;
 
-    foreach my $y (0 .. $self->height - 1)
+    foreach my $y (0 .. $self->y_lim - 1)
     {
-        foreach my $x (0 .. $self->width - 1)
+        foreach my $x (0 .. $self->x_lim - 1)
         {
             my $cell = $self->cell(Euler424_v1::Coord->new({y => $y, x => $x}));
             if ($s =~ s#\AX,##)
@@ -144,32 +144,22 @@ sub populate_from_string
         die "Junk in line - <<$s>>!";
     }
     # TODO: cross-reference the sums and the hints.
-    foreach my $y (0 .. $self->height - 1)
+    foreach my $y (0 .. $self->y_lim - 1)
     {
-        foreach my $x (0 .. $self->width - 1)
+        foreach my $x (0 .. $self->x_lim - 1)
         {
             my $coord = Euler424_v1::Coord->new({x => $x, y => $y});
             my $cell = $self->cell($coord);
             if ($cell->gray)
             {
-                foreach my $rec (
-                    {
-                        d => 'x',
-                        lim => 'width',
-                    },
-                    {
-                        d => 'y',
-                        lim => 'height',
-                    }
-                )
+                foreach my $dir (qw(x y))
                 {
-                    my $dir = $rec->{d};
                     my $hint_meth = $dir . '_hint';
                     if (defined(my $hint = $cell->$hint_meth))
                     {
                         my $next_meth = 'next_' . $dir;
                         my $next_coord = $coord->$next_meth;
-                        my $lim = $rec->{lim};
+                        my $lim = $dir . '_lim';
                         my $sum_meth = $dir . '_affecting_sum';
                         NEXT_X:
                         while ($next_coord->$dir < $self->$lim)
