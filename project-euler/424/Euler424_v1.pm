@@ -326,7 +326,14 @@ sub _mark_as_not
 {
     my ($self, $l_i, $d) = @_;
 
-    $self->truth_table->[$l_i]->[$d] = $X;
+    my $v_ref = \($self->truth_table->[$l_i]->[$d]);
+    if ($$v_ref == $X)
+    {
+        return;
+    }
+
+    $$v_ref = $X;
+
     {
         my @digit_opts = (grep { $self->truth_table->[$_]->[$d] == $EMPTY } 0 .. 9);
         print "Remaining values for digit=$d : " , (join ',', @digit_opts), "\n";
