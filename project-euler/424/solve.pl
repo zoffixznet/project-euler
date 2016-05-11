@@ -7,7 +7,9 @@ use Euler424_v1;
 use IO::All qw / io /;
 
 {
-    foreach my $line (io->file('./p424_kakuro200.txt')->getlines())
+    my @lines = io->file('./p424_kakuro200.txt')->getlines();
+    # foreach my $line (@lines[2])
+    foreach my $line (@lines)
     {
         $line =~ s#\A([67]),##
             or die "ill format for <<$line>>";

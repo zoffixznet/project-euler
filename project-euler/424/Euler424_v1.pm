@@ -88,6 +88,7 @@ my $Y = 2;
 my $NUM_DIGITS = 10;
 
 has _found_letters => (is => 'ro', isa => 'HashRef', default => sub { return +{}; });
+has _found_digits => (is => 'ro', isa => 'HashRef', default => sub { return +{}; });
 has _queue => (is => 'ro', isa => 'ArrayRef', default => sub { return []; });
 has 'y_lim' => (is => 'ro', isa => 'Int', required => 1);
 has 'x_lim' => (is => 'ro', isa => 'Int', required => 1);
@@ -307,6 +308,9 @@ sub solve
                                 if ($len == 1)
                                 {
                                     my $partial_sum = 0;
+                                    my @digits = (1 .. 9);
+                                    my %d = (map { $_ => 1 } @digits);
+                                    my $num_empty = 0;
                                     foreach my $c_ (map { $self->cell($_) } @{$hint->affected_cells})
                                     {
                                         if (defined (my $d_ = $c_->digit))
@@ -328,10 +332,29 @@ sub solve
                                                         last V;
                                                     }
                                                 }
+                                                if (!defined$d2)
+                                                {
+                                                    die "applebloom";
+                                                }
                                             }
                                             $partial_sum += $d2;
+                                            delete $d{$d2};
+                                        }
+                                        else
+                                        {
+                                            $num_empty++;
                                         }
                                     }
+
+                                    foreach my $i (1 .. $num_empty)
+                                    {
+                                        while (not exists $d{$digits[0]})
+                                        {
+                                            shift@digits;
+                                        }
+                                        $partial_sum += shift@digits;
+                                    }
+
                                     my %l = (map { $_ => 1 } $partial_sum+1 .. $max);
 
                                     foreach my $d (0 .. 9)
@@ -438,9 +461,16 @@ sub _mark_as_not
     {
         my @digit_opts = (grep { $self->truth_table->[$_]->[$d] == $EMPTY } 0 .. 9);
         print "Remaining values for digit=$d : " , (join ',', @digit_opts), "\n";
-        if (@digit_opts == 1 and none { $self->truth_table->[$_]->[$d] == $Y } 0 .. 9)
+        if (none { $self->truth_table->[$_]->[$d] == $Y } 0 .. 9)
         {
-            $self->_enqueue({ type => '_mark_as_yes', d => $d, l => $digit_opts[0]});
+            if (@digit_opts == 1)
+            {
+                $self->_enqueue({ type => '_mark_as_yes', d => $d, l => $digit_opts[0]});
+            }
+            elsif (! @digit_opts)
+            {
+                die "All Xs in digit=$d!";
+            }
         }
     }
     {
@@ -448,10 +478,17 @@ sub _mark_as_not
         print "Remaining values for letter=$l_i : " , (join ',', @letter_opts),
         "\n";
 
-        if (@letter_opts == 1 and none { $self->truth_table->[$l_i]->[$_] == $Y } 0 .. 9)
+        if (none { $self->truth_table->[$l_i]->[$_] == $Y } 0 .. 9)
 
         {
-            $self->_enqueue({ type => '_mark_as_yes', d => $letter_opts[0], l => $l_i});
+            if (@letter_opts == 1)
+            {
+                $self->_enqueue({ type => '_mark_as_yes', d => $letter_opts[0], l => $l_i});
+            }
+            elsif (! @letter_opts)
+            {
+                die "All Xs in letter=$l_i!";
+            }
         }
     }
 
@@ -471,6 +508,7 @@ sub _mark_as_yes
     print "Matching $letter=$digit\n";
     $$v_ref = $Y;
     $self->_found_letters->{$l_i} = $digit;
+    $self->_found_digits->{$digit} = $l_i;
 
     foreach my $d (0 .. 9)
     {
