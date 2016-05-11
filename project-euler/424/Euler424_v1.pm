@@ -152,23 +152,42 @@ sub populate_from_string
             my $cell = $self->cell($coord);
             if ($cell->gray)
             {
-                if (defined(my $hint = $cell->horiz_hint))
-                {
-                    my $next_coord = $coord->next_x;
-                    NEXT_X:
-                    while ($next_coord->x < $self->width)
+                foreach my $rec (
                     {
-                        my $next_cell = $self->cell($next_coord);
-                        if ($next_cell->gray)
-                        {
-                            last NEXT_X;
-                        }
-                        $next_cell->horiz_affecting_sum($coord);
-                        push @{$hint->affected_cells}, $next_coord;
+                        dir => 'x',
+                        lim => 'width',
+                        d => 'horiz',
+                    },
+                    {
+                        dir => 'y',
+                        lim => 'height',
+                        d => 'vert',
                     }
-                    continue
+                )
+                {
+                    my $hint_meth = $rec->{d} . '_hint';
+                    if (defined(my $hint = $cell->$hint_meth))
                     {
-                        $next_coord = $next_coord->next_x;
+                        my $dir = $rec->{dir};
+                        my $next_meth = 'next_' . $dir;
+                        my $next_coord = $coord->$next_meth;
+                        my $lim = $rec->{lim};
+                        my $sum_meth = $rec->{d} . '_affecting_sum';
+                        NEXT_X:
+                        while ($next_coord->$dir < $self->$lim)
+                        {
+                            my $next_cell = $self->cell($next_coord);
+                            if ($next_cell->gray)
+                            {
+                                last NEXT_X;
+                            }
+                            $next_cell->$sum_meth($coord);
+                            push @{$hint->affected_cells}, $next_coord;
+                        }
+                        continue
+                        {
+                            $next_coord = $next_coord->$next_meth;
+                        }
                     }
                 }
             }
