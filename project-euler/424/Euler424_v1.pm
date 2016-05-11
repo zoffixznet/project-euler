@@ -67,10 +67,10 @@ my $Y = 2;
 
 my $NUM_DIGITS = 10;
 
-has 'height' => (is => 'ro', isa => 'Int');
-has 'width' => (is => 'ro', isa => 'Int');
+has 'height' => (is => 'ro', isa => 'Int', required => 1);
+has 'width' => (is => 'ro', isa => 'Int', required => 1);
 has 'truth_table' => (is => 'rw', default => sub { return [map { [($EMPTY) x $NUM_DIGITS]} (1 .. $NUM_DIGITS)]; });
-has 'grid' => (is => 'rw', default => sub {
+has 'grid' => (is => 'rw', lazy => 1, default => sub {
         my $self = shift;
         return [map { [map { Euler424_v1::Cell->new; } 1 .. $self->width] }
             1 .. $self->height
@@ -107,7 +107,7 @@ sub populate_from_string
             {
                 $self->cell($y, $x)->set_digit($1);
             }
-            elsif ($s =~ s#\A\((?:h([A-J]{1,2}))?,?v([A-J]{1,2})?\),##)
+            elsif ($s =~ s#\A\((?:h([A-J]{1,2}))?,?(?:v([A-J]{1,2}))?\),##)
             {
                 $self->cell($y, $x)->set_hints({ h => ($1 || undef()), v => ($2 || undef())});
             }
