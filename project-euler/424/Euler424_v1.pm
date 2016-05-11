@@ -179,6 +179,7 @@ sub populate_from_string
 }
 
 use List::Util qw/ max min /;
+use List::MoreUtils qw/ none /;
 
 sub loop
 {
@@ -336,7 +337,7 @@ sub _mark_as_not
     {
         my @digit_opts = (grep { $self->truth_table->[$_]->[$d] == $EMPTY } 0 .. 9);
         print "Remaining values for digit=$d : " , (join ',', @digit_opts), "\n";
-        if (@digit_opts == 1)
+        if (@digit_opts == 1 and none { $self->truth_table->[$_]->[$d] == $Y } 0 .. 9)
         {
             $self->_enqueue({ type => '_mark_as_yes', d => $d, l => $digit_opts[0]});
         }
@@ -346,7 +347,8 @@ sub _mark_as_not
         print "Remaining values for letter=$l_i : " , (join ',', @letter_opts),
         "\n";
 
-        if (@letter_opts == 1)
+        if (@letter_opts == 1 and none { $self->truth_table->[$l_i]->[$_] == $Y } 0 .. 9)
+
         {
             $self->_enqueue({ type => '_mark_as_yes', d => $letter_opts[0], l => $l_i});
         }
