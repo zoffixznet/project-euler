@@ -87,6 +87,7 @@ my $Y = 2;
 
 my $NUM_DIGITS = 10;
 
+has _queue => (is => 'ro', isa => 'ArrayRef', default => sub { return []; });
 has 'y_lim' => (is => 'ro', isa => 'Int', required => 1);
 has 'x_lim' => (is => 'ro', isa => 'Int', required => 1);
 has 'truth_table' => (is => 'rw', default => sub { return [map { [($EMPTY) x $NUM_DIGITS]} (1 .. $NUM_DIGITS)]; });
@@ -247,42 +248,8 @@ sub solve
 
                                 print "Matching $letter=$digit\n";
                                 $already_handled{$letter} = 1;
-                                foreach my $d (0 .. 9)
-                                {
-                                    $self->truth_table->[$l_i]->[$d] =
-                                        ($d == $digit) ? $Y : $X;
-                                    $self->truth_table->[$d]->[$digit] =
-                                        ($d == $l_i) ? $Y : $X;
-                                }
+                                $self->_mark_as_yes($l_i, $digit);
 
-                                $self->loop(
-                                    sub {
-                                        my (undef,$c) = @_;
-                                        if ($c->gray)
-                                        {
-                                            foreach my $dir (qw(x y))
-                                            {
-                                                my $hint_meth = $dir . '_hint';
-                                                if (defined(my $hint = $c->$hint_meth))
-                                                {
-                                                    $hint->sum(
-                                                        $hint->sum =~ s#\Q$letter\E#$digit#gr
-                                                    );
-                                                }
-                                            }
-                                        }
-                                        else
-                                        {
-                                            if (defined $c->digit)
-                                            {
-                                                $c->digit(
-                                                    $c->digit =~ s#\Q$letter\E#$digit#gr
-                                                );
-                                            }
-                                        }
-                                        return;
-                                    },
-                                );
 
                                 # A sanity check.
                                 if (0)
@@ -319,10 +286,7 @@ sub solve
                                 {
                                     if (!exists $l{$d})
                                     {
-                                        $self->truth_table->[$l_i]->[$d] = $X;
-                                        print "Remaining values for digit=$d : " ,
-                                            (join ',', (grep { $self->truth_table->[$_]->[$d] == $EMPTY } 0 .. 9)),
-                                            "\n";
+                                        $self->_mark_as_not($l_i, $d);
                                     }
                                 }
                             }
@@ -333,9 +297,107 @@ sub solve
         }
     );
 
+    while (defined (my $task = shift(@{$self->_queue})))
+    {
+        if ($task->{type} eq '_mark_as_yes')
+        {
+            $self->_mark_as_yes($task->{l}, $task->{d});
+        }
+        else
+        {
+            die "Unknown task type";
+        }
+    }
+
+    return;
+}
+
+sub _enqueue
+{
+    my ($self, $task) = @_;
+
+    push @{$self->_queue}, $task;
+
     return;
 }
 
 
+sub _mark_as_not
+{
+    my ($self, $l_i, $d) = @_;
+
+    $self->truth_table->[$l_i]->[$d] = $X;
+    {
+        my @digit_opts = (grep { $self->truth_table->[$_]->[$d] == $EMPTY } 0 .. 9);
+        print "Remaining values for digit=$d : " , (join ',', @digit_opts), "\n";
+        if (@digit_opts == 1)
+        {
+            $self->_enqueue({ type => '_mark_as_yes', d => $d, l => $digit_opts[0]});
+        }
+    }
+    {
+        my @letter_opts = (grep { $self->truth_table->[$l_i]->[$_] == $EMPTY } 0 .. 9);
+        print "Remaining values for letter=$l_i : " , (join ',', @letter_opts),
+        "\n";
+
+        if (@letter_opts == 1)
+        {
+            $self->_enqueue({ type => '_mark_as_yes', d => $letter_opts[0], l => $l_i});
+        }
+    }
+
+    return;
+}
+
+sub _mark_as_yes
+{
+    my ($self, $l_i, $digit) = @_;
+
+    $self->truth_table->[$l_i]->[$digit] = $Y;
+
+    foreach my $d (0 .. 9)
+    {
+        if ($d != $digit)
+        {
+            $self->_mark_as_not($l_i, $d);
+        }
+        if ($d != $l_i)
+        {
+            $self->_mark_as_not($d, $digit);
+        }
+    }
+
+    my $letter = chr(ord('A') + $l_i);
+    $self->loop(
+        sub {
+            my (undef,$c) = @_;
+            if ($c->gray)
+            {
+                foreach my $dir (qw(x y))
+                {
+                    my $hint_meth = $dir . '_hint';
+                    if (defined(my $hint = $c->$hint_meth))
+                    {
+                        $hint->sum(
+                            $hint->sum =~ s#\Q$letter\E#$digit#gr
+                        );
+                    }
+                }
+            }
+            else
+            {
+                if (defined $c->digit)
+                {
+                    $c->digit(
+                        $c->digit =~ s#\Q$letter\E#$digit#gr
+                    );
+                }
+            }
+            return;
+        },
+    );
+
+    return;
+}
 
 1;
