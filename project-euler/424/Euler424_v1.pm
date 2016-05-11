@@ -180,7 +180,7 @@ sub populate_from_string
     return;
 }
 
-use List::Util qw/ max min /;
+use List::Util qw/ first max min /;
 use List::MoreUtils qw/ none /;
 
 sub loop
@@ -308,6 +308,7 @@ sub solve
                                     my @digits = (1 .. 9);
                                     my %d = (map { $_ => 1 } @digits);
                                     my $num_empty = 0;
+                                    my @to_trim;
                                     foreach my $c_ (map { $self->cell($_) } @{$hint->affected_cells})
                                     {
                                         if (defined (my $d_ = $c_->digit))
@@ -333,6 +334,7 @@ sub solve
                                                 {
                                                     die "applebloom";
                                                 }
+                                                push @to_trim, +{ l => $l_i, min => $d2, max => (first { $self->truth_table->[$l_i]->[$_] == $EMPTY } reverse 0 .. 9)};
                                             }
                                             $partial_sum += $d2;
                                             delete $d{$d2};
@@ -355,6 +357,15 @@ sub solve
                                     $self->_mark_as_not_out_of_range(
                                         $l_i, $partial_sum, $max
                                     );
+
+                                    foreach my $t (@to_trim)
+                                    {
+                                        $self->_mark_as_not_out_of_range(
+                                            $t->{l},
+                                            $t->{min},
+                                            $max - $partial_sum + $t->{min},
+                                        );
+                                    }
                                 }
                             }
                         }
