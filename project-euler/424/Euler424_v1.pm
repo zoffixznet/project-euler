@@ -251,6 +251,17 @@ sub _process_queue
     return;
 }
 
+sub _mark_as_dirty
+{
+    my $self = shift;
+
+    $self->_dirty(1);
+
+    # $self->_output_layout;
+
+    return;
+}
+
 sub solve
 {
     my $self = shift;
@@ -424,25 +435,95 @@ sub solve
                                     }
                                     foreach my $c_ (map { $self->cell($_) } @{$hint->affected_cells})
                                     {
+                                        my $o = $c_->options;
                                         if (!defined ($c_->digit))
                                         {
                                             foreach my $d (1 .. 9)
                                             {
                                                 if (!($total & (1 << ($d - 1))))
                                                 {
-                                                    delete $c_->options->{$d};
+                                                    if (exists($o->{$d}))
+                                                    {
+                                                        $self->_mark_as_dirty;
+                                                        delete $o->{$d};
+                                                    }
                                                 }
                                             }
 
-                                            my @k = keys %{$c_->options};
+                                            my @k = keys %$o;
                                             if (@k == 1)
                                             {
+                                                $self->_mark_as_dirty;
                                                 $c_->digit($k[0]);
                                             }
                                             elsif (! @k)
                                             {
                                                 die "Rarity - no options!";
                                             }
+                                        }
+                                    }
+                                }
+                            }
+
+                            {
+                                my $max_sum = $sum;
+                                $max_sum =~ s#([A-J])#$self->_max_lett_digit($1)#eg;
+                                $max_sum =~ s#\A0#1#;
+
+                                my $cells_count = scalar @{$hint->affected_cells};
+                                my @empty;
+                                my $partial_sum = 0;
+                                foreach my $c_ (map { $self->cell($_) } @{$hint->affected_cells})
+                                {
+                                    if (defined (my $d_ = $c_->digit))
+                                    {
+                                        if ($d_ =~ /\A[0-9]\z/)
+                                        {
+                                            $partial_sum += $d_;
+                                        }
+                                        else
+                                        {
+                                            $partial_sum += $self->_min_lett_digit($d_);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        my @k = sort {$a <=> $b } keys %{$c_->options};
+                                        # if (@k == 9)
+                                        if (1)
+                                        {
+                                            push @empty, $c_;
+                                        }
+                                        else
+                                        {
+                                            $partial_sum += $k[0];
+                                        }
+                                    }
+                                }
+
+                                if (@empty == 1 and $partial_sum < $max_sum)
+                                {
+                                    foreach my $c_ (@empty)
+                                    {
+                                        my $o = $c_->options;
+
+                                        foreach my $d (($max_sum - $partial_sum + 1) .. 9)
+                                        {
+                                            if (exists($o->{$d}))
+                                            {
+                                                $self->_mark_as_dirty;
+                                                delete $o->{$d};
+                                            }
+                                        }
+                                        my @k = keys %$o;
+                                        if (@k == 1)
+                                        {
+                                            $self->_mark_as_dirty;
+                                            $c_->digit($k[0]);
+                                        }
+                                        elsif (! @k)
+                                        {
+                                            die "RainbowDash - no options!";
                                         }
                                     }
                                 }
@@ -459,6 +540,20 @@ sub solve
     # Output the current layout:
     $self->_output_layout;
     return;
+}
+
+sub _max_lett_digit
+{
+    my ($self, $letter) = @_;
+    my $l_i = $self->_calc_l_i($letter);
+    return (first { $self->truth_table->[$l_i]->[$_] != $X } reverse 0 .. 9);
+}
+
+sub _min_lett_digit
+{
+    my ($self, $letter) = @_;
+    my $l_i = $self->_calc_l_i($letter);
+    return (first { $self->truth_table->[$l_i]->[$_] != $X } 0 .. 9);
 }
 
 sub _process_partial_sum
@@ -551,7 +646,7 @@ sub _process_partial_sum
     return;
 }
 
-sub _output_layout
+sub _calc_layout
 {
     my $self = shift;
 
@@ -580,6 +675,18 @@ sub _output_layout
             die "PinkiePie";
         }
     };
+    my $emit_cell = sub {
+        my $cell = shift;
+        if (defined (my $d = $cell->digit))
+        {
+            return $transform->($d);
+        }
+        else
+        {
+            return '[' . (join'', sort {$a <=> $b } keys%{$cell->options})
+            . ']';
+        }
+    };
     $tb->load(
         map
         {
@@ -588,14 +695,21 @@ sub _output_layout
                     my $x = $_;
                     my $coord = Euler424_v1::Coord->new({x => $x, y => $y});
                     my $cell = $self->cell($coord);
-                    $cell->gray ? $transform->($cell->y_hint) . " \\ " . $transform->($cell->x_hint) : $transform->($cell->digit);
+                    $cell->gray ? $transform->($cell->y_hint) . " \\ " . $transform->($cell->x_hint) : $emit_cell->($cell);
                 } 0 .. $self->x_lim - 1
             ],
         }
         (0 .. $self->y_lim-1)
     );
 
-    print "Current State == <<\n$tb\n>>\n";
+    return "$tb";
+}
+
+sub _output_layout
+{
+    my $self = shift;
+
+    printf "Current State == <<\n%s\n>>\n", $self->_calc_layout;
 
     return;
 }
@@ -636,7 +750,7 @@ sub _mark_as_not
     {
         return;
     }
-    $self->_dirty(1);
+    $self->_mark_as_dirty;
 
     $$v_ref = $X;
 
@@ -687,7 +801,6 @@ sub _mark_as_yes
     {
         return;
     }
-    $self->_dirty(1);
     print "Matching $letter=$digit\n";
     $$v_ref = $Y;
     $self->_found_letters->{$l_i} = $digit;
@@ -704,6 +817,7 @@ sub _mark_as_yes
             $self->_mark_as_not($d, $digit);
         }
     }
+    $self->_mark_as_dirty;
 
     $self->loop(
         sub {

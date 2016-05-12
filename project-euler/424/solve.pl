@@ -8,7 +8,7 @@ use IO::All qw / io /;
 
 {
     my @lines = io->file('./p424_kakuro200.txt')->getlines();
-    # foreach my $line (@lines[85])
+    # foreach my $line ($lines[0])
     foreach my $line (@lines)
     {
         $line =~ s#\A([67]),##
