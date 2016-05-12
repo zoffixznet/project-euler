@@ -1022,4 +1022,24 @@ sub _mark_as_yes
     return;
 }
 
+sub load_line
+{
+    my ($class, $args) = @_;
+
+    my $line = $args->{line};
+    my $output_cb = $args->{output_cb};
+
+    $line =~ s#\A([67]),##
+        or die "ill format for <<$line>>";
+    my $len = $1;
+    my $puz = $class->new({
+            y_lim => $len,
+            x_lim => $len,
+            ($output_cb ? (output_cb => $output_cb) : ()),
+        });
+    $puz->populate_from_string($line);
+
+    return $puz;
+}
+
 1;
