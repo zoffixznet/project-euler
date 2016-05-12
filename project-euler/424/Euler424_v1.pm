@@ -596,6 +596,50 @@ sub solve
                                     }
                                 }
                             }
+                            {
+                                my $min_sum = $sum;
+                                $min_sum =~ s#($LETT_RE)#$self->_min_lett_digit($1)#eg;
+                                my @empty;
+                                my $partial_sum = 0;
+                                foreach my $c_ ($self->_hint_cells($hint))
+                                {
+                                    if (defined (my $d_ = $c_->digit))
+                                    {
+                                        if (_is_digit($d_))
+                                        {
+                                            $partial_sum += $d_;
+                                        }
+                                        else
+                                        {
+                                            push @empty, $c_;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        push @empty, $c_;
+                                    }
+                                }
+
+                                @empty = sort { $self->_cell_min($a) <=> $self->_cell_min($b) } @empty;
+
+                                if (@empty)
+                                {
+                                    my $pivot = shift@empty;
+                                    my $cells_count = @empty;
+                                    my $max =
+                                    (
+                                        ((9 + 9 - $cells_count + 1)*$cells_count)
+                                        >> 1
+                                    );
+                                    foreach my $k ($self->_cell_min($pivot) .. 9)
+                                    {
+                                        if ($partial_sum + $max + $k < $min_sum)
+                                        {
+                                            $self->_remove_option($pivot, $k);
+                                        }
+                                    }
+                                }
+                            }
                             $self->_try_whole_sum($sum, $hint);
                             $self->_try_perms_sum($sum, $hint);
                             $self->_try_perms_sum_with_min($sum, $hint);
