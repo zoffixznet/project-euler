@@ -316,7 +316,7 @@ sub solve
                                 );
                                 if (length$max == $len)
                                 {
-                                    my $max_digit = (first { $self->truth_table->[$l_i]->[$_] == $EMPTY } reverse 0 .. 9);
+                                    my $max_digit = $self->_max_lett_digit($letter);
                                     my $new_sum = $sum =~ s#\Q$letter\E#$max_digit#gr;
                                     my $new_max = substr($max, 0, 1);
                                     if ($new_sum !~ /[A-J]/ and $new_max eq substr($new_sum, 0, 1) and $max < $new_sum)
@@ -327,7 +327,7 @@ sub solve
                                 }
                                 else
                                 {
-                                    $max = (first { $self->truth_table->[$l_i]->[$_] == $EMPTY } reverse 0 .. 9);
+                                    $max = $self->_max_lett_digit($letter);
                                 }
                                 print "Matching $letter [$min..$max]\n";
 
@@ -385,7 +385,6 @@ sub solve
                             }
                             elsif (($letter) = $sum =~ /\A[0-9]([A-J])/)
                             {
-                                my $l_i = $self->_calc_l_i($letter);
                                 my $cells_count = scalar @{$hint->affected_cells};
                                 my $max =
                                 (
@@ -397,7 +396,7 @@ sub solve
                                 {
                                     if ($max == ($sum =~ s#\Q$letter\E#0#gr))
                                     {
-                                        $self->_mark_as_yes($l_i, 0);
+                                        $self->_mark_as_yes($self->_calc_l_i($letter), 0);
                                     }
                                 }
                             }
@@ -417,8 +416,7 @@ sub solve
                                 {
                                     if ($s =~ /\A[A-J]\z/)
                                     {
-                                        my $l_i = $self->_calc_l_i($s);
-                                        $s = [ (grep { $self->truth_table->[$l_i]->[$_] != $X } 0 .. 9) ];
+                                        $s = $self->_lett_digits($s);
                                     }
                                     else
                                     {
@@ -460,8 +458,7 @@ sub solve
                                             }
                                             else
                                             {
-                                                my $l_i = $self->_calc_l_i($d_);
-                                                my @d = (grep { $self->truth_table->[$l_i]->[$_] != $X } 0 .. 9);
+                                                my @d = @{ $self->_lett_digits($d_) };
                                                 @partial_sums = uniq( sort {$a <=> $b} (map { my $s = $_; map {$s - $_ } @d } @partial_sums));
                                                 $empty_count--;
                                             }
@@ -585,6 +582,13 @@ sub solve
     return;
 }
 
+sub _lett_digits
+{
+    my ($self, $letter) = @_;
+    my $l_i = $self->_calc_l_i($letter);
+    return [grep { $self->truth_table->[$l_i]->[$_] != $X } 0 .. 9];
+}
+
 sub _max_lett_digit
 {
     my ($self, $letter) = @_;
@@ -625,21 +629,12 @@ sub _process_partial_sum
             }
             else
             {
-                my $l_i = $self->_calc_l_i($d_);
-                V:
-                foreach my $v (0 .. 9)
-                {
-                    if ($self->truth_table->[$l_i]->[$v] == $EMPTY)
-                    {
-                        $d2 = $v;
-                        last V;
-                    }
-                }
+                $d2 = $self->_min_lett_digit($d_);
                 if (!defined$d2)
                 {
                     die "applebloom";
                 }
-                push @to_trim, +{ l => $l_i, min => $d2, max => (first { $self->truth_table->[$l_i]->[$_] == $EMPTY } reverse 0 .. 9)};
+                push @to_trim, +{ l => $self->_calc_l_i($d_), min => $d2, max => $self->_max_lett_digit($d_)};
             }
             $partial_sum += $d2;
         }
@@ -706,8 +701,7 @@ sub _calc_layout
         elsif (ref$item eq '') {
            return $item =~ s#([A-J])#
                 my $l = $1;
-                my $l_i = $self->_calc_l_i($l);
-                "{$l=[" . join('', grep { $self->truth_table->[$l_i]->[$_] == $EMPTY } 0 .. 9) . "]}"
+                "{$l=[" . join('', @{$self->_lett_digits($l)}) . "]}"
             #egr;
         }
         elsif ($item->can('sum')) {
