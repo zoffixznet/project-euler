@@ -601,6 +601,16 @@ sub solve
 
     # Output the current layout:
     $self->_output_layout;
+
+    my $_found_letters = $self->_found_letters;
+    if (keys %$_found_letters == 10)
+    {
+        print "[VERDICT] == Solved: " . join('', @$_found_letters{0 .. 9}) . "\n";
+    }
+    else
+    {
+        print "[VERDICT] == Unsolved\n";
+    }
     return;
 }
 
