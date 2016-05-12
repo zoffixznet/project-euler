@@ -568,11 +568,7 @@ sub solve
                                     }
                                 }
                             }
-                            if ($sum =~ /[A-J]/)
-                            {
-                                $self->_try_whole_sum($sum, $hint);
-
-                            }
+                            $self->_try_whole_sum($sum, $hint);
                         }
                     }
                 }
@@ -593,6 +589,7 @@ sub _try_whole_sum
 
     my $partial_sum = 0;
     my %masks;
+    my @letter_cells;
     foreach my $c_ (map { $self->cell($_) } @{$hint->affected_cells})
     {
         if (defined (my $d_ = $c_->digit))
@@ -603,7 +600,7 @@ sub _try_whole_sum
             }
             else
             {
-                return;
+                push @letter_cells, $c_;
             }
         }
         else
@@ -634,12 +631,25 @@ sub _try_whole_sum
         }
         $partial_sum += $rec->{sum};
     }
-    foreach my $i (0 .. length($sum) - 1)
+    if (! @letter_cells)
     {
-        my $letter = substr($sum, $i, 1);
-        if ($letter =~ /\A[A-J]\z/)
+        foreach my $i (0 .. length($sum) - 1)
         {
-            $self->_mark_as_yes($self->_calc_l_i($letter), substr($partial_sum, $i, 1));
+            my $letter = substr($sum, $i, 1);
+            if ($letter =~ /\A[A-J]\z/)
+            {
+                $self->_mark_as_yes($self->_calc_l_i($letter), substr($partial_sum, $i, 1));
+            }
+        }
+    }
+    elsif (@letter_cells == 1)
+    {
+        if ($sum =~ /\A[0-9]+\z/)
+        {
+            $self->_mark_as_yes(
+                $self->_calc_l_i($letter_cells[0]->digit),
+                $sum - $partial_sum
+            );
         }
     }
 
