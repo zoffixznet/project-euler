@@ -256,18 +256,12 @@ sub solve
 
     my %already_handled;
 
-    my $run_once = 1;
+    # So it will run the first time.
+    $self->_dirty(1);
 
     MAIN:
-    while ($run_once ||
-        (
-            (keys (%{$self->_found_letters}) != 10)
-                and
-            $self->_dirty
-        )
-    )
+    while ( (keys (%{$self->_found_letters}) < 10) and $self->_dirty )
     {
-        $run_once = 0;
         $self->_dirty(0);
 
         $self->_process_queue;
