@@ -201,6 +201,25 @@ sub loop
 
 use v5.16;
 
+sub _process_queue
+{
+    my ($self) = @_;
+
+    while (defined (my $task = shift(@{$self->_queue})))
+    {
+        if ($task->{type} eq '_mark_as_yes')
+        {
+            $self->_mark_as_yes($task->{l}, $task->{d});
+        }
+        else
+        {
+            die "Unknown task type";
+        }
+    }
+
+    return;
+}
+
 sub solve
 {
     my $self = shift;
@@ -386,17 +405,7 @@ sub solve
             }
         );
 
-        while (defined (my $task = shift(@{$self->_queue})))
-        {
-            if ($task->{type} eq '_mark_as_yes')
-            {
-                $self->_mark_as_yes($task->{l}, $task->{d});
-            }
-            else
-            {
-                die "Unknown task type";
-            }
-        }
+        $self->_process_queue;
     }
 
     # Output the current layout:
