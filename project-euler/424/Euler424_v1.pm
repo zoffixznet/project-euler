@@ -31,6 +31,11 @@ has 'sum' => (is => 'rw', isa => 'Str');
 has 'affected_cells' => (is => 'rw', isa => 'ArrayRef',
     default => sub { return []; });
 
+sub count
+{
+    return scalar @{shift->affected_cells};
+}
+
 package Euler424_v1::Cell;
 
 use Moose;
@@ -312,7 +317,7 @@ sub solve
                                 }
                                 my $l_i = $self->_calc_l_i($letter);
                                 my $len = length($sum);
-                                my $cells_count = scalar @{$hint->affected_cells};
+                                my $cells_count = $hint->count;
 
                                 my $min_val =
                                 (
@@ -397,7 +402,7 @@ sub solve
                             }
                             elsif (($letter) = $sum =~ /\A$DIGIT_RE([A-J])/)
                             {
-                                my $cells_count = scalar @{$hint->affected_cells};
+                                my $cells_count = $hint->count;
                                 my $max =
                                 (
                                     ((9 + 9 - $cells_count + 1)*$cells_count)
@@ -456,8 +461,7 @@ sub solve
                                 {
                                     my @partial_sums = ($sum);
                                     my $bitmask = 0;
-                                    my $cells_count = scalar @{$hint->affected_cells};
-                                    my $empty_count = $cells_count;
+                                    my $empty_count = $hint->count;
                                     foreach my $c_ (map { $self->cell($_) } @{$hint->affected_cells})
                                     {
                                         if (defined (my $d_ = $c_->digit))
@@ -522,7 +526,6 @@ sub solve
                                 $max_sum =~ s#([A-J])#$self->_max_lett_digit($1)#eg;
                                 $max_sum =~ s#\A0#1#;
 
-                                my $cells_count = scalar @{$hint->affected_cells};
                                 my @empty;
                                 my $partial_sum = 0;
                                 foreach my $c_ (map { $self->cell($_) } @{$hint->affected_cells})
