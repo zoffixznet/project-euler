@@ -209,7 +209,7 @@ sub populate_from_string
 }
 
 use List::Util qw/ first max min /;
-use List::MoreUtils qw/ none /;
+use List::MoreUtils qw/ none uniq /;
 
 sub loop
 {
@@ -409,8 +409,42 @@ sub solve
                                         max => $sum,
                                     }
                                 );
+                            }
+                            {
+                                my $total = 0;
+                                my @s = split//, $sum;
+                                foreach my $s (@s)
                                 {
-                                    my $partial_sum = $sum;
+                                    if ($s =~ /\A[A-J]\z/)
+                                    {
+                                        my $l_i = $self->_calc_l_i($s);
+                                        $s = [ (grep { $self->truth_table->[$l_i]->[$_] != $X } 0 .. 9) ];
+                                    }
+                                    else
+                                    {
+                                        $s = [$s];
+                                    }
+                                }
+                                if ($s[0][0] == 0)
+                                {
+                                    shift @{ $s[0] };
+                                }
+
+                                my $cross_product = sub {
+                                    if (!@_)
+                                    {
+                                        return [''];
+                                    }
+                                    else
+                                    {
+                                        my $f = shift@_;
+                                        my $more = __SUB__->(@_);
+                                        return [map { my $x = $_; map {$x.$_}@$more } @$f];
+                                    }
+                                };
+                                foreach my $sum (@{ $cross_product->(@s) })
+                                {
+                                    my @partial_sums = ($sum);
                                     my $bitmask = 0;
                                     my $cells_count = scalar @{$hint->affected_cells};
                                     my $empty_count = $cells_count;
@@ -420,46 +454,55 @@ sub solve
                                         {
                                             if ($d_ =~ /\A[0-9]\z/)
                                             {
-                                                $partial_sum -= $d_;
+                                                @partial_sums = ( map {$_-$d_} @partial_sums);
                                                 $bitmask |= (1 << ($d_ - 1));
+                                                $empty_count--;
+                                            }
+                                            else
+                                            {
+                                                my $l_i = $self->_calc_l_i($d_);
+                                                my @d = (grep { $self->truth_table->[$l_i]->[$_] != $X } 0 .. 9);
+                                                @partial_sums = uniq( sort {$a <=> $b} (map { my $s = $_; map {$s - $_ } @d } @partial_sums));
                                                 $empty_count--;
                                             }
                                         }
                                     }
-                                    my $perms = $GENERATED_PERMS->{$empty_count}->{$partial_sum - $empty_count};
-                                    my @p = grep { !($bitmask & $_) } @$perms;
-                                    my $total = 0;
-                                    foreach my $p (@p)
+                                    foreach my $partial_sum (@partial_sums)
                                     {
-                                        $total |= $p;
-                                    }
-                                    foreach my $c_ (map { $self->cell($_) } @{$hint->affected_cells})
-                                    {
-                                        my $o = $c_->options;
-                                        if (!defined ($c_->digit))
+                                        my $perms = $GENERATED_PERMS->{$empty_count}->{$partial_sum - $empty_count};
+                                        my @p = grep { !($bitmask & $_) } @$perms;
+                                        foreach my $p (@p)
                                         {
-                                            foreach my $d (1 .. 9)
+                                            $total |= $p;
+                                        }
+                                    }
+                                }
+                                foreach my $c_ (map { $self->cell($_) } @{$hint->affected_cells})
+                                {
+                                    my $o = $c_->options;
+                                    if (!defined ($c_->digit))
+                                    {
+                                        foreach my $d (1 .. 9)
+                                        {
+                                            if (!($total & (1 << ($d - 1))))
                                             {
-                                                if (!($total & (1 << ($d - 1))))
+                                                if (exists($o->{$d}))
                                                 {
-                                                    if (exists($o->{$d}))
-                                                    {
-                                                        $self->_mark_as_dirty;
-                                                        delete $o->{$d};
-                                                    }
+                                                    $self->_mark_as_dirty;
+                                                    delete $o->{$d};
                                                 }
                                             }
+                                        }
 
-                                            my @k = keys %$o;
-                                            if (@k == 1)
-                                            {
-                                                $self->_mark_as_dirty;
-                                                $c_->digit($k[0]);
-                                            }
-                                            elsif (! @k)
-                                            {
-                                                die "Rarity - no options!";
-                                            }
+                                        my @k = keys %$o;
+                                        if (@k == 1)
+                                        {
+                                            $self->_mark_as_dirty;
+                                            $c_->digit($k[0]);
+                                        }
+                                        elsif (! @k)
+                                        {
+                                            die "Rarity - no options!";
                                         }
                                     }
                                 }
