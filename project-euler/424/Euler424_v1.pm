@@ -295,6 +295,15 @@ sub _hint_cells
     return map { $self->cell($_) } @{$hint->affected_cells};
 }
 
+sub _combine_bitmasks
+{
+    my $ret = 0;
+    foreach my $b (@_)
+    {
+        $ret |= $b;
+    }
+    return $ret;
+}
 sub solve
 {
     my $self = shift;
@@ -419,7 +428,19 @@ sub solve
                             elsif (($digit, $letter) = $sum =~ /\A($DIGIT_RE)($LETT_RE)\z/)
                             {
                                 my $cells_count = $hint->count;
-                                my $max =
+                                my $partial_sum = 0;
+                                foreach my $c_ ($self->_hint_cells($hint))
+                                {
+                                    if (defined (my $d_ = $c_->digit))
+                                    {
+                                        if (_is_digit($d_))
+                                        {
+                                            $cells_count--;
+                                            $partial_sum += $d_;
+                                        }
+                                    }
+                                }
+                                my $max = $partial_sum +
                                 (
                                     ((9 + 9 - $cells_count + 1)*$cells_count)
                                     >> 1
@@ -511,10 +532,7 @@ sub solve
                                     {
                                         my $perms = $GENERATED_PERMS->{$empty_count}->{$partial_sum - $empty_count};
                                         my @p = grep { !($bitmask & $_) } @$perms;
-                                        foreach my $p (@p)
-                                        {
-                                            $total |= $p;
-                                        }
+                                        $total |= _combine_bitmasks(@p);
                                     }
                                 }
                                 foreach my $c_ ($self->_hint_cells($hint))
@@ -611,6 +629,7 @@ sub solve
                                 }
                             }
                             $self->_try_whole_sum($sum, $hint);
+                            $self->_try_perms_sum($sum, $hint);
                         }
                     }
                 }
@@ -654,6 +673,70 @@ sub result
     {
         return "UNSOLVED";
     }
+}
+
+sub _try_perms_sum
+{
+    my ($self, $sum, $hint) = @_;
+
+    if (! _is_numeric($sum))
+    {
+        return;
+    }
+
+    my $cells_count = $hint->count;
+    my $partial_sum = 0;
+    my @letter_cells;
+    my @empty;
+    foreach my $c_ ($self->_hint_cells($hint))
+    {
+        if (defined (my $d_ = $c_->digit))
+        {
+            if (_is_digit($d_))
+            {
+                $partial_sum += $d_;
+                $cells_count--;
+            }
+            else
+            {
+                push @letter_cells, $c_;
+            }
+        }
+        else
+        {
+            push @empty, $c_;
+        }
+    }
+    my $perms = $GENERATED_PERMS->{$cells_count}->{$sum - $partial_sum - $cells_count};
+    my $combined = _combine_bitmasks(@$perms);
+
+    for my $d (1 .. 9)
+    {
+        if (not $combined & (1 << ($d-1)))
+        {
+            foreach my $x (@letter_cells)
+            {
+                $self->_mark_as_not($self->_calc_l_i($x->digit), $d);
+            }
+            foreach my $c_ (@empty)
+            {
+                my $o = $c_->options;
+                if (exists($o->{$d}))
+                {
+                    $self->_mark_as_dirty;
+                    delete $o->{$d};
+                }
+                my @k = keys %$o;
+                if (@k == 1)
+                {
+                    $self->_mark_as_dirty;
+                    $c_->digit($k[0]);
+                }
+            }
+        }
+    }
+
+    return;
 }
 
 sub _try_whole_sum
