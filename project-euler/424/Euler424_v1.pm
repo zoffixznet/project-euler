@@ -208,7 +208,7 @@ sub populate_from_string
     return;
 }
 
-use List::Util qw/ first max min /;
+use List::Util qw/ first max min sum /;
 use List::MoreUtils qw/ none uniq /;
 
 sub loop
@@ -568,6 +568,11 @@ sub solve
                                     }
                                 }
                             }
+                            if ($sum =~ /[A-J]/)
+                            {
+                                $self->_try_whole_sum($sum, $hint);
+
+                            }
                         }
                     }
                 }
@@ -579,6 +584,65 @@ sub solve
 
     # Output the current layout:
     $self->_output_layout;
+    return;
+}
+
+sub _try_whole_sum
+{
+    my ($self, $sum, $hint) = @_;
+
+    my $partial_sum = 0;
+    my %masks;
+    foreach my $c_ (map { $self->cell($_) } @{$hint->affected_cells})
+    {
+        if (defined (my $d_ = $c_->digit))
+        {
+            if ($d_ =~ /\A[0-9]\z/)
+            {
+                $partial_sum += $d_;
+            }
+            else
+            {
+                return;
+            }
+        }
+        else
+        {
+            my $bitmask = 0;
+            my @k = keys %{$c_->options};
+            foreach my $k (@k)
+            {
+                $bitmask |= (1 << ($k - 1));
+            }
+
+            if (!exists $masks{$bitmask})
+            {
+                $masks{$bitmask} = +{
+                    num_bits => scalar@k,
+                    count => 0,
+                    sum => sum(@k),
+                };
+            }
+            $masks{$bitmask}{count}++;
+        }
+    }
+    while (my ($bitmask, $rec) = each%masks)
+    {
+        if ($rec->{num_bits} != $rec->{count})
+        {
+            return;
+        }
+        $partial_sum += $rec->{sum};
+    }
+    foreach my $i (0 .. length($sum) - 1)
+    {
+        my $letter = substr($sum, $i, 1);
+        if ($letter =~ /\A[A-J]\z/)
+        {
+            $self->_mark_as_yes($self->_calc_l_i($letter), substr($partial_sum, $i, 1));
+        }
+    }
+
     return;
 }
 
