@@ -276,7 +276,9 @@ sub solve
                         if (defined(my $hint = $cell->$hint_meth))
                         {
                             my $sum = $hint->sum;
-                            if (my ($letter) = $sum =~ /\A([A-J])/)
+                            my $letter;
+                            my $digit;
+                            if (($letter) = $sum =~ /\A([A-J])/)
                             {
                                 if (exists $already_handled{$letter})
                                 {
@@ -365,6 +367,24 @@ sub solve
                                             max => $max,
                                         }
                                     );
+                                }
+                            }
+                            elsif (($letter) = $sum =~ /\A[0-9]([A-J])/)
+                            {
+                                my $l_i = $self->_calc_l_i($letter);
+                                my $cells_count = scalar @{$hint->affected_cells};
+                                my $max =
+                                (
+                                    ((9 + 9 - $cells_count + 1)*$cells_count)
+                                    >> 1
+                                );
+
+                                if ($max % 10 == 0)
+                                {
+                                    if ($max == ($sum =~ s#\Q$letter\E#0#gr))
+                                    {
+                                        $self->_mark_as_yes($l_i, 0);
+                                    }
                                 }
                             }
                             elsif ($sum =~ /\A[0-9]+\z/)
