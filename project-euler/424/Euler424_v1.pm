@@ -855,15 +855,21 @@ sub _cell_min
     return $self->_min_lett_digit($d);
 }
 
+sub _unpack_bitmask
+{
+    my $b = shift;
+    return [grep { $b & (1 << ($_ - 1)) } 1 .. 9];
+}
+
 sub _try_whole_sum
 {
     my ($self, $sum, $hint) = @_;
 
     my $partial_sum = 0;
     my %masks;
-    my @letter_cells;
     foreach my $c_ ($self->_hint_cells($hint))
     {
+        my $bitmask;
         if (defined (my $d_ = $c_->digit))
         {
             if (_is_digit($d_))
@@ -872,38 +878,52 @@ sub _try_whole_sum
             }
             else
             {
-                push @letter_cells, $c_;
+                $bitmask = $self->_cell_bitmask($c_);
             }
         }
         else
         {
-            my $bitmask = 0;
-            my @k = keys %{$c_->options};
-            foreach my $k (@k)
-            {
-                $bitmask |= (1 << ($k - 1));
-            }
+            $bitmask = $self->_cell_bitmask($c_);
+        }
 
+        if (defined($bitmask))
+        {
             if (!exists $masks{$bitmask})
             {
+                my @k = @{_unpack_bitmask($bitmask)};
                 $masks{$bitmask} = +{
                     num_bits => scalar@k,
                     count => 0,
                     sum => sum(@k),
+                    cells => [],
+                    bitmask => $bitmask,
                 };
             }
-            $masks{$bitmask}{count}++;
+            my $rec = $masks{$bitmask};
+            $rec->{count}++;
+            push @{$rec->{cells}}, $c_;
         }
     }
+    my @ones;
     while (my ($bitmask, $rec) = each%masks)
     {
         if ($rec->{num_bits} != $rec->{count})
         {
-            return;
+            if ($rec->{count} == 1)
+            {
+                push @ones, $rec;
+            }
+            else
+            {
+                return;
+            }
         }
-        $partial_sum += $rec->{sum};
+        else
+        {
+            $partial_sum += $rec->{sum};
+        }
     }
-    if (! @letter_cells)
+    if (! @ones)
     {
         foreach my $i (0 .. length($sum) - 1)
         {
@@ -914,14 +934,29 @@ sub _try_whole_sum
             }
         }
     }
-    elsif (@letter_cells == 1)
+    elsif (@ones == 1)
     {
         if (_is_numeric($sum))
         {
-            $self->_mark_as_yes(
-                $self->_calc_l_i($letter_cells[0]->digit),
-                $sum - $partial_sum
-            );
+            my $c_ = $ones[0]->{cells}->[0];
+            my $d = $c_->digit;
+            my $new_val = $sum - $partial_sum;
+            if (!defined($d))
+            {
+                $c_->digit($new_val);
+                foreach my $k (keys %{ $c_->options })
+                {
+                    if ($k != $new_val)
+                    {
+                        delete $c_->options->{$k};
+                    }
+                }
+                $self->_mark_as_dirty;
+            }
+            else
+            {
+                $self->_mark_as_yes( $self->_calc_l_i($d), $new_val);
+            }
         }
     }
 
