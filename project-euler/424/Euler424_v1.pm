@@ -557,6 +557,7 @@ sub solve
 
                                 my @empty;
                                 my $partial_sum = 0;
+                                my $max_partial_sum = 0;
                                 foreach my $c_ ($self->_hint_cells($hint))
                                 {
                                     if (defined (my $d_ = $c_->digit))
@@ -564,10 +565,12 @@ sub solve
                                         if (_is_digit($d_))
                                         {
                                             $partial_sum += $d_;
+                                            $max_partial_sum += $d_;
                                         }
                                         else
                                         {
                                             $partial_sum += $self->_min_lett_digit($d_);
+                                            $max_partial_sum += $self->_max_lett_digit($d_);
                                         }
                                     }
                                     else
@@ -577,6 +580,7 @@ sub solve
                                         if (1)
                                         {
                                             push @empty, $c_;
+                                            $max_partial_sum += $k[-1];
                                         }
                                         else
                                         {
@@ -592,6 +596,22 @@ sub solve
                                         foreach my $d (($max_sum - $partial_sum + 1) .. 9)
                                         {
                                             $self->_remove_cell_digit_opt($c_, $d);
+                                        }
+                                    }
+                                }
+                                if ($max_partial_sum < $max_sum)
+                                {
+                                    my @l;
+                                    if ((@l = ($sum =~ /($LETT_RE)/g)) == 1)
+                                    {
+                                        my $l = $l[0];
+                                        foreach my $d (0 .. 9)
+                                        {
+                                            my $new_sum = $sum =~ s#\Q$l\E#$d#r;
+                                            if ($max_partial_sum < $new_sum)
+                                            {
+                                                $self->_mark_as_not($self->_calc_l_i($l), $d);
+                                            }
                                         }
                                     }
                                 }
