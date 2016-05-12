@@ -39,6 +39,7 @@ has 'gray' => (is => 'rw', isa => 'Bool');
 has ['x_hint', 'y_hint'] => (is => 'rw', 'isa' => 'Maybe[Euler424_v1::Hint]');
 has 'digit' => (is => 'rw', isa => 'Maybe[Str]');
 has ['x_affecting_sum', 'y_affecting_sum'] => (is => 'rw', 'isa' => 'Maybe[Euler424_v1::Coord]');
+has 'options' => (is => 'ro', 'isa' => 'HashRef', default => sub { return +{ map { $_ => 1 } 1 .. 9 }; });
 
 sub set_gray
 {
@@ -80,6 +81,8 @@ sub set_hints
 package Euler424_v1::Puzzle;
 
 use Moose;
+
+use KakuroPerms qw/$GENERATED_PERMS/;
 
 my $EMPTY = 0;
 my $X = 1;
@@ -395,6 +398,54 @@ sub solve
                                         max => $sum,
                                     }
                                 );
+                                {
+                                    my $partial_sum = $sum;
+                                    my $bitmask = 0;
+                                    my $cells_count = scalar @{$hint->affected_cells};
+                                    my $empty_count = $cells_count;
+                                    foreach my $c_ (map { $self->cell($_) } @{$hint->affected_cells})
+                                    {
+                                        if (defined (my $d_ = $c_->digit))
+                                        {
+                                            if ($d_ =~ /\A[0-9]\z/)
+                                            {
+                                                $partial_sum -= $d_;
+                                                $bitmask |= (1 << ($d_ - 1));
+                                                $empty_count--;
+                                            }
+                                        }
+                                    }
+                                    my $perms = $GENERATED_PERMS->{$empty_count}->{$partial_sum - $empty_count};
+                                    my @p = grep { !($bitmask & $_) } @$perms;
+                                    my $total = 0;
+                                    foreach my $p (@p)
+                                    {
+                                        $total |= $p;
+                                    }
+                                    foreach my $c_ (map { $self->cell($_) } @{$hint->affected_cells})
+                                    {
+                                        if (!defined ($c_->digit))
+                                        {
+                                            foreach my $d (1 .. 9)
+                                            {
+                                                if (!($total & (1 << ($d - 1))))
+                                                {
+                                                    delete $c_->options->{$d};
+                                                }
+                                            }
+
+                                            my @k = keys %{$c_->options};
+                                            if (@k == 1)
+                                            {
+                                                $c_->digit($k[0]);
+                                            }
+                                            elsif (! @k)
+                                            {
+                                                die "Rarity - no options!";
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -422,6 +473,7 @@ sub _process_partial_sum
     my %d = (map { $_ => 1 } @digits);
     my $num_empty = 0;
     my @to_trim;
+    my @partial;
 
     foreach my $c_ (map { $self->cell($_) } @{$hint->affected_cells})
     {
@@ -455,7 +507,15 @@ sub _process_partial_sum
         }
         else
         {
-            $num_empty++;
+            my @k = keys %{$c_->options};
+            if (@k < 9)
+            {
+                push @partial, $c_;
+            }
+            else
+            {
+                $num_empty++;
+            }
         }
     }
 
@@ -466,6 +526,10 @@ sub _process_partial_sum
             shift@digits;
         }
         $partial_sum += shift@digits;
+    }
+    foreach my $p (@partial)
+    {
+        $partial_sum += min(keys%{$p->options});
     }
 
     if (my ($letter) = $hint->sum =~ /\A([A-J])/)
