@@ -602,16 +602,37 @@ sub solve
     # Output the current layout:
     $self->_output_layout;
 
-    my $_found_letters = $self->_found_letters;
-    if (keys %$_found_letters == 10)
+    if ($self->_was_solved)
     {
-        print "[VERDICT] == Solved: " . join('', @$_found_letters{0 .. 9}) . "\n";
+        print "[VERDICT] == Solved: " . $self->result()  . "\n";
     }
     else
     {
         print "[VERDICT] == Unsolved\n";
     }
     return;
+}
+
+sub _was_solved
+{
+    my $self = shift;
+
+    return keys %{$self->_found_letters} == 10;
+}
+
+sub result
+{
+    my $self = shift;
+
+    if ($self->_was_solved)
+    {
+        my $_found_letters = $self->_found_letters;
+        return join('', @$_found_letters{0 .. 9})
+    }
+    else
+    {
+        return "UNSOLVED";
+    }
 }
 
 sub _try_whole_sum
