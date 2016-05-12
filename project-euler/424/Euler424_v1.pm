@@ -359,70 +359,22 @@ sub solve
 
                                 if ($len == 1)
                                 {
-                                    my $partial_sum = 0;
-                                    my @digits = (1 .. 9);
-                                    my %d = (map { $_ => 1 } @digits);
-                                    my $num_empty = 0;
-                                    my @to_trim;
-
-                                    foreach my $c_ (map { $self->cell($_) } @{$hint->affected_cells})
-                                    {
-                                        if (defined (my $d_ = $c_->digit))
+                                    $self->_process_partial_sum(
                                         {
-                                            my $d2;
-                                            if ($d_ =~ /\A[0-9]\z/)
-                                            {
-                                                $d2 = $d_;
-                                            }
-                                            else
-                                            {
-                                                my $l_i = $self->_calc_l_i($d_);
-                                                V:
-                                                foreach my $v (0 .. 9)
-                                                {
-                                                    if ($self->truth_table->[$l_i]->[$v] == $EMPTY)
-                                                    {
-                                                        $d2 = $v;
-                                                        last V;
-                                                    }
-                                                }
-                                                if (!defined$d2)
-                                                {
-                                                    die "applebloom";
-                                                }
-                                                push @to_trim, +{ l => $l_i, min => $d2, max => (first { $self->truth_table->[$l_i]->[$_] == $EMPTY } reverse 0 .. 9)};
-                                            }
-                                            $partial_sum += $d2;
-                                            delete $d{$d2};
+                                            hint => $hint,
+                                            max => $max,
                                         }
-                                        else
-                                        {
-                                            $num_empty++;
-                                        }
-                                    }
-
-                                    foreach my $i (1 .. $num_empty)
-                                    {
-                                        while (not exists $d{$digits[0]})
-                                        {
-                                            shift@digits;
-                                        }
-                                        $partial_sum += shift@digits;
-                                    }
-
-                                    $self->_mark_as_not_out_of_range(
-                                        $l_i, $partial_sum, $max
                                     );
-
-                                    foreach my $t (@to_trim)
-                                    {
-                                        $self->_mark_as_not_out_of_range(
-                                            $t->{l},
-                                            $t->{min},
-                                            $max - $partial_sum + $t->{min},
-                                        );
-                                    }
                                 }
+                            }
+                            elsif ($sum =~ /\A[0-9]+\z/)
+                            {
+                                $self->_process_partial_sum(
+                                    {
+                                        hint => $hint,
+                                        max => $sum,
+                                    }
+                                );
                             }
                         }
                     }
@@ -435,6 +387,83 @@ sub solve
 
     # Output the current layout:
     $self->_output_layout;
+    return;
+}
+
+sub _process_partial_sum
+{
+    my ($self, $args) = @_;
+
+    my $hint = $args->{hint};
+    my $max = $args->{max};
+
+    my $partial_sum = 0;
+    my @digits = (1 .. 9);
+    my %d = (map { $_ => 1 } @digits);
+    my $num_empty = 0;
+    my @to_trim;
+
+    foreach my $c_ (map { $self->cell($_) } @{$hint->affected_cells})
+    {
+        if (defined (my $d_ = $c_->digit))
+        {
+            my $d2;
+            if ($d_ =~ /\A[0-9]\z/)
+            {
+                $d2 = $d_;
+                delete $d{$d2};
+            }
+            else
+            {
+                my $l_i = $self->_calc_l_i($d_);
+                V:
+                foreach my $v (0 .. 9)
+                {
+                    if ($self->truth_table->[$l_i]->[$v] == $EMPTY)
+                    {
+                        $d2 = $v;
+                        last V;
+                    }
+                }
+                if (!defined$d2)
+                {
+                    die "applebloom";
+                }
+                push @to_trim, +{ l => $l_i, min => $d2, max => (first { $self->truth_table->[$l_i]->[$_] == $EMPTY } reverse 0 .. 9)};
+            }
+            $partial_sum += $d2;
+        }
+        else
+        {
+            $num_empty++;
+        }
+    }
+
+    foreach my $i (1 .. $num_empty)
+    {
+        while (not exists $d{$digits[0]})
+        {
+            shift@digits;
+        }
+        $partial_sum += shift@digits;
+    }
+
+    if (my ($letter) = $hint->sum =~ /\A([A-J])/)
+    {
+        $self->_mark_as_not_out_of_range(
+            $self->_calc_l_i($letter), $partial_sum, $max
+        );
+    }
+
+    foreach my $t (@to_trim)
+    {
+        $self->_mark_as_not_out_of_range(
+            $t->{l},
+            $t->{min},
+            $max - $partial_sum + $t->{min},
+        );
+    }
+
     return;
 }
 
@@ -453,7 +482,7 @@ sub _output_layout
             return '';
         }
         elsif (ref$item eq '') {
-            return $item =~ s#([A-J])#
+           return $item =~ s#([A-J])#
                 my $l = $1;
                 my $l_i = $self->_calc_l_i($l);
                 "{$l=[" . join('', grep { $self->truth_table->[$l_i]->[$_] == $EMPTY } 0 .. 9) . "]}"
