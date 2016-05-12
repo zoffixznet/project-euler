@@ -102,6 +102,14 @@ has 'grid' => (is => 'rw', lazy => 1, default => sub {
     }
 );
 
+# Calc letter index
+sub _calc_l_i
+{
+    my ($self, $letter) = @_;
+
+    return ord($letter) - ord('A');
+}
+
 sub cell
 {
     my ($self,$coord) = @_;
@@ -114,6 +122,15 @@ sub populate_from_string
     my ($self,$s) = @_;
 
     $s =~ s#\r?\n?\z#,#;
+
+    my $_process_hint = sub {
+        my $hint = shift;
+        if (defined($hint))
+        {
+            $self->_enqueue({ type => '_mark_as_not', d => 0, l => $self->_calc_l_i(substr($hint, 0, 1))});
+        }
+        return $hint;
+    };
 
     $self->loop(sub {
             my (undef, $cell) = @_;
@@ -128,11 +145,18 @@ sub populate_from_string
             }
             elsif ($s =~ s#\A([A-J]),##)
             {
-                $cell->set_digit($1);
+                $cell->set_digit($_process_hint->($1));
             }
             elsif ($s =~ s#\A\((?:h([A-J]{1,2}))?,?(?:v([A-J]{1,2}))?\),##)
             {
-                $cell->set_hints({ h => ($1 || undef()), v => ($2 || undef())});
+                my $h = $1;
+                my $v = $2;
+                $cell->set_hints(
+                    {
+                        h => $_process_hint->($h || undef()),
+                        v => $_process_hint->($v || undef())
+                    }
+                );
             }
             else
             {
@@ -211,6 +235,10 @@ sub _process_queue
         {
             $self->_mark_as_yes($task->{l}, $task->{d});
         }
+        elsif ($task->{type} eq '_mark_as_not')
+        {
+            $self->_mark_as_not($task->{l}, $task->{d});
+        }
         else
         {
             die "Unknown task type";
@@ -241,6 +269,9 @@ sub solve
     {
         $run_once = 0;
         $self->_dirty(0);
+
+        $self->_process_queue;
+
         $self->loop(sub {
                 my (undef, $cell) = @_;
                 if ($cell->gray)
@@ -257,7 +288,7 @@ sub solve
                                 {
                                     die "Twilly";
                                 }
-                                my $l_i = ord($letter)-ord('A');
+                                my $l_i = $self->_calc_l_i($letter);
                                 my $len = length($sum);
                                 my $cells_count = scalar @{$hint->affected_cells};
 
@@ -351,7 +382,7 @@ sub solve
                                             }
                                             else
                                             {
-                                                my $l_i = ord($d_)-ord('A');
+                                                my $l_i = $self->_calc_l_i($d_);
                                                 V:
                                                 foreach my $v (0 .. 9)
                                                 {
@@ -430,7 +461,7 @@ sub _output_layout
         elsif (ref$item eq '') {
             return $item =~ s#([A-J])#
                 my $l = $1;
-                my $l_i = ord($l)-ord('A');
+                my $l_i = $self->_calc_l_i($l);
                 "{$l=[" . join('', grep { $self->truth_table->[$l_i]->[$_] == $EMPTY } 0 .. 9) . "]}"
             #egr;
         }
