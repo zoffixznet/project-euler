@@ -109,6 +109,14 @@ has 'grid' => (is => 'rw', lazy => 1, default => sub {
         ]
     }
 );
+has 'output_cb' => (is => 'ro', default => sub { return sub { return; }; });
+
+sub _out
+{
+    my $self = shift;
+
+    return $self->output_cb->(@_);
+}
 
 # Calc letter index
 sub _calc_l_i
@@ -352,7 +360,7 @@ sub solve
                                 {
                                     $max = $self->_max_lett_digit($letter);
                                 }
-                                print "Matching $letter [$min..$max]\n";
+                                $self->_out("Matching $letter [$min..$max]\n");
 
                                 if ($min == $max)
                                 {
@@ -386,7 +394,7 @@ sub solve
                                                 }
                                             }
                                         }
-                                        print "Sanity check ok.\n";
+                                        $self->_out("Sanity check ok.\n");
                                     }
                                 }
                                 else
@@ -604,11 +612,11 @@ sub solve
 
     if ($self->_was_solved)
     {
-        print "[VERDICT] == Solved: " . $self->result()  . "\n";
+        $self->_out("[VERDICT] == Solved: " . $self->result()  . "\n");
     }
     else
     {
-        print "[VERDICT] == Unsolved\n";
+        $self->_out("[VERDICT] == Unsolved\n");
     }
     return;
 }
@@ -872,7 +880,7 @@ sub _output_layout
 {
     my $self = shift;
 
-    printf "Current State == <<\n%s\n>>\n", $self->_calc_layout;
+    $self->_out(sprintf "Current State == <<\n%s\n>>\n", $self->_calc_layout);
 
     return;
 }
@@ -919,7 +927,7 @@ sub _mark_as_not
 
     {
         my @digit_opts = (grep { $self->truth_table->[$_]->[$d] == $EMPTY } 0 .. 9);
-        print "Remaining values for digit=$d : " , (join ',', @digit_opts), "\n";
+        $self->_out("Remaining values for digit=$d : " , (join ',', @digit_opts), "\n");
         if (none { $self->truth_table->[$_]->[$d] == $Y } 0 .. 9)
         {
             if (@digit_opts == 1)
@@ -934,8 +942,8 @@ sub _mark_as_not
     }
     {
         my @letter_opts = (grep { $self->truth_table->[$l_i]->[$_] == $EMPTY } 0 .. 9);
-        print "Remaining values for letter=$l_i : " , (join ',', @letter_opts),
-        "\n";
+        $self->_out("Remaining values for letter=$l_i : " , (join ',', @letter_opts),
+        "\n");
 
         if (none { $self->truth_table->[$l_i]->[$_] == $Y } 0 .. 9)
 
@@ -964,7 +972,7 @@ sub _mark_as_yes
     {
         return;
     }
-    print "Matching $letter=$digit\n";
+    $self->_out("Matching $letter=$digit\n");
     $$v_ref = $Y;
     $self->_found_letters->{$l_i} = $digit;
     $self->_found_digits->{$digit} = $l_i;

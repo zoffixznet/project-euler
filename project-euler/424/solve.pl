@@ -14,7 +14,11 @@ use IO::All qw / io /;
         $line =~ s#\A([67]),##
             or die "ill format for <<$line>>";
         my $len = $1;
-        my $puz = Euler424_v1::Puzzle->new({y_lim => $len, x_lim => $len,});
+        my $puz = Euler424_v1::Puzzle->new({
+                y_lim => $len,
+                x_lim => $len,
+                output_cb => sub { print@_; return; },
+            });
         $puz->populate_from_string($line);
         $puz->solve;
         print "==NEXT PUZZLE==\n";
