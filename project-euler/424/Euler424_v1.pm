@@ -95,6 +95,8 @@ my $Y = 2;
 
 my $NUM_DIGITS = 10;
 
+my $LETT_RE = qr/[A-J]/;
+
 has _dirty => (is => 'rw', isa => 'Bool', default => sub { return 0; });
 has _found_letters => (is => 'ro', isa => 'HashRef', default => sub { return +{}; });
 has _found_digits => (is => 'ro', isa => 'HashRef', default => sub { return +{}; });
@@ -159,11 +161,11 @@ sub populate_from_string
             {
                 $cell->set_digit('');
             }
-            elsif ($s =~ s#\A([A-J]),##)
+            elsif ($s =~ s#\A($LETT_RE),##)
             {
                 $cell->set_digit($_process_hint->($1));
             }
-            elsif ($s =~ s#\A\((?:h([A-J]{1,2}))?,?(?:v([A-J]{1,2}))?\),##)
+            elsif ($s =~ s#\A\((?:h((?:$LETT_RE){1,2}))?,?(?:v((?:$LETT_RE){1,2}))?\),##)
             {
                 my $h = $1;
                 my $v = $2;
@@ -323,7 +325,7 @@ sub solve
                             my $sum = $hint->sum;
                             my $letter;
                             my $digit;
-                            if (($letter) = $sum =~ /\A([A-J])/)
+                            if (($letter) = $sum =~ /\A($LETT_RE)/)
                             {
                                 if (exists $already_handled{$letter})
                                 {
@@ -350,7 +352,7 @@ sub solve
                                     my $max_digit = $self->_max_lett_digit($letter);
                                     my $new_sum = $sum =~ s#\Q$letter\E#$max_digit#gr;
                                     my $new_max = substr($max, 0, 1);
-                                    if ($new_sum !~ /[A-J]/ and $new_max eq substr($new_sum, 0, 1) and $max < $new_sum)
+                                    if ($new_sum !~ /$LETT_RE/ and $new_max eq substr($new_sum, 0, 1) and $max < $new_sum)
                                     {
                                         $new_max--;
                                     }
@@ -414,7 +416,7 @@ sub solve
                                     );
                                 }
                             }
-                            elsif (($letter) = $sum =~ /\A$DIGIT_RE([A-J])/)
+                            elsif (($letter) = $sum =~ /\A$DIGIT_RE($LETT_RE)/)
                             {
                                 my $cells_count = $hint->count;
                                 my $max =
@@ -445,7 +447,7 @@ sub solve
                                 my @s = split//, $sum;
                                 foreach my $s (@s)
                                 {
-                                    if ($s =~ /\A[A-J]\z/)
+                                    if ($s =~ /\A$LETT_RE\z/)
                                     {
                                         $s = $self->_lett_digits($s);
                                     }
@@ -537,7 +539,7 @@ sub solve
 
                             {
                                 my $max_sum = $sum;
-                                $max_sum =~ s#([A-J])#$self->_max_lett_digit($1)#eg;
+                                $max_sum =~ s#($LETT_RE)#$self->_max_lett_digit($1)#eg;
                                 $max_sum =~ s#\A0#1#;
 
                                 my @empty;
@@ -696,7 +698,7 @@ sub _try_whole_sum
         foreach my $i (0 .. length($sum) - 1)
         {
             my $letter = substr($sum, $i, 1);
-            if ($letter =~ /\A[A-J]\z/)
+            if ($letter =~ /\A$LETT_RE\z/)
             {
                 $self->_mark_as_yes($self->_calc_l_i($letter), substr($partial_sum, $i, 1));
             }
@@ -799,7 +801,7 @@ sub _process_partial_sum
         $partial_sum += min(keys%{$p->options});
     }
 
-    if (my ($letter) = $hint->sum =~ /\A([A-J])/)
+    if (my ($letter) = $hint->sum =~ /\A($LETT_RE)/)
     {
         $self->_mark_as_not_out_of_range(
             $self->_calc_l_i($letter), $partial_sum, $max
@@ -833,7 +835,7 @@ sub _calc_layout
             return '';
         }
         elsif (ref$item eq '') {
-           return $item =~ s#([A-J])#
+           return $item =~ s#($LETT_RE)#
                 my $l = $1;
                 "{$l=[" . join('', @{$self->_lett_digits($l)}) . "]}"
             #egr;
