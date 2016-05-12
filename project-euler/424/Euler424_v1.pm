@@ -649,6 +649,8 @@ sub solve
             }
         );
 
+        $self->_find_identity_truth_permutations;
+
         $self->_process_queue;
     }
 
@@ -662,6 +664,60 @@ sub solve
     else
     {
         $self->_out("[VERDICT] == Unsolved\n");
+    }
+    return;
+}
+
+sub _find_identity_truth_permutations
+{
+    my ($self) = @_;
+
+    my @sets = (map { +{} } 0 .. 10);
+
+    foreach my $l_i (0 .. 9)
+    {
+        my $letter = chr(ord('A') + $l_i);
+        my $d_s = $self->_lett_digits($letter);
+        my $sig = join',', @$d_s;
+        push @{$sets[scalar@$d_s]{$sig}}, +{l => $l_i, d_s => $d_s};
+    }
+
+    foreach my $i (2 .. 10)
+    {
+        while (my ($sig, $arr) = each(%{$sets[$i]}))
+        {
+            if (@$arr == $i)
+            {
+                # Let's rock and roll.
+                my @letters = (map { $_->{l} } @$arr);
+                my @digits = @{$arr->[0]->{d_s}};
+
+                my %l = (map { $_ => 1 } @letters);
+                my %d = (map { $_ => 1 } @digits);
+
+                foreach my $l_i (0 .. 9)
+                {
+                    if (!exists $l{$l_i})
+                    {
+                        foreach my $d (@digits)
+                        {
+                            $self->_mark_as_not($l_i, $d);
+                        }
+                    }
+                }
+
+                foreach my $d (0 .. 9)
+                {
+                    if (!exists $d{$d})
+                    {
+                        foreach my $l_i (@letters)
+                        {
+                            $self->_mark_as_not($l_i, $d);
+                        }
+                    }
+                }
+            }
+        }
     }
     return;
 }
