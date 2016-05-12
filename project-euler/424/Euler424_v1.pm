@@ -537,30 +537,14 @@ sub solve
                                 }
                                 foreach my $c_ ($self->_hint_cells($hint))
                                 {
-                                    my $o = $c_->options;
                                     if (!defined ($c_->digit))
                                     {
                                         foreach my $d (1 .. 9)
                                         {
                                             if (!($total & (1 << ($d - 1))))
                                             {
-                                                if (exists($o->{$d}))
-                                                {
-                                                    $self->_mark_as_dirty;
-                                                    delete $o->{$d};
-                                                }
+                                                $self->_remove_cell_digit_opt($c_, $d);
                                             }
-                                        }
-
-                                        my @k = keys %$o;
-                                        if (@k == 1)
-                                        {
-                                            $self->_mark_as_dirty;
-                                            $c_->digit($k[0]);
-                                        }
-                                        elsif (! @k)
-                                        {
-                                            die "Rarity - no options!";
                                         }
                                     }
                                 }
@@ -605,31 +589,16 @@ sub solve
                                 {
                                     foreach my $c_ (@empty)
                                     {
-                                        my $o = $c_->options;
-
                                         foreach my $d (($max_sum - $partial_sum + 1) .. 9)
                                         {
-                                            if (exists($o->{$d}))
-                                            {
-                                                $self->_mark_as_dirty;
-                                                delete $o->{$d};
-                                            }
-                                        }
-                                        my @k = keys %$o;
-                                        if (@k == 1)
-                                        {
-                                            $self->_mark_as_dirty;
-                                            $c_->digit($k[0]);
-                                        }
-                                        elsif (! @k)
-                                        {
-                                            die "RainbowDash - no options!";
+                                            $self->_remove_cell_digit_opt($c_, $d);
                                         }
                                     }
                                 }
                             }
                             $self->_try_whole_sum($sum, $hint);
                             $self->_try_perms_sum($sum, $hint);
+                            $self->_try_perms_sum_with_min($sum, $hint);
                         }
                     }
                 }
@@ -716,27 +685,174 @@ sub _try_perms_sum
         {
             foreach my $x (@letter_cells)
             {
-                $self->_mark_as_not($self->_calc_l_i($x->digit), $d);
+                $self->_mark_as_not($self->_calc_l_i($x->digit), $  d);
             }
             foreach my $c_ (@empty)
             {
-                my $o = $c_->options;
-                if (exists($o->{$d}))
-                {
-                    $self->_mark_as_dirty;
-                    delete $o->{$d};
-                }
-                my @k = keys %$o;
-                if (@k == 1)
-                {
-                    $self->_mark_as_dirty;
-                    $c_->digit($k[0]);
-                }
+                $self->_remove_cell_digit_opt($c_, $d);
             }
         }
     }
 
     return;
+}
+
+sub _try_perms_sum_with_min
+{
+    my ($self, $sum, $hint) = @_;
+
+    if (! _is_numeric($sum))
+    {
+        return;
+    }
+
+    my $cells_count = $hint->count;
+    my $partial_sum = 0;
+    my @letter_cells;
+    my @empty;
+    foreach my $c_ ($self->_hint_cells($hint))
+    {
+        if (defined (my $d_ = $c_->digit))
+        {
+            if (_is_digit($d_))
+            {
+                $partial_sum += $d_;
+                $cells_count--;
+            }
+            else
+            {
+                push @letter_cells, $c_;
+            }
+        }
+        else
+        {
+            push @letter_cells, $c_;
+        }
+    }
+
+    if (! @letter_cells)
+    {
+        return;
+    }
+
+    @letter_cells = sort { $self->_cell_min($a) <=> $self->_cell_min($b) } @letter_cells;
+
+    my $pivot = shift@letter_cells;
+
+    if ((--$cells_count) <= 0)
+    {
+        return;
+    }
+
+    my $pivot_val = $self->_cell_min($pivot);
+
+    my $s = $sum - $partial_sum - $pivot_val;
+
+    my $perms = $GENERATED_PERMS->{$cells_count}->{$s- $cells_count};
+
+    if (!defined$perms)
+    {
+        $self->_remove_option($pivot, $pivot_val);
+        return;
+    }
+
+    my $combined = _combine_bitmasks(@$perms);
+
+    foreach my $c_ (@letter_cells)
+    {
+        my $bitmask = $self->_cell_bitmask($c_);
+        if (not $bitmask & $combined)
+        {
+            $self->_remove_option($pivot, $pivot_val);
+            return;
+        }
+    }
+
+    return;
+}
+
+sub _remove_cell_digit_opt
+{
+    my ($self, $c_, $d) = @_;
+    my $o = $c_->options;
+    if (exists($o->{$d}))
+    {
+        $self->_mark_as_dirty;
+        delete $o->{$d};
+    }
+
+    my @k = keys %$o;
+    if (@k == 1)
+    {
+        $self->_mark_as_dirty;
+        $c_->digit($k[0]);
+    }
+    elsif (! @k)
+    {
+        die "Rarity - no options!";
+    }
+    return;
+}
+
+sub _remove_option
+{
+    my ($self,$c_, $opt) = @_;
+
+    my $d = $c_->digit;
+
+    if (! defined ($d))
+    {
+        $self->_remove_cell_digit_opt($c_, $opt);
+        return;
+    }
+    if (_is_digit($d))
+    {
+        if ($d == $opt)
+        {
+            die "Discord forceord.";
+        }
+        return;
+    }
+    $self->_mark_as_not($self->_calc_l_i($d), $opt);
+    return;
+}
+
+sub _cell_bitmask
+{
+    my ($self,$c_) = @_;
+
+    my @digits = sub {
+    my $d = $c_->digit;
+
+    if (! defined ($d))
+    {
+        return keys %{$c_->options};
+    }
+    if (_is_digit($d))
+    {
+        return $d;
+    }
+    return @{ $self->_lett_digits($d) };
+    }->();
+
+    return _combine_bitmasks(map { 1 << ($_ - 1) } @digits);
+}
+
+sub _cell_min
+{
+    my ($self,$c_) = @_;
+
+    my $d = $c_->digit;
+
+    if (! defined ($d))
+    {
+        return min keys %{$c_->options};
+    }
+    if (_is_digit($d))
+    {
+        return $d;
+    }
+    return $self->_min_lett_digit($d);
 }
 
 sub _try_whole_sum
@@ -1032,6 +1148,7 @@ sub _mark_as_not
         {
             if (@digit_opts == 1)
             {
+                $self->_out("_enqueue[digits] ({ type => '_mark_as_yes', d => $d, l => $digit_opts[0]})\n");
                 $self->_enqueue({ type => '_mark_as_yes', d => $d, l => $digit_opts[0]});
             }
             elsif (! @digit_opts)
@@ -1050,6 +1167,7 @@ sub _mark_as_not
         {
             if (@letter_opts == 1)
             {
+                $self->_out("_enqueue({ type => '_mark_as_yes', d => $letter_opts[0], l => $l_i});\n");
                 $self->_enqueue({ type => '_mark_as_yes', d => $letter_opts[0], l => $l_i});
             }
             elsif (! @letter_opts)
