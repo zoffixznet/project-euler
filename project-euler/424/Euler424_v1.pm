@@ -416,7 +416,7 @@ sub solve
                                     );
                                 }
                             }
-                            elsif (($letter) = $sum =~ /\A$DIGIT_RE($LETT_RE)/)
+                            elsif (($digit, $letter) = $sum =~ /\A($DIGIT_RE)($LETT_RE)\z/)
                             {
                                 my $cells_count = $hint->count;
                                 my $max =
@@ -430,6 +430,17 @@ sub solve
                                     if ($max == ($sum =~ s#\Q$letter\E#0#gr))
                                     {
                                         $self->_mark_as_yes($self->_calc_l_i($letter), 0);
+                                    }
+                                }
+                                else
+                                {
+                                    if (int($max / 10) == $digit)
+                                    {
+                                        $self->_mark_as_not_out_of_range(
+                                            $self->_calc_l_i($letter),
+                                            0,
+                                            $max % 10
+                                        );
                                     }
                                 }
                             }
@@ -826,7 +837,7 @@ sub _calc_layout
 
     use Text::Table;
 
-    my $tb = Text::Table->new((map { ; "Col", \' | '; } 2 .. $self->x_lim), "Col");
+    my $tb = Text::Table->new((map { ; "Col", \' | '; } 2 .. $self->x_lim), "Col", \' |');
 
     my $transform = sub {
         my $item = shift;
