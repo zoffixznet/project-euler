@@ -1017,12 +1017,16 @@ sub _mark_as_not
     {
         return;
     }
+    if ($$v_ref == $Y)
+    {
+        die "CheeseSandwich $l_i/$d!";
+    }
     $self->_mark_as_dirty;
 
     $$v_ref = $X;
 
     {
-        my @digit_opts = (grep { $self->truth_table->[$_]->[$d] == $EMPTY } 0 .. 9);
+        my @digit_opts = (grep { $self->truth_table->[$_]->[$d] != $X } 0 .. 9);
         $self->_out("Remaining values for digit=$d : " , (join ',', @digit_opts), "\n");
         if (none { $self->truth_table->[$_]->[$d] == $Y } 0 .. 9)
         {
@@ -1037,7 +1041,7 @@ sub _mark_as_not
         }
     }
     {
-        my @letter_opts = (grep { $self->truth_table->[$l_i]->[$_] == $EMPTY } 0 .. 9);
+        my @letter_opts = (grep { $self->truth_table->[$l_i]->[$_] != $X } 0 .. 9);
         $self->_out("Remaining values for letter=$l_i : " , (join ',', @letter_opts),
         "\n");
 
@@ -1067,6 +1071,10 @@ sub _mark_as_yes
     if ($$v_ref == $Y)
     {
         return;
+    }
+    if ($$v_ref == $X)
+    {
+        die "ShiningArmour $letter/$digit!";
     }
     $self->_out("Matching $letter=$digit\n");
     $$v_ref = $Y;
