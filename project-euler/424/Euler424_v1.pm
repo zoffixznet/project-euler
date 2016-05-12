@@ -279,6 +279,12 @@ sub _is_numeric
     return shift =~ /\A(?:$DIGIT_RE)+\z/;
 }
 
+sub _hint_cells
+{
+    my ($self, $hint) = @_;
+    return map { $self->cell($_) } @{$hint->affected_cells};
+}
+
 sub solve
 {
     my $self = shift;
@@ -462,7 +468,7 @@ sub solve
                                     my @partial_sums = ($sum);
                                     my $bitmask = 0;
                                     my $empty_count = $hint->count;
-                                    foreach my $c_ (map { $self->cell($_) } @{$hint->affected_cells})
+                                    foreach my $c_ ($self->_hint_cells($hint))
                                     {
                                         if (defined (my $d_ = $c_->digit))
                                         {
@@ -490,7 +496,7 @@ sub solve
                                         }
                                     }
                                 }
-                                foreach my $c_ (map { $self->cell($_) } @{$hint->affected_cells})
+                                foreach my $c_ ($self->_hint_cells($hint))
                                 {
                                     my $o = $c_->options;
                                     if (!defined ($c_->digit))
@@ -528,7 +534,7 @@ sub solve
 
                                 my @empty;
                                 my $partial_sum = 0;
-                                foreach my $c_ (map { $self->cell($_) } @{$hint->affected_cells})
+                                foreach my $c_ ($self->_hint_cells($hint))
                                 {
                                     if (defined (my $d_ = $c_->digit))
                                     {
@@ -605,7 +611,7 @@ sub _try_whole_sum
     my $partial_sum = 0;
     my %masks;
     my @letter_cells;
-    foreach my $c_ (map { $self->cell($_) } @{$hint->affected_cells})
+    foreach my $c_ ($self->_hint_cells($hint))
     {
         if (defined (my $d_ = $c_->digit))
         {
@@ -706,7 +712,7 @@ sub _process_partial_sum
     my @to_trim;
     my @partial;
 
-    foreach my $c_ (map { $self->cell($_) } @{$hint->affected_cells})
+    foreach my $c_ ($self->_hint_cells($hint))
     {
         if (defined (my $d_ = $c_->digit))
         {
