@@ -262,6 +262,18 @@ sub _mark_as_dirty
     return;
 }
 
+my $DIGIT_RE = qr/[0-9]/;
+
+sub _is_digit
+{
+    return shift =~ /\A$DIGIT_RE\z/;
+}
+
+sub _is_numeric
+{
+    return shift =~ /\A(?:$DIGIT_RE)+\z/;
+}
+
 sub solve
 {
     my $self = shift;
@@ -383,7 +395,7 @@ sub solve
                                     );
                                 }
                             }
-                            elsif (($letter) = $sum =~ /\A[0-9]([A-J])/)
+                            elsif (($letter) = $sum =~ /\A$DIGIT_RE([A-J])/)
                             {
                                 my $cells_count = scalar @{$hint->affected_cells};
                                 my $max =
@@ -400,7 +412,7 @@ sub solve
                                     }
                                 }
                             }
-                            elsif ($sum =~ /\A[0-9]+\z/)
+                            elsif (_is_numeric($sum))
                             {
                                 $self->_process_partial_sum(
                                     {
@@ -450,7 +462,7 @@ sub solve
                                     {
                                         if (defined (my $d_ = $c_->digit))
                                         {
-                                            if ($d_ =~ /\A[0-9]\z/)
+                                            if (_is_digit($d_))
                                             {
                                                 @partial_sums = ( map {$_-$d_} @partial_sums);
                                                 $bitmask |= (1 << ($d_ - 1));
@@ -517,7 +529,7 @@ sub solve
                                 {
                                     if (defined (my $d_ = $c_->digit))
                                     {
-                                        if ($d_ =~ /\A[0-9]\z/)
+                                        if (_is_digit($d_))
                                         {
                                             $partial_sum += $d_;
                                         }
@@ -594,7 +606,7 @@ sub _try_whole_sum
     {
         if (defined (my $d_ = $c_->digit))
         {
-            if ($d_ =~ /\A[0-9]\z/)
+            if (_is_digit($d_))
             {
                 $partial_sum += $d_;
             }
@@ -644,7 +656,7 @@ sub _try_whole_sum
     }
     elsif (@letter_cells == 1)
     {
-        if ($sum =~ /\A[0-9]+\z/)
+        if (_is_numeric($sum))
         {
             $self->_mark_as_yes(
                 $self->_calc_l_i($letter_cells[0]->digit),
@@ -696,7 +708,7 @@ sub _process_partial_sum
         if (defined (my $d_ = $c_->digit))
         {
             my $d2;
-            if ($d_ =~ /\A[0-9]\z/)
+            if (_is_digit($d_))
             {
                 $d2 = $d_;
                 delete $d{$d2};
