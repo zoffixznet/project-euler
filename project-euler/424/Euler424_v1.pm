@@ -766,8 +766,8 @@ sub solve
 
 sub _try_remove_opts
 {
-    my ($self, $sum, $hint) = @_;
-    my %possible_sums = (map { $_ => 1 } @{$self->_get_possible_sums($sum)});
+    my ($self, $master_sum, $hint) = @_;
+    my @possible_sums = (map { +{ map { $_ => 0 } @$_ } } @{$self->_get_possible_sums_proto($master_sum)});
     my $partial_sum = 0;
     my @cells;
     my %found;
@@ -787,14 +787,27 @@ sub _try_remove_opts
     }
     if (@cells)
     {
-        foreach my $i (keys@cells)
+        foreach my $repeat_times (keys@cells)
         {
             my $recurse = sub {
                 my ($f, $i, $sum) = @_;
 
                 if ($i == @cells)
                 {
-                    return exists($possible_sums{$sum});
+                    my @d = split//,$sum;
+                    if (@d != @possible_sums)
+                    {
+                        return '';
+                    }
+                    while (my ($idx, $d) = each@d)
+                    {
+                        if (!exists$possible_sums[$idx]{$d})
+                        {
+                            return '';
+                        }
+                        $possible_sums[$idx]{$d}++;
+                    }
+                    return 1;
                 }
                 elsif ($i == 0)
                 {
@@ -819,24 +832,26 @@ sub _try_remove_opts
                             }
                         }
                     }
+                    return;
                 }
                 else
                 {
                     my ($c_, $d_s) = @{ $cells[$i]};
+                    my $ret = '';
                     foreach my $d (@$d_s)
                     {
-                        if (!exists($f->{$d}))
+                        if (!exists($f->{$d}) and !exists$found{$d})
                         {
                             if (__SUB__->(+{%$f, $d => 1},
                                     $i+1,
                                     $sum + $d,
                                 ))
                             {
-                                return 1;
+                                $ret = 1;
                             }
                         }
                     }
-                    return '';
+                    return $ret;
                 }
             };
             $recurse->({}, 0, $partial_sum);
@@ -846,12 +861,23 @@ sub _try_remove_opts
             my $next = shift@cells;
             push @cells,  $next;
         }
+
+        while (my ($idx, $h) = each@possible_sums)
+        {
+            if (my ($l) = substr($master_sum, $idx, 1) =~ /\A($LETT_RE)\z/)
+            {
+                foreach my $d (grep { $h->{$_} == 0 } keys%$h)
+                {
+                    $self->_mark_as_not($self->_calc_l_i($l), $d);
+                }
+            }
+        }
     }
 
     return;
 }
 
-sub _get_possible_sums
+sub _get_possible_sums_proto
 {
     my ($self, $sum) = @_;
 
@@ -872,6 +898,13 @@ sub _get_possible_sums
         shift @{ $s[0] };
     }
 
+    return \@s;
+}
+
+sub _compile_possible_sum
+{
+    my ($self, $s) = @_;
+
     my $cross_product = sub {
         if (!@_)
         {
@@ -885,7 +918,14 @@ sub _get_possible_sums
         }
     };
 
-    return $cross_product->(@s);
+    return $cross_product->(@$s);
+}
+
+sub _get_possible_sums
+{
+    my ($self, $sum) = @_;
+
+    return $self->_compile_possible_sum($self->_get_possible_sums_proto($sum));
 }
 
 sub _find_identity_truth_permutations
