@@ -732,6 +732,7 @@ sub solve
                             $self->_try_whole_sum($sum, $hint);
                             $self->_try_perms_sum($sum, $hint);
                             $self->_try_perms_sum_with_min($sum, $hint);
+                            $self->_try_1_plus($sum, $hint);
                         }
                     }
                 }
@@ -868,6 +869,81 @@ sub _try_perms_sum
             foreach my $c_ (@empty)
             {
                 $self->_remove_cell_digit_opt($c_, $d);
+            }
+        }
+    }
+
+    return;
+}
+
+sub _try_1_plus
+{
+    my ($self, $sum, $hint) = @_;
+
+    my $cells_count = $hint->count;
+
+    if ($cells_count != 2)
+    {
+        return;
+    }
+
+    my $sum_l;
+    if (not (($sum_l) = $sum =~ /\A(?:$DIGIT_RE)?($LETT_RE)\z/))
+    {
+        return;
+    }
+
+    my $d_s = $self->_lett_digits($sum_l);
+
+    if ($d_s->[0] + 1 != $d_s->[-1])
+    {
+        return;
+    }
+    my $was_one_found = 0;
+    my @lett_found;
+    foreach my $c_ ($self->_hint_cells($hint))
+    {
+        my $d_ = $c_->digit;
+        if (! defined($d_))
+        {
+            return;
+        }
+        if ($d_ eq 1)
+        {
+            if ($was_one_found++)
+            {
+                return;
+            }
+        }
+        elsif (my ($l_) = $d_ =~ /\A($LETT_RE)\z/)
+        {
+            my $d_s = $self->_lett_digits($l_);
+            if ($d_s->[0] + 1 != $d_s->[-1])
+            {
+                return;
+            }
+            push @lett_found, $l_;
+            if (@lett_found > 1)
+            {
+                return;
+            }
+        }
+    }
+
+    if (not ($was_one_found && @lett_found))
+    {
+        return;
+    }
+
+    my %l = (map { $self->_calc_l_i($_) => 1 } @lett_found, $sum_l);
+    # Let's boogie.
+    for my $d ($d_s->[0])
+    {
+        foreach my $l_i (0 .. 9)
+        {
+            if (not exists $l{$l_i})
+            {
+                $self->_mark_as_not($l_i, $d);
             }
         }
     }
