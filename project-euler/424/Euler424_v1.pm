@@ -495,36 +495,7 @@ sub solve
                             }
                             {
                                 my $total = 0;
-                                my @s = split//, $sum;
-                                foreach my $s (@s)
-                                {
-                                    if ($s =~ /\A$LETT_RE\z/)
-                                    {
-                                        $s = $self->_lett_digits($s);
-                                    }
-                                    else
-                                    {
-                                        $s = [$s];
-                                    }
-                                }
-                                if ($s[0][0] == 0)
-                                {
-                                    shift @{ $s[0] };
-                                }
-
-                                my $cross_product = sub {
-                                    if (!@_)
-                                    {
-                                        return [''];
-                                    }
-                                    else
-                                    {
-                                        my $f = shift@_;
-                                        my $more = __SUB__->(@_);
-                                        return [map { my $x = $_; map {$x.$_}@$more } @$f];
-                                    }
-                                };
-                                foreach my $sum (@{ $cross_product->(@s) })
+                                foreach my $sum (@{ $self->_get_possible_sums($sum)})
                                 {
                                     my @partial_sums = ($sum);
                                     my $bitmask = 0;
@@ -759,6 +730,24 @@ sub solve
         $self->_find_identity_truth_permutations;
 
         $self->_process_queue;
+
+        $self->loop(sub {
+                my (undef, $cell) = @_;
+                if ($cell->gray)
+                {
+                    foreach my $dir (qw(x y))
+                    {
+                        my $hint_meth = $dir . '_hint';
+                        if (defined(my $hint = $cell->$hint_meth))
+                        {
+                            $self->_try_remove_opts($hint->sum, $hint);
+                        }
+                    }
+                }
+            }
+        );
+
+        $self->_process_queue;
     }
 
     # Output the current layout:
@@ -773,6 +762,130 @@ sub solve
         $self->_out("[VERDICT] == Unsolved\n");
     }
     return;
+}
+
+sub _try_remove_opts
+{
+    my ($self, $sum, $hint) = @_;
+    my %possible_sums = (map { $_ => 1 } @{$self->_get_possible_sums($sum)});
+    my $partial_sum = 0;
+    my @cells;
+    my %found;
+    foreach my $c_ ($self->_hint_cells($hint))
+    {
+        my $d_s = $self->_cell_digits($c_);
+        if (@$d_s == 1)
+        {
+            my $d = $d_s->[0];
+            $partial_sum += $d;
+            $found{$d} = 1;
+        }
+        else
+        {
+            push @cells, [$c_, $d_s];
+        }
+    }
+    if (@cells)
+    {
+        foreach my $i (keys@cells)
+        {
+            my $recurse = sub {
+                my ($f, $i, $sum) = @_;
+
+                if ($i == @cells)
+                {
+                    return exists($possible_sums{$sum});
+                }
+                elsif ($i == 0)
+                {
+                    my ($c_, $d_s) = @{ $cells[$i]};
+                    foreach my $d (@$d_s)
+                    {
+                        if (exists $found{$d})
+                        {
+                            $self->_remove_option($c_, $d);
+                        }
+                        else
+                        {
+                            if (!exists($f->{$d}))
+                            {
+                                if (!__SUB__->(+{%$f, $d => 1},
+                                        $i+1,
+                                        $sum + $d,
+                                    ))
+                                {
+                                    $self->_remove_option($c_, $d);
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    my ($c_, $d_s) = @{ $cells[$i]};
+                    foreach my $d (@$d_s)
+                    {
+                        if (!exists($f->{$d}))
+                        {
+                            if (__SUB__->(+{%$f, $d => 1},
+                                    $i+1,
+                                    $sum + $d,
+                                ))
+                            {
+                                return 1;
+                            }
+                        }
+                    }
+                    return '';
+                }
+            };
+            $recurse->({}, 0, $partial_sum);
+        }
+        continue
+        {
+            my $next = shift@cells;
+            push @cells,  $next;
+        }
+    }
+
+    return;
+}
+
+sub _get_possible_sums
+{
+    my ($self, $sum) = @_;
+
+    my @s = split//, $sum;
+    foreach my $s (@s)
+    {
+        if ($s =~ /\A$LETT_RE\z/)
+        {
+            $s = $self->_lett_digits($s);
+        }
+        else
+        {
+            $s = [$s];
+        }
+    }
+    if ($s[0][0] == 0)
+    {
+        shift @{ $s[0] };
+    }
+
+    my $cross_product = sub {
+        if (!@_)
+        {
+            return [''];
+        }
+        else
+        {
+            my $f = shift@_;
+            my $more = __SUB__->(@_);
+            return [map { my $x = $_; map {$x.$_}@$more } @$f];
+        }
+    };
+
+    return $cross_product->(@s);
 }
 
 sub _find_identity_truth_permutations
@@ -1093,25 +1206,26 @@ sub _remove_option
     return;
 }
 
-sub _cell_bitmask
+sub _cell_digits
 {
     my ($self,$c_) = @_;
-
-    my @digits = sub {
     my $d = $c_->digit;
 
     if (! defined ($d))
     {
-        return keys %{$c_->options};
+        return [ sort {$a <=> $b } keys %{$c_->options} ];
     }
     if (_is_digit($d))
     {
-        return $d;
+        return [ $d ];
     }
-    return @{ $self->_lett_digits($d) };
-    }->();
+    return $self->_lett_digits($d);
+}
 
-    return _combine_bitmasks(map { 1 << ($_ - 1) } @digits);
+sub _cell_bitmask
+{
+    my ($self,$c_) = @_;
+    return _combine_bitmasks(map { 1 << ($_ - 1) } @{$self->_cell_digits($c_)});
 }
 
 sub _cell_min
