@@ -234,7 +234,7 @@ sub populate_from_string
 }
 
 use List::Util qw/ first max min sum /;
-use List::MoreUtils qw/ none uniq /;
+use List::MoreUtils qw/ any none uniq /;
 
 sub loop
 {
@@ -946,10 +946,33 @@ sub _find_identity_truth_permutations
     {
         while (my ($sig, $arr) = each(%{$sets[$i]}))
         {
-            if (@$arr == $i)
+            my @l_s = @$arr;
+            my $to_check = sub {
+                if (@$arr == $i)
+                {
+                    return 1;
+                }
+                elsif (@$arr == $i-1)
+                {
+                    my $d_s = $arr->[0]{d_s};
+                    foreach my $p (keys@$d_s)
+                    {
+                        my @subset = @$d_s;
+                        splice(@subset, $p, 1);
+                        my $sub_sig = join',',@subset;
+                        if (exists$sets[$i-1]{$sub_sig})
+                        {
+                            push @l_s, @{$sets[$i-1]{$sub_sig}};
+                            return 1;
+                        }
+                    }
+                }
+            }->();
+
+            if ($to_check)
             {
                 # Let's rock and roll.
-                my @letters = (map { $_->{l} } @$arr);
+                my @letters = (map { $_->{l} } @l_s);
                 my @digits = @{$arr->[0]->{d_s}};
 
                 my %l = (map { $_ => 1 } @letters);
