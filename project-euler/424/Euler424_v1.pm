@@ -346,13 +346,27 @@ sub solve
                             my $digit;
                             if (($letter) = $sum =~ /\A($LETT_RE)/)
                             {
+                                my $cells_count = $hint->count;
+                                my $max =
+                                (
+                                    ((9 + 9 - $cells_count + 1)*$cells_count)
+                                    >> 1
+                                );
+                                my $l_i = $self->_calc_l_i($letter);
+                                if (my ($other_letter) = $sum =~ /\A.($LETT_RE)\z/)
+                                {
+                                    my $max_digit = $self->_max_lett_digit($letter);
+                                    my $min_other = $self->_min_lett_digit($other_letter);
+                                    if ($max < $max_digit . $min_other)
+                                    {
+                                        $self->_mark_as_not($l_i, $max_digit);
+                                    }
+                                }
                                 if (exists $already_handled{$letter})
                                 {
                                     die "Twilly";
                                 }
-                                my $l_i = $self->_calc_l_i($letter);
                                 my $len = length($sum);
-                                my $cells_count = $hint->count;
 
                                 my $min_val =
                                 (
@@ -361,11 +375,6 @@ sub solve
                                 );
 
                                 my $min = $len == 2 ? max(1, int ( $min_val / 10)) : min(9, $min_val);
-                                my $max =
-                                (
-                                    ((9 + 9 - $cells_count + 1)*$cells_count)
-                                    >> 1
-                                );
                                 if (length$max == $len)
                                 {
                                     my $max_digit = $self->_max_lett_digit($letter);
