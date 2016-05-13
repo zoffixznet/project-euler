@@ -856,15 +856,20 @@ sub _try_perms_sum
             push @empty, $c_;
         }
     }
-    my $total_perms = $GENERATED_PERMS->{$total_cells_count}->{$sum - $total_cells_count};
-    my $total_combined = _combine_bitmasks(@$total_perms);
-    my $perms = $GENERATED_PERMS->{$cells_count}->{$sum - $partial_sum - $cells_count};
-    my $combined = _combine_bitmasks(@$perms);
 
+    my $calc_mask = sub {
+        my ($count, $s) = @_;
+
+        return _combine_bitmasks(
+            @{ $GENERATED_PERMS->{$count}->{$s - $count} }
+        );
+    };
+    my $combined = ($calc_mask->($total_cells_count, $sum) &
+        $calc_mask->($cells_count, $sum - $partial_sum));
     my $bit = 1;
     for my $d (1 .. 9)
     {
-        if (not ( ( $combined & $bit) && ($total_combined & $bit)))
+        if (not ( $combined & $bit))
         {
             foreach my $c_ (@empty, @letter_cells)
             {
