@@ -89,6 +89,16 @@ use Moose;
 
 use KakuroPerms qw/$GENERATED_PERMS/;
 
+sub _perms {
+    my ($count, $s) = @_;
+
+    return $GENERATED_PERMS->{$count}->{$s - $count};
+}
+
+sub _def_perms {
+    return _perms(@_) || [];
+}
+
 my $EMPTY = 0;
 my $X = 1;
 my $Y = 2;
@@ -530,9 +540,7 @@ sub solve
                                     }
                                     foreach my $partial_sum (@partial_sums)
                                     {
-                                        my $perms = $GENERATED_PERMS->{$empty_count}->{$partial_sum - $empty_count};
-                                        my @p = grep { !($bitmask & $_) } @$perms;
-                                        $total |= _combine_bitmasks(@p);
+                                        $total |= _combine_bitmasks(grep { !($bitmask & $_) } @{_def_perms($empty_count, $partial_sum)});
                                     }
                                 }
                                 foreach my $c_ ($self->_hint_cells($hint))
@@ -860,9 +868,7 @@ sub _try_perms_sum
     my $calc_mask = sub {
         my ($count, $s) = @_;
 
-        return _combine_bitmasks(
-            @{ $GENERATED_PERMS->{$count}->{$s - $count} }
-        );
+        return _combine_bitmasks(@{_def_perms($count, $s)});
     };
     my $combined = ($calc_mask->($total_cells_count, $sum) &
         $calc_mask->($cells_count, $sum - $partial_sum));
@@ -1009,9 +1015,7 @@ sub _try_perms_sum_with_min
 
     my $pivot_val = $self->_cell_min($pivot);
 
-    my $s = $sum - $partial_sum - $pivot_val;
-
-    my $perms = $GENERATED_PERMS->{$cells_count}->{$s- $cells_count};
+    my $perms = _perms($cells_count, $sum - $partial_sum - $pivot_val);
 
     if (!defined$perms)
     {
