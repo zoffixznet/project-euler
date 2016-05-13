@@ -832,7 +832,8 @@ sub _try_perms_sum
         return;
     }
 
-    my $cells_count = $hint->count;
+    my $total_cells_count = $hint->count;
+    my $cells_count = $total_cells_count;
     my $partial_sum = 0;
     my @letter_cells;
     my @empty;
@@ -855,22 +856,25 @@ sub _try_perms_sum
             push @empty, $c_;
         }
     }
+    my $total_perms = $GENERATED_PERMS->{$total_cells_count}->{$sum - $total_cells_count};
+    my $total_combined = _combine_bitmasks(@$total_perms);
     my $perms = $GENERATED_PERMS->{$cells_count}->{$sum - $partial_sum - $cells_count};
     my $combined = _combine_bitmasks(@$perms);
 
+    my $bit = 1;
     for my $d (1 .. 9)
     {
-        if (not $combined & (1 << ($d-1)))
+        if (not ( ( $combined & $bit) && ($total_combined & $bit)))
         {
-            foreach my $x (@letter_cells)
+            foreach my $c_ (@empty, @letter_cells)
             {
-                $self->_mark_as_not($self->_calc_l_i($x->digit), $  d);
-            }
-            foreach my $c_ (@empty)
-            {
-                $self->_remove_cell_digit_opt($c_, $d);
+                $self->_remove_option($c_, $d);
             }
         }
+    }
+    continue
+    {
+        $bit <<= 1;
     }
 
     return;
