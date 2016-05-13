@@ -967,6 +967,7 @@ sub _find_identity_truth_permutations
                         }
                     }
                 }
+                return '';
             }->();
 
             if ($to_check)
