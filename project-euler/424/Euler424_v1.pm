@@ -197,38 +197,33 @@ sub populate_from_string
     {
         die "Junk in line - <<$s>>!";
     }
-    $self->loop(sub {
-            my ($coord, $cell) = @_;
-            if ($cell->gray)
+    $self->hint_loop(
+        sub {
+            my ($args) = @_;
+            my $coord = $args->{coord};
+            my $dir = $args->{dir};
+            my $hint = $args->{hint};
+            my $next_meth = 'next_' . $dir;
+            my $next_coord = $coord->$next_meth;
+            my $lim = $dir . '_lim';
+            my $sum_meth = $dir . '_affecting_sum';
+            NEXT_X:
+            while ($next_coord->$dir < $self->$lim)
             {
-                foreach my $dir (qw(x y))
+                my $next_cell = $self->cell($next_coord);
+                if ($next_cell->gray)
                 {
-                    my $hint_meth = $dir . '_hint';
-                    if (defined(my $hint = $cell->$hint_meth))
-                    {
-                        my $next_meth = 'next_' . $dir;
-                        my $next_coord = $coord->$next_meth;
-                        my $lim = $dir . '_lim';
-                        my $sum_meth = $dir . '_affecting_sum';
-                        NEXT_X:
-                        while ($next_coord->$dir < $self->$lim)
-                        {
-                            my $next_cell = $self->cell($next_coord);
-                            if ($next_cell->gray)
-                            {
-                                last NEXT_X;
-                            }
-                            $next_cell->$sum_meth($coord);
-                            push @{$hint->affected_cells}, $next_coord;
-                        }
-                        continue
-                        {
-                            $next_coord = $next_coord->$next_meth;
-                        }
-                    }
+                    last NEXT_X;
                 }
+                $next_cell->$sum_meth($coord);
+                push @{$hint->affected_cells}, $next_coord;
             }
-        }
+            continue
+            {
+                $next_coord = $next_coord->$next_meth;
+            }
+            return;
+        },
     );
     return;
 }
@@ -250,6 +245,38 @@ sub loop
     }
     return;
 }
+
+sub hint_loop
+{
+    my ($self, $cb) = @_;
+
+    $self->loop(
+        sub {
+            my ($coord, $cell) = @_;
+            if ($cell->gray)
+            {
+                foreach my $dir (qw(x y))
+                {
+                    my $hint_meth = $dir . '_hint';
+                    if (defined(my $hint = $cell->$hint_meth))
+                    {
+                        $cb->(
+                            {
+                                cell => $cell,
+                                coord => $coord,
+                                dir => $dir,
+                                hint => $hint,
+                                sum => $hint->sum,
+                            }
+                        );
+                    }
+                }
+            }
+        }
+    );
+    return;
+}
+
 
 use v5.16;
 
@@ -332,398 +359,390 @@ sub solve
 
         $self->_process_queue;
 
-        $self->loop(sub {
-                my (undef, $cell) = @_;
-                if ($cell->gray)
+        $self->hint_loop(
+            sub {
+                my ($args) = @_;
+                my $hint = $args->{hint};
+                my $sum = $args->{sum};
+                my $letter;
+                my $digit;
+                if (($letter) = $sum =~ /\A($LETT_RE)/)
                 {
-                    foreach my $dir (qw(x y))
+                    my $cells_count = $hint->count;
+                    my $max =
+                    (
+                        ((9 + 9 - $cells_count + 1)*$cells_count)
+                        >> 1
+                    );
+                    my $l_i = $self->_calc_l_i($letter);
+                    if (my ($other_letter) = $sum =~ /\A.($LETT_RE)\z/)
                     {
-                        my $hint_meth = $dir . '_hint';
-                        if (defined(my $hint = $cell->$hint_meth))
+                        my $max_digit = $self->_max_lett_digit($letter);
+                        my $min_other = $self->_min_lett_digit($other_letter);
+                        if ($max < $max_digit . $min_other)
                         {
-                            my $sum = $hint->sum;
-                            my $letter;
-                            my $digit;
-                            if (($letter) = $sum =~ /\A($LETT_RE)/)
+                            $self->_mark_as_not($l_i, $max_digit);
+                        }
+                    }
+                    if (exists $already_handled{$letter})
+                    {
+                        die "Twilly";
+                    }
+                    my $len = length($sum);
+
+                    my $min_val =
+                    (
+                        ((1 + $cells_count)*$cells_count)
+                        >> 1
+                    );
+
+                    my $min = $len == 2 ? max(1, int ( $min_val / 10)) : min(9, $min_val);
+                    if (length$max == $len)
+                    {
+                        my $max_digit = $self->_max_lett_digit($letter);
+                        my $new_sum = $sum =~ s#\Q$letter\E#$max_digit#gr;
+                        my $new_max = substr($max, 0, 1);
+                        if ($new_sum !~ /$LETT_RE/ and $new_max eq substr($new_sum, 0, 1) and $max < $new_sum)
+                        {
+                            $new_max--;
+                        }
+                        $max = $new_max;
+                    }
+                    else
+                    {
+                        $max = $self->_max_lett_digit($letter);
+                    }
+                    $self->_out("Matching $letter [$min..$max]\n");
+
+                    if ($min == $max)
+                    {
+                        my $digit = $min;
+
+                        $already_handled{$letter} = 1;
+                        $self->_mark_as_yes($l_i, $digit);
+
+
+                        # A sanity check.
+                        if (0)
+                        {
+                            foreach my $row (@{$self->grid})
                             {
-                                my $cells_count = $hint->count;
-                                my $max =
-                                (
-                                    ((9 + 9 - $cells_count + 1)*$cells_count)
-                                    >> 1
-                                );
-                                my $l_i = $self->_calc_l_i($letter);
-                                if (my ($other_letter) = $sum =~ /\A.($LETT_RE)\z/)
+                                foreach my $c (@$row)
                                 {
-                                    my $max_digit = $self->_max_lett_digit($letter);
-                                    my $min_other = $self->_min_lett_digit($other_letter);
-                                    if ($max < $max_digit . $min_other)
+                                    if ($c->gray)
                                     {
-                                        $self->_mark_as_not($l_i, $max_digit);
-                                    }
-                                }
-                                if (exists $already_handled{$letter})
-                                {
-                                    die "Twilly";
-                                }
-                                my $len = length($sum);
-
-                                my $min_val =
-                                (
-                                    ((1 + $cells_count)*$cells_count)
-                                    >> 1
-                                );
-
-                                my $min = $len == 2 ? max(1, int ( $min_val / 10)) : min(9, $min_val);
-                                if (length$max == $len)
-                                {
-                                    my $max_digit = $self->_max_lett_digit($letter);
-                                    my $new_sum = $sum =~ s#\Q$letter\E#$max_digit#gr;
-                                    my $new_max = substr($max, 0, 1);
-                                    if ($new_sum !~ /$LETT_RE/ and $new_max eq substr($new_sum, 0, 1) and $max < $new_sum)
-                                    {
-                                        $new_max--;
-                                    }
-                                    $max = $new_max;
-                                }
-                                else
-                                {
-                                    $max = $self->_max_lett_digit($letter);
-                                }
-                                $self->_out("Matching $letter [$min..$max]\n");
-
-                                if ($min == $max)
-                                {
-                                    my $digit = $min;
-
-                                    $already_handled{$letter} = 1;
-                                    $self->_mark_as_yes($l_i, $digit);
-
-
-                                    # A sanity check.
-                                    if (0)
-                                    {
-                                        foreach my $row (@{$self->grid})
+                                        foreach my $dir (qw(x y))
                                         {
-                                            foreach my $c (@$row)
+                                            my $hint_meth = $dir . '_hint';
+                                            if (defined(my $hint = $c->$hint_meth))
                                             {
-                                                if ($c->gray)
+                                                if ($hint->sum =~ /$letter/)
+                                                # if ($hint->sum =~ /B/)
                                                 {
-                                                    foreach my $dir (qw(x y))
-                                                    {
-                                                        my $hint_meth = $dir . '_hint';
-                                                        if (defined(my $hint = $c->$hint_meth))
-                                                        {
-                                                            if ($hint->sum =~ /$letter/)
-                                                            # if ($hint->sum =~ /B/)
-                                                            {
-                                                                die "Foobar";
-                                                            }
-                                                        }
-                                                    }
+                                                    die "Foobar";
                                                 }
                                             }
                                         }
-                                        $self->_out("Sanity check ok.\n");
                                     }
                                 }
-                                else
-                                {
-                                    $self->_mark_as_not_out_of_range(
-                                        $l_i, $min, $max
-                                    );
-                                }
-
-                                if ($len == 1)
-                                {
-                                    $self->_process_partial_sum(
-                                        {
-                                            hint => $hint,
-                                            max => $max,
-                                        }
-                                    );
-                                }
                             }
-                            elsif (($digit, $letter) = $sum =~ /\A($DIGIT_RE)($LETT_RE)\z/)
+                            $self->_out("Sanity check ok.\n");
+                        }
+                    }
+                    else
+                    {
+                        $self->_mark_as_not_out_of_range(
+                            $l_i, $min, $max
+                        );
+                    }
+
+                    if ($len == 1)
+                    {
+                        $self->_process_partial_sum(
                             {
-                                my $cells_count = $hint->count;
-                                my $partial_sum = 0;
-                                foreach my $c_ ($self->_hint_cells($hint))
-                                {
-                                    if (defined (my $d_ = $c_->digit))
-                                    {
-                                        if (_is_digit($d_))
-                                        {
-                                            $cells_count--;
-                                            $partial_sum += $d_;
-                                        }
-                                    }
-                                }
-                                my $max = $partial_sum +
-                                (
-                                    ((9 + 9 - $cells_count + 1)*$cells_count)
-                                    >> 1
-                                );
-
-                                if ($max % 10 == 0)
-                                {
-                                    if ($max == ($sum =~ s#\Q$letter\E#0#gr))
-                                    {
-                                        $self->_mark_as_yes($self->_calc_l_i($letter), 0);
-                                    }
-                                }
-                                else
-                                {
-                                    if (int($max / 10) == $digit)
-                                    {
-                                        $self->_mark_as_not_out_of_range(
-                                            $self->_calc_l_i($letter),
-                                            0,
-                                            $max % 10
-                                        );
-                                    }
-                                }
+                                hint => $hint,
+                                max => $max,
                             }
-                            elsif (_is_numeric($sum))
+                        );
+                    }
+                }
+                elsif (($digit, $letter) = $sum =~ /\A($DIGIT_RE)($LETT_RE)\z/)
+                {
+                    my $cells_count = $hint->count;
+                    my $partial_sum = 0;
+                    foreach my $c_ ($self->_hint_cells($hint))
+                    {
+                        if (defined (my $d_ = $c_->digit))
+                        {
+                            if (_is_digit($d_))
                             {
-                                $self->_process_partial_sum(
-                                    {
-                                        hint => $hint,
-                                        max => $sum,
-                                    }
-                                );
+                                $cells_count--;
+                                $partial_sum += $d_;
                             }
-                            {
-                                my $total = 0;
-                                foreach my $sum (@{ $self->_get_possible_sums($sum)})
-                                {
-                                    my @partial_sums = ($sum);
-                                    my $bitmask = 0;
-                                    my $empty_count = $hint->count;
-                                    foreach my $c_ ($self->_hint_cells($hint))
-                                    {
-                                        if (defined (my $d_ = $c_->digit))
-                                        {
-                                            if (_is_digit($d_))
-                                            {
-                                                @partial_sums = ( map {$_-$d_} @partial_sums);
-                                                $bitmask |= (1 << ($d_ - 1));
-                                                $empty_count--;
-                                            }
-                                            else
-                                            {
-                                                my @d = @{ $self->_lett_digits($d_) };
-                                                @partial_sums = uniq( sort {$a <=> $b} (map { my $s = $_; map {$s - $_ } @d } @partial_sums));
-                                                $empty_count--;
-                                            }
-                                        }
-                                    }
-                                    foreach my $partial_sum (@partial_sums)
-                                    {
-                                        $total |= _combine_bitmasks(grep { !($bitmask & $_) } @{_def_perms($empty_count, $partial_sum)});
-                                    }
-                                }
-                                foreach my $c_ ($self->_hint_cells($hint))
-                                {
-                                    if (!defined ($c_->digit))
-                                    {
-                                        foreach my $d (1 .. 9)
-                                        {
-                                            if (!($total & (1 << ($d - 1))))
-                                            {
-                                                $self->_remove_cell_digit_opt($c_, $d);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                        }
+                    }
+                    my $max = $partial_sum +
+                    (
+                        ((9 + 9 - $cells_count + 1)*$cells_count)
+                        >> 1
+                    );
 
-                            {
-                                my $max_sum = $sum;
-                                $max_sum =~ s#($LETT_RE)#$self->_max_lett_digit($1)#eg;
-                                $max_sum =~ s#\A0#1#;
-
-                                my $min_sum = $sum;
-                                $min_sum =~ s#($LETT_RE)#$self->_min_lett_digit($1)#eg;
-
-                                my @empty;
-                                my $partial_sum = 0;
-                                my $max_partial_sum = 0;
-                                my $min_partial_sum = 0;
-                                foreach my $c_ ($self->_hint_cells($hint))
-                                {
-                                    if (defined (my $d_ = $c_->digit))
-                                    {
-                                        if (_is_digit($d_))
-                                        {
-                                            $partial_sum += $d_;
-                                            $max_partial_sum += $d_;
-                                            $min_partial_sum += $d_;
-                                        }
-                                        else
-                                        {
-                                            $partial_sum += $self->_min_lett_digit($d_);
-                                            $max_partial_sum += $self->_max_lett_digit($d_);
-                                            $min_partial_sum += $self->_min_lett_digit($d_);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        my @k = sort {$a <=> $b } keys %{$c_->options};
-                                        # if (@k == 9)
-                                        if (1)
-                                        {
-                                            push @empty, $c_;
-                                            $max_partial_sum += $k[-1];
-                                            $min_partial_sum += $k[0];
-                                        }
-                                        else
-                                        {
-                                            $partial_sum += $k[0];
-                                        }
-                                    }
-                                }
-
-                                if (@empty == 1 and $partial_sum < $max_sum)
-                                {
-                                    foreach my $c_ (@empty)
-                                    {
-                                        foreach my $d (($max_sum - $partial_sum + 1) .. 9)
-                                        {
-                                            $self->_remove_cell_digit_opt($c_, $d);
-                                        }
-                                    }
-                                }
-                                if ($max_partial_sum < $max_sum)
-                                {
-                                    my @l;
-                                    if ((@l = ($sum =~ /($LETT_RE)/g)) == 1)
-                                    {
-                                        my $l = $l[0];
-                                        foreach my $d (0 .. 9)
-                                        {
-                                            my $new_sum = $sum =~ s#\Q$l\E#$d#r;
-                                            if ($max_partial_sum < $new_sum)
-                                            {
-                                                $self->_mark_as_not($self->_calc_l_i($l), $d);
-                                            }
-                                        }
-                                    }
-                                }
-                                if ($min_partial_sum > $min_sum)
-                                {
-                                    my @l;
-                                    if ((@l = ($sum =~ /($LETT_RE)/g)) == 1)
-                                    {
-                                        my $l = $l[0];
-                                        foreach my $d (0 .. 9)
-                                        {
-                                            my $new_sum = $sum =~ s#\Q$l\E#$d#r;
-                                            if ($min_partial_sum > $new_sum)
-                                            {
-                                                $self->_mark_as_not($self->_calc_l_i($l), $d);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            {
-                                my $min_sum = $sum;
-                                $min_sum =~ s#($LETT_RE)#$self->_min_lett_digit($1)#eg;
-                                my @empty;
-                                my $partial_sum = 0;
-                                foreach my $c_ ($self->_hint_cells($hint))
-                                {
-                                    if (defined (my $d_ = $c_->digit))
-                                    {
-                                        if (_is_digit($d_))
-                                        {
-                                            $partial_sum += $d_;
-                                        }
-                                        else
-                                        {
-                                            push @empty, $c_;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        push @empty, $c_;
-                                    }
-                                }
-
-                                @empty = sort { $self->_cell_min($a) <=> $self->_cell_min($b) } @empty;
-
-                                if (@empty)
-                                {
-                                    my $pivot = shift@empty;
-                                    my $cells_count = @empty;
-                                    my $max =
-                                    (
-                                        ((9 + 9 - $cells_count + 1)*$cells_count)
-                                        >> 1
-                                    );
-                                    foreach my $k ($self->_cell_min($pivot) .. 9)
-                                    {
-                                        if ($partial_sum + $max + $k < $min_sum)
-                                        {
-                                            $self->_remove_option($pivot, $k);
-                                        }
-                                    }
-                                }
-                            }
-                            {
-                                my $max_sum = $sum;
-                                $max_sum =~ s#($LETT_RE)#$self->_max_lett_digit($1)#eg;
-                                $max_sum =~ s#\A0#1#;
-
-                                my @empty;
-                                my $partial_sum = 0;
-                                foreach my $c_ ($self->_hint_cells($hint))
-                                {
-                                    if (defined (my $d_ = $c_->digit))
-                                    {
-                                        if (_is_digit($d_))
-                                        {
-                                            $partial_sum += $d_;
-                                        }
-                                        else
-                                        {
-                                            push @empty, $c_;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        push @empty, $c_;
-                                    }
-                                }
-
-                                @empty = sort { $self->_cell_min($a) <=> $self->_cell_min($b) } @empty;
-
-                                if (@empty)
-                                {
-                                    foreach my $pivot_i (keys @empty)
-                                    {
-                                        my @e = @empty;
-                                        my ($pivot) = splice@e, $pivot_i, 1;
-                                        my $cells_count = @e;
-                                        my $max = @e ? sum(map { $self->_cell_min($_) } @e) : 0;
-                                        foreach my $k ($self->_cell_min($pivot) .. 9)
-                                        {
-                                            if ($partial_sum + $max + $k > $max_sum)
-                                            {
-                                                $self->_remove_option($pivot, $k);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            $self->_try_whole_sum($sum, $hint);
-                            $self->_try_perms_sum($sum, $hint);
-                            $self->_try_perms_sum_with_min($sum, $hint);
-                            $self->_try_1_plus($sum, $hint);
+                    if ($max % 10 == 0)
+                    {
+                        if ($max == ($sum =~ s#\Q$letter\E#0#gr))
+                        {
+                            $self->_mark_as_yes($self->_calc_l_i($letter), 0);
+                        }
+                    }
+                    else
+                    {
+                        if (int($max / 10) == $digit)
+                        {
+                            $self->_mark_as_not_out_of_range(
+                                $self->_calc_l_i($letter),
+                                0,
+                                $max % 10
+                            );
                         }
                     }
                 }
+                elsif (_is_numeric($sum))
+                {
+                    $self->_process_partial_sum(
+                        {
+                            hint => $hint,
+                            max => $sum,
+                        }
+                    );
+                }
+                {
+                    my $total = 0;
+                    foreach my $sum (@{ $self->_get_possible_sums($sum)})
+                    {
+                        my @partial_sums = ($sum);
+                        my $bitmask = 0;
+                        my $empty_count = $hint->count;
+                        foreach my $c_ ($self->_hint_cells($hint))
+                        {
+                            if (defined (my $d_ = $c_->digit))
+                            {
+                                if (_is_digit($d_))
+                                {
+                                    @partial_sums = ( map {$_-$d_} @partial_sums);
+                                    $bitmask |= (1 << ($d_ - 1));
+                                    $empty_count--;
+                                }
+                                else
+                                {
+                                    my @d = @{ $self->_lett_digits($d_) };
+                                    @partial_sums = uniq( sort {$a <=> $b} (map { my $s = $_; map {$s - $_ } @d } @partial_sums));
+                                    $empty_count--;
+                                }
+                            }
+                        }
+                        foreach my $partial_sum (@partial_sums)
+                        {
+                            $total |= _combine_bitmasks(grep { !($bitmask & $_) } @{_def_perms($empty_count, $partial_sum)});
+                        }
+                    }
+                    foreach my $c_ ($self->_hint_cells($hint))
+                    {
+                        if (!defined ($c_->digit))
+                        {
+                            foreach my $d (1 .. 9)
+                            {
+                                if (!($total & (1 << ($d - 1))))
+                                {
+                                    $self->_remove_cell_digit_opt($c_, $d);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                {
+                    my $max_sum = $sum;
+                    $max_sum =~ s#($LETT_RE)#$self->_max_lett_digit($1)#eg;
+                    $max_sum =~ s#\A0#1#;
+
+                    my $min_sum = $sum;
+                    $min_sum =~ s#($LETT_RE)#$self->_min_lett_digit($1)#eg;
+
+                    my @empty;
+                    my $partial_sum = 0;
+                    my $max_partial_sum = 0;
+                    my $min_partial_sum = 0;
+                    foreach my $c_ ($self->_hint_cells($hint))
+                    {
+                        if (defined (my $d_ = $c_->digit))
+                        {
+                            if (_is_digit($d_))
+                            {
+                                $partial_sum += $d_;
+                                $max_partial_sum += $d_;
+                                $min_partial_sum += $d_;
+                            }
+                            else
+                            {
+                                $partial_sum += $self->_min_lett_digit($d_);
+                                $max_partial_sum += $self->_max_lett_digit($d_);
+                                $min_partial_sum += $self->_min_lett_digit($d_);
+                            }
+                        }
+                        else
+                        {
+                            my @k = sort {$a <=> $b } keys %{$c_->options};
+                            # if (@k == 9)
+                            if (1)
+                            {
+                                push @empty, $c_;
+                                $max_partial_sum += $k[-1];
+                                $min_partial_sum += $k[0];
+                            }
+                            else
+                            {
+                                $partial_sum += $k[0];
+                            }
+                        }
+                    }
+
+                    if (@empty == 1 and $partial_sum < $max_sum)
+                    {
+                        foreach my $c_ (@empty)
+                        {
+                            foreach my $d (($max_sum - $partial_sum + 1) .. 9)
+                            {
+                                $self->_remove_cell_digit_opt($c_, $d);
+                            }
+                        }
+                    }
+                    if ($max_partial_sum < $max_sum)
+                    {
+                        my @l;
+                        if ((@l = ($sum =~ /($LETT_RE)/g)) == 1)
+                        {
+                            my $l = $l[0];
+                            foreach my $d (0 .. 9)
+                            {
+                                my $new_sum = $sum =~ s#\Q$l\E#$d#r;
+                                if ($max_partial_sum < $new_sum)
+                                {
+                                    $self->_mark_as_not($self->_calc_l_i($l), $d);
+                                }
+                            }
+                        }
+                    }
+                    if ($min_partial_sum > $min_sum)
+                    {
+                        my @l;
+                        if ((@l = ($sum =~ /($LETT_RE)/g)) == 1)
+                        {
+                            my $l = $l[0];
+                            foreach my $d (0 .. 9)
+                            {
+                                my $new_sum = $sum =~ s#\Q$l\E#$d#r;
+                                if ($min_partial_sum > $new_sum)
+                                {
+                                    $self->_mark_as_not($self->_calc_l_i($l), $d);
+                                }
+                            }
+                        }
+                    }
+                }
+                {
+                    my $min_sum = $sum;
+                    $min_sum =~ s#($LETT_RE)#$self->_min_lett_digit($1)#eg;
+                    my @empty;
+                    my $partial_sum = 0;
+                    foreach my $c_ ($self->_hint_cells($hint))
+                    {
+                        if (defined (my $d_ = $c_->digit))
+                        {
+                            if (_is_digit($d_))
+                            {
+                                $partial_sum += $d_;
+                            }
+                            else
+                            {
+                                push @empty, $c_;
+                            }
+                        }
+                        else
+                        {
+                            push @empty, $c_;
+                        }
+                    }
+
+                    @empty = sort { $self->_cell_min($a) <=> $self->_cell_min($b) } @empty;
+
+                    if (@empty)
+                    {
+                        my $pivot = shift@empty;
+                        my $cells_count = @empty;
+                        my $max =
+                        (
+                            ((9 + 9 - $cells_count + 1)*$cells_count)
+                            >> 1
+                        );
+                        foreach my $k ($self->_cell_min($pivot) .. 9)
+                        {
+                            if ($partial_sum + $max + $k < $min_sum)
+                            {
+                                $self->_remove_option($pivot, $k);
+                            }
+                        }
+                    }
+                }
+                {
+                    my $max_sum = $sum;
+                    $max_sum =~ s#($LETT_RE)#$self->_max_lett_digit($1)#eg;
+                    $max_sum =~ s#\A0#1#;
+
+                    my @empty;
+                    my $partial_sum = 0;
+                    foreach my $c_ ($self->_hint_cells($hint))
+                    {
+                        if (defined (my $d_ = $c_->digit))
+                        {
+                            if (_is_digit($d_))
+                            {
+                                $partial_sum += $d_;
+                            }
+                            else
+                            {
+                                push @empty, $c_;
+                            }
+                        }
+                        else
+                        {
+                            push @empty, $c_;
+                        }
+                    }
+
+                    @empty = sort { $self->_cell_min($a) <=> $self->_cell_min($b) } @empty;
+
+                    if (@empty)
+                    {
+                        foreach my $pivot_i (keys @empty)
+                        {
+                            my @e = @empty;
+                            my ($pivot) = splice@e, $pivot_i, 1;
+                            my $cells_count = @e;
+                            my $max = @e ? sum(map { $self->_cell_min($_) } @e) : 0;
+                            foreach my $k ($self->_cell_min($pivot) .. 9)
+                            {
+                                if ($partial_sum + $max + $k > $max_sum)
+                                {
+                                    $self->_remove_option($pivot, $k);
+                                }
+                            }
+                        }
+                    }
+                }
+                $self->_try_whole_sum($sum, $hint);
+                $self->_try_perms_sum($sum, $hint);
+                $self->_try_perms_sum_with_min($sum, $hint);
+                $self->_try_1_plus($sum, $hint);
             }
         );
 
@@ -731,20 +750,12 @@ sub solve
 
         $self->_process_queue;
 
-        $self->loop(sub {
-                my (undef, $cell) = @_;
-                if ($cell->gray)
-                {
-                    foreach my $dir (qw(x y))
-                    {
-                        my $hint_meth = $dir . '_hint';
-                        if (defined(my $hint = $cell->$hint_meth))
-                        {
-                            $self->_try_remove_opts($hint->sum, $hint);
-                        }
-                    }
-                }
-            }
+        $self->hint_loop(
+            sub {
+                my ($args) = @_;
+                $self->_try_remove_opts(@{$args}{qw/sum hint/});
+                return;
+            },
         );
 
         $self->_process_queue;
