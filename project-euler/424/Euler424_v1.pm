@@ -43,7 +43,6 @@ use Moose;
 has 'gray' => (is => 'rw', isa => 'Bool');
 has ['x_hint', 'y_hint'] => (is => 'rw', 'isa' => 'Maybe[Euler424_v1::Hint]');
 has 'digit' => (is => 'rw', isa => 'Maybe[Str]');
-has ['x_affecting_sum', 'y_affecting_sum'] => (is => 'rw', 'isa' => 'Maybe[Euler424_v1::Coord]');
 has 'options' => (is => 'ro', 'isa' => 'HashRef', default => sub { return +{ map { $_ => 1 } 1 .. 9 }; });
 
 sub set_gray
@@ -206,7 +205,6 @@ sub populate_from_string
             my $next_meth = 'next_' . $dir;
             my $next_coord = $coord->$next_meth;
             my $lim = $dir . '_lim';
-            my $sum_meth = $dir . '_affecting_sum';
             NEXT_X:
             while ($next_coord->$dir < $self->$lim)
             {
@@ -215,7 +213,6 @@ sub populate_from_string
                 {
                     last NEXT_X;
                 }
-                $next_cell->$sum_meth($coord);
                 push @{$hint->affected_cells}, $next_coord;
             }
             continue
