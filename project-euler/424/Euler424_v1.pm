@@ -417,34 +417,6 @@ sub solve
 
                         $already_handled{$letter} = 1;
                         $self->_mark_as_yes($l_i, $digit);
-
-
-                        # A sanity check.
-                        if (0)
-                        {
-                            foreach my $row (@{$self->grid})
-                            {
-                                foreach my $c (@$row)
-                                {
-                                    if ($c->gray)
-                                    {
-                                        foreach my $dir (qw(x y))
-                                        {
-                                            my $hint_meth = $dir . '_hint';
-                                            if (defined(my $hint = $c->$hint_meth))
-                                            {
-                                                if ($hint->sum =~ /$letter/)
-                                                # if ($hint->sum =~ /B/)
-                                                {
-                                                    die "Foobar";
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            $self->_out("Sanity check ok.\n");
-                        }
                     }
                     else
                     {
