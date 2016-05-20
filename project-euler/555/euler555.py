@@ -1,3 +1,9 @@
+import sys
+if sys.version_info > (3,):
+    long = int
+    xrange = range
+
+
 class M_func:
     """docstring for M_func"""
     def __init__(self, m, k, s):
@@ -14,7 +20,7 @@ class M_func:
         else:
             if not self._c:
                 self._c = [None] * (self.m+1)
-            if self._c[n] == None:
+            if self._c[n] is None:
                 self._c[n] = self.calc(self.calc(n + self.k))
             return self._c[n]
 
@@ -31,11 +37,12 @@ class M_func:
         wavelen = self.k - self.s
         min_ = m_m - wavelen + 1
         min_pos = self.m - wavelen + 1
-        val_at_min = min_ + (min_pos - min_)%wavelen
+        val_at_min = min_ + (min_pos - min_) % wavelen
         if val_at_min != min_:
             return long(0)
         max_ = min(m_m, self.m)
         return (((min_+max_)*(max_-min_+1)) >> 1)
+
 
 def _calc_SF(m, k, s):
     wavelen = k - s
@@ -45,6 +52,7 @@ def _calc_SF(m, k, s):
     min_ = m - s + 1
     max_ = m + min(d, 0)
     return ((long(min_+max_)*(max_-min_+1)) >> 1)
+
 
 class S_func:
     def __init__(self, p, m):
@@ -56,7 +64,7 @@ class S_func:
         ret = 0
         m = self.m
         for k in xrange(2, self.p+1):
-            print (("k=%d") % k)
+            print(("k=%d") % k)
             for s in xrange(1, k):
                 ret += _calc_SF(m, k, s)
         return ret
@@ -66,7 +74,7 @@ class S_func:
         r = 0
         m = self.m
         for k in xrange(2, self.p+1):
-            print (("k=%d") % k)
+            print(("k=%d") % k)
             s = 1
             if ((k & 0x1) == 0):
                 s = (k >> 1)
@@ -102,15 +110,15 @@ class S_func:
                             break
         return (r >> 1)
 
+
 def main():
     m = 1000
     p = 1000
-    print (("S(%d,%d) = %d") % (p,m,S_func(p,m).calc()))
+    print("S(%d,%d) = %d" % (p, m, S_func(p, m).calc()))
 
     m = 1000000
     p = 1000000
-    print (("S(%d,%d) = %d") % (p,m,S_func(p,m).calc()))
+    print("S(%d,%d) = %d" % (p, m, S_func(p, m).calc()))
 
 if __name__ == "__main__":
     main()
-
