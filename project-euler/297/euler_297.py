@@ -9,16 +9,17 @@ fib_limit = long("1" + ("0" * 17)) - 1
 while fibs[-1] < fib_limit:
     fibs.append(fibs[-1]+fibs[-2])
 
-z_sum = [0,0,0]
-z_sum[0] = { 'up_to' : long(1),}
-z_sum[1] = { 'up_to' : long(2),}
-z_sum[2] = { 'up_to' : long(3),}
+z_sum = [0, 0, 0]
+z_sum[0] = {'up_to': long(1)}
+z_sum[1] = {'up_to': long(2)}
+z_sum[2] = {'up_to': long(3)}
 
 while len(z_sum) < len(fibs):
     l = 1 + len(z_sum)
     z_sum.append({
-        'up_to' : (z_sum[-1]['up_to'] + z_sum[-2]['up_to'] + fibs[l-3] - 1),
+        'up_to': (z_sum[-1]['up_to'] + z_sum[-2]['up_to'] + fibs[l-3] - 1),
         })
+
 
 def find_sum_up_to_n(n):
     global z_sum
@@ -42,5 +43,5 @@ def find_sum_up_to_n(n):
     ret += find_sum_up_to_n(remaining) + remaining
     return ret
 
-print ("Sigma[z](999999) =", find_sum_up_to_n(999999))
-print ("Solution =", find_sum_up_to_n(fib_limit))
+print("Sigma[z](999999) = %d" % find_sum_up_to_n(999999))
+print("Solution = %d" % find_sum_up_to_n(fib_limit))
