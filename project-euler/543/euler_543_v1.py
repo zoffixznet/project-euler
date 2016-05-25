@@ -1,15 +1,16 @@
-import math
 import sys
 import re
-from subprocess import Popen, PIPE, check_output
+from subprocess import check_output
 
 if sys.version_info > (3,):
     long = int
 
+
 def count_primes_up_to(n):
     out = check_output(["primesieve", str(n), "-c1"])
-    m = re.search(r'Prime numbers\s*:\s*([0-9]+)', out)
-    return long(m.group(1));
+    m = re.search(r'(?:Prime numbers|Primes)\s*:\s*([0-9]+)', out)
+    return long(m.group(1))
+
 
 def brute_force_calc_s(n):
     out = check_output(["primesieve", str(n), "-p1"])
@@ -19,7 +20,7 @@ def brute_force_calc_s(n):
         h1[x] = True
     s = len(h1.keys())
     h = h1
-    for k in range(2,n):
+    for k in range(2, n):
         next_h = {}
         for num in h.keys():
             for p in primes:
@@ -30,15 +31,17 @@ def brute_force_calc_s(n):
         h = next_h
     return s
 
+
 def calc_s(n):
     if n == 2:
         return len([2])
     if n == 3:
-        return len([2,3])
+        return len([2, 3])
     if n == 5:
-        return len([2,3,5,2+2,2+3])
+        return len([2, 3, 5, 2+2, 2+3])
     if n == 8:
-        return len([2,3,5,7,2+2,2+3,2+5,3+3,3+5,2+2+2,2+2+3,2+3+3,2+2+2+2])
+        return len([2, 3, 5, 7, 2+2, 2+3, 2+5, 3+3, 3+5, 2+2+2, 2+2+3,
+                    2+3+3, 2+2+2+2])
     # Calc s[k=1].
     s_1 = count_primes_up_to(n)
     # Calc s[k=2] for i odd.
@@ -57,25 +60,27 @@ def calc_s(n):
 
     return s_1 + s_2 + even_s + odd_s
 
-fibs = [long(0),long(1)]
+fibs = [long(0), long(1)]
 
 while len(fibs) < 45:
     fibs.append(fibs[-1] + fibs[-2])
 
 print(fibs)
 
+
 def print_s(n):
-    print (("S[%d] = %d" % (n, calc_s(n))))
+    print(("S[%d] = %d" % (n, calc_s(n))))
     return
 
 print_s(10)
 print_s(100)
 print_s(1000)
 
+
 def check_print_s(n):
     calced = calc_s(n)
     real = brute_force_calc_s(n)
-    print (("S[%d] = Real = %d ; Calc = %d" % (n, real, calced)))
+    print(("S[%d] = Real = %d ; Calc = %d" % (n, real, calced)))
     if (real != calced):
         raise BaseException
     return
@@ -85,4 +90,4 @@ check_print_s(100)
 check_print_s(11)
 check_print_s(21)
 check_print_s(101)
-print ("Result = %d" % (sum([calc_s(fibs[k]) for k in range(3,45)])))
+print("Result = %d" % (sum([calc_s(fibs[k]) for k in range(3, 45)])))
