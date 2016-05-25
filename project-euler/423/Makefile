@@ -6,6 +6,10 @@ all: 423.exe 423-debug.exe primes.txt
 423-debug.exe: euler_423_v1.cpp
 	g++ -std=gnu++11 -g -o $@ $< -lm -lstdc++
 
+423-clang.exe: euler_423_v1.cpp
+	clang++ -std=gnu++11 -O3 -Wall -fuse-ld=gold -flto -fvisibility=hidden -fomit-frame-pointer -march=native -o $@ $<
+	# clang++ -std=gnu++11 -O3 -Wall -fvisibility=hidden -fomit-frame-pointer -march=native -o $@ $< -lm -lstdc++
+
 primes.txt:
 	primes 2 50000000 > $@
 
