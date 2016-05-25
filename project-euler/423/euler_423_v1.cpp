@@ -138,15 +138,7 @@ int main()
             p_p++;
         }
 
-#if 0
-        LL C = 0;
-        for (int i = 0; i <= pi; i++)
-        {
-            C += current[i];
-        }
-#else
         const ui C = current[pi];
-#endif
         if ((s_n += C) >= MOD)
         {
             s_n -= MOD;
