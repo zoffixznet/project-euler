@@ -27,7 +27,7 @@ ui one[NUM_PRIMES+1], two[NUM_PRIMES+1];
 
 ui * current , * next, * temp;
 
-const int DUMP_STEP = 1000;
+const int DUMP_STEP = 10000;
 
 int dump_at;
 
