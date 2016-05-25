@@ -16,6 +16,7 @@ ui * lookup_5_prod_mods = NULL;
 
 int primes[NUM_PRIMES];
 int * p_p;
+int next_p;
 
 ui s_n = 0;
 
@@ -26,7 +27,7 @@ ui one[NUM_PRIMES+1], two[NUM_PRIMES+1];
 
 ui * current , * next, * temp;
 
-const int DUMP_STEP = 100000;
+const int DUMP_STEP = 1000;
 
 int dump_at;
 
@@ -53,7 +54,7 @@ int main()
         p_p++;
     }
     *(p_p) = -1;
-    p_p = primes;
+    next_p = *(p_p = primes);
 
     fclose(f);
 
@@ -66,8 +67,6 @@ int main()
     int pi = 0;
 
     int n = 1;
-#if 0
-    int was_set = 0;
     int prev_n = 1;
     while (1)
     {
@@ -81,15 +80,7 @@ int main()
             n = prev_n;
             break;
         }
-        if (! was_set)
-        {
-            {
-                temp = current;
-                current = next;
-                next = temp;
-            }
-            was_set = 1;
-        }
+        fread (&s_n, sizeof(s_n), 1, fh);
         fread (current, sizeof(*current), sizeof(one)/sizeof(one[0]), fh);
 
         fclose(fh);
@@ -98,7 +89,6 @@ int main()
         prev_n = n;
         n = dump_at;
     }
-#endif
 
     /* Restore p_p */
     for (int i = 1; i <= n; i++)
@@ -109,19 +99,19 @@ int main()
             p_p++;
         }
     }
+    next_p = *(p_p);
     for (; n < after_lim ; n++)
     {
-#if 0
         if (dump_at == n)
         {
             char fn[300];
             sprintf(fn, "DUMPS/%d.bin", dump_at);
             FILE * fh = fopen(fn, "wb");
+            fwrite (&s_n, sizeof(s_n), 1, fh);
             fwrite (current, sizeof(*current), sizeof(one)/sizeof(one[0]), fh);
             fclose(fh);
             dump_at += DUMP_STEP;
         }
-#endif
         next[0] = lookup_5_prod_mods[current[0]];
         const int my_top_idx = min(n, NUM_PRIMES_MIN_1);
         int i;
@@ -132,10 +122,10 @@ int main()
         }
         next[i] = next[i-1];
 
-        if (*(p_p) == n)
+        if (next_p == n)
         {
             pi++;
-            p_p++;
+            next_p = *(++p_p);
         }
 
         const ui C = current[pi];
