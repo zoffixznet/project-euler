@@ -4,6 +4,7 @@ import sys
 if sys.version_info > (3,):
     long = int
 
+
 class ArithSeq:
     def __init__(self):
         self.i = 1
@@ -29,10 +30,11 @@ class ArithSeq:
         top = self.i - 1
         return (((long(top) + long(bottom)) * long(c)) >> 1)
 
+
 class FracSeq:
     def __init__(self):
         self._a = ArithSeq()
-        self._q = [['a',1,self._a.p()],['f',1,1]]
+        self._q = [['a', 1, self._a.p()], ['f', 1, 1]]
         self._a._adv(1)
         self._f = False
 
@@ -42,7 +44,7 @@ class FracSeq:
             self._f.n()
         new_peek = self._f.n()
         c = long(math.sqrt(new_peek))
-        self._q.append(['a', c , self._a.p()])
+        self._q.append(['a', c, self._a.p()])
         self._a._adv(c)
         self._q.append(['f', 1, new_peek])
         return
@@ -57,7 +59,7 @@ class FracSeq:
     # Next range
     def n_r(self):
         first = self._q[0]
-        (which, count, peek) = first[0], first[1], first[2]
+        (count, peek) = first[1], first[2]
         self._adv()
         return (peek, peek+count-1)
 
@@ -79,7 +81,7 @@ class FracSeq:
         fc = 0
         while (cnt > 0):
             while (fc > t):
-                print ("Reached %d" % t)
+                print("Reached %d" % (t))
                 t += 1000000000
             first = self._q[0]
             (which, count, peek) = first[0], first[1], first[2]
@@ -111,7 +113,7 @@ class FracSeq:
         a = ArithSeq()
         while (cnt > 0):
             while (fc > t):
-                print ("Reached %d" % t)
+                print("Reached %d" % (t))
                 t += S
             (r_s, r_e) = f.n_r()
             if r_s == r_e:
@@ -138,7 +140,6 @@ class FracSeq:
                 end_t = r_e
                 end_b = bottom
                 end = end_t
-                c = 0
                 while cnt > 0 and bottom <= end:
                     top = (next_sq if next_sq < end else end)
 
@@ -152,36 +153,32 @@ class FracSeq:
 
                     if (c_delta > cnt):
                         end_t = end-1
-                        print (("{f}c_delta=%d ; cnt=%d") % (c_delta, cnt))
+                        print(("{f}c_delta=%d ; cnt=%d") % (c_delta, cnt))
                         if end_b > end_t:
                             check = True
-                            print (("{g}c_delta=%d ; cnt=%d") % (c_delta, cnt))
+                            print(("{g}c_delta=%d ; cnt=%d") % (c_delta, cnt))
                             while c_delta > cnt:
-                                print (("c_delta=%d") % (c_delta))
+                                print(("c_delta=%d") % (c_delta))
                                 c_delta1 -= 1
                                 root_sum = c_delta1 * bottom_root
                                 c_delta = root_sum + c_delta1
-                                print (("{d}c_delta=%d ; cnt=%d") % (c_delta, cnt))
+                                print(("{d}c_delta=%d ; cnt=%d") %
+                                      (c_delta, cnt))
                         else:
-                            end = ((end_t+end_b)>>1)
+                            end = ((end_t + end_b) >> 1)
                             continue
                     elif (c_delta < cnt and end < r_e):
-                        print (("{b}c_delta=%d ; cnt=%d") % (c_delta, cnt))
+                        print(("{b}c_delta=%d ; cnt=%d") % (c_delta, cnt))
                         if end_b > end_t:
                             check = True
-                            print (("{G}c_delta=%d ; cnt=%d") % (c_delta, cnt))
-                            while False: # while c_delta > cnt:
-                                print (("C_delta=%d") % (c_delta))
-                                c_delta1 -= 1
-                                root_sum = c_delta1 * bottom_root
-                                c_delta = root_sum + c_delta1
-                                print (("{D}c_delta=%d ; cnt=%d") % (c_delta, cnt))
+                            print(("{G}c_delta=%d ; cnt=%d") % (c_delta, cnt))
                         else:
                             end_b = end+1
-                            end = ((end_t+end_b)>>1)
+                            end = ((end_t + end_b) >> 1)
                             continue
 
-                    ret += a.sum(root_sum) + ((c_delta1*((bottom<<1) + c_delta1-1)) >> 1)
+                    ret += a.sum(root_sum) + \
+                        ((c_delta1*((bottom << 1) + c_delta1-1)) >> 1)
 
                     if check:
                         ret += a.sum(cnt - c_delta)
@@ -189,9 +186,6 @@ class FracSeq:
 
                     cnt -= c_delta
                     fc += c_delta
-
-                    # print (("_sum_old=%d ; sum=%d ; fc=%d ; cnt=%d") % (FracSeq()._sum_old(fc), ret, fc , cnt))
-                    # print (("sum=%d ; fc=%d ; cnt=%d") % (ret, fc , cnt))
 
                     bottom = next_sq + 1
                     bottom_root += 1
@@ -203,11 +197,13 @@ class FracSeq:
 def frac_sum(n):
     return FracSeq().sum_by_range(n)
 
+
 def debug_sum(n):
-    print ("T(%d) = %d\n" % (n, frac_sum(n)))
+    print("T(%d) = %d\n" % (n, frac_sum(n)))
+
 
 def debug_sum_w_old(n):
-    print ("T(%d) = %d ; %d\n" % (n, frac_sum(n), FracSeq()._sum_old(n)))
+    print("T(%d) = %d ; %d\n" % (n, frac_sum(n), FracSeq()._sum_old(n)))
 
 # debug_sum_w_old(long(sys.argv[1]))
 # exit(0)
