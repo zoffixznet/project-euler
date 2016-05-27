@@ -24,6 +24,13 @@ _reset(2)
 # f(n) = [ f(k(n+1)) - f(kn) ] / k
 # f(kn) = k * s(n)
 # s(kn)-s(kn-1) = k * s(n)
+#
+# For k=2:
+# s(2n) = s(n) + s(n/2) * 2 * n + 2 * n * f(n/2+1) + 2 * (n-2) * f(n/2+2) +
+# 2 * (n-4) * f(n/2+3) ... + 2 * f(n) =
+# s(2n) = s(n) + s(n/2) * 2 * n + 2 * n * [s(n/2+2)-s(n/2-1)] +
+# 2 * (n-2) * [s(n/2+3)-s(n/2+2)] ... + 2 * [s(n+1) - s(n)] =
+# s(2n) = s(n) + s(n/2) * 2 * n +
 
 
 def my_s(n):
@@ -55,3 +62,6 @@ def is_good(k, n, expected):
 is_good(5, 10, 18)
 is_good(7, 100, 1003)
 is_good(2, 1000, long('264830889564'))
+
+for i in range(0, 1000):
+    print(("f(%d) = %d") % (i, f(i)))
