@@ -4,6 +4,7 @@ import sys
 if sys.version_info > (3,):
     long = int
 
+
 class ArithSeq:
     def __init__(self):
         self.i = 1
@@ -20,10 +21,11 @@ class ArithSeq:
         top = self.i - 1
         return (((long(top) + long(bottom)) * long(cnt)) >> 1)
 
+
 class FracSeq:
     def __init__(self):
         self._a = ArithSeq()
-        self._q = [['a',1,0],['f',1,1]]
+        self._q = [['a', 1, 0], ['f', 1, 1]]
         self._f = False
 
     def _append(self):
@@ -56,7 +58,7 @@ class FracSeq:
         fc = 0
         while (cnt > 0):
             while (fc > t):
-                print ("Reached %d" % t)
+                print("Reached %d" % t)
                 t += 1000000000
             first = self._q[0]
             (which, count, peek) = first[0], first[1], first[2]
@@ -80,8 +82,9 @@ class FracSeq:
 def frac_sum(n):
     return FracSeq().sum(n)
 
+
 def debug_sum(n):
-    print ("T(%d) = %d\n" % (n, frac_sum(n)))
+    print("T(%d) = %d\n" % (n, frac_sum(n)))
 
 debug_sum(20)
 debug_sum(1000)
