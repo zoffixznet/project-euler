@@ -5,15 +5,32 @@ use warnings;
 
 use List::Util qw(sum);
 
-my $n = 10;
+my @D_POWERS;
+foreach my $d (0 .. 9)
+{
+    my $e = 1;
+    foreach my $p (1 .. 5)
+    {
+        $e *= $d;
+    }
+    push @D_POWERS, $e;
+}
+
+my $n = 9;
 
 my $sum = 0;
+my $STEP = 1_000_000;
+my $checkpoint = $STEP;
 while (1)
 {
-    if (sum(map { $_ ** 5 } split(//, $n)) == $n)
+    if (++$n == $checkpoint)
+    {
+        print "Reached n=$n ; sum = $sum\n";
+        $checkpoint += $STEP;
+    }
+    if (sum(@D_POWERS[split//, $n]) == $n)
     {
         $sum += $n;
-        print "$n : $sum\n"
+        print "$n : sum = $sum\n"
     }
-    $n++;
 }
