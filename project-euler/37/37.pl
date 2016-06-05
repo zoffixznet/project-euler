@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use List::Util qw(sum);
+
 sub is_prime
 {
     my ($n) = @_;
