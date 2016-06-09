@@ -25,7 +25,8 @@ with precision(20000):
             h -= 1
             money *= (1 - f) / (1 + 2 * f)
         h += 1
-        return h_sums[N_tosses + 1 - h]
+        return h # h_sums[N_tosses + 1 - h]
 
     for f_base in xrange(0, 101):
-        print (("f=%d%% prob = %.16f") % (f_base, calc_prob(f_base * BigFloat('0.01'), h_sums)))
+        h = calc_prob(f_base * BigFloat('0.01'), h_sums)
+        print (("f=%d%% h=%d prob = %.16f") % (f_base, h, h_sums[N_tosses + 1 - h]))
