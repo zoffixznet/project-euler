@@ -1,0 +1,4 @@
+If "h" is the number of heads, then the final value is:
+
+    1£ * (1 + 2f)**h * (1 - f)**(1,000 - h)
+
