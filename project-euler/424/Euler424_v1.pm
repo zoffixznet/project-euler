@@ -607,16 +607,10 @@ sub solve
                     my $partial_sum = 0;
                     foreach my $c_ ($self->_hint_cells($hint))
                     {
-                        if (defined (my $d_ = $c_->digit))
+                        my $d_ = $c_->digit;
+                        if (defined$d_ and _is_digit($d_))
                         {
-                            if (_is_digit($d_))
-                            {
-                                $partial_sum += $d_;
-                            }
-                            else
-                            {
-                                push @empty, $c_;
-                            }
+                            $partial_sum += $d_;
                         }
                         else
                         {
