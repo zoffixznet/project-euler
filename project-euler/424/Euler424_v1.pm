@@ -338,6 +338,7 @@ sub _combine_bitmasks
     }
     return $ret;
 }
+
 sub solve
 {
     my $self = shift;
@@ -561,17 +562,9 @@ sub solve
                         else
                         {
                             my @k = sort {$a <=> $b } keys %{$c_->options};
-                            # if (@k == 9)
-                            if (1)
-                            {
-                                push @empty, $c_;
-                                $max_partial_sum += $k[-1];
-                                $min_partial_sum += $k[0];
-                            }
-                            else
-                            {
-                                $partial_sum += $k[0];
-                            }
+                            push @empty, $c_;
+                            $max_partial_sum += $k[-1];
+                            $min_partial_sum += $k[0];
                         }
                     }
 
