@@ -782,38 +782,21 @@ sub _try_remove_opts
                     }
                     return 1;
                 }
-                elsif ($i == 0)
+                else
                 {
                     my ($c_, $d_s) = @{ $cells[$i]};
+                    my $IS_TOP = ($i == 0);
+                    my $ret = '';
                     foreach my $d (@$d_s)
                     {
                         if (exists $found{$d})
                         {
-                            $self->_remove_option($c_, $d);
-                        }
-                        else
-                        {
-                            if (!exists($f->{$d}))
+                            if ($IS_TOP)
                             {
-                                if (!__SUB__->(+{%$f, $d => 1},
-                                        $i+1,
-                                        $sum + $d,
-                                    ))
-                                {
-                                    $self->_remove_option($c_, $d);
-                                }
+                                $self->_remove_option($c_, $d);
                             }
                         }
-                    }
-                    return;
-                }
-                else
-                {
-                    my ($c_, $d_s) = @{ $cells[$i]};
-                    my $ret = '';
-                    foreach my $d (@$d_s)
-                    {
-                        if (!exists($f->{$d}) and !exists$found{$d})
+                        elsif (!exists($f->{$d}))
                         {
                             if (__SUB__->(+{%$f, $d => 1},
                                     $i+1,
@@ -821,6 +804,10 @@ sub _try_remove_opts
                                 ))
                             {
                                 $ret = 1;
+                            }
+                            elsif ($IS_TOP)
+                            {
+                                $self->_remove_option($c_, $d);
                             }
                         }
                     }
