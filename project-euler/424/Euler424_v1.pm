@@ -1259,18 +1259,13 @@ sub _try_whole_sum
     my %masks;
     foreach my $c_ ($self->_hint_cells($hint))
     {
-        my $bitmask;
         if (defined (my $d_ = $c_->numeric_digit))
         {
             $partial_sum += $d_;
         }
         else
         {
-            $bitmask = $self->_cell_bitmask($c_);
-        }
-
-        if (defined($bitmask))
-        {
+            my $bitmask = $self->_cell_bitmask($c_);
             if (!exists $masks{$bitmask})
             {
                 my @k = @{_unpack_bitmask($bitmask)};
