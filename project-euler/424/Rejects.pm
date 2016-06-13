@@ -1,3 +1,6 @@
+use strict;
+use warnings;
+
                         # A sanity check.
                         if (0)
                         {
