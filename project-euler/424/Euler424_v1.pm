@@ -543,24 +543,18 @@ sub solve
                     my $min_partial_sum = 0;
                     foreach my $c_ ($self->_hint_cells($hint))
                     {
-                        if (defined (my $d_ = $c_->digit))
+                        my $opts = $self->_cell_digits($c_);
+                        my $min = $opts->[0];
+                        $min_partial_sum += $min;
+                        $max_partial_sum += $opts->[-1];
+                        if (defined( $c_->digit ))
                         {
-                            if (_is_digit($d_))
-                            {
-                                $partial_sum += $d_;
-                            }
-                            else
-                            {
-                                $partial_sum += $self->_min_lett_digit($d_);
-                            }
+                            $partial_sum += $min;
                         }
                         else
                         {
                             push @empty, $c_;
                         }
-                        my $opts = $self->_cell_digits($c_);
-                        $min_partial_sum += $opts->[0];
-                        $max_partial_sum += $opts->[-1];
                     }
 
                     if (@empty == 1 and $partial_sum < $max_sum)
