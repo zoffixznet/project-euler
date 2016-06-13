@@ -789,12 +789,16 @@ sub _try_remove_opts
                     my $ret = '';
                     foreach my $d (@$d_s)
                     {
-                        if (exists $found{$d})
-                        {
+                        my $_rem = sub {
                             if ($IS_TOP)
                             {
                                 $self->_remove_option($c_, $d);
                             }
+                            return;
+                        };
+                        if (exists $found{$d})
+                        {
+                            $_rem->();
                         }
                         elsif (!exists($f->{$d}))
                         {
@@ -805,9 +809,9 @@ sub _try_remove_opts
                             {
                                 $ret = 1;
                             }
-                            elsif ($IS_TOP)
+                            else
                             {
-                                $self->_remove_option($c_, $d);
+                                $_rem->();
                             }
                         }
                     }
