@@ -548,23 +548,19 @@ sub solve
                             if (_is_digit($d_))
                             {
                                 $partial_sum += $d_;
-                                $max_partial_sum += $d_;
-                                $min_partial_sum += $d_;
                             }
                             else
                             {
                                 $partial_sum += $self->_min_lett_digit($d_);
-                                $max_partial_sum += $self->_max_lett_digit($d_);
-                                $min_partial_sum += $self->_min_lett_digit($d_);
                             }
                         }
                         else
                         {
-                            my @k = sort {$a <=> $b } keys %{$c_->options};
                             push @empty, $c_;
-                            $max_partial_sum += $k[-1];
-                            $min_partial_sum += $k[0];
                         }
+                        my $opts = $self->_cell_digits($c_);
+                        $min_partial_sum += $opts->[0];
+                        $max_partial_sum += $opts->[-1];
                     }
 
                     if (@empty == 1 and $partial_sum < $max_sum)
