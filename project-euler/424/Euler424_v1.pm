@@ -81,6 +81,20 @@ sub set_hints
     return;
 }
 
+sub numeric_digit
+{
+    my $self = shift;
+
+    my $d = $self->digit;
+    if (defined($d) and Euler424_v1::Puzzle::_is_digit($d))
+    {
+        return $d;
+    }
+    else
+    {
+        return;
+    }
+}
 
 package Euler424_v1::Puzzle;
 
@@ -442,13 +456,10 @@ sub solve
                     my $partial_sum = 0;
                     foreach my $c_ ($self->_hint_cells($hint))
                     {
-                        if (defined (my $d_ = $c_->digit))
+                        if (defined (my $d_ = $c_->numeric_digit))
                         {
-                            if (_is_digit($d_))
-                            {
-                                $cells_count--;
-                                $partial_sum += $d_;
-                            }
+                            $cells_count--;
+                            $partial_sum += $d_;
                         }
                     }
                     my $max = $partial_sum +
@@ -605,8 +616,7 @@ sub solve
                     my $partial_sum = 0;
                     foreach my $c_ ($self->_hint_cells($hint))
                     {
-                        my $d_ = $c_->digit;
-                        if (defined$d_ and _is_digit($d_))
+                        if (defined (my $d_ = $c_->numeric_digit))
                         {
                             $partial_sum += $d_;
                         }
@@ -1250,16 +1260,9 @@ sub _try_whole_sum
     foreach my $c_ ($self->_hint_cells($hint))
     {
         my $bitmask;
-        if (defined (my $d_ = $c_->digit))
+        if (defined (my $d_ = $c_->numeric_digit))
         {
-            if (_is_digit($d_))
-            {
-                $partial_sum += $d_;
-            }
-            else
-            {
-                $bitmask = $self->_cell_bitmask($c_);
-            }
+            $partial_sum += $d_;
         }
         else
         {
