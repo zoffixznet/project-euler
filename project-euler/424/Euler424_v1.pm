@@ -500,14 +500,13 @@ sub solve
                                 {
                                     @partial_sums = ( map {$_-$d_} @partial_sums);
                                     $bitmask |= (1 << ($d_ - 1));
-                                    $empty_count--;
                                 }
                                 else
                                 {
                                     my @d = @{ $self->_lett_digits($d_) };
                                     @partial_sums = uniq( sort {$a <=> $b} (map { my $s = $_; map {$s - $_ } @d } @partial_sums));
-                                    $empty_count--;
                                 }
+                                $empty_count--;
                             }
                         }
                         foreach my $partial_sum (@partial_sums)
