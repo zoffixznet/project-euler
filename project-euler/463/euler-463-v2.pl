@@ -11,10 +11,6 @@ use Euler_463_v2;
 
 my $MOD = 1_000_000_000;
 
-my $LOWER = 100_000;
-
-my $UPPER = $LOWER * 2;
-
 sub _cache
 {
     my ($h, $key, $promise) = @_;
@@ -24,25 +20,6 @@ sub _cache
     if(!defined($ret))
     {
         $ret = $promise->();
-    }
-
-    my $num_keys = scalar keys %$h;
-
-    if ($num_keys >= $UPPER)
-    {
-        my @to_del;
-
-        my $NUM = $num_keys - $LOWER;
-        K:
-        while (my ($k, undef) = each %$h)
-        {
-            push @to_del, $k;
-            if (@to_del == $NUM)
-            {
-                last K;
-            }
-        }
-        delete @$h{@to_del};
     }
     $h->{$key} = $ret;
 
@@ -149,7 +126,7 @@ sub s_bruteforce
     }
 }
 
-if (1)
+if (0)
 {
     my $want = 0;
     foreach my $n (1 .. 100_000)
