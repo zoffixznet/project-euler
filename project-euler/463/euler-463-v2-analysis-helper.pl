@@ -3,13 +3,15 @@
 use strict;
 use warnings;
 
+use Math::GMP;
+
 use 5.016;
 
 package Poly;
 
 use Moose;
 
-has 'coeffs' => (is => 'ro', 'isa' => 'ArrayRef[Int]');
+has 'coeffs' => (is => 'ro', 'isa' => 'ArrayRef[Math::GMP]');
 
 sub inc
 {
@@ -48,7 +50,7 @@ package MultF;
 use Moose;
 
 has 'apply' => (is => 'ro', isa => 'ApplyF');
-has 'mult' => (is => 'ro', isa => 'Int');
+has 'mult' => (is => 'ro', isa => 'Math::GMP');
 
 sub inc
 {
@@ -64,10 +66,10 @@ sub double
 
 package main;
 
-my $mult = 4;
+my $mult = Math::GMP->new('4');
 my @polys = (
-    MultF->new({mult => 6, apply => ApplyF->new({p => Poly->new({coeffs => [1,2]})})}),
-    MultF->new({mult => (-2), apply => ApplyF->new({p => Poly->new({coeffs => [0,1]})})}),
+    MultF->new({mult => Math::GMP->new('6'), apply => ApplyF->new({p => Poly->new({coeffs => [Math::GMP->new(1),Math::GMP->new(2)]})})}),
+    MultF->new({mult => Math::GMP->new(-2), apply => ApplyF->new({p => Poly->new({coeffs => [Math::GMP->new(0),Math::GMP->new(1)]})})}),
 );
 
 my @extend;
@@ -76,8 +78,8 @@ while (1)
     @extend = (map { $_->inc } @polys);
     my @new_polys = map { $_->double } (@polys, @extend);
 
-    my $x2_p_1_coeff = 0;
-    my $x_coeff = 0;
+    my $x2_p_1_coeff = Math::GMP->new(0);
+    my $x_coeff = Math::GMP->new(0);
     foreach my $p (@new_polys)
     {
         my $m = $p->mult;
@@ -134,8 +136,8 @@ while (1)
         }
     }
     @polys = (
-        MultF->new({mult => $x2_p_1_coeff, apply => ApplyF->new({p => Poly->new({coeffs => [1,2]})})}),
-        MultF->new({mult => $x_coeff, apply => ApplyF->new({p => Poly->new({coeffs => [0,1]})})}),
+        MultF->new({mult => $x2_p_1_coeff, apply => ApplyF->new({p => Poly->new({coeffs => [Math::GMP->new(1),Math::GMP->new(2)]})})}),
+        MultF->new({mult => $x_coeff, apply => ApplyF->new({p => Poly->new({coeffs => [Math::GMP->new(0),Math::GMP->new(1)]})})}),
     );
 }
 continue
