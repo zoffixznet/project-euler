@@ -9,14 +9,19 @@ no warnings 'recursion';
 
 my $MOD = 1_000_000_000;
 
-my $UPPER = 200_000;
-my $LOWER = 100_000;
+my $UPPER = 20_000;
+my $LOWER = 10_000;
 
 sub _cache
 {
     my ($h, $key, $promise) = @_;
 
-    my $ret = ($h->{$key} //= $promise->());
+    my $ret = $h->{$key};
+
+    if(!defined($ret))
+    {
+        $ret = $promise->();
+    }
 
     if (scalar keys %$h >= $UPPER)
     {
@@ -34,6 +39,8 @@ sub _cache
         }
         delete @$h{@to_del};
     }
+    $h->{$key} = $ret;
+
     return $ret;
 }
 
