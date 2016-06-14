@@ -44,13 +44,9 @@ sub f_mod
     my ($n) = @_;
 
     return _cache(\%cache, $n, sub {
-        if ($n == 1)
+        if ($n <= 3)
         {
             return 1;
-        }
-        elsif ($n == 3)
-        {
-            return 3;
         }
         elsif (($n & 1) == 0)
         {
