@@ -5,8 +5,6 @@ use warnings;
 
 use 5.016;
 
-no warnings 'recursion';
-
 my $MOD = 1_000_000_000;
 
 my $UPPER = 200_000;
