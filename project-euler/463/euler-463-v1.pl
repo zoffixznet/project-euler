@@ -67,52 +67,6 @@ sub f_mod
     });
 }
 
-sub s_bruteforce
-{
-    my ($n) = @_;
-
-    my $s = 0;
-
-    foreach my $i (1 .. $n)
-    {
-        ($s += f_mod($i)) %= $MOD;
-    }
-
-    return $s;
-}
-
-{
-    my %s_cache;
-
-    sub s_smart
-    {
-        my ($start, $end) = @_;
-
-        return _cache(\%s_cache, "$start|$end", sub {
-                if ($start > $end)
-                {
-                    return 0;
-                }
-                if ($end <= 8)
-                {
-                    return s_bruteforce($end) - s_bruteforce($start - 1);
-                }
-                if (($start & 0b11) != 0)
-                {
-                    return ((f_mod($start) + s_smart($start+1, $end)) % $MOD);
-                }
-                if (($end & 0b11) != 11)
-                {
-                    return ((f_mod($end) + s_smart($start, $end-1)) % $MOD);
-                }
-                my $half_start = ($start >> 1);
-                my $half_end = (($end - 1) >> 1);
-                return ((6 * f_mod($half_end) + (s_smart($half_start+1, $half_end-1) << 2) - (f_mod($half_start) << 1)) % $MOD);
-            }
-        );
-    }
-}
-
 if (1)
 {
     my $want = 0;
