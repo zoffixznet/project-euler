@@ -666,7 +666,7 @@ sub solve
                     }
                 }
                 $self->_try_whole_sum($sum, $hint, $an_partial_sum, \@an_empty);
-                $self->_try_perms_sum($sum, $hint);
+                $self->_try_perms_sum($sum, $hint, $an_partial_sum, $an_cells_count);
                 $self->_try_perms_sum_with_min($sum, $hint);
                 $self->_try_1_plus($sum, $hint);
             }
@@ -947,7 +947,7 @@ sub result
 
 sub _try_perms_sum
 {
-    my ($self, $sum, $hint) = @_;
+    my ($self, $sum, $hint, $partial_sum, $cells_count) = @_;
 
     if (! _is_numeric($sum))
     {
@@ -955,20 +955,13 @@ sub _try_perms_sum
     }
 
     my $total_cells_count = $hint->count;
-    my $cells_count = $total_cells_count;
-    my $partial_sum = 0;
     my @letter_cells;
     my @empty;
     foreach my $c_ ($self->_hint_cells($hint))
     {
         if (defined (my $d_ = $c_->digit))
         {
-            if (_is_digit($d_))
-            {
-                $partial_sum += $d_;
-                $cells_count--;
-            }
-            else
+            if (! _is_digit($d_))
             {
                 push @letter_cells, $c_;
             }
