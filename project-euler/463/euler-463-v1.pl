@@ -48,17 +48,9 @@ sub f_mod
         {
             return 1;
         }
-        elsif (($n & 1) == 0)
-        {
-            return f_mod($n >> 1);
-        }
-        elsif (($n & 3) == 1)
-        {
-            return (2 * f_mod(($n >> 1) + 1) - f_mod($n >> 2)) % $MOD;
-        }
         else
         {
-            return (3 * f_mod(($n >> 1)) - 2 * f_mod($n >> 2)) % $MOD;
+            return f_mod($n >> 1);
         }
     });
 }
