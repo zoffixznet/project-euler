@@ -22,7 +22,7 @@ sub double
 {
     my ($self) = @_;
 
-    return Poly->new({coeffs => [$self->coeffs->[0]*2, $self->coeffs->[1]*2]});
+    return Poly->new({coeffs => [$self->coeffs->[0], $self->coeffs->[1]*2]});
 }
 
 package ApplyF;
@@ -84,7 +84,7 @@ while (1)
         my $m = $p->mult;
         my @c = @{$p->apply->p->coeffs};
 
-        while ($c[0] % 2 == 0)
+        while ($c[1] > 1 and $c[0] % 2 == 0)
         {
             foreach my $x (@c)
             {
