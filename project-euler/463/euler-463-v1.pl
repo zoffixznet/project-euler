@@ -104,6 +104,10 @@ sub s_bruteforce
                 {
                     return 0;
                 }
+                if ($start == $end)
+                {
+                    return f_mod($start);
+                }
                 if ($end <= 8)
                 {
                     return s_bruteforce($end) - s_bruteforce($start - 1);
@@ -117,7 +121,7 @@ sub s_bruteforce
                     return ((f_mod($end) + s_smart($start, $end-1)) % $MOD);
                 }
                 my $half_start = ($start >> 1);
-                my $half_end = (($end - 1) >> 1);
+                my $half_end = ($end >> 1);
                 return ((6 * f_mod($half_end) + (s_smart($half_start+1, $half_end-1) << 2) - (f_mod($half_start) << 1)) % $MOD);
             },
         );
