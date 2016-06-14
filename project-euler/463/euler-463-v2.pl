@@ -11,7 +11,7 @@ use Euler_463_v2;
 
 my $MOD = 1_000_000_000;
 
-my $LOWER = 100;
+my $LOWER = 100_000;
 
 my $UPPER = $LOWER * 2;
 
@@ -132,7 +132,6 @@ sub s_bruteforce
                         return (($c[0] * f_mod(3) + $c[1] * f_mod(1) + s_smart($new_end+1, $end)) % $MOD);
                     }
                 }
-                else
                 {
                     my $power2 = ((($start-1)^$start)+1);
                     my $new_end = $start + $power2 - 1;
@@ -153,8 +152,12 @@ sub s_bruteforce
 if (1)
 {
     my $want = 0;
-    foreach my $n (1 .. 1_000_000)
+    foreach my $n (1 .. 100_000)
     {
+        if ($n % 1_000 == 0)
+        {
+            say "Reached n=$n";
+        }
         ($want += f_mod($n)) %= $MOD;
         my $have = s_smart(1, $n);
         if ($want != $have)
