@@ -32,6 +32,11 @@ sub f_mod
 {
     my ($n) = @_;
 
+    if ($n < 1)
+    {
+        die "Foo";
+    }
+
     return _cache(\%cache, $n, sub {
         if ($n == 1)
         {
@@ -100,17 +105,9 @@ sub s_bruteforce
                     return ((f_mod($end) + s_smart($start, $end-1)) % $MOD);
                 }
                 # start is a power of 2.
-                if (($start & ($start - 1)) == 0)
                 {
-                    my $new_end = (($start << 1)-1);
-                    if ($new_end <= $end)
-                    {
-                        my @c = Euler_463_v2->new->lookup($start);
-                        return (($c[0] * f_mod(3) + $c[1] * f_mod(1) + s_smart($new_end+1, $end)) % $MOD);
-                    }
-                }
-                {
-                    my $power2 = ((($start-1)^$start)+1);
+                    my $p2 = (($start-1)^$start);
+                    my $power2 = ((($start & ($start-1)) != 0) ? $p2+1 : $start);
                     my $new_end = $start + $power2 - 1;
                     while ($new_end > $end)
                     {
@@ -126,7 +123,7 @@ sub s_bruteforce
     }
 }
 
-if (0)
+if (1)
 {
     my $want = 0;
     foreach my $n (1 .. 100_000)
