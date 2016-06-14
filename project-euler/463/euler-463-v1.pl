@@ -16,22 +16,19 @@ sub _cache
 
     my $ret = ($h->{$key} //= $promise->());
 
-    if (scalar keys %$h >= $UPPER)
-    {
-        my @to_del;
+    my @to_del;
 
-        my $NUM = +(scalar keys %$h) - $LOWER;
-        K:
-        while (my ($k, undef) = each %$h)
+    my $NUM = +(scalar keys %$h) - $LOWER;
+    K:
+    while (my ($k, undef) = each %$h)
+    {
+        push @to_del, $k;
+        if (@to_del == $NUM)
         {
-            push @to_del, $k;
-            if (@to_del == $NUM)
-            {
-                last K;
-            }
+            last K;
         }
-        delete @$h{@to_del};
     }
+    delete @$h{@to_del};
     return $ret;
 }
 
