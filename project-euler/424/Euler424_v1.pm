@@ -378,6 +378,24 @@ sub solve
                 my $sum = $args->{sum};
                 my $letter;
                 my $digit;
+
+                # Common analysis.
+                my @an_empty;
+                my $an_partial_sum = 0;
+                foreach my $c_ ($self->_hint_cells($hint))
+                {
+                    if (defined (my $d_ = $c_->numeric_digit))
+                    {
+                        $an_partial_sum += $d_;
+                    }
+                    else
+                    {
+                        push @an_empty, $c_;
+                    }
+                }
+                my $an_cells_count = @an_empty;
+                @an_empty = sort { $self->_cell_min($a) <=> $self->_cell_min($b) } @an_empty;
+
                 if (($letter) = $sum =~ /\A($LETT_RE)/)
                 {
                     my $cells_count = $hint->count;
@@ -452,19 +470,9 @@ sub solve
                 }
                 elsif (($digit, $letter) = $sum =~ /\A($DIGIT_RE)($LETT_RE)\z/)
                 {
-                    my $cells_count = $hint->count;
-                    my $partial_sum = 0;
-                    foreach my $c_ ($self->_hint_cells($hint))
-                    {
-                        if (defined (my $d_ = $c_->numeric_digit))
-                        {
-                            $cells_count--;
-                            $partial_sum += $d_;
-                        }
-                    }
-                    my $max = $partial_sum +
+                    my $max = $an_partial_sum +
                     (
-                        ((9 + 9 - $cells_count + 1)*$cells_count)
+                        ((9 + 9 - $an_cells_count + 1)*$an_cells_count)
                         >> 1
                     );
 
@@ -612,68 +620,52 @@ sub solve
                     }
                 }
                 {
-                    my @empty;
-                    my $partial_sum = 0;
-                    foreach my $c_ ($self->_hint_cells($hint))
+                    my $min_sum = $sum;
+                    $min_sum =~ s#($LETT_RE)#$self->_min_lett_digit($1)#eg;
+
+                    if (@an_empty)
                     {
-                        if (defined (my $d_ = $c_->numeric_digit))
+                        my @e = @an_empty;
+                        my $pivot = shift@e;
+                        my $cells_count = @e;
+                        my $max =
+                        (
+                            ((9 + 9 - $cells_count + 1)*$cells_count)
+                            >> 1
+                        );
+                        foreach my $k ($self->_cell_min($pivot) .. 9)
                         {
-                            $partial_sum += $d_;
-                        }
-                        else
-                        {
-                            push @empty, $c_;
+                            if ($an_partial_sum + $max + $k < $min_sum)
+                            {
+                                $self->_remove_option($pivot, $k);
+                            }
                         }
                     }
-                    @empty = sort { $self->_cell_min($a) <=> $self->_cell_min($b) } @empty;
+                }
+                {
+                    my $max_sum = $sum;
+                    $max_sum =~ s#($LETT_RE)#$self->_max_lett_digit($1)#eg;
+                    $max_sum =~ s#\A0#1#;
 
+                    if (@an_empty)
                     {
-                        my $min_sum = $sum;
-                        $min_sum =~ s#($LETT_RE)#$self->_min_lett_digit($1)#eg;
-
-                        if (@empty)
+                        foreach my $pivot_i (keys @an_empty)
                         {
-                            my $pivot = shift@empty;
-                            my $cells_count = @empty;
-                            my $max =
-                            (
-                                ((9 + 9 - $cells_count + 1)*$cells_count)
-                                >> 1
-                            );
+                            my @e = @an_empty;
+                            my ($pivot) = splice@e, $pivot_i, 1;
+                            my $cells_count = @e;
+                            my $max = @e ? sum(map { $self->_cell_min($_) } @e) : 0;
                             foreach my $k ($self->_cell_min($pivot) .. 9)
                             {
-                                if ($partial_sum + $max + $k < $min_sum)
+                                if ($an_partial_sum + $max + $k > $max_sum)
                                 {
                                     $self->_remove_option($pivot, $k);
                                 }
                             }
                         }
                     }
-                    {
-                        my $max_sum = $sum;
-                        $max_sum =~ s#($LETT_RE)#$self->_max_lett_digit($1)#eg;
-                        $max_sum =~ s#\A0#1#;
-
-                        if (@empty)
-                        {
-                            foreach my $pivot_i (keys @empty)
-                            {
-                                my @e = @empty;
-                                my ($pivot) = splice@e, $pivot_i, 1;
-                                my $cells_count = @e;
-                                my $max = @e ? sum(map { $self->_cell_min($_) } @e) : 0;
-                                foreach my $k ($self->_cell_min($pivot) .. 9)
-                                {
-                                    if ($partial_sum + $max + $k > $max_sum)
-                                    {
-                                        $self->_remove_option($pivot, $k);
-                                    }
-                                }
-                            }
-                        }
-                    }
                 }
-                $self->_try_whole_sum($sum, $hint);
+                $self->_try_whole_sum($sum, $hint, $an_partial_sum, \@an_empty);
                 $self->_try_perms_sum($sum, $hint);
                 $self->_try_perms_sum_with_min($sum, $hint);
                 $self->_try_1_plus($sum, $hint);
@@ -1253,34 +1245,26 @@ sub _unpack_bitmask
 
 sub _try_whole_sum
 {
-    my ($self, $sum, $hint) = @_;
+    my ($self, $sum, $hint, $partial_sum, $an_empty) = @_;
 
-    my $partial_sum = 0;
     my %masks;
-    foreach my $c_ ($self->_hint_cells($hint))
+    foreach my $c_ (@$an_empty)
     {
-        if (defined (my $d_ = $c_->numeric_digit))
+        my $bitmask = $self->_cell_bitmask($c_);
+        if (!exists $masks{$bitmask})
         {
-            $partial_sum += $d_;
+            my @k = @{_unpack_bitmask($bitmask)};
+            $masks{$bitmask} = +{
+                num_bits => scalar@k,
+                count => 0,
+                sum => sum(@k),
+                cells => [],
+                bitmask => $bitmask,
+            };
         }
-        else
-        {
-            my $bitmask = $self->_cell_bitmask($c_);
-            if (!exists $masks{$bitmask})
-            {
-                my @k = @{_unpack_bitmask($bitmask)};
-                $masks{$bitmask} = +{
-                    num_bits => scalar@k,
-                    count => 0,
-                    sum => sum(@k),
-                    cells => [],
-                    bitmask => $bitmask,
-                };
-            }
-            my $rec = $masks{$bitmask};
-            $rec->{count}++;
-            push @{$rec->{cells}}, $c_;
-        }
+        my $rec = $masks{$bitmask};
+        $rec->{count}++;
+        push @{$rec->{cells}}, $c_;
     }
     my @ones;
     while (my ($bitmask, $rec) = each%masks)
