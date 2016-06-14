@@ -74,7 +74,7 @@ sub f_mod
         {
             return (3 * f_mod(($n >> 1)) - 2 * f_mod($n >> 2)) % $MOD;
         }
-    });
+        });
 }
 
 sub s_bruteforce
@@ -98,6 +98,7 @@ sub s_bruteforce
     {
         my ($start, $end) = @_;
 
+        # say "s->e : $start->$end";
         return _cache(\%s_cache, "$start|$end", sub {
                 if ($start > $end)
                 {
@@ -111,19 +112,19 @@ sub s_bruteforce
                 {
                     return ((f_mod($start) + s_smart($start+1, $end)) % $MOD);
                 }
-                if (($end & 0b11) != 11)
+                if (($end & 0b11) != 0b11)
                 {
                     return ((f_mod($end) + s_smart($start, $end-1)) % $MOD);
                 }
                 my $half_start = ($start >> 1);
                 my $half_end = (($end - 1) >> 1);
                 return ((6 * f_mod($half_end) + (s_smart($half_start+1, $half_end-1) << 2) - (f_mod($half_start) << 1)) % $MOD);
-            }
+            },
         );
     }
 }
 
-if (0)
+if (1)
 {
     my $want = 0;
     foreach my $n (1 .. 1_000_000)
