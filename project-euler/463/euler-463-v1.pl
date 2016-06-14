@@ -9,8 +9,9 @@ no warnings 'recursion';
 
 my $MOD = 1_000_000_000;
 
-my $UPPER = 20_000;
-my $LOWER = 10_000;
+my $LOWER = 100;
+
+my $UPPER = $LOWER * 2;
 
 sub _cache
 {
@@ -23,11 +24,13 @@ sub _cache
         $ret = $promise->();
     }
 
-    if (scalar keys %$h >= $UPPER)
+    my $num_keys = scalar keys %$h;
+
+    if ($num_keys >= $UPPER)
     {
         my @to_del;
 
-        my $NUM = +(scalar keys %$h) - $LOWER;
+        my $NUM = $num_keys - $LOWER;
         K:
         while (my ($k, undef) = each %$h)
         {
