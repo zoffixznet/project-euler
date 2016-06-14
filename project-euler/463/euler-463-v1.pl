@@ -29,7 +29,7 @@ sub f_mod
     }
     else
     {
-        return (3 * f_mod(($n >> 1) + 1) - 2 * f_mod($n >> 2)) % $MOD;
+        return (3 * f_mod(($n >> 1)) - 2 * f_mod($n >> 2)) % $MOD;
     }
 }
 
