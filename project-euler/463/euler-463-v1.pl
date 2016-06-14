@@ -113,20 +113,11 @@ sub s_bruteforce
     }
 }
 
-if (0)
+if (1)
 {
     my $want = 0;
     foreach my $n (1 .. 1_000_000)
     {
         ($want += f_mod($n)) %= $MOD;
-        my $have = s_smart(1, $n);
-        if ($want != $have)
-        {
-            die "want=$want have=$have n=$n!";
-        }
     }
-}
-
-{
-    say "S(3 ** 37) = ", s_smart(1, (eval join'*',(3) x 37));
 }
