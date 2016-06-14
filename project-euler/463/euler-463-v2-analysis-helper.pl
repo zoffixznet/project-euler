@@ -65,7 +65,6 @@ sub double
 package main;
 
 my $mult = 4;
-my $last = $mult-1;
 my @polys = (
     MultF->new({mult => 6, apply => ApplyF->new({p => Poly->new({coeffs => [1,2]})})}),
     MultF->new({mult => (-2), apply => ApplyF->new({p => Poly->new({coeffs => [0,1]})})}),
@@ -142,6 +141,5 @@ while (1)
 continue
 {
     $mult <<= 1;
-    $last = $mult - 1;
     say "step=$mult = ", $polys[0]->mult, " * f(2n+1) + ", $polys[1]->mult, " * f(n)";
 }
