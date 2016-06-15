@@ -79,12 +79,12 @@ my %cache;
     %cache = ("$mult" => \@polys);
 }
 
-sub lookup
+sub lookup_proto
 {
     my ($self, $mult) = @_;
 
-    my $ret = $cache{"$mult"} //= sub {
-        my @polys = @{$cache{$mult>>1}};
+    return $cache{"$mult"} //= sub {
+        my @polys = @{$self->lookup_proto($mult>>1)};
         my @extend = (map { $_->inc } @polys);
         my @new_polys = map { $_->double } (@polys, @extend);
 
@@ -152,7 +152,12 @@ sub lookup
 
         return \@polys;
     }->();
+}
 
-    return (map { $_->mult } @$ret);
+sub lookup
+{
+    my ($self, $mult) = @_;
+
+    return (map { $_->mult } @{$self->lookup_proto($mult)});
 }
 
