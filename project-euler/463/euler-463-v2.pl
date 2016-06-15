@@ -118,7 +118,7 @@ sub s_bruteforce
     }
 }
 
-if (1)
+if ($ENV{TEST})
 {
     my $want = 0;
     foreach my $n (1 .. 100_000)
