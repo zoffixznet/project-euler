@@ -64,9 +64,9 @@ sub solve_for_d
                 my $nc = $count;
                 # State.
                 my $s = 0;
-                for my $d (@S[reverse (0 .. $i)])
+                for my $d (reverse (0 .. $i))
                 {
-                    if (($s = $A[$s][$d]) == 0)
+                    if (($s = $A[$s][$S[$d]]) == 0)
                     {
                         if (++$nc >= 2)
                         {
