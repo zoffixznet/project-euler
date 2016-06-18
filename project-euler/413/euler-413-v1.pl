@@ -26,16 +26,19 @@ sub solve_for_d
     my $rec;
     my $total = 0;
 
-    $rec = sub {
-        my ($i, $old, $count, $_n) = @_;
+    my @S = ((0) x $D);
 
-        if ($i == $D+1)
+    $rec = sub {
+        my ($i, $count) = @_;
+
+        if ($i == $D)
         {
             if ($count)
             {
                 if (0)
                 {
                     # $_n = scalar reverse$_n;
+                    my $_n = scalar reverse @S[0 .. $D];
                     if ((map { my $s = $_; grep { my $e = $_; substr($_n, $s, $e-$s+1) % $D == 0 } $s .. length($_n)-1 } 0 .. length($_n)-1) != 1)
                     {
                         print "False $_n\n";
@@ -48,18 +51,18 @@ sub solve_for_d
         {
             NEW:
             for my $new_d (
-                ((($count == 0) && ($i < $D)) ? 0 : 1)
+                ((($count == 0) && ($i < $D-1)) ? 0 : 1)
                     ..
                 9
             )
             {
-                my $n = [$new_d, @$old];
+                $S[$i] = $new_d;
 
                 # $nc == new_count
                 my $nc = $count;
                 # State.
                 my $s = 0;
-                for my $d (@$n)
+                for my $d (@S[reverse (0 .. $i)])
                 {
                     if (($s = $A[$s][$d]) == 0)
                     {
@@ -69,14 +72,14 @@ sub solve_for_d
                         }
                     }
                 }
-                $rec->($i+1, $n, $nc, $new_d.$_n);
+                $rec->($i+1, $nc);
             }
         }
 
         return;
     };
 
-    $rec->(1, [], 0, '');
+    $rec->(0, 0);
 
     return $total;
 }
