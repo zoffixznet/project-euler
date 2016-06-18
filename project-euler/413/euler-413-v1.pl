@@ -27,6 +27,8 @@ sub solve_for_d
     my $total = 0;
 
     my @S = ((0) x $D);
+    # D *M*inus 1.
+    my $M = $D-1;
 
     $rec = sub {
         my ($i, $count) = @_;
@@ -51,7 +53,7 @@ sub solve_for_d
         {
             NEW:
             for my $new_d (
-                ((($count == 0) && ($i < $D-1)) ? 0 : 1)
+                ((($count == 0) && ($i < $M)) ? 0 : 1)
                     ..
                 9
             )
