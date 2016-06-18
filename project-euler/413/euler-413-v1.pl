@@ -22,16 +22,18 @@ sub solve_for_d
 
     my ($g) = DivideFsm::get_div_fsms($D);
     my @A = @$g;
+    # A transposed
+    my @T = map { my $d = $_; [ map { $A[$_][$d] } keys@A ] } keys@{$A[0]};
 
     my $rec;
     my $total = 0;
 
-    my @S = ((0) x $D);
+    # my @S = ((0) x $D);
     # D *M*inus 1.
     my $M = $D-1;
 
     $rec = sub {
-        my ($i, $count) = @_;
+        my ($i, $S, $count) = @_;
 
         if ($i == $D)
         {
@@ -40,7 +42,7 @@ sub solve_for_d
                 if (0)
                 {
                     # $_n = scalar reverse$_n;
-                    my $_n = scalar reverse @S[0 .. $D];
+                    my $_n = scalar reverse @$S[0 .. $D];
                     if ((map { my $s = $_; grep { my $e = $_; substr($_n, $s, $e-$s+1) % $D == 0 } $s .. length($_n)-1 } 0 .. length($_n)-1) != 1)
                     {
                         print "False $_n\n";
@@ -52,36 +54,28 @@ sub solve_for_d
         else
         {
             NEW:
-            for my $new_d (
-                ((($count == 0) && ($i < $M)) ? 0 : 1)
+            foreach my $r (
+                @T[
+                ((($count == 0) && $i) ? 0 : 1)
                     ..
-                9
+                9]
             )
             {
-                $S[$i] = $new_d;
+                my @N = @$r[@$S, 0];
 
                 # $nc == new_count
-                my $nc = $count;
-                # State.
-                my $s = 0;
-                for my $d (reverse (0 .. $i))
+                my $nc = $count + (grep { $_ == 0 } @N);
+                if ($nc < 2)
                 {
-                    if (($s = $A[$s][$S[$d]]) == 0)
-                    {
-                        if (++$nc >= 2)
-                        {
-                            next NEW;
-                        }
-                    }
+                    $rec->($i+1, \@N, $nc);
                 }
-                $rec->($i+1, $nc);
             }
         }
 
         return;
     };
 
-    $rec->(0, 0);
+    $rec->(0, [], 0);
 
     return $total;
 }
