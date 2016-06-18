@@ -27,12 +27,20 @@ sub solve_for_d
     my $total = 0;
 
     $rec = sub {
-        my ($i, $old, $count) = @_;
+        my ($i, $old, $count, $_n) = @_;
 
         if ($i == $D+1)
         {
             if ($count)
             {
+                if (0)
+                {
+                    # $_n = scalar reverse$_n;
+                    if ((map { my $s = $_; grep { my $e = $_; substr($_n, $s, $e-$s+1) % $D == 0 } $s .. length($_n)-1 } 0 .. length($_n)-1) != 1)
+                    {
+                        print "False $_n\n";
+                    }
+                }
                 $total++;
             }
         }
@@ -61,14 +69,14 @@ sub solve_for_d
                         }
                     }
                 }
-                $rec->($i+1, $n, $nc);
+                $rec->($i+1, $n, $nc, $new_d.$_n);
             }
         }
 
         return;
     };
 
-    $rec->(1, [], 0);
+    $rec->(1, [], 0, '');
 
     return $total;
 }
@@ -80,9 +88,8 @@ $sums[0] = 0;
 for my $d (1 .. 7)
 {
     $sums[$d] = $sums[$d-1] + solve_for_d($d);
+    print "F(" . 10 ** $d . ") = " . $sums[$d] . "\n";
 }
-
-print map { "F(" . 10 ** $_ . ") = " . $sums[$_] . "\n" } keys(@sums);
 
 for my $d (8 .. 19)
 {
