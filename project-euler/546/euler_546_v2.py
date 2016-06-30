@@ -23,19 +23,18 @@ class MyIter:
         self.n = 0
         self.f = long(1)
         # Remaining.
-        self.r = k
+        self.r = 1
         return
 
     def inc(self):
         global k
+        self.n += 1
         if self.n < k:
-            self.n += 1
             self.f += 1
         else:
             if self.n == k:
                 # Child / sub-iterator
                 self.c = MyIter()
-            self.n += 1
             self.r -= 1
             if self.r == 0:
                 self.r = k
@@ -43,7 +42,7 @@ class MyIter:
             self.f += self.c.f
 
 f = MyIter()
-STEP = 10000000
+STEP = 1
 lim = STEP
 w = 100000000000000
 while f.n < w:
