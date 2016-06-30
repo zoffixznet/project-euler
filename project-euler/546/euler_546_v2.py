@@ -43,6 +43,13 @@ class MyIter:
             self.f += self.c.f
             if self.f > M:
                 self.f -= M
+        return
+
+    def add(self, delta):
+        target = self.n + delta
+        while self.n < target:
+            self.inc()
+        return
 
 f = MyIter()
 # STEP
@@ -53,6 +60,6 @@ l = S
 w = 100000000000000
 while f.n < w:
     while f.n < l:
-        f.inc()
+        f.add(10)
     l += S
     print ("f(%d) = %d" % (f.n, f.f))
