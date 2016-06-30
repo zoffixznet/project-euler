@@ -6,6 +6,7 @@ if sys.version_info > (3,):
 
 
 k = 2
+M = 1000000000 + 7
 
 
 def _reset(new_k):
@@ -21,13 +22,13 @@ class MyIter:
     def __init__(self):
         global k
         self.n = 0
-        self.f = long(1)
+        self.f = 1
         # Remaining.
         self.r = 1
         return
 
     def inc(self):
-        global k
+        global k, M
         self.n += 1
         if self.n < k:
             self.f += 1
@@ -40,13 +41,18 @@ class MyIter:
                 self.r = k
                 self.c.inc()
             self.f += self.c.f
+            if self.f > M:
+                self.f -= M
 
 f = MyIter()
-STEP = 1
-lim = STEP
+# STEP
+S = 1000000
+# limit
+l = S
+# What we want.
 w = 100000000000000
 while f.n < w:
-    while f.n < lim:
+    while f.n < l:
         f.inc()
-    lim += STEP
+    l += S
     print ("f(%d) = %d" % (f.n, f.f))
