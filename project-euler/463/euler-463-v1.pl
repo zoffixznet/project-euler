@@ -14,8 +14,6 @@ sub _cache
     my $ret = ($h->{$key} //= $promise->());
 
     my @to_del;
-
-    my $NUM = +(scalar keys %$h) - $LOWER;
     while (my ($k, undef) = each %$h)
     {
         push @to_del, $k;
