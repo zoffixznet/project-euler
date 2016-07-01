@@ -11,7 +11,7 @@ sub _cache
 {
     my ($key, $promise) = @_;
     my $ret = ($cache{$key} //= $promise->());
-    delete @cache{keys%cache};
+    %cache = ();
     return $ret;
 }
 
