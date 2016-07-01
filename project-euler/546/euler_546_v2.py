@@ -78,8 +78,19 @@ class MyIter:
                 for i in range(0,k):
                     k_ret = self.c.add(k_k_delta)
                     ret += self.f * k_k_delta + k_ret * k_k_delta
-                    self.f += k_ret * k #_k_delta
+                    self.f += k_ret * (k + 1) // 2 #_k_delta
                     self.n += k_k_delta * k
+                    if TESTING:
+                        while copy['c'].n < self.n:
+                            copy['c'].inc()
+                            copy['ret'] += copy['c'].f
+                        # copy['ret'] -= copy['c'].f
+                        if copy['c'].f != self.f:
+                            print ("Good f = %d ; Bad f = %d" % (copy['c'].f, self.f))
+                            raise BaseException
+                        if copy['ret'] != ret:
+                            print ("Good ret = %d ; Bad ret = %d" % (copy['ret'], ret))
+                            raise BaseException
                 if TESTING:
                     while copy['c'].n < self.n:
                         copy['c'].inc()
