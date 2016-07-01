@@ -55,10 +55,13 @@ class MyIter:
 
     def add(self, delta):
         global k, M, TESTING
+        c = {}
+        ret = 0
+        if TESTING:
+            c = { 'c':self.clone(), 'c_orig': self.clone(), 'ret': ret, 'ret_orig': ret }
         init_f = self.f
         target = self.n + delta
-        ret = init_f
-        # ret = 0
+        # ret = init_f
         while self.r != k and self.n < target:
             self.inc()
             ret += self.f
@@ -71,17 +74,17 @@ class MyIter:
             if k_k_delta > 0:
                 copy = {}
                 if TESTING:
-                    copy = { 'c':self.clone(), 'ret': ret }
+                    copy = { 'c':self.clone(), 'c_orig': self.clone(), 'ret': ret, 'ret_orig': ret }
                 for i in range(0,k):
                     k_ret = self.c.add(k_k_delta)
                     ret += self.f * k_k_delta + k_ret * k_k_delta
-                    self.f += k_ret * k_k_delta
+                    self.f += k_ret * k #_k_delta
                     self.n += k_k_delta * k
                 if TESTING:
                     while copy['c'].n < self.n:
                         copy['c'].inc()
                         copy['ret'] += copy['c'].f
-                    copy['ret'] -= copy['c'].f
+                    # copy['ret'] -= copy['c'].f
                     if copy['c'].f != self.f:
                         print ("Good f = %d ; Bad f = %d" % (copy['c'].f, self.f))
                         raise BaseException
@@ -92,6 +95,17 @@ class MyIter:
             self.inc()
             ret += self.f
         # ret -= self.f
+        if TESTING:
+            while c['c'].n < self.n:
+                c['c'].inc()
+                c['ret'] += c['c'].f
+            if c['c'].f != self.f:
+                print ("Good f = %d ; Bad f = %d" % (c['c'].f, self.f))
+                raise BaseException
+            if c['ret'] != ret:
+                print ("Good ret = %d ; Bad ret = %d" % (c['ret'], ret))
+                raise BaseException
+
         return ret
 
 f = MyIter()
