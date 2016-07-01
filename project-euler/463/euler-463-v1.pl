@@ -20,10 +20,6 @@ sub _cache
     while (my ($k, undef) = each %$h)
     {
         push @to_del, $k;
-        if (@to_del == $NUM)
-        {
-            last K;
-        }
     }
     delete @$h{@to_del};
     return $ret;
