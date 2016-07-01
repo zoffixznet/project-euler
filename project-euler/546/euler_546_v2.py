@@ -7,7 +7,7 @@ if sys.version_info > (3,):
 
 k = 2
 M = 1000000000 + 7
-
+TESTING = True
 
 def _reset(new_k):
     """reset the caches."""
@@ -25,6 +25,7 @@ class MyIter:
         self.f = long(1)
         # Remaining.
         self.r = 1
+        self.c = None
         return
 
     def inc(self):
@@ -43,11 +44,21 @@ class MyIter:
             self.f += self.c.f
         return
 
+    def clone(self):
+        ret = MyIter()
+        ret.n = self.n
+        ret.f = self.f
+        ret.r = self.r
+        if self.c:
+            ret.c = self.c.clone()
+        return ret
+
     def add(self, delta):
-        global k, M
+        global k, M, TESTING
         init_f = self.f
         target = self.n + delta
         ret = init_f
+        # ret = 0
         while self.r != k and self.n < target:
             self.inc()
             ret += self.f
@@ -58,11 +69,25 @@ class MyIter:
             k_delta = (target_k - self.n) // k
             k_k_delta = k_delta // k
             if k_k_delta > 0:
+                copy = {}
+                if TESTING:
+                    copy = { 'c':self.clone(), 'ret': ret }
                 for i in range(0,k):
                     k_ret = self.c.add(k_k_delta)
                     ret += self.f * k_k_delta + k_ret * k_k_delta
                     self.f += k_ret * k_k_delta
                     self.n += k_k_delta * k
+                if TESTING:
+                    while copy['c'].n < self.n:
+                        copy['c'].inc()
+                        copy['ret'] += copy['c'].f
+                    copy['ret'] -= copy['c'].f
+                    if copy['c'].f != self.f:
+                        print ("Good f = %d ; Bad f = %d" % (copy['c'].f, self.f))
+                        raise BaseException
+                    if copy['ret'] != ret:
+                        print ("Good ret = %d ; Bad ret = %d" % (copy['ret'], ret))
+                        raise BaseException
         while self.n < target:
             self.inc()
             ret += self.f
