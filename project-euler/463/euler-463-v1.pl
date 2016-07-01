@@ -5,9 +5,6 @@ use warnings;
 
 use 5.016;
 
-my $MOD = 1_000_000_000;
-
-my $UPPER = 200_000;
 my $LOWER = 100_000;
 
 sub _cache
