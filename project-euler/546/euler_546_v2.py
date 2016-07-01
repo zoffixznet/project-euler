@@ -60,8 +60,8 @@ class MyIter:
             if k_k_delta > 0:
                 for i in range(0,k):
                     k_ret = self.c.add(k_k_delta)
-                    self.f += k_ret * k
-                    ret += self.f
+                    ret += self.f * k_k_delta + k_ret * k_k_delta
+                    self.f += k_ret * k_k_delta
                     self.n += k_k_delta * k
         while self.n < target:
             self.inc()
