@@ -16,7 +16,6 @@ sub _cache
     my @to_del;
 
     my $NUM = +(scalar keys %$h) - $LOWER;
-    K:
     while (my ($k, undef) = each %$h)
     {
         push @to_del, $k;
