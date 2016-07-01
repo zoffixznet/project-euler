@@ -5,21 +5,21 @@ use warnings;
 
 use 5.016;
 
+my %cache;
+
 sub _cache
 {
-    my ($h, $key, $promise) = @_;
-    my $ret = ($h->{$key} //= $promise->());
-    delete @$h{keys%$h};
+    my ($key, $promise) = @_;
+    my $ret = ($cache{$key} //= $promise->());
+    delete @cache{keys%cache};
     return $ret;
 }
-
-my %cache;
 
 sub f_mod
 {
     my ($n) = @_;
 
-    return _cache(\%cache, $n, sub {
+    return _cache($n, sub {
         if ($n <= 3)
         {
             return 1;
