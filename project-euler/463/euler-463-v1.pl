@@ -50,11 +50,8 @@ sub f_mod
     });
 }
 
-if (1)
+my $want = 0;
+foreach my $n (1 .. 1_000_000)
 {
-    my $want = 0;
-    foreach my $n (1 .. 1_000_000)
-    {
-        ($want += f_mod($n)) %= $MOD;
-    }
+    $want += f_mod($n);
 }
