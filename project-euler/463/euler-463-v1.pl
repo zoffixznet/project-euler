@@ -10,15 +10,8 @@ my $LOWER = 100_000;
 sub _cache
 {
     my ($h, $key, $promise) = @_;
-
     my $ret = ($h->{$key} //= $promise->());
-
-    my @to_del;
-    while (my ($k, undef) = each %$h)
-    {
-        push @to_del, $k;
-    }
-    delete @$h{@to_del};
+    delete @$h{keys%$h};
     return $ret;
 }
 
