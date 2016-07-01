@@ -5,8 +5,6 @@ use warnings;
 
 use 5.016;
 
-my $LOWER = 100_000;
-
 sub _cache
 {
     my ($h, $key, $promise) = @_;
