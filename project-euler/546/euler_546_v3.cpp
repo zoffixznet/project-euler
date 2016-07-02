@@ -41,9 +41,10 @@ const ll S = 1000LL;
 
 ll lim = S;
 const ll w = 100000000000000LL;
+#define NUM_F 1000
 int main()
 {
-    MyIter f[1000];
+    MyIter f[NUM_F];
 
     auto & first = f[0];
     while (first.n < w)
@@ -52,6 +53,12 @@ int main()
         {
             first.inc();
         }
+        printf ("DUMP[%lld](%lld) = [", k, first.n);
+        for (int i = 0; i < NUM_F; i++)
+        {
+            printf ("{n=%lld;f=%lld;r=%lld},", f[i].n, f[i].f, f[i].r);
+        }
+        printf("]\n");
         printf ("f[%lld](%lld) = %lld\n", k, first.n, first.f);
         fflush(stdout);
         lim += S;
