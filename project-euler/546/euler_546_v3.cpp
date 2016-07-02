@@ -25,7 +25,7 @@ class MyIter
                 r = k;
                 c.inc();
             }
-            if (f += c.f >= M)
+            if ((f += c.f) >= M)
             {
                 f -= M;
             }
@@ -33,7 +33,12 @@ class MyIter
     }
 };
 
+#if 1
 const ll S = 1000000000LL;
+#else
+const ll S = 1000LL;
+#endif
+
 ll lim = S;
 const ll w = 100000000000000LL;
 int main()
