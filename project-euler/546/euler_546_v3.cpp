@@ -43,20 +43,18 @@ ll lim = S;
 const ll w = 100000000000000LL;
 int main()
 {
-    MyIter * f = new MyIter[1000];
+    MyIter f[1000];
 
-    while (f->n < w)
+    auto & first = f[0];
+    while (first.n < w)
     {
-        while (f->n < lim)
+        while (first.n < lim)
         {
-            f->inc();
+            first.inc();
         }
-        printf ("f[%lld](%lld) = %lld\n", k, f->n, f->f);
+        printf ("f[%lld](%lld) = %lld\n", k, first.n, first.f);
         fflush(stdout);
         lim += S;
     }
-
-    delete f;
-
     return 0;
 }
