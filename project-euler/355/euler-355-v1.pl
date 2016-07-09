@@ -6,7 +6,7 @@ use warnings;
 use bytes;
 
 use List::Util qw(sum);
-use List::MoreUtils qw(none uniq);
+use List::MoreUtils qw(all none uniq);
 
 STDOUT->autoflush(1);
 
@@ -32,8 +32,18 @@ my @factors = (0, map {
 my @remaining1 = (grep { !($factors[$_][0] == $_ and (($_ << 1) >= $MAX)) } 2 .. $#factors);
 my @remaining2 = (grep { not ($factors[$_][0]*$_ <= $MAX) } @remaining1);
 
+my %rem1 = (map { $_ => 1 } @remaining1);
+my @definitely_included2 = (grep { !exists$rem1{$_} } 2 .. $#factors);
+my %def_inc2 = (map { $_ => 1 } @definitely_included2);
+
 my %prime_powers = (map { $primes[$_] => $prime_powers[$_] } keys@primes);
 my %state = %prime_powers;
+
+foreach my $d (@definitely_included2)
+{
+    delete $state{$d};
+}
+
 my @remaining3 = (grep {
         my $n = $_;
         not
@@ -56,27 +66,42 @@ my %def_inc1 = (map { $_ => 1 } @definitely_included1);
 
 my @remaining4 = (grep { !exists($def_inc1{$_}) } @remaining3);
 # for my $n (reverse(2 .. $MAX))
-N:
-for my $n (2 .. $MAX)
+#
+
+foreach my $d (@definitely_included1)
 {
-    if ($n * $factors[$n][0] <= $MAX)
+    delete $state{$d};
+}
+my $dirty = 1;
+
+while ($dirty)
+{
+    $dirty = 0;
+    N:
+    for my $n (2 .. $MAX)
     {
-        next N;
-    }
-    my @f = @{$factors[$n]};
-    my @products = uniq(@state{@f});
-    if (sum( @products ) < $n)
-    {
-        my %n_factors = (map { $_ => 1 } @f);
-        my @state_f = uniq (map { @{$factors[$_]} } @products);
-        foreach my $factor (@state_f)
+        if ($n * $factors[$n][0] <= $MAX)
         {
-            $state{$factor} = exists($n_factors{$factor}) ? $n : $prime_powers{$factor};
+            next N;
+        }
+        my @f = @{$factors[$n]};
+        if (all { exists$state{$_} } @f)
+        {
+            my @products = uniq(@state{@f});
+            if (sum( @products ) < $n)
+            {
+                my %n_factors = (map { $_ => 1 } @f);
+                my @state_f = uniq (map { @{$factors[$_]} } @products);
+                foreach my $factor (@state_f)
+                {
+                    $dirty = 1;
+                    $state{$factor} = exists($n_factors{$factor}) ? $n : $prime_powers{$factor};
+                }
+            }
         }
     }
 }
-
 # 1 can be a part of the coprimes.
-print 1 + sum(uniq(values%state));
+print 1 + sum(uniq(values%state), @definitely_included1, @definitely_included2);
 print "\n";
 
