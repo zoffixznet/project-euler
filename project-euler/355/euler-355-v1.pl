@@ -29,10 +29,11 @@ my @factors = (0, map {
     } `seq 1 "$MAX" | factor`
 );
 
-my @remaining1 = (grep { !($factors[$_][0] == $_ and $_ >= ($MAX>>1)) } 2 .. $#factors);
+my @remaining1 = (grep { !($factors[$_][0] == $_ and (($_ << 1) >= $MAX)) } 2 .. $#factors);
 my @remaining2 = (grep { not ($factors[$_][0]*$_ <= $MAX) } @remaining1);
 
-my %state = (map { $primes[$_] => $prime_powers[$_] } keys@primes);
+my %prime_powers = (map { $primes[$_] => $prime_powers[$_] } keys@primes);
+my %state = %prime_powers;
 my @remaining3 = (grep {
         my $n = $_;
         not
@@ -64,12 +65,13 @@ for my $n (2 .. $MAX)
     }
     my @f = @{$factors[$n]};
     my @products = uniq(@state{@f});
-    my @state_f = uniq (map { @{$factors[$_]} } @products);
-    if (sum( uniq(@state{@f})) < $n)
+    if (sum( @products ) < $n)
     {
-        foreach my $factor (@f)
+        my %n_factors = (map { $_ => 1 } @f);
+        my @state_f = uniq (map { @{$factors[$_]} } @products);
+        foreach my $factor (@state_f)
         {
-            $state{$factor} = $n;
+            $state{$factor} = exists($n_factors{$factor}) ? $n : $prime_powers{$factor};
         }
     }
 }
