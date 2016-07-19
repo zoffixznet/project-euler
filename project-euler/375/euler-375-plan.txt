@@ -1,0 +1,9 @@
+We will calculate the M(N) incrementally by calculating M(j) with a certain
+state and proceeding to M(j+1).
+
+The state will be:
+
+1. The sum so far (= M(j)).
+
+2. A sequence of [ A(i,j), i, ] where S[i] = A(i,j).
+
