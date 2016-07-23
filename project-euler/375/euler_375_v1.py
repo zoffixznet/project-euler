@@ -24,7 +24,10 @@ def brute(m):
 a = []
 s = long(0)
 
-m = 10000
+# m = 10000
+m = 2000000000
+st = 1000000
+lim = st
 for j in xrange(1,m+1):
     S = ((S * S) % 50515093)
     n = []
@@ -47,5 +50,9 @@ for j in xrange(1,m+1):
     # if (s != brute(j)):
       #  print("Wrong for N=%d ; good=%d bad=%d" % (j, brute(j), s))
       #  raise RuntimeError
+    if j == lim:
+        lim += st
+        print(("M(%d) = %d") % (j, s))
+        sys.stdout.flush()
 
 print(("M(%d) = %d") % (m, s))
