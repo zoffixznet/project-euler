@@ -22,17 +22,19 @@ my $m_delta = $m_s2 - $m_s;
 
 my $n = $s2;
 my $m = $m_s2 + 0;
-my $TARGET = $delta * 3 + 1;
+my $TARGET = $delta * 4 + 24024;
 
 my $s_t = (( $TARGET - 1 ) % $delta + 1);
 my $s_t_min_1 = $s_t - 1;
 
-my $m_s2_t = $s + $s_t_min_1;
+my $m_s2_t = $s2 + $s_t_min_1;
 
 my $MIN_ELEM = 3;
 print "\$s = $s\n";
+print "\$s2 = $s2\n";
 print "\$m_s2_t = $m_s2_t\n";
-my $delta_t2 = lookup($m_s2_t) - $m_s;
+print "\$s_t_min_1 = $s_t_min_1\n";
+my $delta_t2 = lookup($m_s2_t) - $m_s2;
 $n += $delta;
 while ($n <= $TARGET)
 {
