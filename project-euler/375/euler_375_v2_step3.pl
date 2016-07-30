@@ -22,7 +22,8 @@ my $m_delta = $m_s2 - $m_s;
 
 my $n = $s2;
 my $m = $m_s2 + 0;
-my $TARGET = $delta * 4 + 24024;
+# my $TARGET = $delta * 4 + 24024;
+my $TARGET = 2_000_000_000;
 
 my $s_t = (( $TARGET - 1 ) % $delta + 1);
 my $s_t_min_1 = $s_t - 1;
