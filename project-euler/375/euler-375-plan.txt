@@ -7,3 +7,14 @@ The state will be:
 
 2. A sequence of [ A(i,j), i, ] where S[i] = A(i,j).
 
+--------------------------------------------------------------------------------
+
+Repetition starts at 1 and ends at 6308949
+Minimum is 3.
+
+Last item to be S[1] is 1999936517 . It repeats 317 times (with a remainder).
+
+The last item is S[2e9 - 1999936517 + 1] = S[63484] .
+
+M(6308949) = 4336411086199724
+M(12617897) = 9043999811195255
