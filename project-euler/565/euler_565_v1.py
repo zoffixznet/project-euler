@@ -8,8 +8,9 @@ if sys.version_info > (3,):
     long = int
     xrange = range
 
-MAX = 1000000000
+# MAX = 1000000000
 # MAX = 1000000
+MAX = 100000000000
 MOD = 2017
 
 root = int(math.sqrt(MAX))
