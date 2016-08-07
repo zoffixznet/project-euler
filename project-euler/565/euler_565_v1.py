@@ -8,7 +8,8 @@ if sys.version_info > (3,):
     long = int
     xrange = range
 
-MAX = 1000000
+MAX = 1000000000
+# MAX = 1000000
 MOD = 2017
 
 root = int(math.sqrt(MAX))
@@ -24,14 +25,14 @@ while True:
     while nn <= MAX:
         if (sum_ % MOD == 0):
             prod = nn
-            print(prod)
             while prod <= MAX:
                 for i in range(1, n):
-                    prod += nn
                     if prod <= MAX:
                         print(prod)
                     else:
+                        prod += nn
                         break
+                    prod += nn
                 prod += nn
         nn *= n
         sum_ += nn
