@@ -43,6 +43,7 @@ for count in ([ones_group] + [x for x in groups.keys() if x != ones_group]):
         denom += 1
     for n in nums:
         print(("Doing %d [count %d]") % (n, trace_count))
+        sys.stdout.flush()
         trace_count += 1
         mods = [long(0) for x in xrange(0, MOD)]
         i = 0
