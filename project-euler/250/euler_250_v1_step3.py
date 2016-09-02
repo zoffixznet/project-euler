@@ -25,3 +25,42 @@ with open('mod_groups.txt') as f:
             ones_group = count
             print("Found ones_group is %d" % count)
         groups[count] = nums
+
+# Total
+tot = [long(0) for x in xrange(0, MOD)]
+tot[0] = 1
+trace_count = 0
+for count in ([ones_group] + [x for x in groups.keys() if x != ones_group]):
+    nums = groups[count]
+    indiv_counts = []
+    n = count
+    numer = count-1
+    denom = 2
+    while len(indiv_counts) != count:
+        indiv_counts.append(n)
+        n = ((n * numer) / denom)
+        numer -= 1
+        denom += 1
+    for n in nums:
+        print(("Doing %d [count %d]") % (n, trace_count))
+        trace_count += 1
+        mods = [long(0) for x in xrange(0, MOD)]
+        i = 0
+        for d in indiv_counts:
+            i += n
+            if i >= MOD:
+                i -= MOD
+            mods[i] += d
+        new = [long(0) for x in xrange(0, MOD)]
+        for i, v in enumerate(mods):
+            if v != 0:
+                p = i
+                for x in tot:
+                    new[p] += v * x
+                    p += 1
+                    if p == MOD:
+                        p = 0
+        tot = new
+
+final_result = tot[0] << zero_count
+print("Final result = %d" % final_result)
