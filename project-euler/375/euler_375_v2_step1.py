@@ -21,5 +21,5 @@ while True:
         break
     l[S] = i
 
-print("Repetition starts at %d and ends at %d" % (l[S], i));
-print("Minimum is %d" % (m));
+print("Repetition starts at %d and ends at %d" % (l[S], i))
+print("Minimum is %d" % (m))
