@@ -6,6 +6,7 @@ if sys.version_info > (3,):
     long = int
     xrange = range
 
+L = int(sys.argv.pop(1))
 powers = {2: [1], 3: [1],}
 
 for e in [2,3]:
@@ -22,7 +23,7 @@ for x3 in [len(powers[3])-1]:
             rec(x-1,start_y, mysum)
             for y in xrange(start_y,len(powers[2])):
                 s = mysum + p[y][x]
-                if s >= 100:
+                if s >= L:
                     return
                 rec(x-1, y+1, s)
         return
