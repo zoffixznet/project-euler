@@ -12,6 +12,7 @@ for e in [2,3]:
     while powers[e][-1] < 1000000:
         powers[e].append(powers[e][-1]*e)
 
+p = [[powers[3][i3]*powers[2][i2] for i3 in xrange(0,len(powers[3]))] for i2 in xrange(0,len(powers[2]))]
 for x3 in [len(powers[3])-1]:
     def rec(x, start_y, mysum):
         """docstring for rec"""
@@ -20,7 +21,7 @@ for x3 in [len(powers[3])-1]:
         else:
             rec(x-1,start_y, mysum)
             for y in xrange(start_y,len(powers[2])):
-                s = mysum + powers[3][x] * powers[2][y]
+                s = mysum + p[y][x]
                 if s >= 100:
                     return
                 rec(x-1, y+1, s)
