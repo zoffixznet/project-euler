@@ -7,12 +7,26 @@ def _get_digits(b, n):
         n /= b
     return ret
 
+def _from_digits(b, d):
+    ret = long(0)
+    e = 1
+    for x in d:
+        ret += x * e
+        e *= b
+    return ret
+
 class BaseNum(object):
     """Based Num object"""
     def __init__(self, b, n, digits=None):
         if not digits:
             digits = _get_digits(b, n)
         self.b, self.n, self.digits = b, n, digits
+    def next_pan(self):
+        if self.n == 0:
+            ret = [1, 0] + range(2,self.b)
+            ret = ret[::-1]
+            return BaseNum(self.b, _from_digits(self.b, ret), ret)
+        return None
 
 class IntegerArithmeticTestCase(unittest.TestCase):
     def testBaseNum(self):  # test method names begin with 'test'
@@ -20,7 +34,11 @@ class IntegerArithmeticTestCase(unittest.TestCase):
         self.assertEqual(bn1.digits, [7,6,5])
         bn2 = BaseNum(2, 0*1+1*2+1*4+0*8+1*16)
         self.assertEqual(bn2.digits, [0,1,1,0,1])
-
+    def testNextPan(self):
+        """docstring for testNextPan"""
+        bn1 = BaseNum(2,0)
+        pan1 = bn1.next_pan()
+        self.assertEqual(pan1.digits, [0,1])
 
 if __name__ == '__main__':
     unittest.main()
