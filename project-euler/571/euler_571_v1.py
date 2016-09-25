@@ -22,10 +22,11 @@ class BaseNum(object):
             digits = _get_digits(b, n)
         self.b, self.n, self.digits = b, n, digits
     def next_pan(self):
-        if self.n == 0:
-            ret = [1, 0] + range(2,self.b)
-            ret = ret[::-1]
-            return BaseNum(self.b, _from_digits(self.b, ret), ret)
+        min_ = [1, 0] + range(2,self.b)
+        min_ = min_[::-1]
+        min_ = BaseNum(self.b, _from_digits(self.b, min_), min_)
+        if self.n <= min_.n:
+            return min_
         return None
 
 class IntegerArithmeticTestCase(unittest.TestCase):
@@ -41,6 +42,9 @@ class IntegerArithmeticTestCase(unittest.TestCase):
         pan = BaseNum(3,0).next_pan()
         self.assertEqual(pan.digits, [2,0,1])
         pan = BaseNum(6,0).next_pan()
+        self.assertEqual(pan.digits, [5,4,3,2,0,1])
+        # Testing beyond 0.
+        pan = BaseNum(6,20).next_pan()
         self.assertEqual(pan.digits, [5,4,3,2,0,1])
         return
 
