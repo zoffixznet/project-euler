@@ -67,7 +67,16 @@ class BaseNum(object):
                     assert len(zero_digs) == num_so_far
                     digs = []
                     for i, d in enumerate(self.digits[num_so_far:0:-1]):
-                        found_d = [x for x in zero_digs if x >= d][0]
+                        found_digs = [x for x in zero_digs if x >= d]
+                        if len(found_digs) == 0:
+                            next_ = (([0] * num_so_far) + [self.digits[num_so_far]+1] + self.digits[num_so_far+1:])
+                            j = num_so_far
+                            while next_[j] == self.b:
+                                next_[j] = 0
+                                j += 1
+                                next_[j] += 1
+                            return BaseNum(self.b, _from_digits(self.b, next_), next_).next_pan()
+                        found_d = found_digs[0]
                         zero_digs = [x for x in zero_digs if x != found_d]
                         digs.append(found_d)
                         if found_d > d:
@@ -110,6 +119,8 @@ class PanNumTestCase(unittest.TestCase):
         self.assertEqual(pan.digits, [1, 0, 1])
         pan = BaseNum(10, 2222222222).next_pan()
         self.assertEqual(pan.n, 2301456789)
+        pan = BaseNum(10, 2999999999).next_pan()
+        self.assertEqual(pan.n, 3012456789)
         return
 
 if __name__ == '__main__':
