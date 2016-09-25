@@ -58,6 +58,8 @@ class IntegerArithmeticTestCase(unittest.TestCase):
         # Testing beyond min.
         pan = BaseNum(2,1*1+1*2).next_pan()
         self.assertEqual(pan.digits, [0,0,1])
+        pan = BaseNum(3, _from_digits(3, [2,2,2,2,2,2])).next_pan()
+        self.assertEqual(pan.digits, [2,0,0,0,0,0,1])
         return
 
 if __name__ == '__main__':
