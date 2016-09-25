@@ -3,8 +3,8 @@ import unittest
 def _get_digits(b, n):
     ret = []
     while n > 0:
-        ret.append(n % b)
-        n /= b
+        n, d = divmod(n, b)
+        ret.append(d)
     return ret
 
 def _from_digits(b, d):
