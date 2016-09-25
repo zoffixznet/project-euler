@@ -40,6 +40,8 @@ class IntegerArithmeticTestCase(unittest.TestCase):
         self.assertEqual(pan1.digits, [0,1])
         pan = BaseNum(3,0).next_pan()
         self.assertEqual(pan.digits, [2,0,1])
+        pan = BaseNum(6,0).next_pan()
+        self.assertEqual(pan.digits, [5,4,3,2,0,1])
         return
 
 if __name__ == '__main__':
