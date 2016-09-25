@@ -22,7 +22,6 @@ def _from_digits(b, d):
         e *= b
     return ret
 
-
 class BaseNum(object):
     """Based Num object"""
     def __init__(self, b, n, digits=None):
@@ -30,10 +29,13 @@ class BaseNum(object):
             digits = _get_digits(b, n)
         self.b, self.n, self.digits = b, n, digits
 
+    def _new_from_digits(self, digits):
+        return BaseNum(self.b, _from_digits(self.b, digits), digits)
+
     def _gen_min(self, pad):
         min_ = [1, 0] + ([0] * pad) + range(2, self.b)
         min_ = min_[::-1]
-        return BaseNum(self.b, _from_digits(self.b, min_), min_)
+        return self._new_from_digits(min_)
 
     def next_pan(self):
         def worker():
@@ -75,7 +77,7 @@ class BaseNum(object):
                                 next_[j] = 0
                                 j += 1
                                 next_[j] += 1
-                            return BaseNum(self.b, _from_digits(self.b, next_), next_).next_pan()
+                            return self._new_from_digits(next_).next_pan()
                         found_d = found_digs[0]
                         zero_digs = [x for x in zero_digs if x != found_d]
                         digs.append(found_d)
@@ -83,7 +85,7 @@ class BaseNum(object):
                             digs += zero_digs
                             break
                     digs = digs[::-1] +  self.digits[num_so_far:]
-                    return BaseNum(self.b, _from_digits(self.b, digs), digs)
+                    return self._new_from_digits(digs)
                 num_so_far += 1
             return None
         ret = worker()
