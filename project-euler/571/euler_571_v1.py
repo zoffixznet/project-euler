@@ -21,12 +21,21 @@ class BaseNum(object):
         if not digits:
             digits = _get_digits(b, n)
         self.b, self.n, self.digits = b, n, digits
-    def next_pan(self):
-        min_ = [1, 0] + range(2,self.b)
+    def _gen_min(self, pad):
+        min_ = [1, 0] + ([0] * pad) + range(2,self.b)
         min_ = min_[::-1]
-        min_ = BaseNum(self.b, _from_digits(self.b, min_), min_)
+        return BaseNum(self.b, _from_digits(self.b, min_), min_)
+    def next_pan(self):
+        min_ = self._gen_min(0)
         if self.n <= min_.n:
             return min_
+        all_b_m_1 = True
+        for d in self.digits:
+            if d != self.b - 1:
+                all_b_m_1 = False
+                break
+        if all_b_m_1:
+            return self._gen_min(len(self.digits) - self.b + 1)
         return None
 
 class IntegerArithmeticTestCase(unittest.TestCase):
@@ -46,6 +55,9 @@ class IntegerArithmeticTestCase(unittest.TestCase):
         # Testing beyond 0.
         pan = BaseNum(6,20).next_pan()
         self.assertEqual(pan.digits, [5,4,3,2,0,1])
+        # Testing beyond min.
+        pan = BaseNum(2,1*1+1*2).next_pan()
+        self.assertEqual(pan.digits, [0,0,1])
         return
 
 if __name__ == '__main__':
