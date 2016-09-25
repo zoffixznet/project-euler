@@ -35,10 +35,12 @@ class IntegerArithmeticTestCase(unittest.TestCase):
         bn2 = BaseNum(2, 0*1+1*2+1*4+0*8+1*16)
         self.assertEqual(bn2.digits, [0,1,1,0,1])
     def testNextPan(self):
-        """docstring for testNextPan"""
         bn1 = BaseNum(2,0)
         pan1 = bn1.next_pan()
         self.assertEqual(pan1.digits, [0,1])
+        pan = BaseNum(3,0).next_pan()
+        self.assertEqual(pan.digits, [2,0,1])
+        return
 
 if __name__ == '__main__':
     unittest.main()
