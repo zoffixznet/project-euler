@@ -34,8 +34,7 @@ class BaseNum(object):
 
     def _gen_min(self, pad):
         min_ = [1, 0] + ([0] * pad) + range(2, self.b)
-        min_ = min_[::-1]
-        return self._new_from_digits(min_)
+        return self._new_from_digits(min_[::-1])
 
     def next_pan(self):
         def worker():
@@ -84,8 +83,7 @@ class BaseNum(object):
                         if found_d > d:
                             digs += zero_digs
                             break
-                    digs = digs[::-1] +  self.digits[num_so_far:]
-                    return self._new_from_digits(digs)
+                    return self._new_from_digits(digs[::-1] +  self.digits[num_so_far:])
                 num_so_far += 1
             return None
         ret = worker()
