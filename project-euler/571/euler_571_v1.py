@@ -36,39 +36,52 @@ class BaseNum(object):
         return BaseNum(self.b, _from_digits(self.b, min_), min_)
 
     def next_pan(self):
-        min_ = self._gen_min(0)
-        if self.n <= min_.n:
-            return min_
-        all_b_m_1 = True
-        for d in self.digits:
-            if d != self.b - 1:
-                all_b_m_1 = False
-                break
-        if all_b_m_1:
-            return self._gen_min(len(self.digits) - self.b + 1)
-        count_found = 0
-        counts = [{'d': [0 for x in xrange(0, self.b)],
-                   'count_found': count_found}]
-        for d in self.digits[::-1]:
-            new_c = [x for x in counts[-1]['d']]
-            if new_c[d] == 0:
-                count_found += 1
-            new_c[d] += 1
-            counts.append({'d': new_c, 'count_found': count_found})
-        if counts[-1]['count_found'] == self.b:
-            return self
-        num_so_far = 1
-        for c in counts[::-1]:
-            if num_so_far >= self.b - c['count_found']:
-                zero_digs = [x for x in xrange(0, len(c['d']))
-                             if (c['d'][x] == 0)]
-                assert len(zero_digs) == num_so_far
-                # Let's rock-and-roll.
-                digs = zero_digs[::-1] + self.digits[num_so_far:]
-                return BaseNum(self.b, _from_digits(self.b, digs), digs)
-            num_so_far += 1
-        return None
-
+        def worker():
+            min_ = self._gen_min(0)
+            if self.n <= min_.n:
+                return min_
+            all_b_m_1 = True
+            for d in self.digits:
+                if d != self.b - 1:
+                    all_b_m_1 = False
+                    break
+            if all_b_m_1:
+                return self._gen_min(len(self.digits) - self.b + 1)
+            count_found = 0
+            counts = [{'d': [0 for x in xrange(0, self.b)],
+                       'count_found': count_found}]
+            for d in self.digits[::-1]:
+                new_c = [x for x in counts[-1]['d']]
+                if new_c[d] == 0:
+                    count_found += 1
+                new_c[d] += 1
+                counts.append({'d': new_c, 'count_found': count_found})
+            if counts[-1]['count_found'] == self.b:
+                return self
+            num_so_far = 1
+            for c in counts[::-1]:
+                if num_so_far >= self.b - c['count_found']:
+                    # Let's rock-and-roll.
+                    zero_digs = [x for x in xrange(0, len(c['d']))
+                                 if (c['d'][x] == 0)]
+                    assert len(zero_digs) == num_so_far
+                    digs = []
+                    for i, d in enumerate(self.digits[num_so_far:0:-1]):
+                        found_d = [x for x in zero_digs if x >= d][0]
+                        zero_digs = [x for x in zero_digs if x != found_d]
+                        digs.append(found_d)
+                        if found_d > d:
+                            digs += zero_digs
+                            break
+                    digs = digs[::-1] +  self.digits[num_so_far:]
+                    return BaseNum(self.b, _from_digits(self.b, digs), digs)
+                num_so_far += 1
+            return None
+        ret = worker()
+        if not ret:
+            return ret
+        assert ret.n >= self.n
+        return ret
 
 class PanNumTestCase(unittest.TestCase):
     def testBaseNum(self):  # test method names begin with 'test'
@@ -96,7 +109,7 @@ class PanNumTestCase(unittest.TestCase):
         pan = BaseNum(2, _from_digits(2, [1, 0, 1])).next_pan()
         self.assertEqual(pan.digits, [1, 0, 1])
         pan = BaseNum(10, 2222222222).next_pan()
-        self.assertEqual(pan.n, 2013456789)
+        self.assertEqual(pan.n, 2301456789)
         return
 
 if __name__ == '__main__':
