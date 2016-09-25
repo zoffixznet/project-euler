@@ -37,15 +37,24 @@ class BaseNum(object):
         if all_b_m_1:
             return self._gen_min(len(self.digits) - self.b + 1)
         count_found = 0
-        counts = [[0 for x in xrange(0, self.b)]]
+        counts = [{'d':[0 for x in xrange(0, self.b)],'count_found':count_found}]
         for d in self.digits[::-1]:
-            new_c = [x for x in counts[-1]]
+            new_c = [x for x in counts[-1]['d']]
             if new_c[d] == 0:
                 count_found += 1
             new_c[d] += 1
-            counts.append(new_c)
-        if count_found == self.b:
+            counts.append({'d':new_c, 'count_found': count_found})
+        if counts[-1]['count_found'] == self.b:
             return self
+        num_so_far = 1
+        for c in counts[::-1]:
+            if num_so_far >= self.b - c['count_found']:
+                zero_digs = [x for x in xrange(0,len(c['d'])) if (c['d'][x] == 0)]
+                assert len(zero_digs) == num_so_far
+                # Let's rock-and-roll.
+                digs = zero_digs[::-1] + self.digits[num_so_far:]
+                return BaseNum(self.b, _from_digits(self.b, digs), digs)
+            num_so_far += 1
         return None
 
 class IntegerArithmeticTestCase(unittest.TestCase):
@@ -72,6 +81,8 @@ class IntegerArithmeticTestCase(unittest.TestCase):
         self.assertEqual(pan.digits, [2,0,0,0,0,0,1])
         pan = BaseNum(2, _from_digits(2, [1,0,1])).next_pan()
         self.assertEqual(pan.digits, [1,0,1])
+        pan = BaseNum(10, 2222222222).next_pan()
+        self.assertEqual(pan.n, 2013456789)
         return
 
 if __name__ == '__main__':
