@@ -121,6 +121,11 @@ class PanNumTestCase(unittest.TestCase):
         self.assertEqual(pan.n, 2301456789)
         pan = BaseNum(10, 2999999999).next_pan()
         self.assertEqual(pan.n, 3012456789)
+
+        # identity.
+        pan = BaseNum(10, 12345678906673432425).next_pan()
+        self.assertEqual(pan.n, 12345678906673432425)
+
         return
 
 if __name__ == '__main__':
