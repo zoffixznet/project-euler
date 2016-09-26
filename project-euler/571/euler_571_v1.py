@@ -157,7 +157,7 @@ class PanNumTestCase(unittest.TestCase):
 
         return
 
-    def _testFindSuperPans(self):
+    def testFindSuperPans(self):
         """docstring for testFindSuperPans"""
 
         super_pan = FindSuperPans(5)
