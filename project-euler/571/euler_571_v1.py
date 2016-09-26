@@ -163,5 +163,8 @@ class PanNumTestCase(unittest.TestCase):
         super_pan = FindSuperPans(5)
         self.assertEqual(super_pan.find_next(), 978)
 
+        super_pan = FindSuperPans(10)
+        self.assertEqual(super_pan.find_next(), 1093265784)
+
 if __name__ == '__main__':
     unittest.main()
