@@ -181,4 +181,6 @@ class PanNumTestCase(unittest.TestCase):
         self.assertEqual(super_pan.sum_lowest_nums(10, False), 20319792309)
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    super_pan = FindSuperPans(12)
+    super_pan.sum_lowest_nums(10, True)
