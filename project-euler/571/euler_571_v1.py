@@ -112,6 +112,17 @@ class FindSuperPans(object):
         self.i = i+1
         return i
 
+    def sum_lowest_nums(self, count, verbose):
+        ret = 0
+        for idx in xrange(0, count):
+            found_num = self.find_next()
+            ret += found_num
+            if verbose:
+                print( "Found the %d -th %d for total=%d" % (idx, found_num, ret) )
+        if verbose:
+            print ("Total sum = %d" % (ret))
+        return ret
+
 class PanNumTestCase(unittest.TestCase):
     def testBaseNum(self):  # test method names begin with 'test'
         bn1 = BaseNum(10, 567)
@@ -165,6 +176,9 @@ class PanNumTestCase(unittest.TestCase):
 
         super_pan = FindSuperPans(10)
         self.assertEqual(super_pan.find_next(), 1093265784)
+
+        super_pan = FindSuperPans(10)
+        self.assertEqual(super_pan.sum_lowest_nums(10, False), 20319792309)
 
 if __name__ == '__main__':
     unittest.main()
