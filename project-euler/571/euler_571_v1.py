@@ -67,7 +67,7 @@ class BaseNum(object):
                                  if (c['d'][x] == 0)]
                     assert len(zero_digs) == num_so_far
                     digs = []
-                    for i, d in enumerate(self.digits[num_so_far:0:-1]):
+                    for i, d in enumerate(self.digits[(num_so_far-1)::-1]):
                         found_digs = [x for x in zero_digs if x >= d]
                         if len(found_digs) == 0:
                             next_ = (([0] * num_so_far) + [self.digits[num_so_far]+1] + self.digits[num_so_far+1:])
@@ -91,6 +91,26 @@ class BaseNum(object):
             return ret
         assert ret.n >= self.n
         return ret
+
+class FindSuperPans(object):
+    """docstring for SuperPan"""
+    def __init__(self, max_b, start=1):
+        self.max_b = max_b
+        self.i = long(start)
+
+    def find_next(self):
+        i = self.i
+        restart = True
+        while restart:
+            restart = False
+            for b in xrange(self.max_b,1,-1):
+                new = BaseNum(b, i).next_pan()
+                if new.n > i:
+                    i = new.n
+                    restart = True
+                    break
+        self.i = i+1
+        return i
 
 class PanNumTestCase(unittest.TestCase):
     def testBaseNum(self):  # test method names begin with 'test'
@@ -129,7 +149,19 @@ class PanNumTestCase(unittest.TestCase):
         pan = BaseNum(10, 10203040506070808).next_pan()
         self.assertEqual(pan.n, 10203040506070809)
 
+        pan = BaseNum(3, _from_digits(3, [2, 0, 2, 2, 2, 2])).next_pan()
+        self.assertEqual(pan.digits, [0, 1, 2, 2, 2, 2])
+
+        pan = BaseNum(3, _from_digits(3, [2, 2, 2, 2, 0, 2])).next_pan()
+        self.assertEqual(pan.digits, [0, 0, 0, 0, 1, 2])
+
         return
+
+    def _testFindSuperPans(self):
+        """docstring for testFindSuperPans"""
+
+        super_pan = FindSuperPans(5)
+        self.assertEqual(super_pan.find_next(), 978)
 
 if __name__ == '__main__':
     unittest.main()
