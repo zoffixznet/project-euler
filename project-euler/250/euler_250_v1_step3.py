@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 
+import os
 import sys
 
 if sys.version_info > (3,):
     long = int
     xrange = range
 
-MOD = 250
-
+MOD = int(os.environ["MOD"])
 
 groups = {}
 zero_count = None

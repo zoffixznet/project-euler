@@ -5,10 +5,13 @@ use warnings;
 
 use Math::GMP;
 
+my $MOD = $ENV{MOD};
+my $MAX = $ENV{MAX};
+
 my @counts;
-for my $n (1 .. 250_250)
+for my $n (1 .. $MAX)
 {
-    $counts[(Math::GMP->new($n)->powm_gmp($n, 250)) . '']++;
+    $counts[(Math::GMP->new($n)->powm_gmp($n, $MOD)) . '']++;
 }
 while (my ($mod, $c) = each@counts)
 {
