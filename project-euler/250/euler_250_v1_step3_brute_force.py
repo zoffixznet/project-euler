@@ -22,16 +22,17 @@ with open('mod_groups.txt') as f:
 l = len(mods)
 ret = 0
 
-def rec(depth, m):
+def rec(depth, m, stack):
     if depth == l:
         if m == 0:
             global ret
+            print(stack)
             ret += 1
     else:
-        rec(depth+1,m)
-        rec(depth+1,(m+mods[depth])%MOD)
+        rec(depth+1, m, stack)
+        rec(depth+1, (m+mods[depth])%MOD, stack + [mods[depth]])
     return
 
-rec(0,0)
+rec(0,0, [])
 ret -= 1
 print ("Num = %d" % (ret))
