@@ -5,7 +5,7 @@ use warnings;
 
 use autodie;
 
-use Test::More tests => 12;
+use Test::More tests => 13;
 
 sub my_test
 {
@@ -49,5 +49,7 @@ sub my_test
     my_test(4, 4, "4;4");
     # TEST
     my_test(4, 5, "4;5");
+    # TEST
+    my_test(250, 10, "250;10");
 }
 
