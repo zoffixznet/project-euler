@@ -52,8 +52,10 @@ for count in ([ones_group] + [x for x in groups.keys() if x != ones_group]):
             if i >= MOD:
                 i -= MOD
             mods[i] += d
-        new = [long(0) for x in xrange(0, MOD)]
-        new[0] = 1
+        # new = [long(0) for x in xrange(0, MOD)]
+        # Removing out because it seems wrong.
+        # new[0] = 1
+        new = [x for x in tot]
         for i, v in enumerate(mods):
             if v != 0:
                 p = i
