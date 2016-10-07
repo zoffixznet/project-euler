@@ -1,7 +1,9 @@
-MOD = 3
-MAX = 5
+MOD = 250
+MAX = 250250
 
 PREFIX = MOD="$(MOD)" MAX="$(MAX)"
+
+PY = /home/shlomif/Download/unpack/prog/python/pypy2-v5.3.0-src/pypy/goal/pypy-c
 
 GEN_FILES = mod_counts.txt mod_groups.txt
 
@@ -15,10 +17,10 @@ mod_groups.txt: mod_counts.txt
 
 # production.
 prod: all
-	$(PREFIX) python euler_250_v1_step3.py
+	$(PREFIX) $(PY) euler_250_v1_step3.py
 
 brute: all
-	$(PREFIX) /home/shlomif/Download/unpack/prog/python/pypy2-v5.3.0-src/pypy/goal/pypy-c euler_250_v1_step3_brute_force.py
+	$(PREFIX) $(PY) euler_250_v1_step3_brute_force.py
 
 clean:
 	rm -f $(GEN_FILES)
