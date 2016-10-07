@@ -53,6 +53,7 @@ for count in ([ones_group] + [x for x in groups.keys() if x != ones_group]):
                 i -= MOD
             mods[i] += d
         new = [long(0) for x in xrange(0, MOD)]
+        new[0] = 1
         for i, v in enumerate(mods):
             if v != 0:
                 p = i
@@ -63,5 +64,6 @@ for count in ([ones_group] + [x for x in groups.keys() if x != ones_group]):
                         p = 0
         tot = new
 
-final_result = tot[0] << zero_count
+# The -1 is to get rid of the trivial / empty set.
+final_result = ((tot[0] << zero_count) - 1)
 print("Final result = %d" % final_result)

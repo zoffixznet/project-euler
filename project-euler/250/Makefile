@@ -1,9 +1,11 @@
-MOD = 5
-MAX = 10
+MOD = 2
+MAX = 2
 
 PREFIX = MOD="$(MOD)" MAX="$(MAX)"
 
-all: mod_counts.txt mod_groups.txt
+GEN_FILES = mod_counts.txt mod_groups.txt
+
+all: $(GEN_FILES)
 
 mod_counts.txt: euler-250-v1-step1.pl
 	$(PREFIX) perl $< > $@
@@ -17,3 +19,6 @@ prod: all
 
 brute: all
 	$(PREFIX) /home/shlomif/Download/unpack/prog/python/pypy2-v5.3.0-src/pypy/goal/pypy-c euler_250_v1_step3_brute_force.py
+
+clean:
+	rm -f $(GEN_FILES)
