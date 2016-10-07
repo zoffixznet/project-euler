@@ -1,5 +1,5 @@
 MOD = 2
-MAX = 2
+MAX = 3
 
 PREFIX = MOD="$(MOD)" MAX="$(MAX)"
 

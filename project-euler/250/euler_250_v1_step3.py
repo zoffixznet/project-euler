@@ -21,7 +21,7 @@ with open('mod_groups.txt') as f:
             zero_count = count
             nums.pop(0)
             print("Found zero_count is %d" % count)
-        if nums[0] == 1:
+        if len(nums) and nums[0] == 1:
             ones_group = count
             print("Found ones_group is %d" % count)
         groups[count] = nums
