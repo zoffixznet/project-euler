@@ -5,7 +5,7 @@ use warnings;
 
 use autodie;
 
-use Test::More tests => 6;
+use Test::More tests => 7;
 
 sub my_test
 {
@@ -37,5 +37,7 @@ sub my_test
     my_test(2, 6, "2;6");
     # TEST
     my_test(3, 3, "3;3");
+    # TEST
+    my_test(3, 4, "3;4");
 }
 
