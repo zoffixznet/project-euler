@@ -1,5 +1,5 @@
-MOD = 2
-MAX = 3
+MOD = 3
+MAX = 5
 
 PREFIX = MOD="$(MOD)" MAX="$(MAX)"
 
@@ -22,3 +22,6 @@ brute: all
 
 clean:
 	rm -f $(GEN_FILES)
+
+test:
+	prove t/*.t
