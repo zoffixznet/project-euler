@@ -25,7 +25,7 @@ my $LIM = 1_000_000;
 
 my $SQ = int(sqrt($LIM / 2));
 
-my @P = (map { int } `primes 2 @{[$SQ+1]}`);
+my @P = (map { int } `primes 2 @{[int($LIM/(2*3*3))+1]}`);
 
 my $MAX_POWER = int( log($LIM) / log(2) );
 foreach my $first_power (1 .. $MAX_POWER)
@@ -52,11 +52,12 @@ foreach my $first_power (1 .. $MAX_POWER)
                 my $rec;
                 $rec = sub {
                     my ($k, $p) = @_;
-                    my $b = $P[$k];
-                    if ($k == @P or $p * $b > $LIM)
+                    my $g = $P[$k];
+                    if ($k == @P or $p * $g > $LIM)
                     {
                         return;
                     }
+                    # say "b=$b";
                     $rec->($k+1, $p);
                     if (($k == $i) or ($k == $j))
                     {
@@ -64,7 +65,7 @@ foreach my $first_power (1 .. $MAX_POWER)
                     }
                     while ($p <= $LIM)
                     {
-                        $p *= $b;
+                        $p *= $g;
                         if ($p <= $LIM)
                         {
                             say $p;

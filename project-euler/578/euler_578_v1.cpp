@@ -64,6 +64,10 @@ int main(int argc, char * argv[])
         {
             count++;
         }
+        else
+        {
+            std::cout << i << std::endl;
+        }
         if (i == checkpoint)
         {
             std::cout << "C(" << i << ") = " << count << std::endl;
