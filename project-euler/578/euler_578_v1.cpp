@@ -35,6 +35,7 @@ bool is_right(ll n)
             if (current > 0)
             {
                 last = current;
+                break;
             }
         }
     }
