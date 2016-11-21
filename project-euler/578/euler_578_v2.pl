@@ -19,10 +19,11 @@ sub pow
 
 # my $LIM = 1_000_000_000_000_000;
 my $LIM = 1_000_000;
+# my $LIM = 100;
 
 my $SQ = int(sqrt($LIM / 2));
 
-my @P = (map { int } `primes 2 $SQ`);
+my @P = (map { int } `primes 2 @{[$SQ+1]}`);
 
 my $MAX_POWER = int( log($LIM) / log(2) );
 foreach my $first_power (1 .. $MAX_POWER)
@@ -49,6 +50,10 @@ foreach my $first_power (1 .. $MAX_POWER)
                 my $rec;
                 $rec = sub {
                     my ($k, $p) = @_;
+                    if ($k == @P)
+                    {
+                        return;
+                    }
                     if (($k == $i) or ($k == $j))
                     {
                         return $rec->($k+1, $p);
