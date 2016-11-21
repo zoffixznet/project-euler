@@ -17,7 +17,7 @@ bool is_right(ll n)
     while (n > 1)
     {
         const ll root = (ll)sqrtl(n);
-        for (;;p++)
+        for (;;p += 2)
         {
             if (p > root)
             {
@@ -64,10 +64,12 @@ int main(int argc, char * argv[])
         {
             count++;
         }
+#if 0
         else
         {
             std::cout << i << std::endl;
         }
+#endif
         if (i == checkpoint)
         {
             std::cout << "C(" << i << ") = " << count << std::endl;
