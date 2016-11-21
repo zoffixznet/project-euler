@@ -5,6 +5,8 @@ use warnings;
 
 use 5.022;
 
+no warnings 'recursion';
+
 sub pow
 {
     my ($b, $e) = @_;
@@ -50,23 +52,25 @@ foreach my $first_power (1 .. $MAX_POWER)
                 my $rec;
                 $rec = sub {
                     my ($k, $p) = @_;
-                    if ($k == @P)
+                    if ($k == @P or $p * $P[$k] > $LIM)
                     {
                         return;
                     }
+                    $rec->($k+1, $p);
                     if (($k == $i) or ($k == $j))
                     {
-                        return $rec->($k+1, $p);
+                        return;
                     }
-                    while ($p < $LIM)
+                    while ($p <= $LIM)
                     {
                         $p *= $P[$k];
-                        if ($p < $LIM)
+                        if ($p <= $LIM)
                         {
                             say $p;
                             $rec->($k+1,$p);
                         }
                     }
+                    return;
                 };
                 say $t;
                 $rec->(0, $t);
