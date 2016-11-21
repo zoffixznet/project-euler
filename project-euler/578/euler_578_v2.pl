@@ -52,7 +52,8 @@ foreach my $first_power (1 .. $MAX_POWER)
                 my $rec;
                 $rec = sub {
                     my ($k, $p) = @_;
-                    if ($k == @P or $p * $P[$k] > $LIM)
+                    my $b = $P[$k];
+                    if ($k == @P or $p * $b > $LIM)
                     {
                         return;
                     }
@@ -63,7 +64,7 @@ foreach my $first_power (1 .. $MAX_POWER)
                     }
                     while ($p <= $LIM)
                     {
-                        $p *= $P[$k];
+                        $p *= $b;
                         if ($p <= $LIM)
                         {
                             say $p;
