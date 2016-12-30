@@ -42,8 +42,12 @@ def C(i,n):
     return (math.factorial(i) / (math.factorial(n) * math.factorial(i-n)))
 
 def T(m, n):
-    numer = [Powers(long(2), m, n+1), Powers(long(5), m, n+1)]
-    denom = [Powers(long(2), m, 1), Powers(long(5), m, 1)]
+    def gen_power(b, i):
+        return Powers(long(b), m, i)
+    def gen_2_5(i):
+        return [gen_power(2, i), gen_power(5, i)]
+    numer = gen_2_5(n+1)
+    denom = gen_2_5(1)
     s = [0,0]
     ret = 0
     verd = False
