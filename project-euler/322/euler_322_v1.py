@@ -64,11 +64,15 @@ def T(m, n):
             sys.stdout.flush()
     return ret
 
+def print_T(m, n):
+    print("T( m = %d, n = %d) = %d" % (m,n, T(m,n)))
+    return
+
 def main():
-    print("ret = %d" % (T(100,5)))
+    print_T(100,5)
     m = long('1' + '0' * 9)
     n = long(10000000 - 10)
-    print("ret = %d" % (T(m,n)))
+    print_T(m, n)
 
 if __name__ == "__main__":
     main()
