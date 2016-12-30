@@ -43,7 +43,7 @@ def main():
     n = long(10000000 - 10)
 
     numer = [Powers(long(2), m, n), Powers(long(5), m, n)]
-    denom = [Powers(long(2), m, m - n + 1), Powers(long(5), m, m - n + 1)]
+    denom = [Powers(long(2), m, 1), Powers(long(5), m, 1)]
     s = [0,0]
     ret = 0
     for i in range(n, m):
@@ -54,10 +54,13 @@ def main():
                 verd = False
         if verd:
             ret += 1
-        if i % 100000 == 0:
+        if i % 1000000 == 0:
             print("i = %d ; ret = %d" % (i, ret))
+            sys.stdout.flush()
 
     print("ret = %d" % (ret))
+
+    return
 
 if __name__ == "__main__":
     main()
