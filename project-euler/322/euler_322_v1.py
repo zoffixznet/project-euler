@@ -62,23 +62,30 @@ def T(m, n):
     ret = 0
     n5b = _base(n,5)
     for i in xrange(n, m):
-        i_cond = (((i|1) & (n|1)) == (n|1))
-        if i_cond:
-            print(("[I] 0b%s" % _base(i,2)), s[0], s[1])
         t_cond = (s[0] < 1)
-        if t_cond:
-            print(("[T] 0b%s" % _base(i,2)), s[0], s[1])
-        if i_cond != t_cond:
-            raise BaseException( "%d" % i)
+        if False:
+            i_cond = (((i|1) & (n|1)) == (n|1))
+            if i_cond:
+                print(("[I] 0b%s" % _base(i,2)), s[0], s[1])
+            if t_cond:
+                print(("[T] 0b%s" % _base(i,2)), s[0], s[1])
+            if i_cond != t_cond:
+                raise BaseException( "%d" % i)
         t5_cond = (s[1] < 1)
-        i5b = _base(i,5)
-        if t5_cond:
-            print("[5T] 0[5]%50s\n     0[5]%50s\n" % (i5b, n5b))
-        i5_cond = get_i5_cond(n5b[::-1], i5b[::-1])
-        if i5_cond:
-            print("[5I] 0[5]%50s\n     0[5]%50s\n" % (i5b, n5b))
-        if i5_cond != t5_cond:
-            raise BaseException( "0[5] %d" % i)
+        if False:
+            i5b = _base(i,5)
+            if t5_cond:
+                print("[5T] 0[5]%50s\n     0[5]%50s\n" % (i5b, n5b))
+            i5_cond = get_i5_cond(n5b[::-1], i5b[::-1])
+            if i5_cond:
+                print("[5I] 0[5]%50s\n     0[5]%50s\n" % (i5b, n5b))
+            if i5_cond != t5_cond:
+                raise BaseException( "0[5] %d" % i)
+        if t_cond and t5_cond:
+            i5b = _base(i,5)
+            print(("[tG] %d %d" % (i,n)), s[0], s[1])
+            print(("[2G] 0b%s" % _base(i,2)), s[0], s[1])
+            print("[5G] 0[5]%50s\n     0[5]%50s\n" % (i5b, n5b))
         if s[0] >= 1 and s[1] >= 1:
             ret += 1
         for j in [0,1]:
