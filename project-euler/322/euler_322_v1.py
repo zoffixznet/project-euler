@@ -41,6 +41,11 @@ class Powers:
 def C(i,n):
     return (math.factorial(i) / (math.factorial(n) * math.factorial(i-n)))
 
+def _base(n,b):
+    if n == 0:
+        return ''
+    return _base(long(n/b),b) + str(n % b)
+
 def T(m, n):
     def gen_power(b, i):
         return Powers(long(b), m, i)
@@ -50,15 +55,13 @@ def T(m, n):
     denom = gen_2_5(1)
     s = [0,0]
     ret = 0
-    verd = False
-    for i in range(n, m):
-        if verd:
+    for i in xrange(n, m):
+        if s[0] < 1:
+            print(("0b%s" % _base(i,2)), s[0], s[1])
+        if s[0] >= 1 and s[1] >= 1:
             ret += 1
-        verd = True
         for j in [0,1]:
             s[j] += numer[j].calc() - denom[j].calc()
-            if s[j] < 1:
-                verd = False
         if False:
             real_verd = (C(i+1,n) % 10 == 0)
             if real_verd != verd:
@@ -73,7 +76,7 @@ def print_T(m, n):
     return
 
 def main():
-    print_T(100,5)
+    # print_T(100,5)
     m = long('1' + '0' * 9)
     n = long(10000000 - 10)
     print_T(m, n)
