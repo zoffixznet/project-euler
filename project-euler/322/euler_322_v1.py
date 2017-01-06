@@ -56,8 +56,14 @@ def T(m, n):
     s = [0,0]
     ret = 0
     for i in xrange(n, m):
-        if s[0] < 1:
-            print(("0b%s" % _base(i,2)), s[0], s[1])
+        i_cond = (((i|1) & (n|1)) == (n|1))
+        if i_cond:
+            print(("[I] 0b%s" % _base(i,2)), s[0], s[1])
+        t_cond = (s[0] < 1)
+        if t_cond:
+            print(("[T] 0b%s" % _base(i,2)), s[0], s[1])
+        if i_cond != t_cond:
+            raise BaseException( "%d" % i)
         if s[0] >= 1 and s[1] >= 1:
             ret += 1
         for j in [0,1]:
