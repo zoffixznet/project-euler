@@ -46,6 +46,11 @@ def _base(n,b):
         return ''
     return _base(long(n/b),b) + str(n % b)
 
+def get_i5_cond(n, i):
+    if n == '':
+        return True
+    return int(n[0]) <= int(i[0]) and get_i5_cond(n[1:], i[1:])
+
 def T(m, n):
     def gen_power(b, i):
         return Powers(long(b), m, i)
@@ -55,6 +60,7 @@ def T(m, n):
     denom = gen_2_5(1)
     s = [0,0]
     ret = 0
+    n5b = _base(n,5)
     for i in xrange(n, m):
         i_cond = (((i|1) & (n|1)) == (n|1))
         if i_cond:
@@ -64,6 +70,15 @@ def T(m, n):
             print(("[T] 0b%s" % _base(i,2)), s[0], s[1])
         if i_cond != t_cond:
             raise BaseException( "%d" % i)
+        t5_cond = (s[1] < 1)
+        i5b = _base(i,5)
+        if t5_cond:
+            print("[5T] 0[5]%50s\n     0[5]%50s\n" % (i5b, n5b))
+        i5_cond = get_i5_cond(n5b[::-1], i5b[::-1])
+        if i5_cond:
+            print("[5I] 0[5]%50s\n     0[5]%50s\n" % (i5b, n5b))
+        if i5_cond != t5_cond:
+            raise BaseException( "0[5] %d" % i)
         if s[0] >= 1 and s[1] >= 1:
             ret += 1
         for j in [0,1]:
