@@ -87,6 +87,9 @@ def main():
     m = long('1' + '0' * 9)
     n = long(10000000 - 10)
     print_T(m, n)
+    m = int('1' + '0' * 18)
+    n = int('1' + '0' * 12) - 10
+    print_T(m, n)
 
 if __name__ == "__main__":
     main()
