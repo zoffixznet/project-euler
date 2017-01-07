@@ -6,6 +6,7 @@ use warnings;
 use bytes;
 
 use List::Util qw(sum);
+use List::UtilsBy qw(extract_by);
 use List::MoreUtils qw(none uniq);
 
 STDOUT->autoflush(1);
@@ -29,7 +30,10 @@ my @factors = (0, map {
     } `seq 1 "$MAX" | factor`
 );
 
-my @remaining1 = (grep { !($factors[$_][0] == $_ and $_ >= ($MAX>>1)) } 2 .. $#factors);
+my @included;
+
+my @remaining1 = (2 .. $#factors);
+push @included, extract_by { ($factors[$_][0] == $_ and $_ >= ($MAX>>1)) } @remaining1;
 my @remaining2 = (grep { not ($factors[$_][0]*$_ <= $MAX) } @remaining1);
 
 my %state = (map { $primes[$_] => $prime_powers[$_] } keys@primes);
