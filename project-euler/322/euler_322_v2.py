@@ -5,6 +5,32 @@ if sys.version_info > (3,):
     long = int
     xrange = range
 
+
+# <<<<<<<<<<<<<<<<<<<<
+# Taken from http://rosettacode.org/wiki/Chinese_remainder_theorem#Python -
+# thanks!
+# Python 2.7
+def chinese_remainder((prod, n, p_n), a):
+    sum = 0
+    for n_i, p, a_i in zip(n, p_n, a):
+        sum += a_i * mul_inv(p, n_i) * p
+    return sum % prod
+
+
+def mul_inv(a, b):
+    b0 = b
+    x0, x1 = 0, 1
+    if b == 1: return 1
+    while a > 1:
+        q = a / b
+        a, b = b, a%b
+        x0, x1 = x1 - q * x0, x0
+    if x1 < 0: x1 += b0
+    return x1
+
+# End of Rosetta code.
+# >>>>>>>>>>>>>>>>>>
+
 def mydiv(i,e):
     ret = (i/e)*e;
     if ret < i:
@@ -48,7 +74,8 @@ class IterWrap:
     """docstring for IterWrap"""
     def __init__(self, b, n):
         self.b, self.n = b, n
-        self.it = base_iter(calc_base_iter(b, n))
+        self.data = calc_base_iter(b, n)
+        self.it = base_iter(self.data)
         self.c = 0
         self.next()
         return;
@@ -59,24 +86,49 @@ class IterWrap:
         self.c += 1
         return
 
+    def skip_to(self, m):
+        """docstring for skip_to"""
+        p = self.data['power']
+        count_per_p = reduce((lambda a,b: a*b), (len(x) for x in self.data['digits']))
+        num = long((m - self.i) / p)
+        delta = num * p
+        self.i += delta
+        self.c += count_per_p * num
+        while self.i < m:
+            self.i = delta + self.it.next()
+            self.c += 1
+        return
+
+def calc_common(m, n):
+    i2 = IterWrap(2, n)
+    ret = 0
+    p2 = i2.data['power']
+    i5 = IterWrap(5, n)
+    p5 = i5.data['power']
+    p = p2 * p5
+    a = (p, [p2,p5], [p5,p2])
+    m_i_s = [mul_inv(p_i, n_i) * p_i for n_i, p_i in zip(a[1], a[2])]
+    m2 = m_i_s[0]
+    m5 = m_i_s[1]
+    while i2.i < p2:
+        print i2.i, "/", p2
+        i5 = IterWrap(5, n)
+        while i5.i < p5:
+            mod_ = ((i2.i * m2 + i5.i * m5) % p)
+            while mod_ < m:
+                ret += 1
+                mod_ += p
+            i5.next()
+        i2.next()
+    return ret
+
 def T(m, n):
     i = [IterWrap(2, n), IterWrap(5, n)]
-    c = 0
-    while i[0].i < m and i[1].i < m:
-        print i[0].i
-        if i[0].i == i[1].i:
-            c += 1
-            i[0].next()
-        while i[0].i < i[1].i:
-            i[0].next()
-        while i[0].i > i[1].i:
-            i[1].next()
-    while i[0].i < m:
-        i[0].next()
-    while i[1].i < m:
-        i[1].next()
-
-    return (m - n - (i[0].c - 1 + i[1].c - 1 - c))
+    i[0].skip_to(m)
+    i[1].skip_to(m)
+    c_calc = calc_common(m,n)
+    print "c_calc = %d" % (c_calc)
+    return (m - n - (i[0].c - 1 + i[1].c - 1 - c_calc))
 
 def print_T(m, n):
     print("T( m = %d, n = %d) = %d" % (m,n, T(m,n)))
@@ -86,9 +138,9 @@ def main():
     # print_T(100,5)
     m = long('1' + '0' * 9)
     n = long(10000000 - 10)
-    print_T(m, n)
-    m = int('1' + '0' * 18)
-    n = int('1' + '0' * 12) - 10
+    # print_T(m, n)
+    m = long('1' + '0' * 18)
+    n = long('1' + '0' * 12) - 10
     print_T(m, n)
 
 if __name__ == "__main__":
