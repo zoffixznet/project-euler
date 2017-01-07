@@ -71,9 +71,33 @@ def both(x12):
     print "Fast: %f" % calc_variance(x12)
     return
 
+def transform_brute(s, l):
+    ret = [0] * (1 + s * (len(l)-1))
+    for i, v in enumerate(l):
+        if i == 0:
+            continue
+        def rec(sum_, c):
+            if i == c:
+                ret[sum_] += v
+            else:
+                for x in xrange(1,s+1):
+                    rec(sum_+x,c+1)
+        rec(0,0)
+    return ret
+
+def transform_both(s, l):
+    good = transform_brute(s, l)
+    fast = transform(s, l)
+    if good != fast:
+        raise BaseException("Foo")
+    return fast
+
 def main():
-    x4 = transform(4, [0,1])
-    x6 = transform(6, x4)
+    x4 = transform_both(4, [0,1])
+    x6 = transform_both(6, x4)
+    transform_both(12, [0,1,2])
+    transform_both(12, [0,1,4,1])
+    transform_both(12, [0,1,4,8])
     x8 = transform(8, x6)
     x12 = transform(12, x8)
     # x20 = transform(20, x12)
@@ -86,7 +110,7 @@ def main():
     both([0,2,1])
     both([0,2,2])
     both([0,2,2,5])
-    # both([0,2,2,5,10,9])
+    both([0,2,2,5,10,9])
     print "x12: %.4f" % calc_variance(x12)
 
 if __name__ == "__main__":
