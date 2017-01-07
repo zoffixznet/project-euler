@@ -112,9 +112,10 @@ def calc_common(m, n):
     m5 = m_i_s[1]
     while i2.i < p2:
         print i2.i, "/", p2
+        j2 = i2.i * m2
         i5 = IterWrap(5, n)
         while i5.i < p5:
-            mod_ = ((i2.i * m2 + i5.i * m5) % p)
+            mod_ = ((j2 + i5.i * m5) % p)
             while mod_ < m:
                 ret += 1
                 mod_ += p
