@@ -22,6 +22,7 @@ def brute(m):
 
     return mysum
 
+
 a = []
 s = long(0)
 

@@ -27,6 +27,7 @@ def debug():
         debug_n(g*top)
         debug_n(g*bottom)
 
+
 # Sum
 before_s = -1
 s = 0

@@ -31,6 +31,7 @@ def all_primes(n):
         ["primes", "2", str(n)]).split('\n')[0:-2]
     )
 
+
 Primes = all_primes(64)
 
 
@@ -45,6 +46,7 @@ def ndiv_coprime(N, L, i):
     for j in range(i):
         res -= ndiv_coprime(N//L[j], L, j)
     return res
+
 
 tab = {}
 
@@ -99,6 +101,7 @@ def P466(n, m):
 def main():
     print("Result == ", P466(long(sys.argv[1]), long(sys.argv[2])))
     return
+
 
 if __name__ == "__main__":
     main()

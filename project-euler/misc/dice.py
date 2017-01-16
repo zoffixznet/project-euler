@@ -19,5 +19,6 @@ def dice(num_faces, n):
 def main():
     print(dice(6, 3))
 
+
 if __name__ == "__main__":
     main()

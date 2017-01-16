@@ -86,6 +86,7 @@ def frac_sum(n):
 def debug_sum(n):
     print("T(%d) = %d\n" % (n, frac_sum(n)))
 
+
 debug_sum(20)
 debug_sum(1000)
 debug_sum(1000000000)

@@ -10,6 +10,7 @@ if sys.version_info > (3,):
 def calc_digits_sum(n):
     return sum(int(x) for x in str(n))
 
+
 A0 = long(1)
 
 idx = long(1)
@@ -23,6 +24,7 @@ def ins(n, digits_sum, idx):
     global calced_arr
     calced_arr.append({'n': n, 's': digits_sum, 'i': idx})
     return
+
 
 ins(a_n, d_s, idx)
 
@@ -67,6 +69,7 @@ def cache_delta():
         cache[s['s']][i][s_digits[i:]] = my_i
     return
 
+
 calc_next()
 ins(a_n, d_s, idx)
 cache_delta()
@@ -78,6 +81,7 @@ LIM = long(1000000000000000)
 def _print_me():
     global a_n, idx, d_s
     print(("a[%d] = %d") % (idx, a_n))
+
 
 while idx < LIM:
     _print_me()

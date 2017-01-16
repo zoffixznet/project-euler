@@ -18,6 +18,7 @@ def _print_me():
     global idx, a_n
     print(("a[%d] = %d") % (idx, a_n))
 
+
 while idx < LIM:
     _print_me()
     a_n += sum(int(x) for x in str(a_n))

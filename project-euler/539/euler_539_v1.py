@@ -30,6 +30,7 @@ def P_list(l, is_left):
 def P_l2(l):
     return P_list(l, 1)
 
+
 ar = []
 for i in xrange(1, 64):
     mask = 0b1
@@ -60,6 +61,7 @@ def reset():
     a = -1
     extract()
     return
+
 
 reset()
 
@@ -147,6 +149,7 @@ def prefix_S_from_2power_to_next(prefix, exp):
 
     return S_from_2power_to_next(exp) + mymask * cnt
 
+
 if False:
     for i in xrange(2, 100001):
         if P_l(i) != P_l2(i):
@@ -209,6 +212,7 @@ def fast_S(MAX):
         s += 1 + P_l(MAX)
 
     return s
+
 
 if True:
     for i in xrange(5, 1000):

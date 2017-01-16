@@ -205,6 +205,7 @@ def debug_sum(n):
 def debug_sum_w_old(n):
     print("T(%d) = %d ; %d\n" % (n, frac_sum(n), FracSeq()._sum_old(n)))
 
+
 # debug_sum_w_old(long(sys.argv[1]))
 # exit(0)
 debug_sum(20)

@@ -135,5 +135,6 @@ def main():
     # both([0, 2, 2, 5, 10, 9])
     print("x12: %.4f" % calc_variance(x12))
 
+
 if __name__ == "__main__":
     main()

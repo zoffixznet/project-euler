@@ -47,5 +47,6 @@ def main(n):
                     for y in i[1]:
                         print("%d: %d*%d+%d*%d" % (a, x[0], x[1], y[0], y[1]))
 
+
 if __name__ == '__main__':
     main(int(sys.argv[1]))

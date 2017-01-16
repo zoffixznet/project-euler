@@ -30,6 +30,7 @@ def check_factor_sig(n, good):
         raise BaseException
     return
 
+
 check_factor_sig(24, [1, 3])
 check_factor_sig(100, [2, 2])
 check_factor_sig(1000, [3, 3])
@@ -68,6 +69,7 @@ def check_num_chains(n, good):
         raise BaseException
     return
 
+
 check_num_chains(12, 8)
 check_num_chains(48, 48)
 check_num_chains(120, 132)
@@ -101,6 +103,7 @@ def iter_over_sigs(length):
             break
         first += 1
     return True
+
 
 length = 1
 while (iter_over_sigs(length)):

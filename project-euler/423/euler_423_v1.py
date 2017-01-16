@@ -20,6 +20,7 @@ def base6(n):
         return ''
     return base6(n / 6) + str(n % 6)
 
+
 sums = [6, 6, 6]
 pi = 0
 # PS = 1000

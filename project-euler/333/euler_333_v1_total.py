@@ -38,6 +38,8 @@ def rec(x, start_y, mysum):
                 return
             rec(x-1, y+1, s)
     return
+
+
 rec(len(powers[3])-1, 0, 0)
 
 mysum = 0

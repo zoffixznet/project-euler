@@ -12,6 +12,7 @@ def is_pent(x):
     else:
         return False
 
+
 flag = False
 for i in range(1, 3000):
     if i % 100 == 0:

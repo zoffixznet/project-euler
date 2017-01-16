@@ -34,6 +34,7 @@ def rec(depth, m, stack):
         rec(depth+1, (m+mods[depth]) % MOD, stack + [mods[depth]])
     return
 
+
 rec(0, 0, [])
 ret -= 1
 print("Num = %d" % (ret))

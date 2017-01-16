@@ -43,6 +43,7 @@ def ass_A(n, expected):
         raise BaseException
     return
 
+
 ass_y(4, 4, 11)
 ass_y(4, 3, ((1 << 60)-9))
 ass_y(4, 2, ((1 << 60)-12))

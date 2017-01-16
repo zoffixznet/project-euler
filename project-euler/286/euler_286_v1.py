@@ -19,6 +19,7 @@ def calc(q):
         probs = new_probs
     return probs[20]
 
+
 l = float(50)
 h = float(100000)
 

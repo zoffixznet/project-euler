@@ -60,6 +60,7 @@ def calc_s(n):
 
     return s_1 + s_2 + even_s + odd_s
 
+
 fibs = [long(0), long(1)]
 
 while len(fibs) < 45:
@@ -71,6 +72,7 @@ print(fibs)
 def print_s(n):
     print(("S[%d] = %d" % (n, calc_s(n))))
     return
+
 
 print_s(10)
 print_s(100)
@@ -84,6 +86,7 @@ def check_print_s(n):
     if (real != calced):
         raise BaseException
     return
+
 
 check_print_s(10)
 check_print_s(100)

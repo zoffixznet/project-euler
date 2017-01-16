@@ -37,6 +37,7 @@ def next_row(k, p):
 def p_calc(n, k, r):
     print("T(%d,%d) = %d" % (n, k, r[n]))
 
+
 r = []
 k = 0
 while k < 3:

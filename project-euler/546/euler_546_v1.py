@@ -16,6 +16,7 @@ def _reset(new_k):
     k = new_k
     return
 
+
 _reset(2)
 
 # s(n) = sum_k=0^k=n(f(k)) = f(0)+f(1)+f(2)...+f(n)
@@ -58,6 +59,7 @@ def is_good(k, n, expected):
         print("f_%d(%d) = %d != %d" % (k, n, got, expected))
         raise Exception
     return
+
 
 is_good(5, 10, 18)
 is_good(7, 100, 1003)

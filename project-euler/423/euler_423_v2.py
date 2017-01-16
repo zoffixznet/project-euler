@@ -23,6 +23,7 @@ def pascal_sum(n, p):
         C += E[b] * l
     return int(C % MOD)
 
+
 if __name__ == "__main__":
     s_n = 0
 

@@ -49,6 +49,7 @@ def solve_for_d(D):
 
     return rec(0, [], 0)
 
+
 sums = []
 
 sums.append(0)

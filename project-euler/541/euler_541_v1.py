@@ -23,4 +23,5 @@ def find_M(p, lim):
         n += p
         s += d
 
+
 find_M(long(sys.argv[1]), 0)

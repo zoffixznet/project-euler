@@ -16,6 +16,7 @@ def _reset(new_k):
     k = new_k
     return
 
+
 _reset(2)
 
 
@@ -51,6 +52,7 @@ class MyIter:
         while self.n < target:
             self.inc()
         return
+
 
 f = MyIter()
 # STEP
