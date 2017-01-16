@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 
 import sys
-import math
 import re
-from bigfloat import *
+from bigfloat import precision
 
 if sys.version_info > (3,):
     long = int
@@ -25,7 +24,7 @@ with precision(60):
             # total += BigFloat('1') / n
             total += 1.0 / n
             while n > checkpoint:
-                print (("n=%030d t = %.40f") % (n, total))
+                print(("n=%030d t = %.40f") % (n, total))
                 sys.stdout.flush()
                 checkpoint += step
             n += 1
