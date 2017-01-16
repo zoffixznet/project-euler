@@ -18,6 +18,7 @@ def _reset(new_k):
 
 _reset(2)
 
+
 class MyIter:
     def __init__(self):
         global k
@@ -62,4 +63,4 @@ while f.n < w:
     while f.n < l:
         f.add(10)
     l += S
-    print ("f(%d) = %d" % (f.n, f.f))
+    print("f(%d) = %d" % (f.n, f.f))

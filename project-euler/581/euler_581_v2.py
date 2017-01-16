@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-import math
 import sys
 from pybst.avltree import AVLTree
 if sys.version_info > (3,):
@@ -7,8 +6,8 @@ if sys.version_info > (3,):
 
 
 def main():
-    primes = [ 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, ];
-    t = AVLTree([(long(x),True) for x in primes])
+    primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, ]
+    t = AVLTree([(long(x), True) for x in primes])
     prev = 1
     s = 0
     while True:
@@ -21,9 +20,8 @@ def main():
         for x in primes:
             mul = x * n
             if not t.get_node(mul):
-                t.insert(mul,True)
+                t.insert(mul, True)
         prev = n
 
 
 main()
-
