@@ -7,7 +7,7 @@ use Test::More tests => 4;
 
 {
     # TEST
-    is (scalar(`$^X euler-158-v1.pl 2`), <<'EOF', "For 2");
+    is( scalar(`$^X euler-158-v1.pl 2`), <<'EOF', "For 2" );
 Count[ 0] = 0
 Count[ 1] = 0
 Count[ 2] = 1
@@ -16,7 +16,7 @@ EOF
 
 {
     # TEST
-    is (scalar(`$^X euler-158-v1.pl 3`), <<"EOF", "For 3");
+    is( scalar(`$^X euler-158-v1.pl 3`), <<"EOF", "For 3" );
 Count[ 0] = 0
 Count[ 1] = 0
 Count[ 2] = @{[2+1]}
@@ -27,7 +27,7 @@ EOF
 {
     # TEST
     # Output taken from brute-force-count.pl .
-    is (scalar(`$^X euler-158-v1.pl 4`), <<"EOF", "For 4");
+    is( scalar(`$^X euler-158-v1.pl 4`), <<"EOF", "For 4" );
 Count[ 0] = 0
 Count[ 1] = 0
 Count[ 2] = 6
@@ -39,7 +39,7 @@ EOF
 {
     # TEST
     # Output taken from brute-force-count.pl .
-    is (scalar(`$^X euler-158-v1.pl 5`), <<"EOF", "For 5");
+    is( scalar(`$^X euler-158-v1.pl 5`), <<"EOF", "For 5" );
 Count[ 0] = 0
 Count[ 1] = 0
 Count[ 2] = 10

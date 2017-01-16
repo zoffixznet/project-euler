@@ -24,7 +24,7 @@ sub read_n
     my $factors = <$numer_fh>;
     chomp($factors);
     $factors =~ s#\A[0-9]+: *##;
-    foreach my $f (split(/ /, $factors))
+    foreach my $f ( split( / /, $factors ) )
     {
         $f{$f}++;
     }
@@ -35,23 +35,23 @@ sub read_d
     my $factors = <$denom_fh>;
     chomp($factors);
     $factors =~ s#\A[0-9]+: *##;
-    foreach my $f (split(/ /, $factors))
+    foreach my $f ( split( / /, $factors ) )
     {
         $f{$f}--;
     }
 }
 
-while (!eof($numer_fh) and !eof($denom_fh))
+while ( !eof($numer_fh) and !eof($denom_fh) )
 {
     read_n();
     read_d();
 }
 
-while (!eof($numer_fh))
+while ( !eof($numer_fh) )
 {
     read_n();
 }
-while (!eof($denom_fh))
+while ( !eof($denom_fh) )
 {
     read_d();
 }
@@ -60,9 +60,9 @@ close($denom_fh);
 
 my $sum = 0;
 
-while (my ($f, $c) = each(%f))
+while ( my ( $f, $c ) = each(%f) )
 {
-    if ($c < 0)
+    if ( $c < 0 )
     {
         die "Factor $f is $c!";
     }

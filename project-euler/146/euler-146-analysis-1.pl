@@ -18,10 +18,10 @@ my $prod = 1;
 
 my @primes;
 
-open (my $list_fh, "primes 2|");
+open( my $list_fh, "primes 2|" );
 
 P:
-while (my $p = <$list_fh>)
+while ( my $p = <$list_fh> )
 {
     chomp($p);
     $p = 0 + $p;
@@ -30,18 +30,27 @@ while (my $p = <$list_fh>)
 
     my @modulos;
 
-    for my $mod (0 .. $prod-1)
+    for my $mod ( 0 .. $prod - 1 )
     {
-        my $sq_mod = $mod*$mod;
-        if (none { my $p = $_; any { ($sq_mod + $_) % $p == 0 } (1,3,7,9,13,27)} @primes)
+        my $sq_mod = $mod * $mod;
+        if (
+            none
+            {
+                my $p = $_;
+                any { ( $sq_mod + $_ ) % $p == 0 } ( 1, 3, 7, 9, 13, 27 )
+            }
+            @primes
+            )
         {
             push @modulos, $mod;
         }
     }
 
-    print "For $prod: " . sprintf("%.100f", ((@modulos + 0.0) / $prod)) . "[@modulos]\n";
+    print "For $prod: "
+        . sprintf( "%.100f", ( ( @modulos + 0.0 ) / $prod ) )
+        . "[@modulos]\n";
 
-    if ($prod > 9_000_000)
+    if ( $prod > 9_000_000 )
     {
         last P;
     }

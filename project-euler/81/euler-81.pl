@@ -9,27 +9,31 @@ use IO::All;
 
 my @lines = io("matrix.txt")->chomp->getlines();
 
-my @matrix = (map { [ map { +{ v => $_ } } (split(/,/, $_)) ] } @lines);
+my @matrix = (
+    map {
+        [ map { +{ v => $_ } } ( split( /,/, $_ ) ) ]
+    } @lines
+);
 
 my $size = 80;
-my $lim = $size-1;
+my $lim  = $size - 1;
 
 $matrix[0][0]->{sum} = $matrix[0][0]->{v};
 
 sub calc_sum
 {
-    my ($y, $x) = @_;
+    my ( $y, $x ) = @_;
 
     my @sums;
 
-    if ($y > 0)
+    if ( $y > 0 )
     {
-        push @sums, $matrix[$y-1][$x]->{sum} + $matrix[$y][$x]->{v};
+        push @sums, $matrix[ $y - 1 ][$x]->{sum} + $matrix[$y][$x]->{v};
     }
 
-    if ($x > 0)
+    if ( $x > 0 )
     {
-        push @sums, $matrix[$y][$x-1]->{sum} + $matrix[$y][$x]->{v};
+        push @sums, $matrix[$y][ $x - 1 ]->{sum} + $matrix[$y][$x]->{v};
     }
 
     $matrix[$y][$x]->{sum} = min(@sums);
@@ -37,21 +41,21 @@ sub calc_sum
     return;
 }
 
-for my $depth (1 .. $lim)
+for my $depth ( 1 .. $lim )
 {
-    for my $y (0 .. $depth)
+    for my $y ( 0 .. $depth )
     {
         my $x = $depth - $y;
-        calc_sum($y,$x);
+        calc_sum( $y, $x );
     }
 }
 
-for my $depth (($lim + 1) .. (2 * $lim))
+for my $depth ( ( $lim + 1 ) .. ( 2 * $lim ) )
 {
-    for my $y (($depth - $lim) .. $lim)
+    for my $y ( ( $depth - $lim ) .. $lim )
     {
-        my $x = $depth-$y;
-        calc_sum($y,$x);
+        my $x = $depth - $y;
+        calc_sum( $y, $x );
     }
 }
 

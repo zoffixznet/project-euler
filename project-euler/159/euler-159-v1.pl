@@ -15,9 +15,9 @@ sub _digi_root
 {
     my ($n) = @_;
 
-    my $ret = sum(split//,$n);
+    my $ret = sum( split //, $n );
 
-    if ($ret >= 10)
+    if ( $ret >= 10 )
     {
         $ret = _digi_root($ret);
     }
@@ -27,22 +27,22 @@ sub _digi_root
 
 my $MAX = 999_999;
 my $sum = 0;
-for my $n (2 .. $MAX)
+for my $n ( 2 .. $MAX )
 {
     my $f = $factors[$n];
 
     # If $n is prime.
     my $result = _digi_root($n);
-    if (defined($f))
+    if ( defined($f) )
     {
-        $result = max( $result, map { $drs[$_] + $drs[$n/$_] } @$f );
+        $result = max( $result, map { $drs[$_] + $drs[ $n / $_ ] } @$f );
     }
-    $sum += ($drs[$n] = $result);
+    $sum += ( $drs[$n] = $result );
 
     my $product = $n * $n;
-    while ($product <= $MAX)
+    while ( $product <= $MAX )
     {
-        push @{$factors[$product]}, $n;
+        push @{ $factors[$product] }, $n;
     }
     continue
     {

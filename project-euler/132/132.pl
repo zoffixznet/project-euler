@@ -11,9 +11,9 @@ sub factorize
     my @ret;
 
     my $factor = 2;
-    while ($n > 1)
+    while ( $n > 1 )
     {
-        if ($n % $factor == 0)
+        if ( $n % $factor == 0 )
         {
             push @ret, $factor;
             $n /= $factor;
@@ -28,28 +28,36 @@ sub factorize
 
 # l = len or logarithm.
 # n = a promise for the number.
-my @factors =
-(
-    +{ l => 2, n => sub { return 11; }},
-    (map {
-        my $e = $_;
-        +{
-            l => ((2 ** $e)+1),
-            n => sub { return 10 ** (2 ** $e) + 1; },
-        }
-        } (1 .. 9)
+my @factors = (
+    +{
+        l => 2,
+        n => sub { return 11; }
+    },
+    (
+        map {
+            my $e = $_;
+            +{
+                l => ( ( 2**$e ) + 1 ),
+                n => sub { return 10**( 2**$e ) + 1; },
+                }
+        } ( 1 .. 9 )
     ),
-    (map {
-        my $e = $_;
-        my $ten_e = (2**9) * (5 ** $e);
-        +{
-            l => (4*$ten_e+1),
-            n => sub { my $x = (10 ** $ten_e); return 1 + $x + ($x ** 2) + ($x ** 3) + ($x ** 4); },
-        }
-    } (1 .. 9)),
+    (
+        map {
+            my $e = $_;
+            my $ten_e = ( 2**9 ) * ( 5**$e );
+            +{
+                l => ( 4 * $ten_e + 1 ),
+                n => sub {
+                    my $x = ( 10**$ten_e );
+                    return 1 + $x + ( $x**2 ) + ( $x**3 ) + ( $x**4 );
+                },
+                }
+        } ( 1 .. 9 )
+    ),
 );
 
-@factors = (sort { $a->{l} <=> $b->{l} } @factors);
+@factors = ( sort { $a->{l} <=> $b->{l} } @factors );
 
 my @primes;
 
@@ -65,16 +73,16 @@ foreach my $fact (@factors)
     my $l = <STDIN>;
     next NON_P_FACTORS;
 
-    push @primes, @{factorize($n)};
+    push @primes, @{ factorize($n) };
 
     @primes = sort { $a <=> $b } @primes;
 
-    if (@primes > $LIMIT)
+    if ( @primes > $LIMIT )
     {
-        splice(@primes,$LIMIT);
+        splice( @primes, $LIMIT );
     }
 
-    if (@primes == $LIMIT)
+    if ( @primes == $LIMIT )
     {
         my $s = 0;
 
@@ -82,7 +90,7 @@ foreach my $fact (@factors)
         {
             $s += $p;
         }
-        print "Primes [", join(',',@primes),"]\n";
+        print "Primes [", join( ',', @primes ), "]\n";
         print "Sum = $s\n";
     }
 }

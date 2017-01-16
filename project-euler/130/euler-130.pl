@@ -3,8 +3,6 @@
 use strict;
 use warnings;
 
-
-
 sub calc_A
 {
     my ($n) = @_;
@@ -14,7 +12,7 @@ sub calc_A
 
     while ($mod)
     {
-        $mod = (($mod * 10 + 1) % $n);
+        $mod = ( ( $mod * 10 + 1 ) % $n );
         $len++;
     }
 
@@ -22,22 +20,22 @@ sub calc_A
 }
 
 open my $primes_fh, "primes 3|";
-my $last_prime = int(scalar(<$primes_fh>));
+my $last_prime = int( scalar(<$primes_fh>) );
 
-my $n = 3;
+my $n     = 3;
 my $count = 0;
-my $sum = 0;
+my $sum   = 0;
 
-while ($count < 25)
+while ( $count < 25 )
 {
-    if ($n == $last_prime)
+    if ( $n == $last_prime )
     {
-        $last_prime = int(scalar(<$primes_fh>));
+        $last_prime = int( scalar(<$primes_fh>) );
     }
-    elsif ($n % 5)
+    elsif ( $n % 5 )
     {
         my $A = calc_A($n);
-        if (($n - 1) % $A == 0)
+        if ( ( $n - 1 ) % $A == 0 )
         {
             $count++;
             $sum += $n;

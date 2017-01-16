@@ -28,7 +28,7 @@ my $grid_string = <<'EOF';
 01 70 54 71 83 51 54 69 16 92 33 48 61 43 52 01 89 19 67 48
 EOF
 
-my @g = (map { [split(/\s+/, $_ )] } split(/\n+/, $grid_string));
+my @g = ( map { [ split( /\s+/, $_ ) ] } split( /\n+/, $grid_string ) );
 
 my $max = 0;
 
@@ -40,34 +40,30 @@ sub product
     {
         foreach my $d (@$c)
         {
-            if (($d < 0) || ($d >= 20))
+            if ( ( $d < 0 ) || ( $d >= 20 ) )
             {
                 return 0;
             }
         }
-        $p *= $g[$c->[0]][$c->[1]];
+        $p *= $g[ $c->[0] ][ $c->[1] ];
     }
     return $p;
 }
 
 sub p_v
 {
-    my ($x, $y, $dx, $dy) = @_;
+    my ( $x, $y, $dx, $dy ) = @_;
 
-    return product(map { [$x + $dx*$_ , $y + $dy*$_] } (0 .. 3));
+    return product( map { [ $x + $dx * $_, $y + $dy * $_ ] } ( 0 .. 3 ) );
 }
 
-foreach my $x (0 .. 19)
+foreach my $x ( 0 .. 19 )
 {
-    foreach my $y (0 .. 19)
+    foreach my $y ( 0 .. 19 )
     {
-        $max =
-            max(
-                $max,
-                map {
-                    p_v($x,$y,@$_)
-                } ([0,1],[1,0],[1,1],[1,-1])
-            );
+        $max = max( $max,
+            map { p_v( $x, $y, @$_ ) }
+                ( [ 0, 1 ], [ 1, 0 ], [ 1, 1 ], [ 1, -1 ] ) );
     }
 }
 print "$max\n";

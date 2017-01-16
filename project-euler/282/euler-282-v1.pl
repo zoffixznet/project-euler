@@ -20,36 +20,38 @@ my %c;
 
 sub A
 {
-    my ($m, $n) = @_;
+    my ( $m, $n ) = @_;
 
     my $ret = sub {
-        if ($m == 0)
+        if ( $m == 0 )
         {
-            return Math::GMP->new("$n")+1;
+            return Math::GMP->new("$n") + 1;
         }
-        elsif ($m == 1)
+        elsif ( $m == 1 )
         {
-            return Math::GMP->new("$n")+2;
+            return Math::GMP->new("$n") + 2;
         }
-        elsif ($m == 2)
+        elsif ( $m == 2 )
         {
-            return ((Math::GMP->new("$n")<<1)+3);
+            return ( ( Math::GMP->new("$n") << 1 ) + 3 );
         }
-        elsif ($m == 3)
+        elsif ( $m == 3 )
         {
-            return ((Math::GMP->new('1') << (Math::GMP->new("$n") + 3)) - 3);
+            return (
+                ( Math::GMP->new('1') << ( Math::GMP->new("$n") + 3 ) ) - 3 );
         }
-        elsif ($n == 0)
+        elsif ( $n == 0 )
         {
-            return A($m-1,1);
+            return A( $m - 1, 1 );
         }
         else
         {
-            return $c{"$m"}{"$n"} //= A($m-1, A($m,$n-1));
+            return $c{"$m"}{"$n"} //= A( $m - 1, A( $m, $n - 1 ) );
         }
-    }->();
+        }
+        ->();
 
-    if ($ret <= 0)
+    if ( $ret <= 0 )
     {
         die "A($m,$n)!";
     }
@@ -59,23 +61,24 @@ sub A
     return $ret;
 }
 
-my $ULTIMATE_MOD = 14 ** 8;
+my $ULTIMATE_MOD = 14**8;
 
 my @m_cache;
 
 sub get__m__cache
 {
-    my ($m, $MOD, $PREFIX) = @_;
+    my ( $m, $MOD, $PREFIX ) = @_;
 
-    return @{ $m_cache[$m]{$MOD}{$PREFIX} //= sub {
-        my $m_ = $m - 2;
-        my @f = ($MOD, $PREFIX);
-        my $next = sub {
-            return A_mod($m_, scalar(shift(@_)),@f);
-        };
+    return @{
+        $m_cache[$m]{$MOD}{$PREFIX} //= sub {
+            my $m_   = $m - 2;
+            my @f    = ( $MOD, $PREFIX );
+            my $next = sub {
+                return A_mod( $m_, scalar( shift(@_) ), @f );
+            };
 
-        # my $x = 1;
-        my $x = A_mod($m-1, 0, @f);
+            # my $x = 1;
+            my $x = A_mod( $m - 1, 0, @f );
 
 =begin More Correct Solution.
 
@@ -96,37 +99,39 @@ sub get__m__cache
 
 =cut
 
-        my $seq = '';
-        my $L = '';
-        my $i = 0;
+            my $seq = '';
+            my $L   = '';
+            my $i   = 0;
 
-        if ($m_ == 1)
-        {
-            while (! vec($L, $x, 1))
+            if ( $m_ == 1 )
             {
-                vec( $seq, $i++, 32 ) = $x;
-                vec( $L, $x, 1 ) = 1;
-
-                if (($x += 2) >= $PREFIX+$MOD)
+                while ( !vec( $L, $x, 1 ) )
                 {
-                    $x = (($x - $PREFIX) % $MOD + $PREFIX);
+                    vec( $seq, $i++, 32 ) = $x;
+                    vec( $L,   $x,   1 )  = 1;
+
+                    if ( ( $x += 2 ) >= $PREFIX + $MOD )
+                    {
+                        $x = ( ( $x - $PREFIX ) % $MOD + $PREFIX );
+                    }
                 }
             }
-        }
-        else
-        {
-            while (! vec($L, $x, 1))
+            else
             {
-                vec( $seq, $i++, 32 ) = $x;
-                vec( $L, $x, 1 ) = 1;
-                $x = $next->($x);
+                while ( !vec( $L, $x, 1 ) )
+                {
+                    vec( $seq, $i++, 32 ) = $x;
+                    vec( $L,   $x,   1 )  = 1;
+                    $x = $next->($x);
+                }
             }
+
+            my $NEW_PREFIX = first { vec( $seq, $_, 32 ) == $x } 0 .. $i;
+            return [ ( $i - $NEW_PREFIX ), $NEW_PREFIX, \$seq ];
+
         }
-
-        my $NEW_PREFIX = first { vec($seq, $_, 32) == $x } 0 .. $i;
-        return [ ($i - $NEW_PREFIX), $NEW_PREFIX, \$seq ];
-
-    }->() };
+            ->()
+    };
 }
 
 =begin foo
@@ -142,53 +147,58 @@ sub A_mod
 
 sub A_mod
 {
-    my ($m, $n, $MOD, $ORIG_PREFIX) = @_;
+    my ( $m, $n, $MOD, $ORIG_PREFIX ) = @_;
 
-    if (($ORIG_PREFIX == 0) and ($MOD == 1))
+    if ( ( $ORIG_PREFIX == 0 ) and ( $MOD == 1 ) )
     {
         return 0;
     }
 
-    my $PREFIX = $ORIG_PREFIX;
-    my $ORIG_ME = ($m > 3);
-    if ($ORIG_ME and $PREFIX)
+    my $PREFIX  = $ORIG_PREFIX;
+    my $ORIG_ME = ( $m > 3 );
+    if ( $ORIG_ME and $PREFIX )
     {
         $PREFIX = 0;
     }
 
     my $Map = sub {
         my $x = shift;
-        return (($x < $PREFIX + $MOD) ? $x : (($x-$PREFIX) % $MOD + $PREFIX));
+        return (
+            ( $x < $PREFIX + $MOD )
+            ? $x
+            : ( ( $x - $PREFIX ) % $MOD + $PREFIX )
+        );
     };
 
     my $ret = sub {
-        if ($m == 0)
+        if ( $m == 0 )
         {
-            return $Map->($n+1);
+            return $Map->( $n + 1 );
         }
-        elsif ($m == 1)
+        elsif ( $m == 1 )
         {
-            return $Map->($n+2);
+            return $Map->( $n + 2 );
         }
-        elsif ($m == 2)
+        elsif ( $m == 2 )
         {
-            return $Map->(($n<<1)+3);
+            return $Map->( ( $n << 1 ) + 3 );
         }
+
         # elsif (0)
-        elsif ($m == 3)
+        elsif ( $m == 3 )
         {
-            # my $ret1 = $Map->((Math::GMP->new('1') << (Math::GMP->new("$n") + 3)) - 3) . '';
+# my $ret1 = $Map->((Math::GMP->new('1') << (Math::GMP->new("$n") + 3)) - 3) . '';
             my $ret2;
-            if ($PREFIX == 0)
+            if ( $PREFIX == 0 )
             {
-                 $ret2 = $Map->(exp_mod(2, $n+3, $MOD) + $MOD*4 - 3);
+                $ret2 = $Map->( exp_mod( 2, $n + 3, $MOD ) + $MOD * 4 - 3 );
             }
             else
             {
                 my $verdict = 0;
                 {
                     no integer;
-                    if (log($PREFIX)/log(2) < $n + 2)
+                    if ( log($PREFIX) / log(2) < $n + 2 )
                     {
                         $verdict = 1;
                     }
@@ -196,60 +206,65 @@ sub A_mod
 
                 if ($verdict)
                 {
-                    $ret2 = exp_mod(2, $n+3, $MOD);
-                    if ($ret2 < $PREFIX)
+                    $ret2 = exp_mod( 2, $n + 3, $MOD );
+                    if ( $ret2 < $PREFIX )
                     {
                         $ret2 += $MOD;
                     }
-                    $ret2 = $Map->($ret2 + $MOD*4 - 3);
+                    $ret2 = $Map->( $ret2 + $MOD * 4 - 3 );
                 }
                 else
                 {
-                    $ret2 = $Map->((Math::GMP->new('1') << (Math::GMP->new("$n") + 3)) - 3) . '';
+                    $ret2 = $Map->(
+                        ( Math::GMP->new('1') << ( Math::GMP->new("$n") + 3 ) )
+                        - 3 )
+                        . '';
                 }
             }
-            if (0) # if ($ret2 != $ret1)
+            if (0)    # if ($ret2 != $ret1)
             {
                 # die "Incorrect $ret1 / $ret2 ret1/ret2!";
             }
             return $ret2;
         }
-        elsif ($n == 0)
+        elsif ( $n == 0 )
         {
-            return A_mod($m-1, 1, $MOD, $PREFIX);
+            return A_mod( $m - 1, 1, $MOD, $PREFIX );
         }
-        elsif ($m <= 6)
+        elsif ( $m <= 6 )
         {
-            my ($NEW_MOD, $NEW_PREFIX, $seq) = get__m__cache($m, $MOD, $PREFIX);
+            my ( $NEW_MOD, $NEW_PREFIX, $seq ) =
+                get__m__cache( $m, $MOD, $PREFIX );
 
-            my $r_idx = A_mod($m, ($n-1), $NEW_MOD, $NEW_PREFIX);
+            my $r_idx = A_mod( $m, ( $n - 1 ), $NEW_MOD, $NEW_PREFIX );
 
             # my $r = $cache{$ret};
             # my $r = $seq->[$r_idx];
 
-            return vec(${$seq}, $r_idx, 32);
+            return vec( ${$seq}, $r_idx, 32 );
         }
         else
         {
-            return $c{"$m"}{"$n"} //= A($m-1, A($m,$n-1));
+            return $c{"$m"}{"$n"} //= A( $m - 1, A( $m, $n - 1 ) );
         }
-    }->();
+        }
+        ->();
 
-    if ($ret < 0 or (!defined $ret))
+    if ( $ret < 0 or ( !defined $ret ) )
     {
         die "A_mod($m,$n)!";
     }
 
-    if ($ORIG_ME and $ORIG_PREFIX and ($ret < $ORIG_PREFIX))
+    if ( $ORIG_ME and $ORIG_PREFIX and ( $ret < $ORIG_PREFIX ) )
     {
         $ret += $MOD;
     }
 
     if (0)
     {
-        my $want = $Map->(A($m,$n));
+        my $want = $Map->( A( $m, $n ) );
 
-        if ($want != $ret)
+        if ( $want != $ret )
         {
             die "A_mod($m,$n, $MOD, $PREFIX)!";
         }
@@ -260,204 +275,225 @@ sub A_mod
     return $ret;
 }
 
-
 sub exp_mod
 {
-    my ($base, $exp, $mod) = @_;
+    my ( $base, $exp, $mod ) = @_;
 
-    if ($exp == 0)
+    if ( $exp == 0 )
     {
         return 1;
     }
-    my $rec = exp_mod($base, $exp >> 1, $mod);
-    my $ret = ($rec * $rec) % $mod;
-    if ($exp & 1)
+    my $rec = exp_mod( $base, $exp >> 1, $mod );
+    my $ret = ( $rec * $rec ) % $mod;
+    if ( $exp & 1 )
     {
-        $ret = (($ret * $base) % $mod);
+        $ret = ( ( $ret * $base ) % $mod );
     }
     return $ret;
 }
 
 {
     my %Cache1;
-sub hyperexp_modulo
-{
-    my ($base, $exp, $mod, $prefix) = @_;
 
-    my $DEFAULT_RET = 0;
-
-    my $Map = sub {
-        my $x = shift;
-        return (($x < $prefix) ? $x : (($x-$prefix) % $mod + $prefix));
-    };
-
-    my $ret;
-
-    if ($exp == 1)
+    sub hyperexp_modulo
     {
-        $ret = $Map->($base);
-        # return $base;
-    }
-    elsif (($mod == 1) and ($prefix == 0))
-    {
-        $ret = $DEFAULT_RET;
-    }
-    else
-    {
-        my $T = sub {
-            return $Map->(shift(@_) * $base);
+        my ( $base, $exp, $mod, $prefix ) = @_;
+
+        my $DEFAULT_RET = 0;
+
+        my $Map = sub {
+            my $x = shift;
+            return (
+                ( $x < $prefix ) ? $x : ( ( $x - $prefix ) % $mod + $prefix ) );
         };
 
-        my $_calc = sub {
-            my $x = 1;
-            my %cache;
-            my @seq;
+        my $ret;
 
-            while (!exists($cache{$x}))
-            {
-                push @seq, $x;
-                $cache{$x} = $#seq;
-                $x = $T->($x);
-            }
-
-            my $PREFIX = $cache{$x};
-            return [$PREFIX, (@seq-$PREFIX), \@seq];
-        };
-
-        my ($PREFIX, $LEN, $SEQ) = @{
-            $Cache1{$base}{$exp}{$prefix}{$mod} //= $_calc->()
-        };
-
-        my $mod_recurse = hyperexp_modulo($base, $exp-1, $LEN, $PREFIX);
-
-        # TODO : Verification code - remove later.
-        if (0)
+        if ( $exp == 1 )
         {
-            my $d = Math::GMP->new($base);
+            $ret = $Map->($base);
 
-            for my $i (1 .. $exp-1-1)
-            {
-                $d = $base ** $d;
-            }
+            # return $base;
+        }
+        elsif ( ( $mod == 1 ) and ( $prefix == 0 ) )
+        {
+            $ret = $DEFAULT_RET;
+        }
+        else
+        {
+            my $T = sub {
+                return $Map->( shift(@_) * $base );
+            };
 
-            if ((($d < $PREFIX) ? $d : (($d-$PREFIX) % $LEN + $PREFIX))
-                != $mod_recurse)
-            {
-                if (! $ENV{D})
+            my $_calc = sub {
+                my $x = 1;
+                my %cache;
+                my @seq;
+
+                while ( !exists( $cache{$x} ) )
                 {
-                    die "Incorrect result (hyperexp_modulo($base, $exp-1, $LEN, $PREFIX, $base); !";
+                    push @seq, $x;
+                    $cache{$x} = $#seq;
+                    $x = $T->($x);
+                }
+
+                my $PREFIX = $cache{$x};
+                return [ $PREFIX, ( @seq - $PREFIX ), \@seq ];
+            };
+
+            my ( $PREFIX, $LEN, $SEQ ) =
+                @{ $Cache1{$base}{$exp}{$prefix}{$mod} //= $_calc->() };
+
+            my $mod_recurse = hyperexp_modulo( $base, $exp - 1, $LEN, $PREFIX );
+
+            # TODO : Verification code - remove later.
+            if (0)
+            {
+                my $d = Math::GMP->new($base);
+
+                for my $i ( 1 .. $exp - 1 - 1 )
+                {
+                    $d = $base**$d;
+                }
+
+                if (
+                    (
+                        ( $d < $PREFIX )
+                        ? $d
+                        : ( ( $d - $PREFIX ) % $LEN + $PREFIX )
+                    ) != $mod_recurse
+                    )
+                {
+                    if ( !$ENV{D} )
+                    {
+                        die
+"Incorrect result (hyperexp_modulo($base, $exp-1, $LEN, $PREFIX, $base); !";
+                    }
+                }
+            }
+            $ret = $SEQ->[$mod_recurse];
+
+            # TODO : Disable.
+            if (0)
+            {
+                my $d = Math::GMP->new($base);
+
+                for my $i ( 1 .. $exp - 1 )
+                {
+                    $d = $base**$d;
+                }
+
+                if (
+                    (
+                        ( $d < $prefix )
+                        ? $d
+                        : ( ( $d - $prefix ) % $mod + $prefix )
+                    ) != $ret
+                    )
+                {
+                    if ( !$ENV{D} )
+                    {
+                        die
+"Incorrect result CHECK-INNER (hyperexp_modulo(@_); !";
+                    }
                 }
             }
         }
-        $ret = $SEQ->[$mod_recurse];
+
         # TODO : Disable.
         if (0)
         {
             my $d = Math::GMP->new($base);
 
-            for my $i (1 .. $exp-1)
+            for my $i ( 1 .. $exp - 1 )
             {
-                $d = $base ** $d;
+                $d = $base**$d;
             }
 
-            if ((($d < $prefix) ? $d : (($d-$prefix) % $mod + $prefix))
-                != $ret)
+            if (
+                (
+                    ( $d < $prefix )
+                    ? $d
+                    : ( ( $d - $prefix ) % $mod + $prefix )
+                ) != $ret
+                )
             {
-                if (! $ENV{D})
+                if ( !$ENV{D} )
                 {
-                    die "Incorrect result CHECK-INNER (hyperexp_modulo(@_); !";
+                    die "Incorrect result CHECK (hyperexp_modulo(@_); !";
                 }
             }
         }
+
+        return $ret;
     }
-
-    # TODO : Disable.
-    if (0)
-    {
-        my $d = Math::GMP->new($base);
-
-        for my $i (1 .. $exp-1)
-        {
-            $d = $base ** $d;
-        }
-
-        if ((($d < $prefix) ? $d : (($d-$prefix) % $mod + $prefix))
-                != $ret)
-        {
-            if (! $ENV{D})
-            {
-                die "Incorrect result CHECK (hyperexp_modulo(@_); !";
-            }
-        }
-    }
-
-    return $ret;
-}
 }
 
 my $TEST_MOD = $ULTIMATE_MOD;
+
 # my $TEST_MOD = 37;
 # my $TEST_MOD = 305607;
 
-for my $m (0 .. 3)
+for my $m ( 0 .. 3 )
 {
-    for my $n (0 .. 100)
+    for my $n ( 0 .. 100 )
     {
-        print "A($m,$n) = ", ( A($m,$n) % $ULTIMATE_MOD ), "\n";
+        print "A($m,$n) = ", ( A( $m, $n ) % $ULTIMATE_MOD ), "\n";
     }
 }
 
 for my $m (3)
 {
-    for my $n (0 .. 100)
+    for my $n ( 0 .. 100 )
     {
-        print "A_mod($m,$n) = ", A_mod($m, $n, $ULTIMATE_MOD, 0), "\n";
+        print "A_mod($m,$n) = ", A_mod( $m, $n, $ULTIMATE_MOD, 0 ), "\n";
     }
 }
 
 for my $m (4)
 {
-    for my $n (0 .. 2)
+    for my $n ( 0 .. 2 )
     {
         # print "A($m,$n) = ", (A($m,$n) % $ULTIMATE_MOD), "\n";
-        print "A($m,$n) = ", (A($m,$n) % $TEST_MOD), "\n";
-        # print "A[t]($m,$n) = ", ((hyperexp_modulo(2, $n+3, $TEST_MOD, 0) + $TEST_MOD - 3) % $TEST_MOD), "\n";
+        print "A($m,$n) = ", ( A( $m, $n ) % $TEST_MOD ), "\n";
+
+# print "A[t]($m,$n) = ", ((hyperexp_modulo(2, $n+3, $TEST_MOD, 0) + $TEST_MOD - 3) % $TEST_MOD), "\n";
     }
-    for my $n (3 .. 10)
+    for my $n ( 3 .. 10 )
     {
-        # print "A[t]($m,$n) = ", ((hyperexp_modulo(2, $n+3, $TEST_MOD, 0) + $TEST_MOD - 3) % $TEST_MOD), "\n";
+# print "A[t]($m,$n) = ", ((hyperexp_modulo(2, $n+3, $TEST_MOD, 0) + $TEST_MOD - 3) % $TEST_MOD), "\n";
     }
 }
 
 for my $m (4)
 {
-    for my $n (0 .. 10)
+    for my $n ( 0 .. 10 )
     {
         # print "A_mod($m,$n) = ", A_mod($m, $n, $ULTIMATE_MOD, 0), "\n";
-        print "A_mod($m,$n) = ", A_mod($m, $n, $TEST_MOD, 0), "\n";
+        print "A_mod($m,$n) = ", A_mod( $m, $n, $TEST_MOD, 0 ), "\n";
     }
 }
 
 for my $m (5)
 {
-    for my $n (0 .. 0)
+    for my $n ( 0 .. 0 )
     {
-        print "A($m,$n) = ", (A($m,$n) % $ULTIMATE_MOD), "\n";
+        print "A($m,$n) = ", ( A( $m, $n ) % $ULTIMATE_MOD ), "\n";
     }
 }
 
 for my $m (5)
 {
-    for my $n (0 .. 5)
+    for my $n ( 0 .. 5 )
     {
-        print "A_mod($m,$n) = ", A_mod($m, $n, $ULTIMATE_MOD, 0), "\n";
+        print "A_mod($m,$n) = ", A_mod( $m, $n, $ULTIMATE_MOD, 0 ), "\n";
     }
 }
 
 for my $m (6)
 {
-    for my $n (0 .. 6)
+    for my $n ( 0 .. 6 )
     {
-        print "A_mod($m,$n) = ", A_mod($m, $n, $ULTIMATE_MOD, 0), "\n";
+        print "A_mod($m,$n) = ", A_mod( $m, $n, $ULTIMATE_MOD, 0 ), "\n";
     }
 }

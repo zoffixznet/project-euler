@@ -17,42 +17,42 @@ STDOUT->autoflush(1);
 =cut
 
 my $solution_counts_vec = '';
-my $ten_counts = 0;
+my $ten_counts          = 0;
 
 my $LIMIT = 50_000_000;
 
-foreach my $z (1 .. ($LIMIT-1))
+foreach my $z ( 1 .. ( $LIMIT - 1 ) )
 {
-    print "Z = $z ; Ten Counts = $ten_counts\n" if ($z % 10_000 == 0);
-    my $d = (int($z/3)+1);
+    print "Z = $z ; Ten Counts = $ten_counts\n" if ( $z % 10_000 == 0 );
+    my $d = ( int( $z / 3 ) + 1 );
 
-    D_LOOP:
+D_LOOP:
     while (1)
     {
-        my $n = (3*$d-$z)*($z+$d);
+        my $n = ( 3 * $d - $z ) * ( $z + $d );
 
-        if ($n >= $LIMIT)
+        if ( $n >= $LIMIT )
         {
             last D_LOOP;
         }
-        elsif ($n > 0)
+        elsif ( $n > 0 )
         {
-            my $c = vec($solution_counts_vec, $n, 2);
+            my $c = vec( $solution_counts_vec, $n, 2 );
             $c++;
-            if ($c == 2)
+            if ( $c == 2 )
             {
                 $ten_counts--;
             }
-            elsif ($c == 3)
+            elsif ( $c == 3 )
             {
                 # Make sure it doesn't overflow.
                 $c--;
             }
-            elsif ($c == 1)
+            elsif ( $c == 1 )
             {
                 $ten_counts++;
             }
-            vec($solution_counts_vec, $n, 2) = $c;
+            vec( $solution_counts_vec, $n, 2 ) = $c;
         }
     }
     continue

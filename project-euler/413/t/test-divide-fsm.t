@@ -7,14 +7,14 @@ use Test::More tests => 170000;
 
 use DivideFsm;
 
-for my $BASE (grep { $_ != 10 } 2 .. 19)
+for my $BASE ( grep { $_ != 10 } 2 .. 19 )
 {
-    my ($g, $r) = DivideFsm::get_div_fsms($BASE);
+    my ( $g, $r ) = DivideFsm::get_div_fsms($BASE);
 
     # for my $i (1 .. 10000)
-    for my $i (())
+    for my $i ( () )
     {
-        my @d = reverse split//, $i;
+        my @d = reverse split //, $i;
 
         my $s = 0;
         for my $digit (@d)
@@ -23,12 +23,12 @@ for my $BASE (grep { $_ != 10 } 2 .. 19)
         }
 
         #+TEST*10000*17
-        is (($s == 0) ? 1 : 0, ($i % $BASE == 0) ? 1 : 0, "Num matches");
+        is( ( $s == 0 ) ? 1 : 0, ( $i % $BASE == 0 ) ? 1 : 0, "Num matches" );
     }
 
-    for my $i (1 .. 10000)
+    for my $i ( 1 .. 10000 )
     {
-        my @d = split//, $i;
+        my @d = split //, $i;
 
         my $s = 0;
         for my $digit (@d)
@@ -37,7 +37,7 @@ for my $BASE (grep { $_ != 10 } 2 .. 19)
         }
 
         # TEST*10000*17
-        is (($s == 0) ? 1 : 0, ($i % $BASE == 0) ? 1 : 0, "Num matches");
+        is( ( $s == 0 ) ? 1 : 0, ( $i % $BASE == 0 ) ? 1 : 0, "Num matches" );
     }
 }
 

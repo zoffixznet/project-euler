@@ -44,16 +44,16 @@ open my $primes_fh, "primes 2|"
     or die "Cannot open the primes filehandle.";
 
 PRIMES:
-while (my $p = <$primes_fh>)
+while ( my $p = <$primes_fh> )
 {
-    if (! ((++$n) & 0x1))
+    if ( !( ( ++$n ) & 0x1 ) )
     {
         # Always 2.
         next PRIMES;
     }
     chomp($p);
 
-    if (((2 * $n * $p) % ($p * $p)) > 10_000_000_000)
+    if ( ( ( 2 * $n * $p ) % ( $p * $p ) ) > 10_000_000_000 )
     {
         print "Found n = $n p = $p\n";
         last PRIMES;

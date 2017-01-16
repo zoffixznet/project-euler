@@ -17,15 +17,14 @@ sub new
     return $self;
 }
 
-
 sub _init
 {
-    my ($self, $set) = @_;
+    my ( $self, $set ) = @_;
 
     $self->{stack} =
-        [ {prefix => [], set => [@$set], elem => undef, prev => []} ];
+        [ { prefix => [], set => [@$set], elem => undef, prev => [] } ];
 
-    $self->{lim} = (@$set + 1);
+    $self->{lim} = ( @$set + 1 );
 
     return 0;
 }
@@ -40,26 +39,26 @@ sub next
     {
         my $s = $stack->[-1];
 
-        if (@$stack == $limit)
+        if ( @$stack == $limit )
         {
             pop(@$stack);
             return $s->{prefix};
         }
         else
         {
-            if (defined($s->{elem}))
+            if ( defined( $s->{elem} ) )
             {
-                push @{$s->{prev}}, $s->{elem};
+                push @{ $s->{prev} }, $s->{elem};
             }
 
-            if (defined($s->{elem} = shift(@{$s->{set}})))
+            if ( defined( $s->{elem} = shift( @{ $s->{set} } ) ) )
             {
                 push @$stack,
                     {
-                        prefix => [@{$s->{prefix}}, $s->{elem}],
-                        set => [@{$s->{prev}}, @{$s->{set}}],
-                        elem => undef(),
-                        prev => [],
+                    prefix => [ @{ $s->{prefix} }, $s->{elem} ],
+                    set    => [ @{ $s->{prev} },   @{ $s->{set} } ],
+                    elem   => undef(),
+                    prev   => [],
                     };
             }
             else
@@ -74,10 +73,10 @@ sub next
 
 sub skip
 {
-    my ($self, $n) = @_;
+    my ( $self, $n ) = @_;
 
     my $stack = $self->{stack};
-    while (@$stack >= $n+2)
+    while ( @$stack >= $n + 2 )
     {
         pop(@$stack);
     }
@@ -90,11 +89,12 @@ package main;
 use Data::Dumper;
 use Math::GMP;
 
-my $set = [reverse(0 .. 9)];
+my $set = [ reverse( 0 .. 9 ) ];
 
 my $iter = Permutations::Iterator->new($set);
 
-my @primes = ([2,2],[3,3],[4,5],[5,7],[6,11],[7,13],[8,17]);
+my @primes =
+    ( [ 2, 2 ], [ 3, 3 ], [ 4, 5 ], [ 5, 7 ], [ 6, 11 ], [ 7, 13 ], [ 8, 17 ] );
 foreach (@primes)
 {
     $_->[0]--;
@@ -103,20 +103,20 @@ foreach (@primes)
 my $sum = Math::GMP->new();
 my $perm;
 PERMUTATIONS:
-while (($perm = $iter->next()) && ($perm->[0] != 0))
+while ( ( $perm = $iter->next() ) && ( $perm->[0] != 0 ) )
 {
     print "Check: @$perm\n";
     foreach my $s (@primes)
     {
-        my ($pos, $prime) = @$s;
-        if (join("", @$perm[$pos .. $pos+2]) % $prime)
+        my ( $pos, $prime ) = @$s;
+        if ( join( "", @$perm[ $pos .. $pos + 2 ] ) % $prime )
         {
             print "Pos = $pos\n";
-            $iter->skip($pos+2);
+            $iter->skip( $pos + 2 );
             next PERMUTATIONS;
         }
     }
-    my $n = Math::GMP->new(join("", @$perm));
+    my $n = Math::GMP->new( join( "", @$perm ) );
     print "Found $n\n";
     $sum += $n;
     print "Sum: $sum\n";

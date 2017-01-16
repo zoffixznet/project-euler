@@ -18,7 +18,7 @@ sub sum_of_f
 
     my $sum = 0;
 
-    for my $n (1 .. $max)
+    for my $n ( 1 .. $max )
     {
         my $found = f_div($n);
         print "Found $found for $n\n";

@@ -3,8 +3,6 @@
 use strict;
 use warnings;
 
-
-
 my $pat = '1_2_3_4_5_6_7_8_9_0';
 
 # If ($s * $s) % 10 == 0 then $s % 10 == 0 so $s *$s % 100 == 0
@@ -13,36 +11,37 @@ my $pat2 = '1_2_3_4_5_6_7_8_900';
 # If ($s * $s) % 10 == 0 then $s % 10 == 0 so $s *$s % 100 == 0
 my $pat3 = '1_2_3_4_5_6_7_8[048]900';
 
-foreach my $d1 (0,4,8)
+foreach my $d1 ( 0, 4, 8 )
 {
     my $d_suffix = "8${d1}900";
 
     my $recurse;
 
     $recurse = sub {
-        my ($prefix, $l) = @_;
+        my ( $prefix, $l ) = @_;
 
-        if ($l == 8)
+        if ( $l == 8 )
         {
-            my $n = $prefix . $d_suffix;
-            my $sq = int(sqrt($n));
-            if ($sq * $sq == $n)
+            my $n  = $prefix . $d_suffix;
+            my $sq = int( sqrt($n) );
+            if ( $sq * $sq == $n )
             {
                 print "Result == $sq ; Square == $n\n";
+
                 # exit(0);
             }
         }
         else
         {
-            foreach my $d (0 .. 9)
+            foreach my $d ( 0 .. 9 )
             {
-                $recurse->($prefix.$l.$d, $l+1);
+                $recurse->( $prefix . $l . $d, $l + 1 );
             }
         }
         return;
     };
 
-    $recurse->('',1);
+    $recurse->( '', 1 );
 }
 
 # die "Could not find.";

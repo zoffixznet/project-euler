@@ -9,16 +9,16 @@ sub is_prime
 {
     my ($n) = @_;
 
-    if ($n <= 1)
+    if ( $n <= 1 )
     {
         return 0;
     }
 
-    my $top = int(sqrt($n));
+    my $top = int( sqrt($n) );
 
-    for my $i (2 .. $top)
+    for my $i ( 2 .. $top )
     {
-        if ($n % $i == 0)
+        if ( $n % $i == 0 )
         {
             return 0;
         }
@@ -30,14 +30,12 @@ sub is_prime
 my @trunc_primes = ();
 
 N_LOOP:
-for(my $n = 11; @trunc_primes < 11 ; $n += 2)
+for ( my $n = 11 ; @trunc_primes < 11 ; $n += 2 )
 {
-    foreach my $i (1 .. length($n))
+    foreach my $i ( 1 .. length($n) )
     {
-        if (is_prime(substr($n, 0, $i))
-                &&
-            is_prime(substr($n, -$i))
-        )
+        if (   is_prime( substr( $n, 0, $i ) )
+            && is_prime( substr( $n, -$i ) ) )
         {
             # Do nothing
         }
@@ -47,6 +45,6 @@ for(my $n = 11; @trunc_primes < 11 ; $n += 2)
         }
     }
     push @trunc_primes, $n;
-    print "Found " . join(",", @trunc_primes) . "\n";
+    print "Found " . join( ",", @trunc_primes ) . "\n";
     print "Sum = " . sum(@trunc_primes) . "\n";
 }

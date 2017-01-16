@@ -15,7 +15,7 @@ STDOUT->autoflush(1);
 
 sub solve_for_set
 {
-    my ($set_ref, $num_elems) = @_;
+    my ( $set_ref, $num_elems ) = @_;
 
     my @set = @$set_ref;
 
@@ -27,52 +27,54 @@ sub solve_for_set
 
     my $top_sum = sub {
         my ($c) = @_;
-        return $sums[-1] - $sums[-($c+1)];
+        return $sums[-1] - $sums[ -( $c + 1 ) ];
     };
 
     my $bottom_sum = sub {
-        my ($start, $c) = @_;
+        my ( $start, $c ) = @_;
 
-        return $sums[$start+$c] - $sums[$start];
+        return $sums[ $start + $c ] - $sums[$start];
     };
 
     # Recurse;
     my $r;
+
     # Number of solutions.
     my $num_sols;
 
     $r = sub {
+
         # $init_s is initial start.
-        my ($num_remain, $goal, $init_s) = @_;
+        my ( $num_remain, $goal, $init_s ) = @_;
 
         {
             my $ts = $top_sum->($num_remain);
-            if ($ts == $goal)
+            if ( $ts == $goal )
             {
                 $num_sols++;
                 return;
             }
-            elsif ($ts < $goal)
+            elsif ( $ts < $goal )
             {
                 return;
             }
         }
-        for my $s ($init_s .. @set - $num_remain - 1)
+        for my $s ( $init_s .. @set - $num_remain - 1 )
         {
             {
-                my $bs = $bottom_sum->($s, $num_remain);
-                if ($bs == $goal)
+                my $bs = $bottom_sum->( $s, $num_remain );
+                if ( $bs == $goal )
                 {
                     $num_sols++;
                     return;
                 }
-                elsif ($bs > $goal)
+                elsif ( $bs > $goal )
                 {
                     return;
                 }
             }
-            $r->($num_remain-1, $goal-$set[$s], $s+1);
-            if ($num_sols == 2)
+            $r->( $num_remain - 1, $goal - $set[$s], $s + 1 );
+            if ( $num_sols == 2 )
             {
                 return;
             }
@@ -82,13 +84,13 @@ sub solve_for_set
     my $total_sum = 0;
 
     my $TOP = $top_sum->($num_elems);
-    for my $partial_sum ($bottom_sum->(0, $num_elems) .. $TOP)
+    for my $partial_sum ( $bottom_sum->( 0, $num_elems ) .. $TOP )
     {
         print "Evaluating $partial_sum/$TOP [total_sum = $total_sum ]\n";
         $num_sols = 0;
-        $r->($num_elems, $partial_sum, 0);
+        $r->( $num_elems, $partial_sum, 0 );
 
-        if ($num_sols == 1)
+        if ( $num_sols == 1 )
         {
             $total_sum += $partial_sum;
         }
@@ -98,6 +100,6 @@ sub solve_for_set
 }
 
 # Test data.
-print "Test data == ", solve_for_set([1, 3, 6, 8, 10, 11], 3), "\n";
-my $result = solve_for_set([map { $_*$_ } 1 .. 100], 50);
+print "Test data == ", solve_for_set( [ 1, 3, 6, 8, 10, 11 ], 3 ), "\n";
+my $result = solve_for_set( [ map { $_ * $_ } 1 .. 100 ], 50 );
 print "Solution == $result\n";

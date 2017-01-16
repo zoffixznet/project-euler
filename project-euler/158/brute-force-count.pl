@@ -7,17 +7,19 @@ sub gen_perms
 {
     my ($set) = @_;
 
-    if (@$set == 0)
+    if ( @$set == 0 )
     {
-        return [[]];
+        return [ [] ];
     }
 
     my $elem;
     my @prev_elems;
     my @perms;
-    while (defined($elem = shift(@$set)))
+    while ( defined( $elem = shift(@$set) ) )
     {
-        push @perms, (map { [$elem,@{$_}] } @{gen_perms([@prev_elems,@$set])});
+        push @perms,
+            ( map { [ $elem, @{$_} ] }
+                @{ gen_perms( [ @prev_elems, @$set ] ) } );
         push @prev_elems, $elem;
     }
 
@@ -26,9 +28,9 @@ sub gen_perms
 
 my $COUNT = shift(@ARGV);
 
-my @perms = @{gen_perms([1 .. $COUNT])};
+my @perms = @{ gen_perms( [ 1 .. $COUNT ] ) };
 
-foreach my $len (0 .. $COUNT)
+foreach my $len ( 0 .. $COUNT )
 {
     my %found = ();
 
@@ -36,11 +38,12 @@ foreach my $len (0 .. $COUNT)
 
     foreach my $p (@perms)
     {
-        my @sub_p = @$p[0 .. $len-1];
+        my @sub_p = @$p[ 0 .. $len - 1 ];
 
-        if (! $found{join(',',@sub_p)}++ )
+        if ( !$found{ join( ',', @sub_p ) }++ )
         {
-            if (1 == grep { $sub_p[$_+1] < $sub_p[$_] } (0 .. $#sub_p-1))
+            if ( 1 == grep { $sub_p[ $_ + 1 ] < $sub_p[$_] }
+                ( 0 .. $#sub_p - 1 ) )
             {
                 $count++;
             }

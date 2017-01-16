@@ -3,8 +3,6 @@
 use strict;
 use warnings;
 
-
-
 sub calc_A
 {
     my ($n) = @_;
@@ -14,7 +12,7 @@ sub calc_A
 
     while ($mod)
     {
-        $mod = (($mod * 10 + 1) % $n);
+        $mod = ( ( $mod * 10 + 1 ) % $n );
         $len++;
     }
 
@@ -24,15 +22,15 @@ sub calc_A
 open my $primes_fh, "primes 7|";
 my $last_prime =
 
-my $count = 0;
+    my $count = 0;
 my $sum = 0;
 
-while ($count < 40)
+while ( $count < 40 )
 {
-    my $n = int(scalar(<$primes_fh>));
+    my $n = int( scalar(<$primes_fh>) );
     {
         my $A = calc_A($n);
-        if (1_000_000_000 % $A == 0)
+        if ( 1_000_000_000 % $A == 0 )
         {
             $count++;
             $sum += $n;

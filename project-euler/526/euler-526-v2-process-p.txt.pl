@@ -22,16 +22,17 @@ sub get_last
     return $n[-1];
 }
 
-my $max = ((-e $log_fn) ? get_last() : 0);
+my $max = ( ( -e $log_fn ) ? get_last() : 0 );
 
 open my $log_fh, '>>', $log_fn;
 $log_fh->autoflush(1);
-while (my $l = <ARGV>)
+while ( my $l = <ARGV> )
 {
-    my ($n) = ($l =~ /([0-9]+)/g);
-    my $sum = `seq "$n" "@{[$n+8]}" | factor | perl -lane '\$s += \$F[-1]; END { print \$s }'`;
+    my ($n) = ( $l =~ /([0-9]+)/g );
+    my $sum =
+`seq "$n" "@{[$n+8]}" | factor | perl -lane '\$s += \$F[-1]; END { print \$s }'`;
     chomp($sum);
-    if ($sum > $max)
+    if ( $sum > $max )
     {
         $max = $sum;
         my $str = "Found n = $n Max = $max\n";

@@ -17,15 +17,14 @@ sub new
     return $self;
 }
 
-
 sub _init
 {
-    my ($self, $set) = @_;
+    my ( $self, $set ) = @_;
 
     $self->{stack} =
-        [ {prefix => [], set => [@$set], elem => undef, prev => []} ];
+        [ { prefix => [], set => [@$set], elem => undef, prev => [] } ];
 
-    $self->{lim} = (@$set + 1);
+    $self->{lim} = ( @$set + 1 );
 
     return 0;
 }
@@ -40,26 +39,26 @@ sub next
     {
         my $s = $stack->[-1];
 
-        if (@$stack == $limit)
+        if ( @$stack == $limit )
         {
             pop(@$stack);
             return $s->{prefix};
         }
         else
         {
-            if (defined($s->{elem}))
+            if ( defined( $s->{elem} ) )
             {
-                push @{$s->{prev}}, $s->{elem};
+                push @{ $s->{prev} }, $s->{elem};
             }
 
-            if ($s->{elem} = shift(@{$s->{set}}))
+            if ( $s->{elem} = shift( @{ $s->{set} } ) )
             {
                 push @$stack,
                     {
-                        prefix => [@{$s->{prefix}}, $s->{elem}],
-                        set => [@{$s->{prev}}, @{$s->{set}}],
-                        elem => undef(),
-                        prev => [],
+                    prefix => [ @{ $s->{prefix} }, $s->{elem} ],
+                    set    => [ @{ $s->{prev} },   @{ $s->{set} } ],
+                    elem   => undef(),
+                    prev   => [],
                     };
             }
             else
@@ -74,11 +73,11 @@ sub next
 
 use Data::Dumper;
 
-my $set = [1, 22, 303, 4400, 51, 607, 789];
+my $set = [ 1, 22, 303, 4400, 51, 607, 789 ];
 
 my $self = Permutations::Iterator->new($set);
 
-while (defined(my $p = $self->next()))
+while ( defined( my $p = $self->next() ) )
 {
-    print join(",", @$p), "\n";
+    print join( ",", @$p ), "\n";
 }

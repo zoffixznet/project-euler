@@ -5,8 +5,6 @@ use warnings;
 
 use integer;
 
-
-
 sub calc_A
 {
     my ($n) = @_;
@@ -16,7 +14,7 @@ sub calc_A
 
     while ($mod)
     {
-        $mod = (($mod * 10 + 1) % $n);
+        $mod = ( ( $mod * 10 + 1 ) % $n );
         $len++;
     }
 
@@ -29,17 +27,17 @@ sub is_div
 
     my $A = calc_A($n);
 
-    while (($A & 0x1) == 0)
+    while ( ( $A & 0x1 ) == 0 )
     {
         $A >>= 1;
     }
 
-    while ($A % 5 == 0)
+    while ( $A % 5 == 0 )
     {
         $A /= 5;
     }
 
-    return ($A == 1);
+    return ( $A == 1 );
 }
 
 open my $primes_fh, "(echo 3 ; primes 7 100000)|";
@@ -47,11 +45,11 @@ open my $primes_fh, "(echo 3 ; primes 7 100000)|";
 # 2 and 5 are such primes and calc_A() will get stuck for them.
 my $sum = 2 + 5;
 
-while (my $line = <$primes_fh>)
+while ( my $line = <$primes_fh> )
 {
     my $n = int($line);
     print "Checking $n\n";
-    if (! is_div($n))
+    if ( !is_div($n) )
     {
         $sum += $n;
     }

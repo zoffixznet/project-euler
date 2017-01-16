@@ -9,22 +9,22 @@ use List::Util qw(sum);
 
 my $power_num_idx = 0;
 
-for (my $i = 10; ; $i++)
+for ( my $i = 10 ; ; $i++ )
 {
-    my $s = sum(split//,$i);
+    my $s = sum( split //, $i );
 
-    if ($s == 1)
+    if ( $s == 1 )
     {
         next;
     }
     my $pow = $s * $s;
 
-    while ($pow < $i)
+    while ( $pow < $i )
     {
         $pow *= $s;
     }
 
-    if ($pow == $i)
+    if ( $pow == $i )
     {
         $power_num_idx++;
         print "a[$power_num_idx] = $i\n";

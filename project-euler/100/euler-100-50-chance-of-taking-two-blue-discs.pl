@@ -38,23 +38,23 @@ sub find_blue_discs_num
 {
     my $num_discs = shift;
 
-    my $bottom = ($num_discs >> 1);
-    my $top = $num_discs;
+    my $bottom = ( $num_discs >> 1 );
+    my $top    = $num_discs;
 
-    my $divide_by = $num_discs * ($num_discs-1);
+    my $divide_by = $num_discs * ( $num_discs - 1 );
 
-    my $wanted_product = ($divide_by >> 1);
+    my $wanted_product = ( $divide_by >> 1 );
 
-    while ($top >= $bottom)
+    while ( $top >= $bottom )
     {
-        my $mid = (($bottom + $top) >> 1);
+        my $mid = ( ( $bottom + $top ) >> 1 );
 
-        my $product = $mid * ($mid-1);
-        if ($product == $wanted_product)
+        my $product = $mid * ( $mid - 1 );
+        if ( $product == $wanted_product )
         {
             return $mid;
         }
-        elsif ($product < $wanted_product)
+        elsif ( $product < $wanted_product )
         {
             $bottom = $mid + 1;
         }
@@ -66,7 +66,7 @@ sub find_blue_discs_num
     return;
 }
 
-print "P(BB)[22] = ", find_blue_discs_num(21), "\n";
+print "P(BB)[22] = ",  find_blue_discs_num(21),  "\n";
 print "P(BB)[120] = ", find_blue_discs_num(120), "\n";
 
 my $n = 1_000_000_000_000 + 1;
@@ -75,7 +75,7 @@ while (1)
 {
     print "N = $n\n";
     my $v = find_blue_discs_num($n);
-    if (defined($v))
+    if ( defined($v) )
     {
         print "P(BB)[$n] = $v\n";
         exit(0);

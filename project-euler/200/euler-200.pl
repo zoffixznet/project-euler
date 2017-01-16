@@ -16,8 +16,8 @@ STDOUT->autoflush(1);
 
 use File::Spec;
 use File::Basename (qw( basename dirname ));
-use File::Temp (qw/ tempfile tempdir /);
-use File::Path (qw/ rmtree mkpath /);
+use File::Temp     (qw/ tempfile tempdir /);
+use File::Path     (qw/ rmtree mkpath /);
 
 use IO::All qw / io /;
 
@@ -40,7 +40,7 @@ sub new
 
 sub _init
 {
-    my ($self, $args) = @_;
+    my ( $self, $args ) = @_;
 
     $self->{'q'} = $args->{'q'};
 
@@ -55,14 +55,14 @@ sub val
 {
     my ($self) = @_;
 
-    return $self->{'q'} ** 3 * $primes[$self->{'i'}] ** 2;
+    return $self->{'q'}**3 * $primes[ $self->{'i'} ]**2;
 }
 
 sub advance
 {
     my ($self) = @_;
 
-    if ($primes[++$self->{'i'}] == $self->{'q'})
+    if ( $primes[ ++$self->{'i'} ] == $self->{'q'} )
     {
         ++$self->{'i'};
     }
@@ -77,13 +77,13 @@ sub sqube_stream
     my @streams;
 
     my $new_stream = sub {
-        push @streams, Stream->new({q => $primes[scalar @streams]});
+        push @streams, Stream->new( { q => $primes[ scalar @streams ] } );
     };
     $new_stream->();
 
     return sub {
         my $idx = min_by { $streams[$_]->val } keys @streams;
-        if ($idx == $#streams)
+        if ( $idx == $#streams )
         {
             $new_stream->();
         }

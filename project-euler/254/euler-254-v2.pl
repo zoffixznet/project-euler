@@ -14,7 +14,7 @@ use List::MoreUtils qw();
 STDOUT->autoflush(1);
 
 my @factorials = (1);
-for my $n (1 .. 9)
+for my $n ( 1 .. 9 )
 {
     push @factorials, $factorials[-1] * $n;
 }
@@ -24,27 +24,27 @@ my @g;
 my $count = 0;
 
 my $num_digits = 1;
-my $SEEK = 150;
-while ($count < $SEEK)
+my $SEEK       = 150;
+while ( $count < $SEEK )
 {
     my $recurse;
 
     $recurse = sub {
         my $n = shift;
 
-        if (length($n) == $num_digits)
+        if ( length($n) == $num_digits )
         {
-            my $sf = sum(split//,sum(@factorials[split//,$n]));
+            my $sf = sum( split //, sum( @factorials[ split //, $n ] ) );
 
-            if ($sf <= $SEEK)
+            if ( $sf <= $SEEK )
             {
-                if (!defined($g[$sf]))
+                if ( !defined( $g[$sf] ) )
                 {
                     $count++;
                     $g[$sf] = $n;
-                    $sum += sum(split//,$n);
+                    $sum += sum( split //, $n );
                     print "Found g($sf) == $n [Count=$count]\n";
-                    if ($count == $SEEK)
+                    if ( $count == $SEEK )
                     {
                         return 1;
                     }
@@ -55,10 +55,10 @@ while ($count < $SEEK)
         }
         else
         {
-            my $s = substr($n,-1);
-            for my $d (($s <= 1) ? (0 , 2..9) : ($s .. 9))
+            my $s = substr( $n, -1 );
+            for my $d ( ( $s <= 1 ) ? ( 0, 2 .. 9 ) : ( $s .. 9 ) )
             {
-                if ($recurse->($n.$d))
+                if ( $recurse->( $n . $d ) )
                 {
                     return 1;
                 }
@@ -67,10 +67,10 @@ while ($count < $SEEK)
         }
     };
 
-    D_LOOP:
-    for my $d (1 .. 9)
+D_LOOP:
+    for my $d ( 1 .. 9 )
     {
-        if ($recurse->($d))
+        if ( $recurse->($d) )
         {
             last D_LOOP;
         }

@@ -9,8 +9,7 @@ use bytes;
 use List::MoreUtils qw(any firstidx);
 use List::Util qw(first max min);
 
-my @shapes_strings =
-(
+my @shapes_strings = (
     <<'EOF',
  ***
 *XXX*
@@ -52,27 +51,34 @@ EOF
 sub shape_string_to_vector
 {
     my ($s) = @_;
-    my @mat = map { [split//] } split(/\n/, $s);
+    my @mat = map { [ split // ] } split( /\n/, $s );
 
-    my $max_x = max (map { scalar @$_ } @mat) - 1;
-    my $leftmost_topmost_x = first { my $x = $_; any { $_->[$x] eq 'X' } @mat }  (0 .. $max_x);
+    my $max_x = max( map { scalar @$_ } @mat ) - 1;
+    my $leftmost_topmost_x = first
+    {
+        my $x = $_;
+        any { $_->[$x] eq 'X' } @mat
+    }
+    ( 0 .. $max_x );
     my $leftmost_topmost_y = firstidx { $_->[$leftmost_topmost_x] eq 'X' } @mat;
 
-    my @cells_offsets = ([0,0]);
+    my @cells_offsets = ( [ 0, 0 ] );
     my @neighbours_offsets;
 
-    while (my ($y,$line) = each(@mat))
+    while ( my ( $y, $line ) = each(@mat) )
     {
-        while (my ($x, $cell) = each (@$line))
+        while ( my ( $x, $cell ) = each(@$line) )
         {
-            if (not ($x == $leftmost_topmost_x and $y == $leftmost_topmost_y))
+            if (
+                not( $x == $leftmost_topmost_x and $y == $leftmost_topmost_y ) )
             {
-                my @offsets = ($x-$leftmost_topmost_x, $y-$leftmost_topmost_y);
-                if ($cell eq 'X')
+                my @offsets =
+                    ( $x - $leftmost_topmost_x, $y - $leftmost_topmost_y );
+                if ( $cell eq 'X' )
                 {
                     push @cells_offsets, \@offsets;
                 }
-                elsif ($cell eq '*')
+                elsif ( $cell eq '*' )
                 {
                     push @neighbours_offsets, \@offsets;
                 }
@@ -80,9 +86,8 @@ sub shape_string_to_vector
         }
     }
 
-    return
-    {
-        cells => \@cells_offsets,
+    return {
+        cells      => \@cells_offsets,
         neighbours => \@neighbours_offsets,
     };
 }
@@ -97,55 +102,55 @@ sub get_shapes
 # Some routines to manipulate location vectors:
 #
 
-my ($X_DIM, $Y_DIM);
+my ( $X_DIM, $Y_DIM );
 
 sub set_XY_DIM
 {
-    ($X_DIM, $Y_DIM) = @_;
+    ( $X_DIM, $Y_DIM ) = @_;
 }
 
 sub vec_set
 {
-    my ($buf, $x, $y) = @_;
+    my ( $buf, $x, $y ) = @_;
 
-    if ($x < 0)
+    if ( $x < 0 )
     {
         die "X $x is lower than 0.";
     }
-    if ($x >= $X_DIM)
+    if ( $x >= $X_DIM )
     {
         die "X $x is Bigger than $X_DIM";
     }
-    if ($y < 0)
+    if ( $y < 0 )
     {
         die "Y $y is lower than 0.";
     }
-    if ($y >= $Y_DIM)
+    if ( $y >= $Y_DIM )
     {
         die "Y $y is Bigger than $Y_DIM";
     }
 
-    vec($$buf, $y*$X_DIM+$x, 1) = 1;
+    vec( $$buf, $y * $X_DIM + $x, 1 ) = 1;
 
     return;
 }
 
 sub not_in_dims
 {
-    my ($x, $y) = @_;
-    return (($x < 0) || ($x >= $X_DIM) || ($y < 0) || ($y >= $Y_DIM));
+    my ( $x, $y ) = @_;
+    return ( ( $x < 0 ) || ( $x >= $X_DIM ) || ( $y < 0 ) || ( $y >= $Y_DIM ) );
 }
 
 sub vec_get
 {
-    my ($buf, $x, $y) = @_;
+    my ( $buf, $x, $y ) = @_;
 
     # This is done for convenience to query external cells.
-    if (not_in_dims($x,$y))
+    if ( not_in_dims( $x, $y ) )
     {
         return 0;
     }
-    return vec($$buf, $y*$X_DIM+$x, 1);
+    return vec( $$buf, $y * $X_DIM + $x, 1 );
 }
 
 sub get_initial_vec
@@ -157,13 +162,13 @@ sub find_pos
 {
     my ($buf) = @_;
 
-    for my $x (0 .. $X_DIM-1)
+    for my $x ( 0 .. $X_DIM - 1 )
     {
-        for my $y (0 .. $Y_DIM-1)
+        for my $y ( 0 .. $Y_DIM - 1 )
         {
-            if (! vec_get($buf, $x, $y))
+            if ( !vec_get( $buf, $x, $y ) )
             {
-                return [$x,$y];
+                return [ $x, $y ];
             }
         }
     }
@@ -171,20 +176,20 @@ sub find_pos
     die "No empty spot.";
 }
 
-my @bufs = (+{get_initial_vec() => 1});
+my @bufs = ( +{ get_initial_vec() => 1 } );
 
 sub try_to_fit_shape_at_pos
 {
-    my ($depth, $old_buf, $count, $pos, $shape) = @_;
+    my ( $depth, $old_buf, $count, $pos, $shape ) = @_;
 
     my $buf = $$old_buf;
 
     my @coords;
-    foreach my $new_offset (@{$shape->{'cells'}})
+    foreach my $new_offset ( @{ $shape->{'cells'} } )
     {
-        my @new_pos = ($pos->[0] + $new_offset->[0], $pos->[1] + $new_offset->[1]);
-        if (not_in_dims(@new_pos) or vec_get($old_buf, @new_pos)
-        )
+        my @new_pos =
+            ( $pos->[0] + $new_offset->[0], $pos->[1] + $new_offset->[1] );
+        if ( not_in_dims(@new_pos) or vec_get( $old_buf, @new_pos ) )
         {
             # Cannot fit shape.
             return;
@@ -195,7 +200,7 @@ sub try_to_fit_shape_at_pos
 
     foreach my $cell_pos (@coords)
     {
-        vec_set(\$buf, @$cell_pos);
+        vec_set( \$buf, @$cell_pos );
     }
 
 =begin removed.
@@ -240,7 +245,7 @@ sub try_to_fit_shape_at_pos
 =cut
 
     # Finally add it to the next depth.
-    $bufs[$depth+1]{$buf} += $count;
+    $bufs[ $depth + 1 ]{$buf} += $count;
 
     return;
 }
@@ -249,11 +254,11 @@ sub _print_buf
 {
     my ($buf) = @_;
 
-    for my $y (0 .. $Y_DIM-1)
+    for my $y ( 0 .. $Y_DIM - 1 )
     {
-        for my $x (0 .. $X_DIM-1)
+        for my $x ( 0 .. $X_DIM - 1 )
         {
-            print vec_get($buf, $x, $y) ? "#" : " ";
+            print vec_get( $buf, $x, $y ) ? "#" : " ";
         }
         print "\n";
     }
@@ -262,31 +267,31 @@ sub _print_buf
 
 sub handle_buf_at_depth
 {
-    my ($depth, $buf, $count) = @_;
+    my ( $depth, $buf, $count ) = @_;
 
     # _print_buf(\$buf);
 
-    my $pos = find_pos(\$buf);
+    my $pos = find_pos( \$buf );
 
     foreach my $shape (@shapes)
     {
-        try_to_fit_shape_at_pos($depth, \$buf, $count, $pos, $shape);
+        try_to_fit_shape_at_pos( $depth, \$buf, $count, $pos, $shape );
     }
 
-    return
+    return;
 }
 
 sub handle_depth
 {
     my ($depth) = @_;
 
-    while (my ($buf, $count) = each(%{$bufs[$depth]}))
+    while ( my ( $buf, $count ) = each( %{ $bufs[$depth] } ) )
     {
-        handle_buf_at_depth($depth, $buf, $count);
+        handle_buf_at_depth( $depth, $buf, $count );
     }
 
     # Clear up space to save on memory.
-    if (!$ENV{DEBUG})
+    if ( !$ENV{DEBUG} )
     {
         $bufs[$depth] = 'REMOVED';
     }
@@ -296,19 +301,19 @@ sub handle_depth
 
 sub handle_all_depths
 {
-    my $MAX_DEPTH = $X_DIM*$Y_DIM/3;
-    foreach my $depth (0 .. $MAX_DEPTH-1)
+    my $MAX_DEPTH = $X_DIM * $Y_DIM / 3;
+    foreach my $depth ( 0 .. $MAX_DEPTH - 1 )
     {
         print "Handling depth $depth\n";
         handle_depth($depth);
     }
 
-    if (keys(%{ $bufs[$MAX_DEPTH] }) != 1)
+    if ( keys( %{ $bufs[$MAX_DEPTH] } ) != 1 )
     {
         die "Found more than one solution.";
     }
 
-    my ($k) = keys(%{ $bufs[$MAX_DEPTH] });
+    my ($k) = keys( %{ $bufs[$MAX_DEPTH] } );
     print "Final Count is ", $bufs[$MAX_DEPTH]{$k}, "\n";
 
     return;

@@ -18,4 +18,4 @@ foreach my $f (@factors)
 
 my $rank = reduce { $a * $b } 1, map { $_ * 2 + 1 } values(%counts);
 
-print "N = $n\nRank = ", (($rank+1)/2), "\n";
+print "N = $n\nRank = ", ( ( $rank + 1 ) / 2 ), "\n";

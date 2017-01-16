@@ -23,14 +23,14 @@ sub calc_A
 
     while ($mod)
     {
-        $mod = (($mod * 10 + 1) % $n);
+        $mod = ( ( $mod * 10 + 1 ) % $n );
         $len++;
     }
 
     return $len;
 }
 
-print "A(7) = ", calc_A(7), "\n";
+print "A(7) = ",  calc_A(7),  "\n";
 print "A(41) = ", calc_A(41), "\n";
 
 my $n = 1_000_001;
@@ -38,13 +38,13 @@ my $n = 1_000_001;
 N_loop:
 while (1)
 {
-    if ($n % 5 == 0)
+    if ( $n % 5 == 0 )
     {
         next N_loop;
     }
     my $A = calc_A($n);
     print "N = $n ; A($n) = $A\n";
-    if ($A > 1_000_000)
+    if ( $A > 1_000_000 )
     {
         print "Found n - $n\n";
         exit(0);

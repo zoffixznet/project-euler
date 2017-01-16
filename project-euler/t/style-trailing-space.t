@@ -6,7 +6,7 @@ use warnings;
 use Test::TrailingSpace ();
 use Test::More tests => 1;
 
-foreach my $path ( '..' )
+foreach my $path ('..')
 {
     my $finder = Test::TrailingSpace->new(
         {

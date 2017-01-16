@@ -15,49 +15,50 @@ use List::MoreUtils qw();
 
 sub make_pair
 {
-    my ($A, $L) = @_;
+    my ( $A, $L ) = @_;
 
     return "$A,$L";
 }
 
 sub parse_pair
 {
-    return split/,/,shift;
+    return split /,/, shift;
 }
 
 my @counts;
-$counts[0] = { make_pair(0,0) => 1 };
+$counts[0] = { make_pair( 0, 0 ) => 1 };
 
 sub step
 {
     my ($n) = @_;
 
-    my $next = ($counts[$n] //= +{});
+    my $next = ( $counts[$n] //= +{} );
 
-    while (my ($pair, $count) = each(%{$counts[$n-1]}))
+    while ( my ( $pair, $count ) = each( %{ $counts[ $n - 1 ] } ) )
     {
-        my $add = sub
-        {
-            my ($A, $L) = @_;
+        my $add = sub {
+            my ( $A, $L ) = @_;
 
-            $next->{make_pair($A,$L)} += $count;
+            $next->{ make_pair( $A, $L ) } += $count;
 
             return;
         };
 
-        my ($num_A, $num_L) = parse_pair($pair);
+        my ( $num_A, $num_L ) = parse_pair($pair);
 
         # Handle O - On-time.
-        $add->(0, $num_L);
+        $add->( 0, $num_L );
+
         # Handle A - Absent.
-        if ($num_A < 3-1)
+        if ( $num_A < 3 - 1 )
         {
-            $add->($num_A+1,$num_L);
+            $add->( $num_A + 1, $num_L );
         }
+
         # Handle L - Late.
-        if ($num_L < 1)
+        if ( $num_L < 1 )
         {
-            $add->(0, $num_L+1);
+            $add->( 0, $num_L + 1 );
         }
     }
     return;
@@ -67,11 +68,11 @@ sub calc_count
 {
     my ($n) = @_;
 
-    return sum(values(%{$counts[$n]}));
+    return sum( values( %{ $counts[$n] } ) );
 }
 
 my $pivot = 4;
-for my $n (1 .. $pivot)
+for my $n ( 1 .. $pivot )
 {
     step($n);
 }
@@ -79,7 +80,7 @@ for my $n (1 .. $pivot)
 say "Count[$pivot] = ", calc_count($pivot);
 
 my $desired = 30;
-for my $n (($pivot+1) .. $desired)
+for my $n ( ( $pivot + 1 ) .. $desired )
 {
     step($n);
 }

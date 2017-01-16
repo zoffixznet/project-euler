@@ -15,22 +15,23 @@ package Exponents;
 open my $primes_fh, "primes 3|"
     or die "Cannot open primes";
 
-my @prime_exponents = ({e => 2, b => 2});
-
+my @prime_exponents = ( { e => 2, b => 2 } );
 
 sub peek_exp
 {
     my $i = shift;
 
-    my $p_exp = ($prime_exponents[$i] ||=
-        do {
+    my $p_exp = (
+        $prime_exponents[$i] ||=
+            do
+        {
             my $p = <$primes_fh>;
             chomp($p);
-            { e => $p, b => 2,};
-        }
+            { e => $p, b => 2, };
+            }
     );
 
-    return $p_exp->{b} ** $p_exp->{e};
+    return $p_exp->{b}**$p_exp->{e};
 }
 
 sub get_exp
@@ -39,7 +40,7 @@ sub get_exp
 
     my $p_exp = $prime_exponents[$i];
 
-    my $ret = $p_exp->{b} ** $p_exp->{e};
+    my $ret = $p_exp->{b}**$p_exp->{e};
 
     $p_exp->{b}++;
 
@@ -54,7 +55,8 @@ use List::Util qw(reduce);
 
 use vars qw($a $b);
 
-sub new {
+sub new
+{
     my $class = shift;
 
     my $self = bless {}, $class;
@@ -64,37 +66,39 @@ sub new {
 
     my $p_exp =
 
-    $self->{e} = $e_idx;
+        $self->{e} = $e_idx;
     $self->{n} = Exponents::get_exp($e_idx);
 
     return $self;
 }
 
-sub cmp {
-    my $self = shift;
+sub cmp
+{
+    my $self  = shift;
     my $other = shift;
 
-    return (
-            (($self->{n} <=> $other->{n}))
-                ||
-            (($self->{e} <=> $other->{e}))
-    );
+    return (   ( ( $self->{n} <=> $other->{n} ) )
+            || ( ( $self->{e} <=> $other->{e} ) ) );
 }
 
-sub val {
+sub val
+{
     my $self = shift;
 
-    if (@_) {
+    if (@_)
+    {
         $self->{val} = shift;
     }
 
     return $self->{val};
 }
 
-sub heap {
+sub heap
+{
     my $self = shift;
 
-    if (@_) {
+    if (@_)
+    {
         $self->{heap} = shift;
     }
 
@@ -105,9 +109,9 @@ package main;
 
 my $heap = Heap::Fibonacci->new;
 
-$heap->add(MyHeapElem->new(0));
+$heap->add( MyHeapElem->new(0) );
 
-my $power_num_idx = 0;
+my $power_num_idx  = 0;
 my $last_power_num = 0;
 
 I_LOOP:
@@ -121,29 +125,29 @@ while (1)
 
     my $next_exp_i = Exponents::peek_exp($e_idx);
 
-    while (Exponents::peek_exp($e_idx) <= $next_exp_i)
+    while ( Exponents::peek_exp($e_idx) <= $next_exp_i )
     {
-        $heap->add(MyHeapElem->new($e_idx++));
+        $heap->add( MyHeapElem->new( $e_idx++ ) );
     }
 
-    if (length($i) == 1)
+    if ( length($i) == 1 )
     {
         next I_LOOP;
     }
-    my $s = sum(split//,$i);
+    my $s = sum( split //, $i );
 
-    if ($s == 1)
+    if ( $s == 1 )
     {
         next I_LOOP;
     }
     my $pow = $s * $s;
 
-    while ($pow < $i)
+    while ( $pow < $i )
     {
         $pow *= $s;
     }
 
-    if ($pow == $i and $pow != $last_power_num)
+    if ( $pow == $i and $pow != $last_power_num )
     {
         $power_num_idx++;
         print "a[$power_num_idx] = $i\n";

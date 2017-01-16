@@ -9,21 +9,21 @@ my $limit = 2_000_000;
 
 my $primes_bitmask = "";
 
-my $loop_to = int(sqrt($limit));
-my $sum = 0;
+my $loop_to   = int( sqrt($limit) );
+my $sum       = 0;
 my $total_sum = Math::BigInt->new('0');
 
-for my $p (2 .. $loop_to)
+for my $p ( 2 .. $loop_to )
 {
-    if (vec($primes_bitmask, $p, 1) == 0)
+    if ( vec( $primes_bitmask, $p, 1 ) == 0 )
     {
         $sum += $p;
 
         my $i = $p * $p;
 
-        while ($i < $limit)
+        while ( $i < $limit )
         {
-            vec($primes_bitmask, $i, 1) = 1;
+            vec( $primes_bitmask, $i, 1 ) = 1;
         }
         continue
         {
@@ -33,11 +33,11 @@ for my $p (2 .. $loop_to)
     }
 }
 
-for my $p ($loop_to .. $limit)
+for my $p ( $loop_to .. $limit )
 {
-    if (vec($primes_bitmask, $p, 1) == 0)
+    if ( vec( $primes_bitmask, $p, 1 ) == 0 )
     {
-        if (($sum += $p) > (1 << 30))
+        if ( ( $sum += $p ) > ( 1 << 30 ) )
         {
             $total_sum += $sum;
             $sum = 0;

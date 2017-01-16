@@ -53,16 +53,13 @@ http://www.research.att.com/~njas/sequences/?q=1%2C17%2C241%2C3361%2C46817%2C652
 
 my $sum = 0;
 for my $n1 (
-split(/,\s*/, q{17, 241, 3361, 46817, 652081, 9082321, 126500417})
-)
+    split( /,\s*/, q{17, 241, 3361, 46817, 652081, 9082321, 126500417} ) )
 {
     print "$sum\n";
-    $sum += Math::BigInt->new($n1) * 3 -1;
+    $sum += Math::BigInt->new($n1) * 3 - 1;
 }
 
-for my $n2 (
-    split(/,\s*/, q{5, 65, 901, 12545, 174725, 2433601, 33895685})
-)
+for my $n2 ( split( /,\s*/, q{5, 65, 901, 12545, 174725, 2433601, 33895685} ) )
 {
     print "$sum\n";
     $sum += Math::BigInt->new($n2) * 3 + 1;

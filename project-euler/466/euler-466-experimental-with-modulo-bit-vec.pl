@@ -17,14 +17,14 @@ STDOUT->autoflush(1);
 
 sub gcd
 {
-    my ($n, $m) = @_;
+    my ( $n, $m ) = @_;
 
     return Math::GMP->new($n)->bgcd($m);
 }
 
 sub lcm
 {
-    my ($n, $m) = @_;
+    my ( $n, $m ) = @_;
 
     return Math::GMP->new($n)->blcm($m);
 }
@@ -37,7 +37,7 @@ sub multi_lcm
 
     foreach my $n (@$n_s)
     {
-        $lcm = lcm($lcm, $n);
+        $lcm = lcm( $lcm, $n );
     }
 
     return $lcm;
@@ -47,16 +47,16 @@ sub multi_lcm
 
 sub sgcd
 {
-    my ($n, $m) = @_;
+    my ( $n, $m ) = @_;
 
-    if ($m > $n)
+    if ( $m > $n )
     {
-        ($n, $m) = ($m, $n);
+        ( $n, $m ) = ( $m, $n );
     }
 
-    while ($m > 0)
+    while ( $m > 0 )
     {
-        ($n, $m) = ($m, $n%$m);
+        ( $n, $m ) = ( $m, $n % $m );
     }
 
     return $n;
@@ -64,9 +64,9 @@ sub sgcd
 
 sub slcm
 {
-    my ($n, $m) = @_;
+    my ( $n, $m ) = @_;
 
-    return ($n * $m / sgcd($n,$m));
+    return ( $n * $m / sgcd( $n, $m ) );
 }
 
 =begin pure_perl
@@ -131,7 +131,8 @@ sub count_mods_up_to_LIM
 
 my $DEBUG = 1;
 
-use Inline (C => <<'EOF',
+use Inline (
+    C => <<'EOF',
 
 #include <gmp.h>
 
@@ -374,8 +375,8 @@ AV * count_mods_up_to_LIM(AV * r_proto, IV step, AV * l_proto)
 }
 EOF
     CLEAN_AFTER_BUILD => 0,
-    CCFLAGS => ($Config{ccflags} . ' -std=gnu99 -march=native -flto -O3'),
-    LIBS => ' -lgmp',
+    CCFLAGS => ( $Config{ccflags} . ' -std=gnu99 -march=native -flto -O3' ),
+    LIBS    => ' -lgmp',
 );
 
 =begin hello
@@ -426,7 +427,7 @@ sub calc_counts
 
 sub calc_P
 {
-    my ($MIN, $MAJ) = @_;
+    my ( $MIN, $MAJ ) = @_;
 
     my $total_count = 0;
 
@@ -437,45 +438,50 @@ sub calc_P
 
     if ($DEBUG)
     {
-        %found = (map { $_ => 1 } (1 .. $MAJ));
+        %found = ( map { $_ => 1 } ( 1 .. $MAJ ) );
     }
 
     my @found_in_next;
 
-    foreach my $row_idx (2 .. $MIN)
+    foreach my $row_idx ( 2 .. $MIN )
     {
         # print "row_idx == $row_idx\n";
-        my $max = $row_idx * $MAJ;
+        my $max   = $row_idx * $MAJ;
         my $count = $MAJ;
 
-        foreach my $prev_row (1 .. $row_idx-1)
+        foreach my $prev_row ( 1 .. $row_idx - 1 )
         {
             my $prev_max = $prev_row * $MAJ;
 
             my $delta;
-            if ($prev_row == 1)
+            if ( $prev_row == 1 )
             {
-                $delta = int($prev_max / $row_idx);
+                $delta = int( $prev_max / $row_idx );
             }
             else
             {
-                $delta = ($found_in_next[$row_idx][$prev_row] // 0);
+                $delta = ( $found_in_next[$row_idx][$prev_row] // 0 );
             }
 
             if ($DEBUG)
             {
-                my @expected_delta =
-                (grep { ($found{$_} // (-1)) == $prev_row } map { $_ * $row_idx } 1 .. $MAJ);
+                my @expected_delta = (
+                    grep { ( $found{$_} // (-1) ) == $prev_row }
+                    map { $_ * $row_idx } 1 .. $MAJ
+                );
 
-                if ($delta != @expected_delta)
+                if ( $delta != @expected_delta )
                 {
-                    die "Row == $row_idx ; Prev_Row == $prev_row. There are $delta whereas there should be " . @expected_delta . " [@expected_delta]!\n";
+                    die
+"Row == $row_idx ; Prev_Row == $prev_row. There are $delta whereas there should be "
+                        . @expected_delta
+                        . " [@expected_delta]!\n";
                 }
             }
 
             $count -= $delta;
 
-            if ($count < 0)
+            if ( $count < 0 )
             {
                 die "Count is less than 0! (\$count=$count)\n";
             }
@@ -483,24 +489,28 @@ sub calc_P
 
         if ($DEBUG)
         {
-            my @new = (grep { !exists($found{$_}) } map { $row_idx * $_ } 1 .. $MAJ);
+            my @new = (
+                grep { !exists( $found{$_} ) }
+                map  { $row_idx * $_ } 1 .. $MAJ
+            );
 
-            if (@new != $count)
+            if ( @new != $count )
             {
-                die "Row == $row_idx. There are $count whereas there should be " . @new . "!\n";
+                die "Row == $row_idx. There are $count whereas there should be "
+                    . @new . "!\n";
             }
 
-            %found = (%found, map { $_ => $row_idx } @new);
+            %found = ( %found, map { $_ => $row_idx } @new );
         }
 
-        my $start_i = (($MAJ / $row_idx) + 1);
+        my $start_i = ( ( $MAJ / $row_idx ) + 1 );
         my $start_i_prod = $start_i * $row_idx;
 
-        foreach my $next_row ($row_idx+1 .. $MIN)
+        foreach my $next_row ( $row_idx + 1 .. $MIN )
         {
-            my $step = slcm($row_idx, $next_row);
-            my $start_prod = ($start_i_prod / $step) * $step;
-            if ($start_i_prod % $step)
+            my $step = slcm( $row_idx, $next_row );
+            my $start_prod = ( $start_i_prod / $step ) * $step;
+            if ( $start_i_prod % $step )
             {
                 $start_prod += $step;
             }
@@ -509,43 +519,48 @@ sub calc_P
             my @lcms;
             $lcms[$row_idx] = $step;
 
-            for my $maj_factor (reverse(2 .. $row_idx-1))
+            for my $maj_factor ( reverse( 2 .. $row_idx - 1 ) )
             {
-                $lcms[$maj_factor] = lcm(
-                    $lcms[$maj_factor+1],
-                    $maj_factor
-                );
+                $lcms[$maj_factor] =
+                    lcm( $lcms[ $maj_factor + 1 ], $maj_factor );
             }
+
             # print "LCMs[2] == ", $lcms[2], "\n";
 
             my $prev_maj_checkpoint = 0;
-            MAJ_FACTOR:
-            for my $maj_factor (2 .. $row_idx)
+        MAJ_FACTOR:
+            for my $maj_factor ( 2 .. $row_idx )
             {
-                print "Row == $row_idx ; Next_row == $next_row ; Maj_factor == $maj_factor\n";
+                print
+"Row == $row_idx ; Next_row == $next_row ; Maj_factor == $maj_factor\n";
+
                 # my $maj_checkpoint = min($MAJ * $maj_factor, $end_prod);
                 my $maj_checkpoint = $MAJ * $maj_factor;
 
-                if ($prev_maj_checkpoint > 0)
+                if ( $prev_maj_checkpoint > 0 )
                 {
-                    while ($prod <= $prev_maj_checkpoint)
+                    while ( $prod <= $prev_maj_checkpoint )
                     {
                         $prod += $step;
                     }
                 }
                 $prev_maj_checkpoint = $maj_checkpoint;
 
-                if ($prod > $maj_checkpoint)
+                if ( $prod > $maj_checkpoint )
                 {
-                    print ("Skipped prod=$prod ; maj_checkpoint=$maj_checkpoint\n");
+                    print(
+                        "Skipped prod=$prod ; maj_checkpoint=$maj_checkpoint\n"
+                    );
                     next MAJ_FACTOR;
                 }
 
-                my @prev_rows = ($maj_factor .. $row_idx-1);
+                my @prev_rows = ( $maj_factor .. $row_idx - 1 );
 
-                if (any { $step % $_ == 0 } @prev_rows)
+                if ( any { $step % $_ == 0 } @prev_rows )
                 {
-                    printf ("Skipped due to step evenly divisible for step=%d ; prev_rows=[%s]\n", $step, join(",",@prev_rows));
+                    printf(
+"Skipped due to step evenly divisible for step=%d ; prev_rows=[%s]\n",
+                        $step, join( ",", @prev_rows ) );
                 }
                 else
                 {
@@ -553,7 +568,7 @@ sub calc_P
 
                     foreach my $row (@prev_rows)
                     {
-                        if (none { $row % $_ == 0 } @aft_rows)
+                        if ( none { $row % $_ == 0 } @aft_rows )
                         {
                             push @aft_rows, $row;
                         }
@@ -561,41 +576,49 @@ sub calc_P
 
                     my $prev_rows_and_step_lcm = $lcms[$maj_factor];
 
-
                     my $prev_rows_div_step = $prev_rows_and_step_lcm / $step;
 
-
-                    my $maj_end_prod_div = $maj_checkpoint / $step;
+                    my $maj_end_prod_div   = $maj_checkpoint / $step;
                     my $maj_start_prod_div = $prod / $step;
 
-                    my $maj_end_prod_bound_lcm = ($maj_end_prod_div / $prev_rows_div_step) * $prev_rows_div_step;
-                    my $maj_start_prod_bound_lcm = ($maj_start_prod_div / $prev_rows_div_step) * $prev_rows_div_step;
+                    my $maj_end_prod_bound_lcm =
+                        ( $maj_end_prod_div / $prev_rows_div_step ) *
+                        $prev_rows_div_step;
+                    my $maj_start_prod_bound_lcm =
+                        ( $maj_start_prod_div / $prev_rows_div_step ) *
+                        $prev_rows_div_step;
 
                     if (0)
                     {
-                        my @_mods_checkpoints_base =
-                        (
+                        my @_mods_checkpoints_base = (
                             0,
                             $prev_rows_div_step - 1,
                             $maj_end_prod_div - $maj_end_prod_bound_lcm,
-                            (($prev_rows_div_step + $maj_start_prod_div - $maj_start_prod_bound_lcm)),
+                            (
+                                (
+                                    $prev_rows_div_step +
+                                        $maj_start_prod_div -
+                                        $maj_start_prod_bound_lcm
+                                )
+                            ),
                             $maj_start_prod_div % $prev_rows_div_step,
                             $maj_end_prod_div % $prev_rows_div_step
                         );
                         my %c;
                         my $c = 0;
-                        my @Q = uniq(sort { $a <=> $b } map { $_, $_+1 } @_mods_checkpoints_base);
-                        my @p = map { [(''.lcm($_,$step))+0,0] } @aft_rows;
-
-                        print "Calculating for prev_rows_div_step=$prev_rows_div_step with repetition of lcm=" . multi_lcm([@aft_rows]) . " aft_rows=[@aft_rows]\n";
-                        calc_counts(
-                            \$c,
-                            \@Q,
-                            $step,
-                            $prev_rows_div_step,
-                            \%c,
-                            \@p,
+                        my @Q = uniq(
+                            sort { $a <=> $b }
+                            map { $_, $_ + 1 } @_mods_checkpoints_base
                         );
+                        my @p = map { [ ( '' . lcm( $_, $step ) ) + 0, 0 ] }
+                            @aft_rows;
+
+                        print
+"Calculating for prev_rows_div_step=$prev_rows_div_step with repetition of lcm="
+                            . multi_lcm( [@aft_rows] )
+                            . " aft_rows=[@aft_rows]\n";
+                        calc_counts( \$c, \@Q, $step,
+                            $prev_rows_div_step, \%c, \@p, );
                     }
 
                     # my $LIM = $prev_rows_and_step_lcm;
@@ -608,45 +631,49 @@ sub calc_P
 
                     {
                         # Put the largest ones first.
-                        my @_r = reverse@aft_rows;
+                        my @_r = reverse @aft_rows;
 
-                        $_count_mods_up_to_LIM  = sub {
-                            return count_mods_up_to_LIM(\@_r, $step, shift);
+                        $_count_mods_up_to_LIM = sub {
+                            return count_mods_up_to_LIM( \@_r, $step, shift );
                         };
                     }
 
-
                     # If $c is 0 then $_calc_num_mods will always return 0 so
                     # the delta will be 0.
-                    if (0) # if (! $c)
+                    if (0)    # if (! $c)
                     {
                         my $c = 0;
-                        printf ("Skipped for count=%d ; prev_rows_div_step=%d ; step=%d ; aft_rows=[%s]\n", $c, $prev_rows_div_step, $step, join(",",@aft_rows));
+                        printf(
+"Skipped for count=%d ; prev_rows_div_step=%d ; step=%d ; aft_rows=[%s]\n",
+                            $c, $prev_rows_div_step,
+                            $step, join( ",", @aft_rows )
+                        );
                     }
                     else
                     {
-                        # checkpoints
-                        # my %out_hash = (map { $_cp[$_] => $out_arr->[$_] } keys(@$out_arr));
-                        # $out_hash{-1} = 0;
-                        #
+          # checkpoints
+          # my %out_hash = (map { $_cp[$_] => $out_arr->[$_] } keys(@$out_arr));
+          # $out_hash{-1} = 0;
+          #
                         my %out_hash;
 
                         my $_calc_num_mods = sub {
-                            my ($s, $e) = @_;
+                            my ( $s, $e ) = @_;
 
-                            # my $ret = $c{$e+1}-$c{$s};
-                            # my $ret = $_count_mods_up_to_LIM->($e)-$_count_mods_up_to_LIM->($s-1);
-                            # my $ret = $_count_mods_up_to_LIM->($e)-(($s == 0) ? (-1) : $_count_mods_up_to_LIM->($s));
+# my $ret = $c{$e+1}-$c{$s};
+# my $ret = $_count_mods_up_to_LIM->($e)-$_count_mods_up_to_LIM->($s-1);
+# my $ret = $_count_mods_up_to_LIM->($e)-(($s == 0) ? (-1) : $_count_mods_up_to_LIM->($s));
 
-                            # my $ret = $_count_mods_up_to_LIM->($e)-(($s==0) ? 0 : $_count_mods_up_to_LIM->($s-1));
-                            my $ret = $out_hash{$e}-$out_hash{$s-1};
+# my $ret = $_count_mods_up_to_LIM->($e)-(($s==0) ? 0 : $_count_mods_up_to_LIM->($s-1));
+                            my $ret = $out_hash{$e} - $out_hash{ $s - 1 };
 
-                            printf ("_calc_num_mods: [%d->%d]/%d == %d\n", $s, $e, $prev_rows_div_step, $ret);
+                            printf( "_calc_num_mods: [%d->%d]/%d == %d\n",
+                                $s, $e, $prev_rows_div_step, $ret );
 
                             return $ret;
                         };
 
-                        if ($maj_start_prod_div % $prev_rows_div_step)
+                        if ( $maj_start_prod_div % $prev_rows_div_step )
                         {
                             $maj_start_prod_bound_lcm += $prev_rows_div_step;
                         }
@@ -666,14 +693,25 @@ step == $step
 EOF
                         };
 
-                        my $cond1 = ($maj_end_prod_bound_lcm <= $maj_start_prod_bound_lcm);
-                        my $cond2 = ($maj_start_prod_bound_lcm >= $maj_end_prod_div);
-                        my $cond3 = ($maj_end_prod_bound_lcm <= $maj_start_prod_div);
+                        my $cond1 = ( $maj_end_prod_bound_lcm <=
+                                $maj_start_prod_bound_lcm );
+                        my $cond2 =
+                            ( $maj_start_prod_bound_lcm >= $maj_end_prod_div );
+                        my $cond3 =
+                            ( $maj_end_prod_bound_lcm <= $maj_start_prod_div );
 
                         my $end_mod1 = $prev_rows_div_step - 1;
-                        my $end_mod2 = $maj_end_prod_div - $maj_end_prod_bound_lcm;
-                        my $start_mod3 = (($prev_rows_div_step + $maj_start_prod_div - $maj_start_prod_bound_lcm));
-                        my $start_mod4 = $maj_start_prod_div % $prev_rows_div_step;
+                        my $end_mod2 =
+                            $maj_end_prod_div - $maj_end_prod_bound_lcm;
+                        my $start_mod3 = (
+                            (
+                                $prev_rows_div_step +
+                                    $maj_start_prod_div -
+                                    $maj_start_prod_bound_lcm
+                            )
+                        );
+                        my $start_mod4 =
+                            $maj_start_prod_div % $prev_rows_div_step;
                         my $end_mod4 = $maj_end_prod_div % $prev_rows_div_step;
 
                         my $_end = sub {
@@ -681,49 +719,54 @@ EOF
                         };
 
                         my $_start = sub {
-                            return $_[0]-1;
+                            return $_[0] - 1;
                         };
 
-                        my @mini_deltas =
-                        (
+                        my @mini_deltas = (
                             [
                                 $cond1,
-                                [$_end->($end_mod1)],
+                                [ $_end->($end_mod1) ],
                                 sub {
-                                    return
-                                    (
+                                    return (
                                         (
-                                            ($maj_end_prod_bound_lcm - $maj_start_prod_bound_lcm)
-                                            / $prev_rows_div_step
-                                        )
-                                        * $_calc_num_mods->(0, $end_mod1)
+                                            (
+                                                $maj_end_prod_bound_lcm -
+                                                    $maj_start_prod_bound_lcm
+                                            ) / $prev_rows_div_step
+                                        ) * $_calc_num_mods->( 0, $end_mod1 )
                                     );
                                 },
                             ],
                             [
                                 $cond2,
-                                [$_end->($end_mod2)],
+                                [ $_end->($end_mod2) ],
                                 sub {
-                                    return
-                                    $_calc_num_mods->(0, $end_mod2);
+                                    return $_calc_num_mods->( 0, $end_mod2 );
                                 },
                             ],
                             [
                                 $cond3,
-                                [$_start->($start_mod3), $_end->($end_mod1)],
+                                [ $_start->($start_mod3), $_end->($end_mod1) ],
                                 sub {
-                                    return
-                                    (($maj_start_prod_bound_lcm > $maj_start_prod_div)
-                                        ? $_calc_num_mods->($start_mod3, $end_mod1)
-                                        : 0);
+                                    return (
+                                        (
+                                            $maj_start_prod_bound_lcm >
+                                                $maj_start_prod_div
+                                        )
+                                        ? $_calc_num_mods->(
+                                            $start_mod3, $end_mod1
+                                            )
+                                        : 0
+                                    );
                                 },
                             ],
                             [
-                                scalar(not ($cond1 && $cond2 && $cond3)),
-                                [$_start->($start_mod4),$_end->($end_mod4)],
+                                scalar( not( $cond1 && $cond2 && $cond3 ) ),
+                                [ $_start->($start_mod4), $_end->($end_mod4) ],
                                 sub {
-                                    return
-                                    $_calc_num_mods->($start_mod4, $end_mod4);
+                                    return $_calc_num_mods->(
+                                        $start_mod4, $end_mod4
+                                    );
                                 },
                             ],
                         );
@@ -731,9 +774,9 @@ EOF
                         my $found_in_next_delta = 0;
                         foreach my $mini (@mini_deltas)
                         {
-                            if (not $mini->[0])
+                            if ( not $mini->[0] )
                             {
-                                foreach my $mod (@{$mini->[1]})
+                                foreach my $mod ( @{ $mini->[1] } )
                                 {
                                     $out_hash{$mod} = undef;
                                 }
@@ -744,43 +787,49 @@ EOF
                                 $mini->[3] = sub { return 0; };
                             }
                         }
-                        my @k = keys(%out_hash);
-                        my $out_arr = $_count_mods_up_to_LIM->(
-                            \@k
-                        );
+                        my @k       = keys(%out_hash);
+                        my $out_arr = $_count_mods_up_to_LIM->( \@k );
 
-                        foreach my $i (keys@k)
+                        foreach my $i ( keys @k )
                         {
-                            $out_hash{$k[$i]} = $out_arr->[$i];
+                            $out_hash{ $k[$i] } = $out_arr->[$i];
                         }
                         $out_hash{-1} = 0;
 
                         foreach my $mini (@mini_deltas)
                         {
-                            $found_in_next_delta += ($mini->[4] = $mini->[3]->());
+                            $found_in_next_delta +=
+                                ( $mini->[4] = $mini->[3]->() );
                         }
 
-                        if (1 && $DEBUG)
+                        if ( 1 && $DEBUG )
                         {
                             my @expected = grep {
                                 my $prod = $_;
-                                (none { $prod % $_ == 0 } $maj_factor .. $row_idx-1)
-                            }
-                            map { $prod + $_ * $step }
-                            0 .. (($maj_checkpoint-$prod) / $step)
-                            ;
+                                (
+                                    none { $prod % $_ == 0 }
+                                    $maj_factor .. $row_idx - 1
+                                    )
+                                }
+                                map { $prod + $_ * $step }
+                                0 .. ( ( $maj_checkpoint - $prod ) / $step );
 
-                            if ($found_in_next_delta != @expected)
+                            if ( $found_in_next_delta != @expected )
                             {
-                                die "[FOO] Row == $next_row ; Prev_Row == $row_idx. There are $found_in_next_delta whereas there should be " . @expected . " [@expected]!\n";
+                                die
+"[FOO] Row == $next_row ; Prev_Row == $row_idx. There are $found_in_next_delta whereas there should be "
+                                    . @expected
+                                    . " [@expected]!\n";
                             }
                         }
-                        ($found_in_next[$next_row][$row_idx] //= 0) += $found_in_next_delta;
+                        ( $found_in_next[$next_row][$row_idx] //= 0 ) +=
+                            $found_in_next_delta;
                     }
                 }
 
-                $prod = (($maj_checkpoint / $step) * $step);
+                $prod = ( ( $maj_checkpoint / $step ) * $step );
             }
+
             # print "Row == $row_idx ; Next_row == $next_row\n";
         }
 
@@ -792,13 +841,13 @@ EOF
 
 sub my_test
 {
-    my ($MIN, $MAJ, $expected) = @_;
+    my ( $MIN, $MAJ, $expected ) = @_;
 
-    my $got = calc_P($MIN, $MAJ);
+    my $got = calc_P( $MIN, $MAJ );
 
     print "P($MIN, $MAJ) = $got (should be $expected)\n";
 
-    if ($got != $expected)
+    if ( $got != $expected )
     {
         die "Got is not expected.";
     }
@@ -808,40 +857,40 @@ sub main
 {
     if ($DEBUG)
     {
-        my_test(4, 1000, 2416);
-        my_test(4, 4, 9);
-        my_test(3, 4, 8);
-        my_test(4, 7, 19);
-        my_test(4, 8, 20);
-        my_test(4, 9, 22);
-        my_test(4, 10, 24);
-        my_test(10, 10, 42);
-        my_test(11, 11, 53);
-        my_test(12, 12, 59);
-        my_test(12, 25, 143);
-        my_test(12, 345, 1998);
-        my_test(13, 13, 72);
-        my_test(14, 14, 80);
-        my_test(15, 20, 137);
-        my_test(16, 20, 142);
-        my_test(17, 20, 146);
-        my_test(18, 100, 824);
+        my_test( 4,  1000, 2416 );
+        my_test( 4,  4,    9 );
+        my_test( 3,  4,    8 );
+        my_test( 4,  7,    19 );
+        my_test( 4,  8,    20 );
+        my_test( 4,  9,    22 );
+        my_test( 4,  10,   24 );
+        my_test( 10, 10,   42 );
+        my_test( 11, 11,   53 );
+        my_test( 12, 12,   59 );
+        my_test( 12, 25,   143 );
+        my_test( 12, 345,  1998 );
+        my_test( 13, 13,   72 );
+        my_test( 14, 14,   80 );
+        my_test( 15, 20,   137 );
+        my_test( 16, 20,   142 );
+        my_test( 17, 20,   146 );
+        my_test( 18, 100,  824 );
     }
 
-    if (0 && $DEBUG)
+    if ( 0 && $DEBUG )
     {
-        my_test(64, 64, 1263);
+        my_test( 64, 64, 1263 );
     }
 
-    if (1 and !$DEBUG)
+    if ( 1 and !$DEBUG )
     {
-        my_test(32, (('1'.('0'x15))+0), 13826382602124302);
+        my_test( 32, ( ( '1' . ( '0' x 15 ) ) + 0 ), 13826382602124302 );
     }
 
-    if (1 and !$DEBUG)
+    if ( 1 and !$DEBUG )
     {
         my $WRONG_RESULT = 100;
-        my_test(64, (('1'.('0' x 16))+0), $WRONG_RESULT);
+        my_test( 64, ( ( '1' . ( '0' x 16 ) ) + 0 ), $WRONG_RESULT );
     }
 
 }
@@ -850,7 +899,6 @@ $DEBUG = 1;
 main();
 $DEBUG = 0;
 main();
-
 
 __END__
 

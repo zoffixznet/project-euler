@@ -13,29 +13,29 @@ use IO::Handle;
 STDOUT->autoflush(1);
 
 my $comb1 = '';
-vec($comb1, 1, 1) = 1;
+vec( $comb1, 1, 1 ) = 1;
 
-my @compositions = (undef, [$comb1],);
+my @compositions = ( undef, [$comb1], );
 
 my $limit = 200;
 
 my $power_of_2 = 2;
 
-while ($power_of_2 < $limit)
+while ( $power_of_2 < $limit )
 {
-    my $v = $compositions[$power_of_2/2][0];
+    my $v = $compositions[ $power_of_2 / 2 ][0];
 
-    vec($v, $power_of_2, 1) = 1;
-    push @{$compositions[$power_of_2]}, $v;
+    vec( $v, $power_of_2, 1 ) = 1;
+    push @{ $compositions[$power_of_2] }, $v;
 
     my $less_sig = $power_of_2;
     $less_sig /= 2;
 
-    while ($less_sig >= 1)
+    while ( $less_sig >= 1 )
     {
         my $v2 = $v;
-        vec($v2, $power_of_2+$less_sig, 1) = 1;
-        push @{$compositions[$power_of_2+$less_sig]}, $v2;
+        vec( $v2, $power_of_2 + $less_sig, 1 ) = 1;
+        push @{ $compositions[ $power_of_2 + $less_sig ] }, $v2;
     }
     continue
     {
@@ -51,19 +51,19 @@ continue
     my $n = 7;
 
     my $v = '';
-    vec($v, 1, 1) = 1;
-    vec($v, 2, 1) = 1;
-    vec($v, 4, 1) = 1;
-    vec($v, 6, 1) = 1;
-    vec($v, 7, 1) = 1;
+    vec( $v, 1, 1 ) = 1;
+    vec( $v, 2, 1 ) = 1;
+    vec( $v, 4, 1 ) = 1;
+    vec( $v, 6, 1 ) = 1;
+    vec( $v, 7, 1 ) = 1;
 
-    push @{$compositions[$n]}, (my $s = $v);
+    push @{ $compositions[$n] }, ( my $s = $v );
 
     $n *= 2;
-    while ($n < $limit)
+    while ( $n < $limit )
     {
-        vec($v, $n, 1) = 1;
-        push @{$compositions[$n]}, (my $s = $v);
+        vec( $v, $n, 1 ) = 1;
+        push @{ $compositions[$n] }, ( my $s = $v );
     }
     continue
     {
@@ -73,16 +73,17 @@ continue
 my $sum = 0;
 
 N_LOOP:
-foreach my $n (1 .. 200)
+foreach my $n ( 1 .. 200 )
 {
-    if (!defined($compositions[$n]))
+    if ( !defined( $compositions[$n] ) )
     {
         print "${n}: Unavailable\n";
         next N_LOOP;
     }
-    my $optimal_comb = min_by { unpack("b*", $_) =~ tr/1/1/ } @{$compositions[$n]};
+    my $optimal_comb =
+        min_by { unpack( "b*", $_ ) =~ tr/1/1/ } @{ $compositions[$n] };
 
-    my $comb = unpack("b*", $optimal_comb);
+    my $comb = unpack( "b*", $optimal_comb );
     my $result = -1 + $comb =~ tr/1/1/;
     print "${n}: $result ($comb)\n";
 

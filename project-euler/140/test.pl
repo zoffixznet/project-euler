@@ -12,10 +12,11 @@ sub _calc
     my $n = $i;
     my $s = sqrt(5);
 
-    my $A = +(1+$s)/2;
-    my $B = +(1-$s)/2;
+    my $A = +( 1 + $s ) / 2;
+    my $B = +( 1 - $s ) / 2;
 
-    return $A**$n*(4/$s*$A+1/$s)+$B**$n*(-4*$B/$s-1/$s);
+    return $A**$n * ( 4 / $s * $A + 1 / $s ) +
+        $B**$n * ( -4 * $B / $s - 1 / $s );
 }
 
-say _calc(shift(@ARGV));
+say _calc( shift(@ARGV) );

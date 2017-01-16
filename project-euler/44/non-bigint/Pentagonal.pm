@@ -10,7 +10,7 @@ our @EXPORT = (qw(is_pentagonal));
 sub new
 {
     my $class = shift;
-    my $self = { 'i' => 1, 'n' => 1};
+    my $self = { 'i' => 1, 'n' => 1 };
     bless $self, $class;
     return $self;
 }
@@ -18,9 +18,9 @@ sub new
 sub from_i
 {
     my $class = shift;
-    my $i = shift;
-    my $n = (($i*(3*$i-1))/2);
-    my $self = {i => $i, n => $n};
+    my $i     = shift;
+    my $n     = ( ( $i * ( 3 * $i - 1 ) ) / 2 );
+    my $self  = { i => $i, n => $n };
     bless $self, $class;
     return $self;
 }
@@ -31,7 +31,7 @@ sub inc
 
     my $new = Pentagonal->new();
 
-    $new->{i} = $self->{i}+1;
+    $new->{i} = $self->{i} + 1;
 
     $new->{n} = $self->{n} + $self->{i} * 3 + 1;
 
@@ -40,26 +40,26 @@ sub inc
 
 sub register
 {
-    my ($self, $hash_ref) = @_;
+    my ( $self, $hash_ref ) = @_;
 
-    $hash_ref->{$self->{n}} = $self->{i};
+    $hash_ref->{ $self->{n} } = $self->{i};
 }
 
 my $pent_max = Pentagonal->new();
 my %pents_map;
-$pent_max->register(\%pents_map);
+$pent_max->register( \%pents_map );
 
 sub is_pentagonal
 {
     my $num = shift;
 
-    while ($num > $pent_max->{n})
+    while ( $num > $pent_max->{n} )
     {
         # Advance both pent_max and pent_max_idx
         $pent_max = $pent_max->inc();
-        $pent_max->register(\%pents_map);
+        $pent_max->register( \%pents_map );
     }
-    return exists($pents_map{$num});
+    return exists( $pents_map{$num} );
 }
 
 1;

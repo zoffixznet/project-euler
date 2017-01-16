@@ -23,26 +23,23 @@ my $triangle_str = <<'EOF';
 04 62 98 27 23 09 70 98 73 93 38 53 60 04 23
 EOF
 
-my @lines = (map { [split(/\s+/, $_)] } split(/\n/, $triangle_str));
+my @lines = ( map { [ split( /\s+/, $_ ) ] } split( /\n/, $triangle_str ) );
 
-my @totals_lines = ([ @{$lines[0]} ]);
+my @totals_lines = ( [ @{ $lines[0] } ] );
 
-for my $i (1 .. $#lines)
+for my $i ( 1 .. $#lines )
 {
     my $last = $totals_lines[-1];
     my $this = $lines[$i];
-    push @totals_lines,
-        [
-            map
-            {
-                $this->[$_] +
-                max(
-                  (($_ > 0) ? ($last->[$_-1]) : ()),
-                  (($_ < $#{$this}) ? ($last->[$_]) : ())
+    push @totals_lines, [
+        map {
+            $this->[$_] + max(
+                ( ( $_ > 0 )         ? ( $last->[ $_ - 1 ] ) : () ),
+                ( ( $_ < $#{$this} ) ? ( $last->[$_] )       : () )
                 )
-            } (0 .. $#{$this})
-        ];
+        } ( 0 .. $#{$this} )
+    ];
 }
 
-printf "Max is %i\n", max(@{$totals_lines[-1]});
+printf "Max is %i\n", max( @{ $totals_lines[-1] } );
 

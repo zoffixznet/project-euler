@@ -3,8 +3,9 @@
 use strict;
 use warnings;
 
-foreach my $inputs (0 .. (2**6-1))
+foreach my $inputs ( 0 .. ( 2**6 - 1 ) )
 {
-    my ($aa, $bb, $cc, $dd, $ee, $ff) = split//, sprintf"%06b", $inputs;
-    print "$aa$bb$cc$dd$ee$ff => $bb$cc$dd$ee$ff" . (($aa xor ($bb && $cc)) ? '1' : '0') . "\n";
+    my ( $aa, $bb, $cc, $dd, $ee, $ff ) = split //, sprintf "%06b", $inputs;
+    print "$aa$bb$cc$dd$ee$ff => $bb$cc$dd$ee$ff"
+        . ( ( $aa xor( $bb && $cc ) ) ? '1' : '0' ) . "\n";
 }

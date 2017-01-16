@@ -11,36 +11,36 @@ my $modulo = Math::BigInt->new("10000000000");
 
 sub get_power_modulo
 {
-    my ($b, $e) = @_;
+    my ( $b, $e ) = @_;
 
-    if ($e == 0)
+    if ( $e == 0 )
     {
         return 1;
     }
 
-    my $rec_p = get_power_modulo($b, ($e >> 1));
+    my $rec_p = get_power_modulo( $b, ( $e >> 1 ) );
 
     my $ret = $rec_p * $rec_p;
 
-    if ($e & 0x1)
+    if ( $e & 0x1 )
     {
         $ret *= $b;
     }
 
-    return ($ret % $modulo);
+    return ( $ret % $modulo );
 }
 
+# TEST
+is( get_power_modulo( 2, 5 ) . "", 32, "2 ** 5 is right." );
 
 # TEST
-is (get_power_modulo(2, 5) . "", 32, "2 ** 5 is right.");
+is( get_power_modulo( 3, 3 ) . "", 27, "3 ** 3 is right." );
 
 # TEST
-is (get_power_modulo(3, 3) . "", 27, "3 ** 3 is right.");
+is( get_power_modulo( 2, 10 ) . "", 1024, "2 ** 1024 is right." );
 
-# TEST
-is (get_power_modulo(2, 10) . "", 1024, "2 ** 1024 is right.");
-
-print "Answer = ", ((get_power_modulo(2, 7830457) * 28433 + 1) % $modulo), "\n";
+print "Answer = ",
+    ( ( get_power_modulo( 2, 7830457 ) * 28433 + 1 ) % $modulo ), "\n";
 
 =head1 Documentation
 

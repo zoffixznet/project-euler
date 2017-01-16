@@ -18,10 +18,10 @@ my $L = shift(@ARGV);
 # The count.
 my $c = 0;
 
-for my $n (1 .. $L)
+for my $n ( 1 .. $L )
 {
-    my @x = (grep { $n % $_ == 0 } @primes);
-    if (@x >= 4)
+    my @x = ( grep { $n % $_ == 0 } @primes );
+    if ( @x >= 4 )
     {
         print "N = $n : @x\n";
         $c++;

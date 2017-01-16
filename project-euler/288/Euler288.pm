@@ -24,16 +24,16 @@ STDOUT->autoflush(1);
 
 sub factorial_factor_exp
 {
-    my ($n , $f) = @_;
+    my ( $n, $f ) = @_;
 
-    if ($n < $f)
+    if ( $n < $f )
     {
         return 0;
     }
     else
     {
         my $div = $n / $f;
-        return $div + factorial_factor_exp($div, $f);
+        return $div + factorial_factor_exp( $div, $f );
     }
 }
 

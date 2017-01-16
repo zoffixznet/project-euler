@@ -28,6 +28,11 @@ my $number = <<'EOF';
 71636269561882670428252483600823257530420752963450
 EOF
 
-my @digits = ($number =~ /[0-9]/g);
-print max (map { reduce { $a * $b } @digits[$_..($_+12)] } (0 .. @digits-13));
+my @digits = ( $number =~ /[0-9]/g );
+print max (
+    map {
+        reduce { $a * $b }
+        @digits[ $_ .. ( $_ + 12 ) ]
+    } ( 0 .. @digits - 13 )
+);
 print "\n";

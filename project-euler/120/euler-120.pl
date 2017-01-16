@@ -38,14 +38,14 @@ STDOUT->autoflush(1);
 
 my $sum = 0;
 
-for my $A (3 .. 1_000)
+for my $A ( 3 .. 1_000 )
 {
     my $r_max = 2;
 
-    foreach my $n (grep { $_ % 2 } (0 .. 2*$A))
+    foreach my $n ( grep { $_ % 2 } ( 0 .. 2 * $A ) )
     {
-        my $r = ((2 * $A * $n) % ($A*$A));
-        $r_max = max($r_max, $r);
+        my $r = ( ( 2 * $A * $n ) % ( $A * $A ) );
+        $r_max = max( $r_max, $r );
     }
     print "$A : $r_max\n";
     $sum += $r_max;

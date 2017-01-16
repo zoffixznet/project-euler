@@ -14,4 +14,9 @@ sub P
 {
     return Euler480::calc_P(@_);
 }
-print "Result = <<", W(P('legionary') + P('calorimeters') - P('annihilate') + P('orchestrated') - P('fluttering')), ">>\n";
+print "Result = <<",
+    W( P('legionary') +
+        P('calorimeters') -
+        P('annihilate') +
+        P('orchestrated') -
+        P('fluttering') ), ">>\n";

@@ -13,22 +13,23 @@ use List::MoreUtils qw();
 
 STDOUT->autoflush(1);
 
-my $PI = atan2(1,1)*4;
-my $MIN_COS = cos (120 * $PI / 180);
-for my $c (1 .. 120_000)
+my $PI = atan2( 1, 1 ) * 4;
+my $MIN_COS = cos( 120 * $PI / 180 );
+for my $c ( 1 .. 120_000 )
 {
     print "C=$c\n";
-    for my $aa (1 .. $c)
+    for my $aa ( 1 .. $c )
     {
-        my $numer = $aa*$aa-$c*$c;
-        my $denom = 1/(2*$aa);
+        my $numer = $aa * $aa - $c * $c;
+        my $denom = 1 / ( 2 * $aa );
+
         # $c < $aa + $bb
         # $bb > $c - $aa
-        B:
-        for my $bb (reverse( max($c-$aa+1,1) .. $aa) )
+    B:
+        for my $bb ( reverse( max( $c - $aa + 1, 1 ) .. $aa ) )
         {
-            my $cos_C = ($numer/$bb + $bb)*$denom;
-            if ($cos_C <= $MIN_COS)
+            my $cos_C = ( $numer / $bb + $bb ) * $denom;
+            if ( $cos_C <= $MIN_COS )
             {
                 # print "Skipping [$c,$aa,$bb]\n";
                 last B;

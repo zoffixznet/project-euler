@@ -24,8 +24,7 @@ sub gn
 }
 
 # The primes.
-my @p = (map { gn($_) } @p_s);
-
+my @p = ( map { gn($_) } @p_s );
 
 sub product
 {
@@ -44,66 +43,65 @@ sub my_eval
 {
     my $coords = shift;
 
-    if (any { $_ < 0 or $_ > $#p } @$coords)
+    if ( any { $_ < 0 or $_ > $#p } @$coords )
     {
         die "Coords out of range.";
     }
 
-    if ( ( join",",@$coords ) ne (join",", sort { $a <=> $b } @$coords))
+    if ( ( join ",", @$coords ) ne ( join ",", sort { $a <=> $b } @$coords ) )
     {
         die "Coords are not sorted.";
     }
 
-    return
-    +{
+    return +{
         coords => [@$coords],
-        prod => (product(@p[@$coords]) . ''),
-    }
+        prod   => ( product( @p[@$coords] ) . '' ),
+    };
 }
 
-my $fn = './266_DATA.json';
-my $fh = path($fn);
-my $data = (-e $fn) ? decode_json($fh->slurp_utf8()) : +{
-    upper => [my_eval([keys@p])],
-    lower => [my_eval([])],
+my $fn   = './266_DATA.json';
+my $fh   = path($fn);
+my $data = ( -e $fn ) ? decode_json( $fh->slurp_utf8() ) : +{
+    upper => [ my_eval( [ keys @p ] ) ],
+    lower => [ my_eval( [] ) ],
 };
 
 sub add
 {
-    my ($key, $coords) = @_;
+    my ( $key, $coords ) = @_;
 
-    my $e = my_eval($coords);
-    my $ep = gn($e->{prod});
-    if ($key eq 'u')
+    my $e  = my_eval($coords);
+    my $ep = gn( $e->{prod} );
+    if ( $key eq 'u' )
     {
 
-        if ($ep < $SQ)
+        if ( $ep < $SQ )
         {
             die "Upper Product is smaller than the pivot";
         }
 
-        if ($ep >= gn($data->{upper}->[-1]->{prod}))
+        if ( $ep >= gn( $data->{upper}->[-1]->{prod} ) )
         {
             die "Upper Product does not improve on the limit.";
         }
 
-        push @{$data->{upper}}, $e;
+        push @{ $data->{upper} }, $e;
 
     }
-    elsif ($key eq 'l')
+    elsif ( $key eq 'l' )
     {
 
-        if ($ep > $SQ)
+        if ( $ep > $SQ )
         {
             die "Lower Product is larger than the pivot";
         }
 
-        if ($ep <= gn($data->{lower}->[-1]->{prod}))
+        if ( $ep <= gn( $data->{lower}->[-1]->{prod} ) )
         {
             die "Lower Product does not improve on the limit.";
         }
 
-        push @{$data->{lower}}, $e;
+        push @{ $data->{lower} }, $e;
 
     }
     else
@@ -111,15 +109,15 @@ sub add
         die "Unknown operation '$key'!";
     }
 
-    $fh->spew_utf8(encode_json($data));
+    $fh->spew_utf8( encode_json($data) );
 }
 
 # Summary.
 sub S
 {
     return [
-        { l => $data->{lower}->[-1] },
-        { u => $data->{upper}->[-1] },
+        { l     => $data->{lower}->[-1] },
+        { u     => $data->{upper}->[-1] },
         { PIVOT => "$SQ" },
     ];
 }

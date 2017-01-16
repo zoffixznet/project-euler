@@ -19,36 +19,37 @@ STDOUT->autoflush(1);
 
 use List::Util qw(reduce);
 
-my @Cache = (undef, []);
+my @Cache = ( undef, [] );
 
 sub factorize_helper
 {
-    my ($n, $start_from) = @_;
+    my ( $n, $start_from ) = @_;
 
-    my $limit = int(sqrt($n));
+    my $limit = int( sqrt($n) );
 
-    if (! defined($Cache[$n]))
+    if ( !defined( $Cache[$n] ) )
     {
         my $d = $n;
-        while ($d % $start_from)
+        while ( $d % $start_from )
         {
-            if (++$start_from > $limit)
+            if ( ++$start_from > $limit )
             {
-                return $Cache[$n] = [[$n,1]];
+                return $Cache[$n] = [ [ $n, 1 ] ];
             }
         }
 
         $d /= $start_from;
 
-        my @n_factors = (map { [@$_] } @{factorize_helper($d, $start_from)});
+        my @n_factors =
+            ( map { [@$_] } @{ factorize_helper( $d, $start_from ) } );
 
-        if (@n_factors && $n_factors[0][0] == $start_from)
+        if ( @n_factors && $n_factors[0][0] == $start_from )
         {
             $n_factors[0][1]++;
         }
         else
         {
-            unshift @n_factors, ([$start_from, 1]);
+            unshift @n_factors, ( [ $start_from, 1 ] );
         }
 
         $Cache[$n] = \@n_factors;
@@ -59,7 +60,7 @@ sub factorize_helper
 sub factorize
 {
     my ($n) = @_;
-    return factorize_helper($n, 2);
+    return factorize_helper( $n, 2 );
 }
 
 my $MOD = 1_000_000_000;
@@ -67,13 +68,13 @@ my $MOD = 1_000_000_000;
 # exp_mod_slow.
 sub em_slow
 {
-    my ($b, $e) = @_;
+    my ( $b, $e ) = @_;
 
     my $r = 1;
 
-    for my $i (1 .. $e)
+    for my $i ( 1 .. $e )
     {
-        ($r *= $b) %= $MOD;
+        ( $r *= $b ) %= $MOD;
     }
 
     return $r;
@@ -81,70 +82,71 @@ sub em_slow
 
 sub exp_mod
 {
-    my ($b, $e) = @_;
+    my ( $b, $e ) = @_;
 
-    if ($e == 0)
+    if ( $e == 0 )
     {
         return 1;
     }
 
-    my $rec_p = exp_mod($b, ($e >> 1));
+    my $rec_p = exp_mod( $b, ( $e >> 1 ) );
 
     my $ret = $rec_p * $rec_p;
 
-    if ($e & 0x1)
+    if ( $e & 0x1 )
     {
-        ($ret %= $MOD) *= $b;
+        ( $ret %= $MOD ) *= $b;
     }
 
-    return ($ret % $MOD);
+    return ( $ret % $MOD );
 }
 
 my $cycles_json_fn = 'euler-455-cycles.json';
 my $cycles;
 
-if (! -e $cycles_json_fn)
+if ( !-e $cycles_json_fn )
 {
-    my $twos_cycles = $cycles->[2] ||= {};
+    my $twos_cycles  = $cycles->[2] ||= {};
     my $fives_cycles = $cycles->[5] ||= [];
 
-    foreach my $power_of_2_e (1 .. 32)
+    foreach my $power_of_2_e ( 1 .. 32 )
     {
         say "power_of_2_e = $power_of_2_e";
-        my $power_of_2 = (1 << $power_of_2_e);
+        my $power_of_2 = ( 1 << $power_of_2_e );
 
         my %found_modulos;
 
         my $m = $power_of_2 % $MOD;
         my $e = 1;
 
-        while (!exists($found_modulos{$m}))
+        while ( !exists( $found_modulos{$m} ) )
         {
             $found_modulos{$m} = $e;
             $e++;
-            ($m *= $power_of_2) %= $MOD;
+            ( $m *= $power_of_2 ) %= $MOD;
         }
 
-        $twos_cycles->{($power_of_2<<1)-1} = [$power_of_2_e, $e - $found_modulos{$m}];
+        $twos_cycles->{ ( $power_of_2 << 1 ) - 1 } =
+            [ $power_of_2_e, $e - $found_modulos{$m} ];
     }
 
     {
         my $power_of_5 = 5;
-        while ($power_of_5 <= $MOD)
+        while ( $power_of_5 <= $MOD )
         {
             my %found_modulos;
 
             my $m = $power_of_5 % $MOD;
             my $e = 1;
 
-            while (!exists($found_modulos{$m}))
+            while ( !exists( $found_modulos{$m} ) )
             {
                 $found_modulos{$m} = $e;
                 $e++;
-                ($m *= $power_of_5) %= $MOD;
+                ( $m *= $power_of_5 ) %= $MOD;
             }
 
-            push @$fives_cycles, [$power_of_5, $e-$found_modulos{$m}];
+            push @$fives_cycles, [ $power_of_5, $e - $found_modulos{$m} ];
         }
         continue
         {
@@ -152,19 +154,24 @@ if (! -e $cycles_json_fn)
         }
     }
 
-    io->file($cycles_json_fn)->utf8->print(encode_json($cycles));
+    io->file($cycles_json_fn)->utf8->print( encode_json($cycles) );
 }
 else
 {
-    $cycles = decode_json(io->file($cycles_json_fn)->utf8->all());
+    $cycles = decode_json( io->file($cycles_json_fn)->utf8->all() );
 }
 
-my $twos_cycles = $cycles->[2];
+my $twos_cycles  = $cycles->[2];
 my $fives_cycles = $cycles->[5];
 
-my $base_cycle_len = 0 + (''. Math::BigInt::blcm(
-    map { my ($p, $k) = @$_; ($p ** ($k-1)*($p-1)) / ($p == 2 ? 2 : 1) } ([2,9],[5,9])
-));
+my $base_cycle_len = 0 + (
+    '' . Math::BigInt::blcm(
+        map {
+            my ( $p, $k ) = @$_;
+            ( $p**( $k - 1 ) * ( $p - 1 ) ) / ( $p == 2 ? 2 : 1 )
+        } ( [ 2, 9 ], [ 5, 9 ] )
+    )
+);
 
 # By experiment it's the only possible cycle_len.
 my $CYCLE_LEN = 50_000_000;
@@ -175,8 +182,9 @@ sub calc_f
 
     my $x = 0;
 
-    if ($n % 10 != 0)
+    if ( $n % 10 != 0 )
     {
+
 =begin foo
         my $divisor_cycle_len = 1;
         my $n_dividend = $n;
@@ -212,12 +220,12 @@ sub calc_f
 
         say "N = $n ; cycle_len = $cycle_len";
 
-        DELTA:
-        for my $delta (reverse(0 .. 100))
+    DELTA:
+        for my $delta ( reverse( 0 .. 100 ) )
         {
             for my $i ($delta)
             {
-                if (exp_mod($n, $i) != exp_mod($n, $i+$cycle_len))
+                if ( exp_mod( $n, $i ) != exp_mod( $n, $i + $cycle_len ) )
                 {
                     print "First wrong delta : $delta\n";
                     last DELTA;
@@ -297,9 +305,9 @@ sub calc_f
 my $MAX = 1_000_000;
 my $sum = 0;
 
-my ($START, $END) = @ARGV;
+my ( $START, $END ) = @ARGV;
 
-foreach my $n ($START .. $END)
+foreach my $n ( $START .. $END )
 {
     $sum += calc_f($n);
 }

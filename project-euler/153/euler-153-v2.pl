@@ -19,41 +19,42 @@ my $sum = 0;
 
 sub gcd
 {
-    my ($n, $m) = @_;
+    my ( $n, $m ) = @_;
 
-    if ($m > $n)
+    if ( $m > $n )
     {
-        ($n, $m) = ($m, $n);
+        ( $n, $m ) = ( $m, $n );
     }
 
-    while ($m > 0)
+    while ( $m > 0 )
     {
-        ($n, $m) = ($m, $n%$m);
+        ( $n, $m ) = ( $m, $n % $m );
     }
 
     return $n;
 }
 
 my $r2 = 2;
-for my $r (1 .. $MAX)
+for my $r ( 1 .. $MAX )
 {
     print "R=$r\n";
-    # print "R=$r - adding ", int ($MAX / $r) * $r, "\n";
-    $sum += int ($MAX / $r) * $r;
 
-    my $x = $r * $r + 1;
-    my $i = 1;
+    # print "R=$r - adding ", int ($MAX / $r) * $r, "\n";
+    $sum += int( $MAX / $r ) * $r;
+
+    my $x   = $r * $r + 1;
+    my $i   = 1;
     my $inc = 1;
-    while ($x <= $MAX)
+    while ( $x <= $MAX )
     {
-        if (gcd($i, $r) == 1)
+        if ( gcd( $i, $r ) == 1 )
         {
             my $xm = $x;
             my $rm = $r2;
 
-            while ($xm <= $MAX)
+            while ( $xm <= $MAX )
             {
-                $sum += int ($MAX / $xm) * $rm;
+                $sum += int( $MAX / $xm ) * $rm;
             }
             continue
             {
@@ -65,7 +66,7 @@ for my $r (1 .. $MAX)
     continue
     {
         $i++;
-        $x += ($inc += 2);
+        $x += ( $inc += 2 );
     }
 }
 continue

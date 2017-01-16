@@ -11,8 +11,6 @@ use bytes;
 #
 # use Math::GMPq qw(:mpq);
 
-
-
 use List::Util qw(sum);
 use List::MoreUtils qw();
 use List::UtilsBy qw(max_by);
@@ -25,19 +23,19 @@ my $sum = 0;
 
 sub gcd
 {
-    my ($n, $m) = @_;
+    my ( $n, $m ) = @_;
 
-    if ($n < $m)
+    if ( $n < $m )
     {
-        return gcd($m,$n);
+        return gcd( $m, $n );
     }
 
-    if ($m == 0)
+    if ( $m == 0 )
     {
         return $n;
     }
 
-    return gcd($m,$n % $m);
+    return gcd( $m, $n % $m );
 }
 
 =begin foo
@@ -67,9 +65,9 @@ sub _exp
 
 =cut
 
-for my $N (5 .. $MAX)
+for my $N ( 5 .. $MAX )
 {
-    if ($N % 100 == 0)
+    if ( $N % 100 == 0 )
     {
         print "N=$N\n";
     }
@@ -97,24 +95,25 @@ for my $N (5 .. $MAX)
 =cut
 
     my $logN = log($N);
-    my $k = max_by { $_ * ($logN - log($_)) } (1 .. ($N-1));
+    my $k = max_by { $_ * ( $logN - log($_) ) } ( 1 .. ( $N - 1 ) );
 
     # M($N) == ($N/$k) ** $k
-    my $g = gcd($N, $k);
+    my $g = gcd( $N, $k );
 
     my $k_to_check = $k / $g;
 
-    while ($k_to_check % 5 == 0)
+    while ( $k_to_check % 5 == 0 )
     {
         $k_to_check /= 5;
     }
 
-    while (($k_to_check & 0x1) == 0)
+    while ( ( $k_to_check & 0x1 ) == 0 )
     {
         $k_to_check >>= 1;
     }
 
-    my $diff = (($k_to_check == 1) ? (-$N) : $N);
+    my $diff = ( ( $k_to_check == 1 ) ? ( -$N ) : $N );
+
     # print "N=$N ; Diff=$diff ; k_to_check=$k_to_check\n";
     $sum += $diff;
 }

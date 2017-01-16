@@ -41,7 +41,7 @@ sub fact
 
     my $r = 1;
 
-    for my $i (2 .. $n)
+    for my $i ( 2 .. $n )
     {
         $r *= $i;
     }
@@ -51,39 +51,40 @@ sub fact
 
 sub nCr
 {
-    my ($n, $k) = @_;
+    my ( $n, $k ) = @_;
     $n += 0;
     $k += 0;
 
-    if ($n < $k)
+    if ( $n < $k )
     {
         die "N=$n K=$k";
     }
-    return fact($n) / (fact($n-$k) * fact($k));
+    return fact($n) / ( fact( $n - $k ) * fact($k) );
 }
 
 sub nCr3
 {
-    my ($n, $k1, $k2) = @_;
-    $n += 0;
+    my ( $n, $k1, $k2 ) = @_;
+    $n  += 0;
     $k1 += 0;
     $k2 += 0;
 
-    if ($n < $k1+$k2)
+    if ( $n < $k1 + $k2 )
     {
         die "N=$n K1=$k1 K2=$k2";
     }
-    return fact($n) / (fact($n-$k1-$k2) * fact($k1) * fact($k2));
+    return fact($n) / ( fact( $n - $k1 - $k2 ) * fact($k1) * fact($k2) );
 }
 
 # TODO : this can be optimised to oblivion and exclude recursion.
 sub after_bump
 {
-    my ($num, $remain, $factor) = @_;
+    my ( $num, $remain, $factor ) = @_;
 
-    foreach my $i (0 .. $remain)
+    foreach my $i ( 0 .. $remain )
     {
-        my $val = ($counts[$num+$i] += (nCr($remain,$i) * $factor));
+        my $val = ( $counts[ $num + $i ] += ( nCr( $remain, $i ) * $factor ) );
+
         # print "C[@{[$num+$i]}] == $val\n";
     }
     return;
@@ -94,28 +95,29 @@ sub before_bump
     my ($COUNT) = @_;
 
     # The first_max cannot be 0 because second_min must be less than that.
-    foreach my $first_max (1 .. $COUNT-1)
+    foreach my $first_max ( 1 .. $COUNT - 1 )
     {
-        foreach my $e_elems_count (1 .. $first_max)
+        foreach my $e_elems_count ( 1 .. $first_max )
         {
-            my $not_in_e_below_first_max =
-            ( $first_max + 1 ) - $e_elems_count;
+            my $not_in_e_below_first_max = ( $first_max + 1 ) - $e_elems_count;
 
             # my $factor = nCr($first_max, $e_elems_count);
 
-            foreach my $num_below_1max_in_2nd (1 .. $not_in_e_below_first_max)
+            foreach my $num_below_1max_in_2nd ( 1 .. $not_in_e_below_first_max )
             {
                 after_bump(
                     $num_below_1max_in_2nd + $e_elems_count,
-                    $COUNT - ($first_max+1),
+                    $COUNT - ( $first_max + 1 ),
                     (
-                        nCr3($first_max, $num_below_1max_in_2nd, $e_elems_count-1)
+                        nCr3(
+                            $first_max, $num_below_1max_in_2nd,
+                            $e_elems_count - 1
+                        )
                     )
                 );
             }
         }
     }
-
 
     return;
 }
@@ -127,12 +129,11 @@ my $COUNT_LETTERS = shift(@ARGV);
 #
 #
 
-
 before_bump($COUNT_LETTERS);
 
-foreach my $i (keys(@counts))
+foreach my $i ( keys(@counts) )
 {
-    print "Count[", sprintf("%2d", $i), "] = ", ($counts[$i] // 0), "\n";
+    print "Count[", sprintf( "%2d", $i ), "] = ", ( $counts[$i] // 0 ), "\n";
 }
 
 __END__

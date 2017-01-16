@@ -11,7 +11,6 @@ use List::MoreUtils qw();
 
 STDOUT->autoflush(1);
 
-
 my $n = shift(@ARGV);
 
 my $start = $n + 8;
@@ -37,17 +36,17 @@ sub update
     push @f_s, $x;
 }
 
-for my $i (0 .. 8)
+for my $i ( 0 .. 8 )
 {
     update();
 }
 
 my $max = 0;
-my $i = $n;
+my $i   = $n;
 
-while ($i >= 3)
+while ( $i >= 3 )
 {
-    if ($sum > $max)
+    if ( $sum > $max )
     {
         $max = $sum;
         print "Found New Max g($i) = $max\n";

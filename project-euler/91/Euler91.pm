@@ -19,7 +19,7 @@ In this case, there are x_len * y_len triangles.
 
 sub get_num_O_right_angle_triangles
 {
-    my ($x_len, $y_len) = @_;
+    my ( $x_len, $y_len ) = @_;
 
     return $x_len * $y_len;
 }
@@ -37,33 +37,38 @@ their gcd is 0).
 
 sub _get_num_other_helper
 {
-    my ($x_len, $y_len) = @_;
+    my ( $x_len, $y_len ) = @_;
 
-    my @limits = ($x_len, $y_len);
+    my @limits = ( $x_len, $y_len );
 
-    my @p2_limits = ($x_len, 0);
+    my @p2_limits = ( $x_len, 0 );
 
     my $count = 0;
 
-    foreach my $delta_x (1 .. $limits[0])
+    foreach my $delta_x ( 1 .. $limits[0] )
     {
-        DELTA_Y:
-        foreach my $delta_y (1 .. $limits[1])
+    DELTA_Y:
+        foreach my $delta_y ( 1 .. $limits[1] )
         {
-            if (Math::GMP->new($delta_y)->bgcd($delta_x) != 1)
+            if ( Math::GMP->new($delta_y)->bgcd($delta_x) != 1 )
             {
                 next DELTA_Y;
             }
-            my $max_p1_multi = min(int($x_len / $delta_x), int($y_len / $delta_y));
+            my $max_p1_multi =
+                min( int( $x_len / $delta_x ), int( $y_len / $delta_y ) );
 
-            my @delta2 = ($delta_y, -$delta_x);
-            foreach my $p1_multi (1 .. $max_p1_multi)
+            my @delta2 = ( $delta_y, -$delta_x );
+            foreach my $p1_multi ( 1 .. $max_p1_multi )
             {
-                my @coords = ($p1_multi * $delta_x, $p1_multi * $delta_y);
-                my $max_p2_multi = (min(
-                    map { int(($p2_limits[$_]-$coords[$_]) / $delta2[$_]) }
-                    (0 .. 1)
-                ));
+                my @coords = ( $p1_multi * $delta_x, $p1_multi * $delta_y );
+                my $max_p2_multi = (
+                    min(
+                        map {
+                            int(
+                                ( $p2_limits[$_] - $coords[$_] ) / $delta2[$_] )
+                        } ( 0 .. 1 )
+                    )
+                );
 
                 # print "[@coords] $max_p2_multi\n";
 
@@ -73,7 +78,7 @@ sub _get_num_other_helper
     }
 
     # Deal with the delta_x = 0 case
-    $count += $x_len*$y_len;
+    $count += $x_len * $y_len;
 
     return $count;
 }

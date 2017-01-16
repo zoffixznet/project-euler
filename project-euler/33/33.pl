@@ -8,25 +8,23 @@ use Math::BigRat;
 
 my %h = ();
 
-foreach my $numer (11 .. 99)
+foreach my $numer ( 11 .. 99 )
 {
-    if ($numer % 10 == 0)
+    if ( $numer % 10 == 0 )
     {
         next;
     }
 
-    foreach my $denom (($numer+1)..99)
+    foreach my $denom ( ( $numer + 1 ) .. 99 )
     {
         my $get_my = sub {
             my $digit = shift;
-            my ($n, $d) = ($numer, $denom);
-            if (
-                    ($d =~ s{$digit}{})
-                 && ($n =~ s{$digit}{})
-                 && ($d * $numer == $n * $denom)
-             )
+            my ( $n, $d ) = ( $numer, $denom );
+            if (   ( $d =~ s{$digit}{} )
+                && ( $n =~ s{$digit}{} )
+                && ( $d * $numer == $n * $denom ) )
             {
-                 return ($n, $d);
+                return ( $n, $d );
             }
             else
             {
@@ -34,11 +32,11 @@ foreach my $numer (11 .. 99)
             }
         };
 
-        foreach my $digit ($numer%10,int($numer/10))
+        foreach my $digit ( $numer % 10, int( $numer / 10 ) )
         {
-            if (my ($n, $d) = $get_my->($digit))
+            if ( my ( $n, $d ) = $get_my->($digit) )
             {
-                my $gcd = Math::BigInt::bgcd($n, $d);
+                my $gcd = Math::BigInt::bgcd( $n, $d );
                 $n /= "$gcd";
                 $d /= "$gcd";
 
@@ -49,5 +47,5 @@ foreach my $numer (11 .. 99)
     }
 }
 
-print "Results == ", (join ' , ',keys(%h)), "\n"
+print "Results == ", ( join ' , ', keys(%h) ), "\n"
 

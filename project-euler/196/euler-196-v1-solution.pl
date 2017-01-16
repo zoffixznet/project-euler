@@ -9,7 +9,7 @@ sub S
 {
     my ($i) = @_;
 
-    my $row = Row->new({idx => $i});
+    my $row = Row->new( { idx => $i } );
     $row->mark_primes;
 
     return $row->calc_S;

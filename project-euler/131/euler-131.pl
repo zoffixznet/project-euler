@@ -34,21 +34,22 @@ close($primes_fh);
 chomp(@primes);
 
 my %primes_map;
-@primes_map{@primes} = ((1) x @primes);
+@primes_map{@primes} = ( (1) x @primes );
 
-my $root = 1;
+my $root        = 1;
 my $total_count = 0;
 
 ROOTS:
 while (1)
 {
-    my $to_check = ($root * $root + $root * ($root+1) + ($root+1) * ($root+1));
+    my $to_check = (
+        $root * $root + $root * ( $root + 1 ) + ( $root + 1 ) * ( $root + 1 ) );
 
-    if ($to_check > 1_000_000)
+    if ( $to_check > 1_000_000 )
     {
         last ROOTS;
     }
-    if (exists($primes_map{"$to_check"}))
+    if ( exists( $primes_map{"$to_check"} ) )
     {
         $total_count++;
         print "Found $to_check ; Total found = $total_count\n";

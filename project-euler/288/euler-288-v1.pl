@@ -17,28 +17,29 @@ use Math::BigInt lib => "GMP";
 my @t_n;
 
 my $N_LIM = 10;
-my $BASE = 61;
-my $LIM = 10_000_000;
+my $BASE  = 61;
+my $LIM   = 10_000_000;
 
 my $S_0 = 290797;
-my $s = $S_0;
+my $s   = $S_0;
 
-for my $n (0 .. $N_LIM-1)
+for my $n ( 0 .. $N_LIM - 1 )
 {
-    push @t_n, ($s % $BASE);
-    $s = (($s * $s) % 50515093);
+    push @t_n, ( $s % $BASE );
+    $s = ( ( $s * $s ) % 50515093 );
 }
 
 my $sum = 0;
-for my $n ($N_LIM .. $LIM)
+for my $n ( $N_LIM .. $LIM )
 {
-    $sum += ($s % $BASE);
-    $s = (($s * $s) % 50515093);
+    $sum += ( $s % $BASE );
+    $s = ( ( $s * $s ) % 50515093 );
 }
 
 sub f
 {
-    return factorial_factor_exp(shift(), Math::BigInt->new($BASE)) % (Math::BigInt->new($BASE) ** $N_LIM);
+    return factorial_factor_exp( shift(), Math::BigInt->new($BASE) )
+        % ( Math::BigInt->new($BASE)**$N_LIM );
 }
 
 io->file("test.p6")->print(<<"EOF");
@@ -121,9 +122,8 @@ print "\n";
 
 EOF
 
-print sum(
-    (map { f(Math::BigInt->new($BASE) ** $_) * $t_n[$_] } 1 .. $#t_n),
-    $sum * f(Math::BigInt->new($BASE) ** $N_LIM)
-) % (Math::BigInt->new($BASE) ** $N_LIM);
+print sum( ( map { f( Math::BigInt->new($BASE)**$_ ) * $t_n[$_] } 1 .. $#t_n ),
+    $sum * f( Math::BigInt->new($BASE)**$N_LIM ) )
+    % ( Math::BigInt->new($BASE)**$N_LIM );
 print "\n";
 exit(0);

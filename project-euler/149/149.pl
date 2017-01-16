@@ -31,13 +31,14 @@ sub fetch
 
     my $ln = $self->{_last_nums};
 
-    if ($k <= 55)
+    if ( $k <= 55 )
     {
-        $s_k = (((100003 - 200003*$k + 300007*($k**3)) % 1000000) - 500000);
+        $s_k = ( ( ( 100003 - 200003 * $k + 300007 * ( $k**3 ) ) % 1000000 ) -
+                500000 );
     }
     else
     {
-        $s_k = ((($ln->[-24] + $ln->[-55] + 1000000) % 1000000) - 500000);
+        $s_k = ( ( ( $ln->[-24] + $ln->[-55] + 1000000 ) % 1000000 ) - 500000 );
         shift(@$ln);
     }
     push @$ln, $s_k;
@@ -52,29 +53,29 @@ package main;
 {
     my $rand = FiboRand->new;
 
-    foreach my $k (1 .. 100)
+    foreach my $k ( 1 .. 100 )
     {
         print "$k = ", $rand->fetch(), "\n";
     }
 
     $rand = FiboRand->new;
 
-    for my $k ( 1 .. 9)
+    for my $k ( 1 .. 9 )
     {
         $rand->fetch();
     }
 
-    if ($rand->fetch() != -393027)
+    if ( $rand->fetch() != -393027 )
     {
         die "Wrong s10!";
     }
 
-    for my $k (11 .. 99)
+    for my $k ( 11 .. 99 )
     {
         $rand->fetch();
     }
 
-    if ($rand->fetch() != 86613)
+    if ( $rand->fetch() != 86613 )
     {
         die "Wrong s100!";
     }
@@ -89,17 +90,17 @@ sub new
 
 sub _max
 {
-    my ($x, $y) = @_;
+    my ( $x, $y ) = @_;
 
-    return ($x > $y) ? $x : $y;
+    return ( $x > $y ) ? $x : $y;
 }
 
 sub add
 {
-    my ($self, $n) = @_;
+    my ( $self, $n ) = @_;
 
-    $self->{_ending_here} = _max($self->{_ending_here} + $n, 0);
-    $self->{_so_far} = _max($self->{_so_far}, $self->{_ending_here});
+    $self->{_ending_here} = _max( $self->{_ending_here} + $n, 0 );
+    $self->{_so_far} = _max( $self->{_so_far}, $self->{_ending_here} );
 
     return;
 }
@@ -117,25 +118,26 @@ my $rand = FiboRand->new;
 
 sub max
 {
-    my ($x, $y) = @_;
+    my ( $x, $y ) = @_;
 
-    return ($x > $y) ? $x : $y;
+    return ( $x > $y ) ? $x : $y;
 }
 
 my $SIZE = 2_000;
 
-my $horiz_max_max = 0;
-my @vert_max = map { Max->new } (1 .. $SIZE);
-my @diag_max = map { Max->new } (1 .. $SIZE);
-my @anti_diag_max = map { Max->new } (1 .. $SIZE);
-my $diag_max_max = 0;
+my $horiz_max_max     = 0;
+my @vert_max          = map { Max->new } ( 1 .. $SIZE );
+my @diag_max          = map { Max->new } ( 1 .. $SIZE );
+my @anti_diag_max     = map { Max->new } ( 1 .. $SIZE );
+my $diag_max_max      = 0;
 my $anti_diag_max_max = 0;
 
 sub handle_row
 {
     my $horiz = Max->new;
+
     # First row.
-    foreach my $x (0 .. $SIZE-1)
+    foreach my $x ( 0 .. $SIZE - 1 )
     {
         my $s = $rand->fetch();
 
@@ -145,22 +147,23 @@ sub handle_row
         $anti_diag_max[$x]->add($s);
     }
 
-    $horiz_max_max = max($horiz_max_max, $horiz->get_max());
+    $horiz_max_max = max( $horiz_max_max, $horiz->get_max() );
 
-    $diag_max_max = max($diag_max_max, $diag_max[0]->get_max());
+    $diag_max_max = max( $diag_max_max, $diag_max[0]->get_max() );
     shift(@diag_max);
     push @diag_max, Max->new;
 
-    $anti_diag_max_max = max($anti_diag_max_max, $anti_diag_max[-1]->get_max());
+    $anti_diag_max_max =
+        max( $anti_diag_max_max, $anti_diag_max[-1]->get_max() );
     pop(@anti_diag_max);
     unshift @anti_diag_max, Max->new;
 
     return;
 }
 
-foreach my $y (1 .. $SIZE)
+foreach my $y ( 1 .. $SIZE )
 {
-    if ($y % 100 == 0)
+    if ( $y % 100 == 0 )
     {
         print "$y\n";
     }
@@ -175,7 +178,7 @@ sub multi_max
 
     foreach my $n (@$aref)
     {
-        if ($n > $max)
+        if ( $n > $max )
         {
             $max = $n;
         }
@@ -183,9 +186,11 @@ sub multi_max
     return $max;
 }
 
-print "Result = ", multi_max(
+print "Result = ",
+    multi_max(
     [
-    $horiz_max_max, $anti_diag_max_max, $diag_max_max, (map { $_->get_max() } @vert_max, @diag_max, @anti_diag_max
-    )
+        $horiz_max_max, $anti_diag_max_max, $diag_max_max,
+        ( map { $_->get_max() } @vert_max, @diag_max, @anti_diag_max )
     ]
-), "\n";
+    ),
+    "\n";

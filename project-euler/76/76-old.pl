@@ -19,36 +19,34 @@ $num_sums[1][1] = Math::BigInt->new(1);
 
 sub calc_num_sum
 {
-    my ($sum, $max) = @_;
+    my ( $sum, $max ) = @_;
 
     print "Calling calc_num_sum($sum,$max)\n";
 
     print("CalcSum[$sum][$max]\n");
 
-    $max = min($max,$sum);
+    $max = min( $max, $sum );
 
-    if ($max == $sum)
+    if ( $max == $sum )
     {
         return $num_sums[$sum][$max] //= 1;
     }
 
-    my $ret =
-    (
+    my $ret = (
         $num_sums[$sum][$max] //=
-        do
+            do
         {
             my $count = Math::BigInt->new(0);
-            foreach my $first (1 .. $max)
+            foreach my $first ( 1 .. $max )
             {
-                my $tail_sum = $sum-$first;
+                my $tail_sum = $sum - $first;
 
-                $count += ($num_sums[$tail_sum][$first] //=
-                    calc_num_sum($tail_sum, $first)
-                );
+                $count += ( $num_sums[$tail_sum][$first] //=
+                        calc_num_sum( $tail_sum, $first ) );
             }
 
             $count;
-        }
+            }
     );
 
     print "Sum[$sum][$max] = $ret\n";
@@ -56,5 +54,5 @@ sub calc_num_sum
     return $ret;
 }
 
-calc_num_sum(100,99);
+calc_num_sum( 100, 99 );
 

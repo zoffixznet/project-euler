@@ -21,9 +21,9 @@ sub to_id
     my ($wall) = @_;
 
     my $v = '';
-    while (my ($i, $rec) = each(@$wall))
+    while ( my ( $i, $rec ) = each(@$wall) )
     {
-        vec($v, $i, 8) = (($rec->{o} & 0x1) | ($rec->{l} << 1));
+        vec( $v, $i, 8 ) = ( ( $rec->{o} & 0x1 ) | ( $rec->{l} << 1 ) );
     }
 
     return $v;
@@ -34,9 +34,10 @@ sub from_id
     my ($id) = @_;
 
     return [
-        map { my $v = vec($id, $_, 8);
-            +{ o => (2 | ($v&0x1)), l => ($v >> 1) }
-        } 0 .. length($id)-1
+        map {
+            my $v = vec( $id, $_, 8 );
+            +{ o => ( 2 | ( $v & 0x1 ) ), l => ( $v >> 1 ) }
+        } 0 .. length($id) - 1
     ];
 }
 
@@ -51,50 +52,50 @@ sub solve_for_level
 
     STDERR->print("Checking level $l\n");
 
-    if (!defined($levels[$l]))
+    if ( !defined( $levels[$l] ) )
     {
         return;
     }
 
-    while (my ($id, $count) = each(%{$levels[$l]}))
+    while ( my ( $id, $count ) = each( %{ $levels[$l] } ) )
     {
         my $wall = from_id($id);
 
         my $min_i;
-        my $min_len = $LEN+1;
+        my $min_len = $LEN + 1;
 
-        while (my ($i, $rec) = each @$wall)
+        while ( my ( $i, $rec ) = each @$wall )
         {
             my $len = $rec->{l};
-            if ($len < $min_len)
+            if ( $len < $min_len )
             {
                 $min_len = $len;
-                $min_i = $i;
+                $min_i   = $i;
             }
         }
 
-        my $rem = $LEN-$min_len;
-        NEW:
-        for my $new (($rem >= 5) ? (2,3) : ($rem == 3) ? (3) : (2))
+        my $rem = $LEN - $min_len;
+    NEW:
+        for my $new ( ( $rem >= 5 ) ? ( 2, 3 ) : ( $rem == 3 ) ? (3) : (2) )
         {
-            my $new_len = $min_len+$new;
-            if ($new_len != $LEN)
+            my $new_len = $min_len + $new;
+            if ( $new_len != $LEN )
             {
                 foreach my $i (
-                    (($min_i > 0) ? ($min_i - 1) : ()),
-                    (($min_i+1 < $NUM_LAYERS) ? ($min_i+1) : ()),
-                )
+                    ( ( $min_i > 0 ) ? ( $min_i - 1 ) : () ),
+                    ( ( $min_i + 1 < $NUM_LAYERS ) ? ( $min_i + 1 ) : () ),
+                    )
                 {
-                    my ($o, $l) = @{$wall->[$i]}{qw(o l)};
-                    if ($l == $new_len or ($l-$o) == $new_len)
+                    my ( $o, $l ) = @{ $wall->[$i] }{qw(o l)};
+                    if ( $l == $new_len or ( $l - $o ) == $new_len )
                     {
                         next NEW;
                     }
                 }
             }
             my $new_id = $id;
-            vec($new_id, $min_i, 8) = (($new & 0x1) | ($new_len << 1));
-            $levels[$l+$new]{$new_id} += $count;
+            vec( $new_id, $min_i, 8 ) = ( ( $new & 0x1 ) | ( $new_len << 1 ) );
+            $levels[ $l + $new ]{$new_id} += $count;
         }
     }
 
@@ -106,35 +107,36 @@ sub solve_for_level
 
 sub solve
 {
-    my ($len, $num_layers) = @_;
+    my ( $len, $num_layers ) = @_;
 
     @levels = ();
 
-    $LEN = $len;
+    $LEN        = $len;
     $NUM_LAYERS = $num_layers;
 
-    foreach my $start_new (2,3)
+    foreach my $start_new ( 2, 3 )
     {
         my $wall = [
-            map { my $l = (($_&0x1) ? $start_new : ($start_new^0x1));
+            map {
+                my $l = ( ( $_ & 0x1 ) ? $start_new : ( $start_new ^ 0x1 ) );
                 +{ o => $l, l => $l }
-            } (0 .. $NUM_LAYERS-1)
+            } ( 0 .. $NUM_LAYERS - 1 )
         ];
 
-        my $sum = sum (map { $_->{l} } @$wall);
+        my $sum = sum( map { $_->{l} } @$wall );
 
-        $levels[$sum]{to_id($wall)} = 1;
+        $levels[$sum]{ to_id($wall) } = 1;
     }
 
-    my $total = $LEN*$NUM_LAYERS;
-    for my $l (0 .. $total-1)
+    my $total = $LEN * $NUM_LAYERS;
+    for my $l ( 0 .. $total - 1 )
     {
         solve_for_level($l);
     }
 
     # Now let's count the number of elements in the total level.
     #
-    return sum(values(%{$levels[$total]}));
+    return sum( values( %{ $levels[$total] } ) );
 }
 
 1;

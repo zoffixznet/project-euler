@@ -7,16 +7,16 @@ sub is_prime
 {
     my ($n) = @_;
 
-    if ($n <= 1)
+    if ( $n <= 1 )
     {
         return 0;
     }
 
-    my $top = int(sqrt($n));
+    my $top = int( sqrt($n) );
 
-    for my $i (2 .. $top)
+    for my $i ( 2 .. $top )
     {
-        if ($n % $i == 0)
+        if ( $n % $i == 0 )
         {
             return 0;
         }
@@ -28,29 +28,29 @@ sub is_prime
 sub is_circ_prime
 {
     my $n = shift;
-    if ($n =~ /0/)
+    if ( $n =~ /0/ )
     {
         return;
     }
     else
     {
         my $l = length($n);
-        for my $i (1 .. $l)
+        for my $i ( 1 .. $l )
         {
-            if (!is_prime($n))
+            if ( !is_prime($n) )
             {
                 return;
             }
-            $n = substr($n,1) . substr($n,0,1);
+            $n = substr( $n, 1 ) . substr( $n, 0, 1 );
         }
         return 1;
     }
 }
 
 my $count;
-foreach my $n (2 .. 1_000_000)
+foreach my $n ( 2 .. 1_000_000 )
 {
-    if (is_circ_prime($n))
+    if ( is_circ_prime($n) )
     {
         $count++;
     }

@@ -14,86 +14,88 @@ sub gen_id_mat
     return [
         map {
             my $i = $_;
-            [map { (($_ == $i) ? 1 : 0); } @Euler377::DIGITS ]
-        }
-        @Euler377::DIGITS
+            [ map { ( ( $_ == $i ) ? 1 : 0 ); } @Euler377::DIGITS ]
+        } @Euler377::DIGITS
     ];
 }
 
 {
     my $ID_MAT = gen_id_mat();
-    my $result = Euler377::multiply(
-        $ID_MAT,
-        $ID_MAT,
-    );
+    my $result = Euler377::multiply( $ID_MAT, $ID_MAT, );
 
     # TEST
     ok(
-        scalar
-        (
-        all
-        {
-            my $i = $_;
+        scalar(
             all
             {
-                my $j = $_;
-                ($result->{normal}->[$i]->[$j] == (($i == $j) ? 1 : 0));
+                my $i = $_;
+                all
+                {
+                    my $j = $_;
+                    ( $result->{normal}->[$i]->[$j] ==
+                            ( ( $i == $j ) ? 1 : 0 ) );
+                }
+                @Euler377::DIGITS;
             }
-            @Euler377::DIGITS;
-        } @Euler377::DIGITS
-    ),
+            @Euler377::DIGITS
+        ),
         "id * id == id",
     );
 }
 
 {
     # TEST
-    is (''.Euler377->new->calc_count(1), 1, "count(1) is correct.");
+    is( '' . Euler377->new->calc_count(1), 1, "count(1) is correct." );
 
     # TEST
-    is (''.Euler377->new->calc_count(2), 2, "count(2) is correct.");
+    is( '' . Euler377->new->calc_count(2), 2, "count(2) is correct." );
 
     # TEST
-    is (''.Euler377->new->calc_count(3), scalar(@{[
+    is(
+        '' . Euler377->new->calc_count(3),
+        scalar(
+            @{
+                [
                     qw(
-                    111
-                    12
-                    21
-                    3
-                    )
-                ]}), "count(2) is correct.");
+                        111
+                        12
+                        21
+                        3
+                        )
+                ]
+            }
+        ),
+        "count(2) is correct."
+    );
 
     # TEST
-    is (''.Euler377->new->calc_count(5), 16, "count(5) is correct.");
+    is( '' . Euler377->new->calc_count(5), 16, "count(5) is correct." );
 }
 
 sub test_single_calc_result
 {
-    my ($BASE, $blurb) = @_;
+    my ( $BASE, $blurb ) = @_;
 
     local $Test::Builder::Level = $Test::Builder::Level + 1;
 
-    my $obj = Euler377->new({BASE => $BASE, N_s => [$BASE]});
-    return is (
-        $obj->calc_result(),
-        ($obj->calc_using_brute_force($BASE) % 1_000_000_000),
-        $blurb,
-    );
+    my $obj = Euler377->new( { BASE => $BASE, N_s => [$BASE] } );
+    return is( $obj->calc_result(),
+        ( $obj->calc_using_brute_force($BASE) % 1_000_000_000 ), $blurb, );
 }
 
 {
     # TEST
-    test_single_calc_result(13, "Good calc result for 13");
+    test_single_calc_result( 13, "Good calc result for 13" );
 
     # TEST
-    test_single_calc_result(14, "Good calc result for 14");
+    test_single_calc_result( 14, "Good calc result for 14" );
 
     # TEST
-    test_single_calc_result(15, "Good calc result for 15");
+    test_single_calc_result( 15, "Good calc result for 15" );
 
     # TEST
-    test_single_calc_result(16, "Good calc result for 16");
+    test_single_calc_result( 16, "Good calc result for 16" );
 
     # TEST
-    test_single_calc_result(17, "Good calc result for 17");
+    test_single_calc_result( 17, "Good calc result for 17" );
 }

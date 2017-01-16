@@ -13,7 +13,6 @@ use List::MoreUtils qw();
 
 STDOUT->autoflush(1);
 
-
 my $bitmask = '';
 
 my $lim_line = <>;
@@ -22,13 +21,13 @@ my ($LIM) = $lim_line =~ /([0-9]+)/g;
 my $STEP = 10_000;
 
 my $count = 0;
-my $sum = 0;
-my $pr = $LIM - $STEP;
+my $sum   = 0;
+my $pr    = $LIM - $STEP;
 MAIN:
-while (my $l = <>)
+while ( my $l = <> )
 {
-    my ($A, $Asq, @p) = ($l =~ /([0-9]+)/g);
-    if (!@p)
+    my ( $A, $Asq, @p ) = ( $l =~ /([0-9]+)/g );
+    if ( !@p )
     {
         last MAIN;
     }
@@ -38,17 +37,18 @@ while (my $l = <>)
         $q{$p}++;
     }
     my $rec = sub {
-        my ($n, $d) = @_;
+        my ( $n, $d ) = @_;
 
-        if (!@$d)
+        if ( !@$d )
         {
-            if ($n > $A)
+            if ( $n > $A )
             {
-                if (!vec($bitmask, $n, 1))
+                if ( !vec( $bitmask, $n, 1 ) )
                 {
                     # print "f($n) = $A\n";
-                    vec($bitmask, $n, 1) = 1;
+                    vec( $bitmask, $n, 1 ) = 1;
                     $sum += $A;
+
                     # print "Sum[Intermediate] = $sum\n";
                     $count++;
                 }
@@ -57,21 +57,21 @@ while (my $l = <>)
         }
         my $p = shift(@$d);
         my $e = shift(@$d);
-        for my $m (0 .. $e)
+        for my $m ( 0 .. $e )
         {
-            __SUB__->($n, [@$d]);
+            __SUB__->( $n, [@$d] );
         }
         continue
         {
-            if (($n *= $p) > $LIM)
+            if ( ( $n *= $p ) > $LIM )
             {
                 return;
             }
         }
         return;
     };
-    $rec->(1, [%q]);
-    if ($A == $pr)
+    $rec->( 1, [%q] );
+    if ( $A == $pr )
     {
         print "A=$A sum=$sum\n";
         $pr -= $STEP;

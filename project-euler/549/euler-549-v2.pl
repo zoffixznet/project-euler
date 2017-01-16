@@ -11,6 +11,7 @@ STDOUT->autoflush(1);
 use List::Util qw/max min/;
 
 my $MAX = 100_000_000;
+
 # my $MAX = 100;
 my $buf = '';
 
@@ -23,9 +24,9 @@ foreach my $p (@primes)
     my @powers = ();
     {
         my $pow = $p;
-        while ($pow <= $MAX)
+        while ( $pow <= $MAX )
         {
-            push @powers, [$pow, $pow];
+            push @powers, [ $pow, $pow ];
             $pow *= $p;
         }
     }
@@ -33,19 +34,19 @@ foreach my $p (@primes)
     $powers[0][1] += $powers[0][0];
     my $this_e = 1;
     my $prev_e = 0;
-    my $mul = $p;
+    my $mul    = $p;
 
-    foreach my $e (1 .. @powers)
+    foreach my $e ( 1 .. @powers )
     {
-        if ($e == $prev_e + 1)
+        if ( $e == $prev_e + 1 )
         {
-            my $pow = $powers[$e-1][0];
-            my $i = $pow;
-            while ($i <= $MAX)
+            my $pow = $powers[ $e - 1 ][0];
+            my $i   = $pow;
+            while ( $i <= $MAX )
             {
-                if (vec($buf, $i, 32) < $mul)
+                if ( vec( $buf, $i, 32 ) < $mul )
                 {
-                    vec($buf, $i, 32) = $mul;
+                    vec( $buf, $i, 32 ) = $mul;
                 }
             }
             continue
@@ -56,14 +57,14 @@ foreach my $p (@primes)
     }
     continue
     {
-        if ($e == $this_e)
+        if ( $e == $this_e )
         {
             $mul += $p;
             $prev_e = $this_e;
-            INC_THIS_E:
+        INC_THIS_E:
             foreach my $p_r (@powers)
             {
-                if ($p_r->[1] == $mul)
+                if ( $p_r->[1] == $mul )
                 {
                     $this_e++;
                     $p_r->[1] += $p_r->[0];
@@ -78,9 +79,9 @@ foreach my $p (@primes)
 }
 
 my $sum = 0;
-foreach my $i (2 .. $MAX)
+foreach my $i ( 2 .. $MAX )
 {
-    $sum += vec($buf, $i, 32);
+    $sum += vec( $buf, $i, 32 );
 }
 
 print "Sum = $sum\n";

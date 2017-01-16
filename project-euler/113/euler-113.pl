@@ -5,9 +5,7 @@ use warnings;
 
 use Math::GMP qw(:constant);
 
-
-
-my @digits = (0 .. 9);
+my @digits = ( 0 .. 9 );
 
 sub count_increasing
 {
@@ -16,15 +14,16 @@ sub count_increasing
     my $max_digit = $NUM_DIGITS - 1;
 
     my $total_sum = 0;
+
     # Count the increasing numbers
     {
         # Contains for each leading digit, the count of numbers that start
         # with that digit and that are increasing.
         my @counts;
 
-        push @counts, [(1) x @digits];
+        push @counts, [ (1) x @digits ];
 
-        foreach my $digit_idx (1 .. $max_digit)
+        foreach my $digit_idx ( 1 .. $max_digit )
         {
             my @d_counts;
 
@@ -33,18 +32,18 @@ sub count_increasing
             # 8$D$N can have either 8 or 9 as $D.
             # 0 can have them all.
             my $digit_sum = 0;
-            foreach my $d (reverse @digits)
+            foreach my $d ( reverse @digits )
             {
                 $digit_sum += $counts[-1][$d];
-                push @d_counts, (0+$digit_sum);
+                push @d_counts, ( 0 + $digit_sum );
             }
 
             # print "For $digit_idx : ", join(",", reverse @d_counts ), "\n";
 
-            push @counts, [reverse @d_counts];
+            push @counts, [ reverse @d_counts ];
         }
 
-        foreach my $c (@{$counts[-1]})
+        foreach my $c ( @{ $counts[-1] } )
         {
             $total_sum += $c;
         }
@@ -76,16 +75,16 @@ sub count_decreasing
     my @counts;
 
     {
-        my @d_counts = ((1) x @digits);
+        my @d_counts = ( (1) x @digits );
         push @counts, \@d_counts;
 
-        foreach my $d_c (@d_counts[1 .. 9])
+        foreach my $d_c ( @d_counts[ 1 .. 9 ] )
         {
             $total_sum += $d_c;
         }
     }
 
-    foreach my $digit_idx (1 .. $max_digit)
+    foreach my $digit_idx ( 1 .. $max_digit )
     {
         my @d_counts;
 
@@ -94,14 +93,14 @@ sub count_decreasing
         foreach my $d (@digits)
         {
             $digit_sum += $counts[-1][$d];
-            push @d_counts, (0+$digit_sum);
+            push @d_counts, ( 0 + $digit_sum );
         }
 
-        push @counts, (\@d_counts);
+        push @counts, ( \@d_counts );
 
         # print "For $digit_idx : ", join(",", reverse @d_counts ), "\n";
 
-        foreach my $d_c (@d_counts[1 .. 9])
+        foreach my $d_c ( @d_counts[ 1 .. 9 ] )
         {
             $total_sum += $d_c;
         }
@@ -116,11 +115,12 @@ sub calc_num_non_bouncy
 
     my $max_digit = $NUM_DIGITS - 1;
 
-    my $total_sum = count_increasing($NUM_DIGITS) + count_decreasing($NUM_DIGITS);
+    my $total_sum =
+        count_increasing($NUM_DIGITS) + count_decreasing($NUM_DIGITS);
 
     # Remove one count of the numbers that are both increasing and
     # decreasing i.e: numbers with all digits the same.
-    foreach my $num_digits (0 .. $max_digit)
+    foreach my $num_digits ( 0 .. $max_digit )
     {
         $total_sum -= 9;
     }
@@ -133,23 +133,23 @@ sub trace
     my $NUM_DIGITS = shift;
 
     print "Both($NUM_DIGITS) = ", calc_num_non_bouncy($NUM_DIGITS), "\n";
-    print "Inc($NUM_DIGITS) = ", count_increasing($NUM_DIGITS), "\n";
-    print "Dec($NUM_DIGITS) = ", count_decreasing($NUM_DIGITS), "\n";
+    print "Inc($NUM_DIGITS) = ",  count_increasing($NUM_DIGITS),    "\n";
+    print "Dec($NUM_DIGITS) = ",  count_decreasing($NUM_DIGITS),    "\n";
 
     return;
 
-    my ($inc_count, $dec_count, $both_count);
-    for my $n (1 .. (10 ** $NUM_DIGITS-1))
+    my ( $inc_count, $dec_count, $both_count );
+    for my $n ( 1 .. ( 10**$NUM_DIGITS - 1 ) )
     {
-        my $s = join "",sort { $a <=> $b } split//,$n;
+        my $s = join "", sort { $a <=> $b } split //, $n;
 
         my $both_offset = 0;
-        if ($n eq $s)
+        if ( $n eq $s )
         {
             $inc_count++;
             $both_offset = 1;
         }
-        if ($n eq reverse($s))
+        if ( $n eq reverse($s) )
         {
             $both_offset = 1;
             $dec_count++;

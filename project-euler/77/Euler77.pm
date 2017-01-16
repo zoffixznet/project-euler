@@ -10,43 +10,40 @@ my @cache;
 
 sub get_combinations
 {
-    my ($prefix, $start_from_max_prime_idx, $sum, $out_combinations_ref) = @_;
+    my ( $prefix, $start_from_max_prime_idx, $sum, $out_combinations_ref ) = @_;
 
     my $combinations = [];
 
-    if ($sum == 0)
+    if ( $sum == 0 )
     {
         push @$combinations, [];
     }
-    elsif (defined($cache[$sum][$start_from_max_prime_idx]))
+    elsif ( defined( $cache[$sum][$start_from_max_prime_idx] ) )
     {
         $combinations = $cache[$sum][$start_from_max_prime_idx];
     }
     else
     {
-        MAX_PRIME:
-        foreach my $max_prime_idx ($start_from_max_prime_idx .. $#primes)
+    MAX_PRIME:
+        foreach my $max_prime_idx ( $start_from_max_prime_idx .. $#primes )
         {
             my $max_prime = $primes[$max_prime_idx];
 
-            if ($max_prime > $sum)
+            if ( $max_prime > $sum )
             {
                 last MAX_PRIME;
             }
 
             get_combinations(
-                [$max_prime],
-                $max_prime_idx,
-                $sum-$max_prime,
-                $combinations
+                [$max_prime],      $max_prime_idx,
+                $sum - $max_prime, $combinations
             );
         }
 
         $cache[$sum][$start_from_max_prime_idx] = $combinations;
     }
 
-
-    push @$out_combinations_ref, (map { [@$prefix, @$_] } @$combinations);
+    push @$out_combinations_ref, ( map { [ @$prefix, @$_ ] } @$combinations );
 
     return;
 }
@@ -57,16 +54,17 @@ sub get_num_primes_combinations
 
     my @combinations;
 
-    MAX_PRIME:
-    foreach my $max_prime_idx (0 .. $#primes)
+MAX_PRIME:
+    foreach my $max_prime_idx ( 0 .. $#primes )
     {
         my $max_prime = $primes[$max_prime_idx];
 
-        if ($max_prime > $n)
+        if ( $max_prime > $n )
         {
             last MAX_PRIME;
         }
-        get_combinations([$max_prime], $max_prime_idx, $n-$max_prime, \@combinations);
+        get_combinations( [$max_prime], $max_prime_idx, $n - $max_prime,
+            \@combinations );
     }
     return scalar(@combinations);
 }

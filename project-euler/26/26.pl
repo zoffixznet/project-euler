@@ -13,18 +13,16 @@ sub find_cycle
 
     my $r = 1;
     my $count;
-    while (!exists($states{"$r"}))
+    while ( !exists( $states{"$r"} ) )
     {
         $states{"$r"} = $count++;
-        $r = +($r * 10) % $n;
+        $r = +( $r * 10 ) % $n;
     }
     return $count - $states{"$r"};
 }
 
 my $pair =
     reduce { $a->[1] > $b->[1] ? $a : $b }
-    map { [$_,find_cycle($_)] }
-    (2 .. 999)
-    ;
+map { [ $_, find_cycle($_) ] } ( 2 .. 999 );
 
-print join(",", @$pair), "\n";
+print join( ",", @$pair ), "\n";

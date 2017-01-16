@@ -9,7 +9,7 @@ my $mod_u_0 = -1_000_000_000;
 
 sub mod_f
 {
-    return floor (2 ** (30.403243784 - (shift()*1e-9)**2));
+    return floor( 2**( 30.403243784 - ( shift() * 1e-9 )**2 ) );
 }
 
 my %found;
@@ -20,12 +20,12 @@ $found{$u} = $n;
 while (1)
 {
     my $new_u = mod_f($u);
-    if ((++$n) % 100_000 == 0)
+    if ( ( ++$n ) % 100_000 == 0 )
     {
         print "Reached $n\n";
     }
     print "found[$n] = $new_u\n";
-    if (exists ($found{$new_u}))
+    if ( exists( $found{$new_u} ) )
     {
         print "found[$found{$new_u}] = found[$n]\n";
         exit(0);

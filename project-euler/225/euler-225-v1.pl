@@ -16,16 +16,16 @@ STDOUT->autoflush(1);
 my $n = 3;
 
 my $found = 0;
-while ($found < 124)
+while ( $found < 124 )
 {
-    my @last = (1,1,1);
-    my %sigs = ("@last" => undef(),);
+    my @last = ( 1, 1, 1 );
+    my %sigs = ( "@last" => undef(), );
 
-    L:
-    while ($last[-1])
+L:
+    while ( $last[-1] )
     {
-        @last = (@last[1,2], ($last[0]+$last[1]+$last[2])%$n);
-        if (exists($sigs{"@last"}))
+        @last = ( @last[ 1, 2 ], ( $last[0] + $last[1] + $last[2] ) % $n );
+        if ( exists( $sigs{"@last"} ) )
         {
             $found++;
             print "Found the ${found}'th find - $n\n";

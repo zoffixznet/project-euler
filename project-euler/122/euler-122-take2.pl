@@ -13,42 +13,42 @@ use IO::Handle;
 STDOUT->autoflush(1);
 
 my $comb1 = '';
-vec($comb1, 1, 1) = 1;
+vec( $comb1, 1, 1 ) = 1;
 
-my @combinations = (undef, [$comb1]);
+my @combinations = ( undef, [$comb1] );
 
 sub is_superset
 {
-    my ($super, $sub, $true_superset) = @_;
+    my ( $super, $sub, $true_superset ) = @_;
 
-    foreach my $key (keys(%$sub))
+    foreach my $key ( keys(%$sub) )
     {
-        if (!exists($super->{$key}))
+        if ( !exists( $super->{$key} ) )
         {
             return;
         }
     }
 
-    return ((!$true_superset) || (keys(%$super) > keys(%$sub)));
+    return ( ( !$true_superset ) || ( keys(%$super) > keys(%$sub) ) );
 }
 
 my $sum = 0;
 print "1: 0\n";
 
-foreach my $n (2 .. 200)
+foreach my $n ( 2 .. 200 )
 {
     # print "Reached $n\n";
     my $sets = [];
 
-    foreach my $lower (1 .. ($n>>1))
+    foreach my $lower ( 1 .. ( $n >> 1 ) )
     {
         my $upper = $n - $lower;
 
-        push @$sets, (
-            map { my $s = $_; vec($s, $n, 1) = 1; $s }
-            grep { vec($_, $lower, 1) }
-            @{$combinations[$upper]}
-        );
+        push @$sets,
+            (
+            map { my $s = $_; vec( $s, $n, 1 ) = 1; $s }
+            grep { vec( $_, $lower, 1 ) } @{ $combinations[$upper] }
+            );
 
 =begin foo
         U_SET:
@@ -100,9 +100,10 @@ foreach my $n (2 .. 200)
     # $combinations[$n] = [sort { $a cmp $b } keys(%sets)];
     $combinations[$n] = $sets;
 
-    my $optimal_comb = min_by { unpack("b*", $_) =~ tr/1/1/ } @{$combinations[$n]};
+    my $optimal_comb =
+        min_by { unpack( "b*", $_ ) =~ tr/1/1/ } @{ $combinations[$n] };
 
-    my $comb = unpack("b*", $optimal_comb);
+    my $comb = unpack( "b*", $optimal_comb );
     my $result = -1 + $comb =~ tr/1/1/;
 
     print "${n}: $result ($comb)\n";

@@ -9,15 +9,15 @@ my $limit = 1_000_000;
 
 my $primes_bitmask = "";
 
-my $loop_to = int(sqrt($limit));
-for my $p (2 .. $loop_to)
+my $loop_to = int( sqrt($limit) );
+for my $p ( 2 .. $loop_to )
 {
-    if (vec($primes_bitmask, $p, 1) == 0)
+    if ( vec( $primes_bitmask, $p, 1 ) == 0 )
     {
         my $i = $p * $p;
-        while ($i < $limit)
+        while ( $i < $limit )
         {
-            vec($primes_bitmask, $i, 1) = 1;
+            vec( $primes_bitmask, $i, 1 ) = 1;
         }
         continue
         {
@@ -27,14 +27,16 @@ for my $p (2 .. $loop_to)
 }
 
 NUM_LOOP:
-for my $n (10 .. $limit)
+for my $n ( 10 .. $limit )
 {
     if ( $n !~ /0/ )
     {
         next NUM_LOOP;
     }
-    my @found = (grep { my $m = $n; $m =~ s/0/$_/g; vec($primes_bitmask, $m, 1) } (0 .. 9));
-    if (@found >= 8)
+    my @found =
+        ( grep { my $m = $n; $m =~ s/0/$_/g; vec( $primes_bitmask, $m, 1 ) }
+            ( 0 .. 9 ) );
+    if ( @found >= 8 )
     {
         my $m = $n;
         $m =~ s/0/$found[0]/g;

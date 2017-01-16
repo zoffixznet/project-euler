@@ -10,19 +10,19 @@ my @f_n = (0);
 
 STDOUT->autoflush(1);
 
-for my $n (1 .. 1_000_000_000_000)
+for my $n ( 1 .. 1_000_000_000_000 )
 {
-    if ($n % 1_000_000 == 0)
+    if ( $n % 1_000_000 == 0 )
     {
         print "Reached $n\n";
     }
-    for my $d (split//,$n)
+    for my $d ( split //, $n )
     {
         $f_n[$d]++;
     }
-    foreach my $d (1 .. 9)
+    foreach my $d ( 1 .. 9 )
     {
-        if ($f_n[$d] == $n)
+        if ( $f_n[$d] == $n )
         {
             $s_n[$d] += $n;
         }

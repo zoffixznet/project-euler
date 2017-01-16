@@ -1,27 +1,27 @@
 use strict;
 use warnings;
 
-my $Limit = 1_000_000;
-my @factors = ((0) x $Limit);
-my $count = 0;
-for my $i (2 .. $Limit)
+my $Limit   = 1_000_000;
+my @factors = ( (0) x $Limit );
+my $count   = 0;
+for my $i ( 2 .. $Limit )
 {
-    if ($factors[$i] == 0)
+    if ( $factors[$i] == 0 )
     {
         # i is prime.
         $count = 0;
         my $val = $i;
-        while ($val < $Limit)
+        while ( $val < $Limit )
         {
             $factors[$val]++;
             $val += $i;
         }
     }
-    elsif ($factors[$i] == 4)
+    elsif ( $factors[$i] == 4 )
     {
-        if (++$count == 4)
+        if ( ++$count == 4 )
         {
-            print "Found " . ($i-3) . "\n";
+            print "Found " . ( $i - 3 ) . "\n";
             exit;
         }
     }

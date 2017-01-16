@@ -14,7 +14,7 @@ use List::MoreUtils qw();
 STDOUT->autoflush(1);
 
 my @factorials = (1);
-for my $n (1 .. 9)
+for my $n ( 1 .. 9 )
 {
     push @factorials, $factorials[-1] * $n;
 }
@@ -24,30 +24,30 @@ my @g;
 my $count = 0;
 
 my $num_digits = 1;
-my $SEEK = 150;
-while ($count < $SEEK)
+my $SEEK       = 150;
+while ( $count < $SEEK )
 {
     my $recurse;
 
     $recurse = sub {
-        my ($n, $d) = @_;
+        my ( $n, $d ) = @_;
 
         my $remain = $num_digits - length($n);
 
-        if (! $remain)
+        if ( !$remain )
         {
-            my $f = sum(@factorials[split//,$n]);
-            my $sf = sum(split//,$f);
+            my $f = sum( @factorials[ split //, $n ] );
+            my $sf = sum( split //, $f );
 
-            if ($sf <= $SEEK)
+            if ( $sf <= $SEEK )
             {
-                if (!defined($g[$sf]))
+                if ( !defined( $g[$sf] ) )
                 {
                     $count++;
                     $g[$sf] = $n;
-                    $sum += sum(split//,$n);
+                    $sum += sum( split //, $n );
                     print "Found g($sf) == $n (f=$f) [Count=$count]\n";
-                    if ($count == $SEEK)
+                    if ( $count == $SEEK )
                     {
                         return 1;
                     }
@@ -58,9 +58,10 @@ while ($count < $SEEK)
         }
         else
         {
-            for my $e (($d == 9) ? ($remain) : reverse(0 .. min($remain, $d)))
+            for my $e (
+                ( $d == 9 ) ? ($remain) : reverse( 0 .. min( $remain, $d ) ) )
             {
-                if ($recurse->($n.($d x $e), $d+1))
+                if ( $recurse->( $n . ( $d x $e ), $d + 1 ) )
                 {
                     return 1;
                 }
@@ -69,10 +70,10 @@ while ($count < $SEEK)
         }
     };
 
-    D_LOOP:
-    for my $d (1 .. 9)
+D_LOOP:
+    for my $d ( 1 .. 9 )
     {
-        if ($recurse->('', $d))
+        if ( $recurse->( '', $d ) )
         {
             last D_LOOP;
         }

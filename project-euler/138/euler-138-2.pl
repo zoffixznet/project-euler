@@ -13,16 +13,16 @@ sub get_valid_n_mods_for_base
 
     my %valid_L_squared_mods;
 
-    for my $L (0 .. $base-1)
+    for my $L ( 0 .. $base - 1 )
     {
-        $valid_L_squared_mods{($L * $L) % $base} = 1;
+        $valid_L_squared_mods{ ( $L * $L ) % $base } = 1;
     }
 
     my @valid_n_mods;
-    for my $n (0 .. $base-1)
+    for my $n ( 0 .. $base - 1 )
     {
-        my $modulo = ((1 + $n * (4 + $n * 5))%$base);
-        if (exists($valid_L_squared_mods{$modulo}))
+        my $modulo = ( ( 1 + $n * ( 4 + $n * 5 ) ) % $base );
+        if ( exists( $valid_L_squared_mods{$modulo} ) )
         {
             push @valid_n_mods, $n;
         }
@@ -31,13 +31,13 @@ sub get_valid_n_mods_for_base
     return \@valid_n_mods;
 }
 
-my $base = 95_480;
-my $count = 0;
-my $sum_L = 0;
-my $base_n = 0;
+my $base       = 95_480;
+my $count      = 0;
+my $sum_L      = 0;
+my $base_n     = 0;
 my $valid_mods = get_valid_n_mods_for_base($base);
-my $L = 1;
-my $L_sq = 1;
+my $L          = 1;
+my $L_sq       = 1;
 my $L_sq_delta = 1;
 
 while (1)
@@ -46,18 +46,18 @@ while (1)
     {
         my $n = $base_n + $delta;
 
-        my ($prev_L, $prev_L_sq, $prev_L_sq_delta);
-        foreach my $result (1+$n*(4+5*$n))
+        my ( $prev_L, $prev_L_sq, $prev_L_sq_delta );
+        foreach my $result ( 1 + $n * ( 4 + 5 * $n ) )
         {
-            while ($L_sq < $result)
+            while ( $L_sq < $result )
             {
-                ($prev_L, $prev_L_sq, $prev_L_sq_delta)
-                    = ($L, $L_sq, $L_sq_delta);
+                ( $prev_L, $prev_L_sq, $prev_L_sq_delta ) =
+                    ( $L, $L_sq, $L_sq_delta );
                 $L++;
-                $L_sq += ($L_sq_delta += 2);
+                $L_sq += ( $L_sq_delta += 2 );
             }
 
-            if ($L_sq == $result)
+            if ( $L_sq == $result )
             {
                 $sum_L += $L;
                 $count++;
@@ -65,8 +65,8 @@ while (1)
             }
             else
             {
-                ($L, $L_sq, $L_sq_delta) =
-                    ($prev_L, $prev_L_sq, $prev_L_sq_delta);
+                ( $L, $L_sq, $L_sq_delta ) =
+                    ( $prev_L, $prev_L_sq, $prev_L_sq_delta );
             }
 
         }

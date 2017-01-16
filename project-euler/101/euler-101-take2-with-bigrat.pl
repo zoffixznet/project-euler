@@ -7,7 +7,6 @@ use Math::BigRat try => 'GMP';
 
 use List::Util qw();
 
-
 =head1 Planning.
 
 Suppose we have n terms for which the polynomial yields (a1, a2, a3 ... an).
@@ -35,13 +34,13 @@ package Row;
 
 use Moose;
 
-has 'elems' => (isa => 'ArrayRef[Math::BigRat]', is => 'rw');
+has 'elems' => ( isa => 'ArrayRef[Math::BigRat]', is => 'rw' );
 
 sub multiply_by
 {
-    my ($self, $x) = @_;
+    my ( $self, $x ) = @_;
 
-    foreach my $e (@{$self->elems})
+    foreach my $e ( @{ $self->elems } )
     {
         $e *= $x;
     }
@@ -53,50 +52,46 @@ sub as_string
 {
     my $self = shift;
 
-    return join(", ", map { $_ . "" } @{$self->elems()});
+    return join( ", ", map { $_ . "" } @{ $self->elems() } );
 }
 
 package Matrix;
 
 use Moose;
 
-has 'rows' => (isa => 'ArrayRef[Row]', is => 'rw');
+has 'rows' => ( isa => 'ArrayRef[Row]', is => 'rw' );
 
 sub size
 {
     my ($self) = @_;
 
-    return scalar(@{$self->rows});
+    return scalar( @{ $self->rows } );
 }
 
 sub eye
 {
     my $package = shift;
-    my $size = shift;
+    my $size    = shift;
 
     return $package->new(
         {
-            rows =>
-            [
-                map
-                {
+            rows => [
+                map {
                     my $r = $_;
                     Row->new(
                         {
-                            elems =>
-                            [
-                                map
-                                {
-                                    ($_ == $r
+                            elems => [
+                                map {
+                                    (
+                                        $_ == $r
                                         ? Math::BigRat->new(1)
                                         : Math::BigRat->new(0)
-                                    )
-                                }
-                                (0 .. $size-1)
+                                        )
+                                } ( 0 .. $size - 1 )
                             ]
                         }
-                    )
-                } (0 .. $size-1)
+                        )
+                } ( 0 .. $size - 1 )
             ]
         }
     );
@@ -104,18 +99,18 @@ sub eye
 
 sub _swap_rows
 {
-    my ($self, $i, $j) = @_;
+    my ( $self, $i, $j ) = @_;
 
     my $rows = $self->rows();
 
-    @{$rows}[$i,$j] = @{$rows}[$j,$i];
+    @{$rows}[ $i, $j ] = @{$rows}[ $j, $i ];
 
     return;
 }
 
 sub _multiply_row_by
 {
-    my ($self, $row, $x) = @_;
+    my ( $self, $row, $x ) = @_;
 
     $self->rows->[$row]->multiply_by($x);
 
@@ -124,15 +119,13 @@ sub _multiply_row_by
 
 sub _add_row_product_to_row
 {
-    my ($self, $row_idx, $other_row, $multiplier) = @_;
+    my ( $self, $row_idx, $other_row, $multiplier ) = @_;
 
-    foreach my $i (0 .. $self->size()-1)
+    foreach my $i ( 0 .. $self->size() - 1 )
     {
-        $self->_set_elem(
-            $row_idx, $i,
-            $self->_elem($row_idx, $i)
-                + ($multiplier * $self->_elem($other_row, $i))
-        );
+        $self->_set_elem( $row_idx, $i,
+            $self->_elem( $row_idx, $i ) +
+                ( $multiplier * $self->_elem( $other_row, $i ) ) );
     }
 
     return;
@@ -140,14 +133,14 @@ sub _add_row_product_to_row
 
 sub _elem
 {
-    my ($self, $r, $c) = @_;
+    my ( $self, $r, $c ) = @_;
 
     return $self->rows->[$r]->elems->[$c];
 }
 
 sub _set_elem
 {
-    my ($self, $r, $c, $v) = @_;
+    my ( $self, $r, $c, $v ) = @_;
 
     $self->rows->[$r]->elems->[$c] = $v;
 
@@ -158,64 +151,62 @@ sub inv
 {
     my ($self) = @_;
 
-    my $inverted = Matrix->eye($self->size());
+    my $inverted = Matrix->eye( $self->size() );
 
     my $simultaneous = sub {
         my $callback = shift;
 
-        foreach ($self, $inverted)
+        foreach ( $self, $inverted )
         {
             $callback->($_);
         }
     };
 
-    foreach my $col_to_stair (0 .. $self->size()-1)
+    foreach my $col_to_stair ( 0 .. $self->size() - 1 )
     {
-        my $found_row_idx =
-            List::Util::first
-            {
-                ! $self->_elem($_, $col_to_stair)->is_zero()
-            }
-            ($col_to_stair .. $self->size() - 1)
-            ;
-
-        if ($found_row_idx != $col_to_stair)
+        my $found_row_idx = List::Util::first
         {
-            $simultaneous->(sub {
-                $_->_swap_rows($col_to_stair, $found_row_idx);
+            !$self->_elem( $_, $col_to_stair )->is_zero()
+        }
+        ( $col_to_stair .. $self->size() - 1 );
+
+        if ( $found_row_idx != $col_to_stair )
+        {
+            $simultaneous->(
+                sub {
+                    $_->_swap_rows( $col_to_stair, $found_row_idx );
                 }
             );
         }
 
         {
-            my $n = $self->_elem($col_to_stair, $col_to_stair);
-            if (!$n->is_one())
+            my $n = $self->_elem( $col_to_stair, $col_to_stair );
+            if ( !$n->is_one() )
             {
                 $simultaneous->(
                     sub {
-                        $_->_multiply_row_by($col_to_stair, 1/$n);
+                        $_->_multiply_row_by( $col_to_stair, 1 / $n );
                     }
                 );
             }
         }
 
-        ROW_IDX:
-        foreach my $row_idx (0 .. $self->size()-1)
+    ROW_IDX:
+        foreach my $row_idx ( 0 .. $self->size() - 1 )
         {
-            if ($row_idx == $col_to_stair)
+            if ( $row_idx == $col_to_stair )
             {
                 next ROW_IDX;
             }
 
-            my $x = $self->_elem($row_idx, $col_to_stair);
+            my $x = $self->_elem( $row_idx, $col_to_stair );
 
-            if (! $x->is_zero())
+            if ( !$x->is_zero() )
             {
                 $simultaneous->(
                     sub {
-                        $_->_add_row_product_to_row(
-                            $row_idx, $col_to_stair, -$x
-                        );
+                        $_->_add_row_product_to_row( $row_idx, $col_to_stair,
+                            -$x );
                     }
                 );
             }
@@ -229,21 +220,21 @@ sub as_string
 {
     my $self = shift;
 
-    return join( "", map { $_->as_string() . "\n" } @{$self->rows()});
+    return join( "", map { $_->as_string() . "\n" } @{ $self->rows() } );
 }
 
 package main;
 
 use Data::Dumper;
 
-
-my @u_coeffs = (map { (-1) ** $_ } (0 .. 10));
+my @u_coeffs = ( map { (-1)**$_ } ( 0 .. 10 ) );
 
 sub calc_u_result_vec
 {
     my $x = shift;
 
-    return [map { (Math::BigRat->new($x) ** $_) * $u_coeffs[$_] } (0 .. $#u_coeffs)];
+    return [ map { ( Math::BigRat->new($x)**$_ ) * $u_coeffs[$_] }
+            ( 0 .. $#u_coeffs ) ];
 }
 
 sub mysum
@@ -261,16 +252,16 @@ sub mysum
 sub calc_u_result
 {
     my $x = shift;
-    return List::Util::sum (@{calc_u_result_vec($x)});
+    return List::Util::sum( @{ calc_u_result_vec($x) } );
 }
 
-my @u_results = (map { calc_u_result($_) } (1 .. scalar(@u_coeffs)));
+my @u_results = ( map { calc_u_result($_) } ( 1 .. scalar(@u_coeffs) ) );
 
 sub _row
 {
     my $elems = shift;
 
-    return Row->new({ elems => [ map { Math::BigRat->new($_) } @{$elems}]});
+    return Row->new( { elems => [ map { Math::BigRat->new($_) } @{$elems} ] } );
 }
 
 =begin Foo
@@ -292,26 +283,27 @@ print $mat->inv->as_string();
 =cut
 
 my $total_sum = 0;
-foreach my $idx (1 .. 10)
+foreach my $idx ( 1 .. 10 )
 {
-    my $gen_mat = sub { return Matrix->new(
-        {
-            rows =>
-            [
-                map {
-                    my $base = $_;
-                    _row([
-                        map {
-                            my $power = $_;
-                            Math::BigRat->new($base) ** $power
-                        }
-                        (0 .. $idx-1)
-                    ]);
-                }
-                (1 .. $idx)
-            ],
-        }
-    ) };
+    my $gen_mat = sub {
+        return Matrix->new(
+            {
+                rows => [
+                    map {
+                        my $base = $_;
+                        _row(
+                            [
+                                map {
+                                    my $power = $_;
+                                    Math::BigRat->new($base)**$power
+                                } ( 0 .. $idx - 1 )
+                            ]
+                        );
+                    } ( 1 .. $idx )
+                ],
+            }
+        );
+    };
 
     my $mat = $gen_mat->();
     print $mat->as_string();
@@ -320,13 +312,13 @@ foreach my $idx (1 .. 10)
 
     my @coeffs;
 
-    foreach my $c_idx (0 .. $idx-1)
+    foreach my $c_idx ( 0 .. $idx - 1 )
     {
         my $sum = Math::BigRat->new(0);
 
-        foreach my $x (0 .. $idx-1)
+        foreach my $x ( 0 .. $idx - 1 )
         {
-            $sum += $inv->_elem($c_idx, $x) * $u_results[$x];
+            $sum += $inv->_elem( $c_idx, $x ) * $u_results[$x];
         }
 
         push @coeffs, $sum;
@@ -336,29 +328,29 @@ foreach my $idx (1 .. 10)
         my $x = shift;
 
         my $bop = Math::BigRat->new(0);
-        foreach my $exp (0 .. $idx-1)
+        foreach my $exp ( 0 .. $idx - 1 )
         {
-            $bop += $coeffs[$exp] * ($x ** $exp);
+            $bop += $coeffs[$exp] * ( $x**$exp );
         }
 
         return $bop;
     };
 
-    foreach my $prev_idx (1 .. $idx)
+    foreach my $prev_idx ( 1 .. $idx )
     {
-        if ($get_coeff_val->($prev_idx) != $u_results[$prev_idx-1])
+        if ( $get_coeff_val->($prev_idx) != $u_results[ $prev_idx - 1 ] )
         {
-            die "Foo ($idx, $prev_idx)!" ;
+            die "Foo ($idx, $prev_idx)!";
         }
     }
 
     my $check = $idx;
-    CHECK_LOOP:
+CHECK_LOOP:
     while (1)
     {
         my $val_of_idx = $get_coeff_val->($check);
         print "$val_of_idx\n";
-        if ($val_of_idx != calc_u_result($check))
+        if ( $val_of_idx != calc_u_result($check) )
         {
             $total_sum += $val_of_idx;
             last CHECK_LOOP;

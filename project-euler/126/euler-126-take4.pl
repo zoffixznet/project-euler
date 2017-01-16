@@ -31,22 +31,21 @@ Z_LOOP:
 while (1)
 {
     print "Checking z=$z\n";
-    Y_LOOP:
-    for my $y (1 .. $z)
+Y_LOOP:
+    for my $y ( 1 .. $z )
     {
-        X_LOOP:
-        for my $x (1 .. $y)
+    X_LOOP:
+        for my $x ( 1 .. $y )
         {
-            my $new_layer_count =
-                ($x*($y+$z)+$z*$y);
+            my $new_layer_count = ( $x * ( $y + $z ) + $z * $y );
 
-            my $delta = ((($x+$y+$z)<<1)-4);
+            my $delta = ( ( ( $x + $y + $z ) << 1 ) - 4 );
 
-            if ($new_layer_count >= $LIMIT)
+            if ( $new_layer_count >= $LIMIT )
             {
-                if ($x == 1)
+                if ( $x == 1 )
                 {
-                    if ($y == 1)
+                    if ( $y == 1 )
                     {
                         last Z_LOOP;
                     }
@@ -61,10 +60,10 @@ while (1)
                     last X_LOOP;
                 }
             }
-            while ($new_layer_count < $LIMIT)
+            while ( $new_layer_count < $LIMIT )
             {
                 $C[$new_layer_count]++;
-                $new_layer_count += ($delta += 4);
+                $new_layer_count += ( $delta += 4 );
             }
         }
     }
@@ -74,10 +73,10 @@ continue
     $z++;
 }
 
-foreach my $count (1 .. $#C)
+foreach my $count ( 1 .. $#C )
 {
-    if (defined($C[$count]))
+    if ( defined( $C[$count] ) )
     {
-        print "C[" , ($count*2), "] = $C[$count]\n";
+        print "C[", ( $count * 2 ), "] = $C[$count]\n";
     }
 }
