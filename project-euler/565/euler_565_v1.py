@@ -38,6 +38,7 @@ while True:
         nn *= n
         sum_ += nn
 
+
 def is_prime(n):
     for x in xrange(3, int(math.sqrt(n))+1, 2):
         if n % x == 0:
@@ -47,7 +48,7 @@ def is_prime(n):
 m2 = MOD * 2
 start = root + m2 - (root % m2)
 
-for n in xrange(start-1,MAX+1,m2):
+for n in xrange(start-1, MAX+1, m2):
     if is_prime(n):
-        for nn in xrange(n,MAX+1,n):
+        for nn in xrange(n, MAX+1, n):
             print(nn)

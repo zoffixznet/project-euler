@@ -22,6 +22,7 @@ def _from_digits(b, d):
         e *= b
     return ret
 
+
 class BaseNum(object):
     """Based Num object"""
     def __init__(self, b, n, digits=None):
@@ -70,7 +71,9 @@ class BaseNum(object):
                     for i, d in enumerate(self.digits[(num_so_far-1)::-1]):
                         found_digs = [x for x in zero_digs if x >= d]
                         if len(found_digs) == 0:
-                            next_ = (([0] * num_so_far) + [self.digits[num_so_far]+1] + self.digits[num_so_far+1:])
+                            next_ = (([0] * num_so_far) +
+                                     [self.digits[num_so_far]+1] +
+                                     self.digits[num_so_far+1:])
                             j = num_so_far
                             while next_[j] == self.b:
                                 next_[j] = 0
@@ -83,7 +86,8 @@ class BaseNum(object):
                         if found_d > d:
                             digs += zero_digs
                             break
-                    return self._new_from_digits(digs[::-1] +  self.digits[num_so_far:])
+                    return self._new_from_digits(
+                        digs[::-1] + self.digits[num_so_far:])
                 num_so_far += 1
             return None
         ret = worker()
@@ -91,6 +95,7 @@ class BaseNum(object):
             return ret
         assert ret.n >= self.n
         return ret
+
 
 class FindSuperPans(object):
     """docstring for SuperPan"""
@@ -103,7 +108,7 @@ class FindSuperPans(object):
         restart = True
         while restart:
             restart = False
-            for b in xrange(self.max_b,1,-1):
+            for b in xrange(self.max_b, 1, -1):
                 new = BaseNum(b, i).next_pan()
                 if new.n > i:
                     i = new.n
@@ -118,10 +123,12 @@ class FindSuperPans(object):
             found_num = self.find_next()
             ret += found_num
             if verbose:
-                print( "Found the %d -th %d for total=%d" % (idx, found_num, ret) )
+                print("Found the %d -th %d for total=%d" %
+                      (idx, found_num, ret))
         if verbose:
-            print ("Total sum = %d" % (ret))
+            print("Total sum = %d" % (ret))
         return ret
+
 
 class PanNumTestCase(unittest.TestCase):
     def testBaseNum(self):  # test method names begin with 'test'

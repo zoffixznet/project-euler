@@ -3,14 +3,15 @@
 from divide_fsm import get_div_fsms
 import sys
 
+
 def solve_for_d(D):
     # Both 0 and x0 are divisible.
     if (D == 10):
-        return 0;
+        return 0
 
-    (A, foo) = get_div_fsms(D);
+    (A, foo) = get_div_fsms(D)
     # A transposed
-    T = [[ A[x][d] for x in range(0,len(A)) ] for d in range(0,len(A[0]))]
+    T = [[A[x][d] for x in range(0, len(A))] for d in range(0, len(A[0]))]
 
     # my @S = ((0) x $D);
     # D *M*inus 1.
@@ -32,17 +33,6 @@ def solve_for_d(D):
         if (i == D):
             cache[key] = count
             return count
-#             {
-#                 if (0)
-#                 {
-#                     # $_n = scalar reverse$_n;
-#                     my $_n = scalar reverse @$S[0 .. $D];
-#                     if ((map { my $s = $_; grep { my $e = $_; substr($_n, $s, $e-$s+1) % $D == 0 } $s .. length($_n)-1 } 0 .. length($_n)-1) != 1)
-#                     {
-#                         print "False $_n\n";
-#                     }
-#                 }
-#             }
         else:
             ret = 0
 
@@ -57,14 +47,14 @@ def solve_for_d(D):
             cache[key] = ret
             return ret
 
-    return rec(0, [], 0);
+    return rec(0, [], 0)
 
 sums = []
 
 sums.append(0)
 
-for d in range(1,20):
-    print ("Calcing d=%d" % (d));
+for d in range(1, 20):
+    print("Calcing d=%d" % (d))
     sys.stdout.flush()
     sums.append(sums[d-1] + solve_for_d(d))
-    print (("F( . 10 ** %d ) = %d. ") % (d, sums[d]))
+    print(("F( . 10 ** %d ) = %d. ") % (d, sums[d]))

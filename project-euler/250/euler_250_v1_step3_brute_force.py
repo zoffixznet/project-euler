@@ -16,11 +16,12 @@ with open('mod_groups.txt') as f:
         nums = [long(i) for i in l.rstrip('\n').split(' ')]
         count = nums.pop(0)
         for n in nums:
-            for i in xrange(0,count):
+            for i in xrange(0, count):
                 mods.append(n)
 
 l = len(mods)
 ret = 0
+
 
 def rec(depth, m, stack):
     if depth == l:
@@ -30,9 +31,9 @@ def rec(depth, m, stack):
             ret += 1
     else:
         rec(depth+1, m, stack)
-        rec(depth+1, (m+mods[depth])%MOD, stack + [mods[depth]])
+        rec(depth+1, (m+mods[depth]) % MOD, stack + [mods[depth]])
     return
 
-rec(0,0, [])
+rec(0, 0, [])
 ret -= 1
-print ("Num = %d" % (ret))
+print("Num = %d" % (ret))
