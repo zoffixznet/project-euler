@@ -129,9 +129,11 @@ sub my_compile_segment
 {
     # TEST
     eq_or_diff(
-        intersect(
-            compile_segment( [ 46, 53, 17, 62 ] ),
-            compile_segment( [ 46, 70, 22, 40 ] )
+        scalar(
+            intersect(
+                compile_segment( [ 46, 53, 17, 62 ] ),
+                compile_segment( [ 46, 70, 22, 40 ] )
+            )
         ),
         [ [ 6354, 181, ], [ 10205, 181, ], ],
         "Interesct L2 and L3",
@@ -141,9 +143,11 @@ sub my_compile_segment
 {
     # TEST
     eq_or_diff(
-        intersect(
-            compile_segment( [ 46, 53, 17, 62 ] ),
-            compile_segment( [ 27, 44, 12, 32 ] )
+        scalar(
+            intersect(
+                compile_segment( [ 46, 53, 17, 62 ] ),
+                compile_segment( [ 27, 44, 12, 32 ] )
+            )
         ),
         undef,
         "Intersect L2 and L1",
@@ -153,9 +157,11 @@ sub my_compile_segment
 {
     # TEST
     eq_or_diff(
-        intersect(
-            compile_segment( [ 46, 70, 22, 40 ] ),
-            compile_segment( [ 27, 44, 12, 32 ] )
+        scalar(
+            intersect(
+                compile_segment( [ 46, 70, 22, 40 ] ),
+                compile_segment( [ 27, 44, 12, 32 ] )
+            )
         ),
         undef,
         "Intersect L1 and L3",
@@ -165,9 +171,11 @@ sub my_compile_segment
 {
     # TEST
     eq_or_diff(
-        intersect_x(
-            compile_segment( [ 46, -100, 46,  100 ] ),
-            compile_segment( [ 0,  0,    200, 0 ] )
+        scalar(
+            intersect_x(
+                compile_segment( [ 46, -100, 46,  100 ] ),
+                compile_segment( [ 0,  0,    200, 0 ] )
+            )
         ),
         [ [ 46, 1 ], [ 0, 1 ] ],
         "intersect_x found.",
@@ -177,9 +185,11 @@ sub my_compile_segment
 {
     # TEST
     eq_or_diff(
-        intersect_x(
-            compile_segment( [ 46, -100, 46,  100 ] ),
-            compile_segment( [ 50, 0,    200, 0 ] )
+        scalar(
+            intersect_x(
+                compile_segment( [ 46, -100, 46,  100 ] ),
+                compile_segment( [ 50, 0,    200, 0 ] )
+            )
         ),
         undef,
         "intersect_x not found.",
@@ -189,9 +199,11 @@ sub my_compile_segment
 {
     # TEST
     eq_or_diff(
-        intersect(
-            compile_segment( [ 0, 0, 2, 2 ] ),
-            compile_segment( [ 0, 2, 2, 0 ] )
+        scalar(
+            intersect(
+                compile_segment( [ 0, 0, 2, 2 ] ),
+                compile_segment( [ 0, 2, 2, 0 ] )
+            )
         ),
         [ [ 1, 1 ], [ 1, 1 ], ],
         "Interesct at (1,1)",
@@ -201,9 +213,11 @@ sub my_compile_segment
 {
     # TEST
     eq_or_diff(
-        intersect(
-            compile_segment( [ 0, 0, 2, -2 ] ),
-            compile_segment( [ 2, 0, 0, -2 ] )
+        scalar(
+            intersect(
+                compile_segment( [ 0, 0, 2, -2 ] ),
+                compile_segment( [ 2, 0, 0, -2 ] )
+            )
         ),
         [ [ 1, 1 ], [ -1, 1 ], ],
         "Interesct at (-1,1)",
@@ -213,9 +227,11 @@ sub my_compile_segment
 {
     # TEST
     eq_or_diff(
-        intersect(
-            compile_segment( [ -2, -2, 0, 0, ] ),
-            compile_segment( [ -2, 0,  0, -2 ] )
+        scalar(
+            intersect(
+                compile_segment( [ -2, -2, 0, 0, ] ),
+                compile_segment( [ -2, 0,  0, -2 ] )
+            )
         ),
         [ [ -1, 1 ], [ -1, 1 ], ],
         "Interesct at (-1,-1)",
@@ -225,9 +241,11 @@ sub my_compile_segment
 {
     # TEST
     eq_or_diff(
-        intersect(
-            compile_segment( [ 2, 2, 4, 4, ] ),
-            compile_segment( [ 0, 2, 2, 0 ] )
+        scalar(
+            intersect(
+                compile_segment( [ 2, 2, 4, 4, ] ),
+                compile_segment( [ 0, 2, 2, 0 ] )
+            )
         ),
         undef,
         "No Interesct - should be (1,1) but out-of-range.",

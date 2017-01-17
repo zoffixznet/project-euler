@@ -179,7 +179,7 @@ sub intersect_x
     }
     else
     {
-        return undef;
+        return;
     }
 }
 
@@ -190,7 +190,7 @@ sub intersect
     # Both are y = f(x) so m1x+b1 == m2x+b2 ==> x
     if ( _eq( $s1->{'m'}, $s2->{'m'} ) )
     {
-        return undef;
+        return;
     }
     else
     {
@@ -208,7 +208,7 @@ sub intersect
         }
         else
         {
-            return undef;
+            return;
         }
     }
 }
