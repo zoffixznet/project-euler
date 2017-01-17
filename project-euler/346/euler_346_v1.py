@@ -7,9 +7,9 @@ if sys.version_info > (3,):
 
 
 def find_repunits(m):
-    h = {1:True}
+    h = {1: True}
     LIM = int(math.sqrt(m))
-    for b in xrange(2,LIM+1):
+    for b in xrange(2, LIM+1):
         power = b
         s = 1 + power
         power *= b
