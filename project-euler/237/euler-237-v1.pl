@@ -190,7 +190,7 @@ piece_dirs( [] );
 
 use Data::Dumper;
 
-print Dumper( \%one_wide_components );
+# print Dumper( \%one_wide_components );
 
 my %mid;
 
@@ -205,7 +205,10 @@ sub calc_ret_fcc
         sub {
             my %fcc;
 
-            print "Trace " . ( ++$::mytrace ) . "\n";
+            if ( ++$::mytrace % 10_000 == 0 )
+            {
+                print "Trace " . ($::mytrace) . "\n";
+            }
             foreach my $f ( @{ $left_fcc_sig->data } )
             {
                 for my $i ( 0 .. $#$f )
