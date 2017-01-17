@@ -3,8 +3,6 @@
 use strict;
 use warnings;
 
-use Math::BigInt lib => "GMP", ":constant";
-
 =head1 Note
 
 02 + 12 has not been included as this problem is concerned with the squares
