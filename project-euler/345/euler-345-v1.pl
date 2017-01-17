@@ -11,8 +11,7 @@ sub run
     my $input = shift;
 
     my @table = (
-        map
-        {
+        map {
             [ map { int } $_ =~ /([0-9]+)/g ]
             } split /\r?\n/,
         $input
