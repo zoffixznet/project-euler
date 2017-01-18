@@ -1,5 +1,4 @@
 import sys
-from bigfloat import precision, BigFloat
 
 if sys.version_info > (3,):
     long = int
