@@ -15,10 +15,10 @@ def main():
     # LIM = 100
     ret = long(0)
     for p_idx, p in enumerate(primes):
-        print("Reached (%d,%d)" % (p_idx,p))
+        print("Reached (%d,%d)" % (p_idx, p))
         if p * primes[p_idx+1] > LIM:
             break
-        for q_idx in xrange(p_idx+1,len(primes)):
+        for q_idx in xrange(p_idx+1, len(primes)):
             q = primes[q_idx]
             prod = p * q
             if prod > LIM:
