@@ -1,0 +1,13 @@
+We can assume without loss of generality that the radii of the circles is 1.
+
+As a result, the area of the L-section is (1**2 - Pi*(1**2)/4).
+
+The cartesian formula of the line is y1 = x*(1/n).
+
+The cartesian formula of the circle's left-bottom edge is :
+(1-y)**2 + (1-x)**2 = 1 or y2 = 1-sqrt[1-(1-x)**2].
+
+Since y1 is consistently increasing and y2 is consistently decreasing, we
+can find the approximate x where y1 = y2 by using bisection or similar.
+
+
