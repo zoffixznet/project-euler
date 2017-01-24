@@ -10,4 +10,15 @@ The cartesian formula of the circle's left-bottom edge is :
 Since y1 is consistently increasing and y2 is consistently decreasing, we
 can find the approximate x where y1 = y2 by using bisection or similar.
 
+Based on the point (x1, y1) we can find the area of the concave triangle by
+splitting it into two parts based on the line (x1,0)-(x1,y1).
 
+The area of the left part is simply x1*y1/2.
+
+The area of the right part is the area of the trumboid minus the one of the
+circle's pie slice.
+
+The area of the trumboid is (y1+1)*(1-x1)/2 .
+
+The area of the pie slice is arcsin[(1-x1)/1]/(2*Pi)*Pi*(R=1)**2 =
+arcsin[1-x1]/2 .
