@@ -33,16 +33,48 @@ with precision(100):
         right_area = ((y1+1)*(1-x1)*0.5 - asin(1-x1)*0.5)
         return ((left_area + right_area) / L_sect_area)
 
+    def print_ratio(n):
+        ret = calc_ratio(n)
+        print("ratio(%d) = %f" % (n, ret))
+        return ret
+
+    def find_first_less_than_ratio(want):
+        l = 1
+        h = 2
+        have = calc_ratio(h)
+        while have >= want:
+            l = h
+            h <<= 1
+            have = print_ratio(h)
+        m = (l+h) >> 1
+        have = print_ratio(m)
+        prev_have = calc_ratio(m-1)
+        while have >= want or prev_have < want:
+            if prev_have < want:
+                h = m
+            else:
+                l = m
+            m = (l+h) >> 1
+            have = print_ratio(m)
+            prev_have = calc_ratio(m-1)
+        return m
+
     def assert_ratio(n, want, fuzz):
         have = calc_ratio(n)
         print("ratio(%d): have = %f ; want = %f" % (n, have, want))
         assert(abs(have-want) < fuzz)
         return
 
+    def print_less_than(want):
+        print("first n for %f is %d"
+              % (want, find_first_less_than_ratio(want)))
+
     def main():
         assert_ratio(1, 0.5, 1e-8)
         assert_ratio(2, BigFloat(36.46)/100, 1e-2)
         assert_ratio(15, 0.1, 1e-2)
+        print_less_than(0.1)
+        print_less_than(BigFloat('1e-3'))
 
     if __name__ == "__main__":
         main()
