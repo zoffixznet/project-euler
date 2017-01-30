@@ -11,7 +11,7 @@ def dice(num_faces, n, prev):
         ret = [0] * (1 + num_faces * n)
         for i in xrange(0, num_faces):
             for j, v in enumerate(prev):
-                ret[i+j] += v
+                ret[i+j] ^= v
         return ret
 
 
