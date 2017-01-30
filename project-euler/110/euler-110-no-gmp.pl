@@ -2,6 +2,7 @@
 
 use strict;
 use warnings;
+use autodie;
 
 =head1 ANALYSIS
 
@@ -73,7 +74,7 @@ my $primes_list = '';
 my $num_primes  = 0;
 
 {
-    open my $fh, "primes 2 43 |";
+    open my $fh, '-|', 'primes', '2', '43';
     while ( my $p = <$fh> )
     {
         chomp($p);
