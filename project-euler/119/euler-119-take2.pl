@@ -12,7 +12,7 @@ use Heap::Fibonacci;
 
 package Exponents;
 
-open my $primes_fh, "primes 3|"
+open my $primes_fh, '-|', 'primes', '3'
     or die "Cannot open primes";
 
 my @prime_exponents = ( { e => 2, b => 2 } );

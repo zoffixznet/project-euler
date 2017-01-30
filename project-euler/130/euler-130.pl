@@ -19,7 +19,7 @@ sub calc_A
     return $len;
 }
 
-open my $primes_fh, "primes 3|";
+open my $primes_fh, '-|', 'primes', '3';
 my $last_prime = int( scalar(<$primes_fh>) );
 
 my $n     = 3;

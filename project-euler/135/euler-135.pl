@@ -14,11 +14,9 @@ use integer;
 my $solution_counts_vec = '';
 my $ten_counts          = 0;
 
-my $z = 2;
-
 my $LIMIT = 1_000_000;
 
-for $z ( 1 .. $LIMIT )
+for my $z ( 1 .. $LIMIT )
 {
     print "Z = $z ; Ten Counts = $ten_counts\n" if ( $z % 10_000 == 0 );
     my $d = ( int( $z / 3 ) + 1 );

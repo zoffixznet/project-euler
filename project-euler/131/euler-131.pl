@@ -24,7 +24,7 @@ So n < p.
 
 =cut
 
-open my $primes_fh, "primes 2 1000000|"
+open my $primes_fh, '-|', 'primes', '2', '1000000'
     or die "Cannot open primes program!";
 
 my @primes = <$primes_fh>;

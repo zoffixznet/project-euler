@@ -40,7 +40,7 @@ use IO::Handle;
 STDOUT->autoflush(1);
 
 my $n = 0;
-open my $primes_fh, "primes 2|"
+open my $primes_fh, '-|', 'primes', '2'
     or die "Cannot open the primes filehandle.";
 
 PRIMES:
