@@ -1,4 +1,4 @@
-all: euler_518_v1.exe euler_518_v1-debug.exe
+all: euler_518_v1.exe euler_518_v1-debug.exe euler_518_v2.exe euler_518_v2-debug.exe
 
 CPPFLAGS = -std=gnu++11
 
@@ -8,6 +8,12 @@ euler_518_v1-debug.exe: $(SOURCES)
 	g++ $(CPPFLAGS) -g -Wall -o $@ $< -lm
 
 euler_518_v1.exe: $(SOURCES)
+	g++ $(CPPFLAGS) -O3 -Wall -flto -fwhole-program -fvisibility=hidden -fomit-frame-pointer -march=native -o $@ $< -lm
+
+euler_518_v2-debug.exe: euler_518_v2.cpp
+	g++ $(CPPFLAGS) -g -Wall -o $@ $< -lm
+
+euler_518_v2.exe: euler_518_v2.cpp
 	g++ $(CPPFLAGS) -O3 -Wall -flto -fwhole-program -fvisibility=hidden -fomit-frame-pointer -march=native -o $@ $< -lm
 
 primes.txt:
