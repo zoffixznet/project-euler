@@ -19,5 +19,11 @@ euler_518_v2.exe: euler_518_v2.cpp
 primes.txt:
 	primes 2 100000000 > $@
 
+factored.txt: primes.txt
+	< $< perl -lpE '++$_' | factor > $@
+
+by-pivot-factor/3.txt: factored.txt
+	pypy-c gen-pivots.py
+
 clean:
 	rm -f *.exe
