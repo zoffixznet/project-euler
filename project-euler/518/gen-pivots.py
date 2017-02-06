@@ -25,17 +25,18 @@ def main():
             if pivot not in by_pivots:
                 by_pivots[pivot] = []
             by_pivots[pivot].append(l)
-    print type(by_pivots)
     for pivot, numbers in by_pivots.iteritems():
         filtered = []
         for l in numbers:
-            if all(factor_counts[x] > 2 for x in l_re.match(l).group(1).split(' ')):
+            if all(factor_counts[x] > 2 for x
+                   in l_re.match(l).group(1).split(' ')):
                 filtered.append(l)
         if len(filtered) > 0:
             with open('./by-pivot-factor/%s.txt' % (pivot), 'w') as o:
                 for l in filtered:
                     o.write(l + "\n")
     return
+
 
 if __name__ == "__main__":
     main()

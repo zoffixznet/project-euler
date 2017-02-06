@@ -13,7 +13,7 @@ def main():
         for l in fh:
             nums[1+int(l)] = True
 
-    re_f = re.compile('^([0-9]+)\.txt$');
+    re_f = re.compile('^([0-9]+)\.txt$')
     total_sum = long(0)
     for fn in os.listdir('by-pivot-factor'):
         t = re_f.match(fn)
@@ -38,10 +38,11 @@ def main():
                                 if not (is_local and l[j]):
                                     if is_local:
                                         l[j] = True
-                                    print("Found %d,%d,%d" % (i,r,j))
-                                    total_sum += ((i+r+j)-3);
+                                    print("Found %d,%d,%d" % (i, r, j))
+                                    total_sum += ((i+r+j)-3)
     print("Total sum = %d" % total_sum)
     return
+
 
 if __name__ == "__main__":
     main()
