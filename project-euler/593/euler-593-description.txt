@@ -1,0 +1,29 @@
+Fleeting Medians
+
+We define two sequences S={S(1),S(2),...,S(n)}
+and S2={S2(1),S2(2),...,S2(n)}
+
+:
+
+S(k)=(pk)k
+mod 10007 where pk is the k
+
+th prime number.
+
+S2(k)=S(k)+S(⌊k10000⌋+1)
+where ⌊⋅⌋
+
+denotes the floor function.
+
+Then let M(i,j)
+be the median of elements S2(i) through S2(j), inclusive. For example, M(1,10)=2021.5 and M(102,103)=4715.0
+
+.
+
+Let F(n,k)=∑n−k+1i=1M(i,i+k−1)
+. For example, F(100,10)=463628.5 and F(105,104)=675348207.5
+
+.
+
+Find F(107,105)
+. If the sum is not an integer, use .5 to denote a half. Otherwise, use .0 instead.
