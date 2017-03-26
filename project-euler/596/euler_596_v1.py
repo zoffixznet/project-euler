@@ -1,3 +1,4 @@
+import math
 import sys
 
 if sys.version_info > (3,):
@@ -29,12 +30,7 @@ def calc_T(r):
             c3 = c2
             lim3 = lim2
             while lim3 >= 0:
-                t = 0
-                c4 = c3
-                while t*t <= lim3:
-                    ret += c4
-                    t += 1
-                    c4 = c3 << 1
+                ret += c3 * ((int(math.sqrt(lim3)) << 1) | 1)
                 z += 1
                 c3 = c2 << 1
                 lim3 = lim2 - z*z
@@ -59,6 +55,7 @@ def main():
     assert_T(2, 89)
     assert_T(5, 3121)
     assert_T(100, 493490641)
+    # assert_T(10000, 49348022079085897)
     # print("Result = %d" % calc_G((n*n*n for n in xrange(1, 1000000))))
 
 
