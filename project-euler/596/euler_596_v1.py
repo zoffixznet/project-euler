@@ -6,17 +6,13 @@ if sys.version_info > (3,):
     xrange = range
 
 
-def calc_lim2_ret_helper(lim2):
+def calc_lim2_ret(lim2):
     ret = 0
     max_ = int(math.sqrt(lim2))
     for z in xrange(0, 1+max_):
         # print("z=%d l-z=%d" % (z, lim2 - z*z))
         ret += int(math.sqrt(lim2 - z*z))
     return ret
-
-
-def calc_lim2_ret(lim2):
-    return ((calc_lim2_ret_helper(lim2) << 2) | 1)
 
 
 lim2_cache = {}
@@ -38,9 +34,10 @@ def calc_T(radius):
     lim1 = r_sq
     while lim1 >= 0:
         r = 0
-        for y in xrange(1, 1+int(math.sqrt(lim1))):
+        max_ = int(math.sqrt(lim1))
+        for y in xrange(1, 1+max_):
             r += lim2_ret(lim1 - y*y)
-        ret += ((r << 1) + lim2_ret(lim1)) << shift
+        ret += ((((r << 1) + lim2_ret(lim1)) << 2) + (max_ << 1) + 1) << shift
         print("x=%d y=%d" % (x, y))
         sys.stdout.flush()
         x += 1
@@ -59,7 +56,7 @@ def assert_T(r, want):
 
 def main():
     for lim2 in xrange(0, 10000):
-        print("lim2_ret(%d) = %d" % (lim2, calc_lim2_ret_helper(lim2)))
+        print("lim2_ret(%d) = %d" % (lim2, calc_lim2_ret(lim2)))
     assert_T(2, 89)
     assert_T(5, 3121)
     assert_T(100, 493490641)
