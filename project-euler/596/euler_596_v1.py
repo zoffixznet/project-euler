@@ -8,16 +8,9 @@ if sys.version_info > (3,):
 
 def calc_lim2_ret(lim2):
     ret = 0
-    z = 0
-    s3 = 0
-    d3 = s3 + 1
-    lim3 = lim2
-    while lim3 >= 0:
-        ret += (((int(math.sqrt(lim3)) << 1) | 1) << s3)
-        z += 1
-        s3 = d3
-        lim3 = lim2 - z*z
-    return ret
+    for z in xrange(1, 1+int(math.sqrt(lim2))):
+        ret += ((int(math.sqrt(lim2 - z*z)) << 1) | 1)
+    return ((ret << 1) + (int(math.sqrt(lim2)) << 1) + 1)
 
 
 lim2_cache = {}
@@ -46,7 +39,7 @@ def calc_T(r):
             y += 1
             s2 = d2
             lim2 = lim1 - y*y
-        print("x=%d y=%d" % (x,y))
+        print("x=%d y=%d" % (x, y))
         x += 1
         shift = 1
         lim1 = r_sq-x*x
