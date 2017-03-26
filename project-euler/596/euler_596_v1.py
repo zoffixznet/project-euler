@@ -58,6 +58,7 @@ def assert_T(r, want):
 def main():
     assert_T(2, 89)
     assert_T(5, 3121)
+    assert_T(100, 493490641)
     # print("Result = %d" % calc_G((n*n*n for n in xrange(1, 1000000))))
 
 
