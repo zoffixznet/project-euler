@@ -19,16 +19,16 @@ def calc_T(r):
     count = 1
     r_sq = r*r
     ret = 0
-    while x*x <= r_sq:
+    lim1 = r_sq
+    while lim1 >= 0:
         y = 0
-        lim1 = r_sq-x*x
         c2 = count
-        while y*y <= lim1:
-            lim2 = lim1 - y*y
+        lim2 = lim1
+        while lim2 >= 0:
             z = 0
             c3 = c2
-            while z*z <= lim2:
-                lim3 = lim2 - z*z
+            lim3 = lim2
+            while lim3 >= 0:
                 t = 0
                 c4 = c3
                 while t*t <= lim3:
@@ -37,10 +37,13 @@ def calc_T(r):
                     c4 = c3 << 1
                 z += 1
                 c3 = c2 << 1
+                lim3 = lim2 - z*z
             y += 1
             c2 = count << 1
+            lim2 = lim1 - y*y
         x += 1
         count = 2
+        lim1 = r_sq-x*x
     return ret
 
 
