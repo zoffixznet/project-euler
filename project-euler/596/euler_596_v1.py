@@ -37,13 +37,9 @@ def calc_T(radius):
     ret = 0
     lim1 = r_sq
     while lim1 >= 0:
-        y = 1
-        lim2 = lim1 - y*y
         r = 0
-        while lim2 >= 0:
-            r += lim2_ret(lim2)
-            y += 1
-            lim2 = lim1 - y*y
+        for y in xrange(1, 1+int(math.sqrt(lim1))):
+            r += lim2_ret(lim1 - y*y)
         ret += ((r << 1) + lim2_ret(lim1)) << shift
         print("x=%d y=%d" % (x, y))
         sys.stdout.flush()
