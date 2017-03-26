@@ -9,9 +9,9 @@ if sys.version_info > (3,):
 def calc_lim2_ret(lim2):
     ret = 0
     max_ = int(math.sqrt(lim2))
-    for z in xrange(1, 1+max_):
+    for z in xrange(0, 1+max_):
         ret += int(math.sqrt(lim2 - z*z))
-    return (((ret + max_) << 2) | 1)
+    return ((ret << 2) | 1)
 
 
 lim2_cache = {}
