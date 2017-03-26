@@ -6,6 +6,20 @@ if sys.version_info > (3,):
     xrange = range
 
 
+def calc_lim2_ret(lim2):
+    ret = 0
+    z = 0
+    s3 = 0
+    d3 = s3 + 1
+    lim3 = lim2
+    while lim3 >= 0:
+        ret += (((int(math.sqrt(lim3)) << 1) | 1) << s3)
+        z += 1
+        s3 = d3
+        lim3 = lim2 - z*z
+    return ret
+
+
 def calc_T(r):
     x = 0
     shift = 0
@@ -18,15 +32,7 @@ def calc_T(r):
         d2 = s2 + 1
         lim2 = lim1
         while lim2 >= 0:
-            z = 0
-            s3 = s2
-            d3 = s3 + 1
-            lim3 = lim2
-            while lim3 >= 0:
-                ret += (((int(math.sqrt(lim3)) << 1) | 1) << s3)
-                z += 1
-                s3 = d3
-                lim3 = lim2 - z*z
+            ret += (calc_lim2_ret(lim2) << s2)
             y += 1
             s2 = d2
             lim2 = lim1 - y*y
