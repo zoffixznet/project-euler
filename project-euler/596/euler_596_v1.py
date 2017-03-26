@@ -6,12 +6,17 @@ if sys.version_info > (3,):
     xrange = range
 
 
-def calc_lim2_ret(lim2):
+def calc_lim2_ret_helper(lim2):
     ret = 0
     max_ = int(math.sqrt(lim2))
     for z in xrange(0, 1+max_):
+        # print("z=%d l-z=%d" % (z, lim2 - z*z))
         ret += int(math.sqrt(lim2 - z*z))
-    return ((ret << 2) | 1)
+    return ret
+
+
+def calc_lim2_ret(lim2):
+    return ((calc_lim2_ret_helper(lim2) << 2) | 1)
 
 
 lim2_cache = {}
@@ -21,28 +26,25 @@ def lim2_ret(lim2):
     global lim2_cache
     if lim2 not in lim2_cache:
         lim2_cache[lim2] = calc_lim2_ret(lim2)
-    else:
-        pass
         # print("InCache")
     return lim2_cache[lim2]
 
 
-def calc_T(r):
+def calc_T(radius):
     x = 0
     shift = 0
-    r_sq = r*r
+    r_sq = radius*radius
     ret = 0
     lim1 = r_sq
     while lim1 >= 0:
-        y = 0
-        s2 = shift
-        d2 = s2 + 1
-        lim2 = lim1
+        y = 1
+        lim2 = lim1 - y*y
+        r = 0
         while lim2 >= 0:
-            ret += (lim2_ret(lim2) << s2)
+            r += lim2_ret(lim2)
             y += 1
-            s2 = d2
             lim2 = lim1 - y*y
+        ret += ((r << 1) + lim2_ret(lim1)) << shift
         print("x=%d y=%d" % (x, y))
         sys.stdout.flush()
         x += 1
@@ -60,6 +62,8 @@ def assert_T(r, want):
 
 
 def main():
+    for lim2 in xrange(0, 10000):
+        print("lim2_ret(%d) = %d" % (lim2, calc_lim2_ret_helper(lim2)))
     assert_T(2, 89)
     assert_T(5, 3121)
     assert_T(100, 493490641)
