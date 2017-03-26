@@ -6,39 +6,32 @@ if sys.version_info > (3,):
     xrange = range
 
 
-class Node:
-    """docstring for Node"""
-    def __init__(self, v, count):
-        self.v = v
-        self.count = count
-        self.next = None
-        return
-
-
 def calc_T(r):
     x = 0
-    count = 1
+    shift = 0
     r_sq = r*r
     ret = 0
     lim1 = r_sq
     while lim1 >= 0:
         y = 0
-        c2 = count
+        s2 = shift
+        d2 = s2 + 1
         lim2 = lim1
         while lim2 >= 0:
             z = 0
-            c3 = c2
+            s3 = s2
+            d3 = s3 + 1
             lim3 = lim2
             while lim3 >= 0:
-                ret += c3 * ((int(math.sqrt(lim3)) << 1) | 1)
+                ret += (((int(math.sqrt(lim3)) << 1) | 1) << s3)
                 z += 1
-                c3 = c2 << 1
+                s3 = d3
                 lim3 = lim2 - z*z
             y += 1
-            c2 = count << 1
+            s2 = d2
             lim2 = lim1 - y*y
         x += 1
-        count = 2
+        shift = 1
         lim1 = r_sq-x*x
     return ret
 
