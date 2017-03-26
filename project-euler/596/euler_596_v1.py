@@ -20,6 +20,16 @@ def calc_lim2_ret(lim2):
     return ret
 
 
+lim2_cache = {}
+
+
+def lim2_ret(lim2):
+    global lim2_cache
+    if lim2 not in lim2_cache:
+        lim2_cache[lim2] = calc_lim2_ret(lim2)
+    return lim2_cache[lim2]
+
+
 def calc_T(r):
     x = 0
     shift = 0
@@ -32,10 +42,11 @@ def calc_T(r):
         d2 = s2 + 1
         lim2 = lim1
         while lim2 >= 0:
-            ret += (calc_lim2_ret(lim2) << s2)
+            ret += (lim2_ret(lim2) << s2)
             y += 1
             s2 = d2
             lim2 = lim1 - y*y
+        print("x=%d y=%d" % (x,y))
         x += 1
         shift = 1
         lim1 = r_sq-x*x
