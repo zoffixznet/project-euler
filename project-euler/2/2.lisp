@@ -1,5 +1,5 @@
 ; This aims to be a solution for:
-; http://projecteuler.net/index.php?section=problems&id=1
+; https://projecteuler.net/problem=2
 (asdf:oos 'asdf:load-op :iterate)
 (use-package :iterate)
 

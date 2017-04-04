@@ -6,7 +6,7 @@ use warnings;
 my ( $i, $j ) = ( 1, 2 );
 
 my $sum;
-while ( $i < 1e6 )
+while ( $i < 4e6 )
 {
     if ( $i % 2 == 0 )
     {
