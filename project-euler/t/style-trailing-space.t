@@ -12,7 +12,7 @@ foreach my $path ('..')
         {
             root              => $path,
             filename_regex    => qr/./,
-            abs_path_prune_re => qr#CMakeFiles|_Inline|(?:\.(?:xcf|patch)\z)|#,
+            abs_path_prune_re => qr#CMakeFiles|_Inline|(?:\.(?:xcf|patch)\z)#,
         }
     );
 
