@@ -20,12 +20,12 @@ def get_vec_exp(n, p, m, e):
         return e
 
 
-def get_vec(primes, n):
-    return [get_vec_exp(n, p, p, 0) for p in primes]
+def get_vec(p_len, primes, n):
+    return [get_vec_exp(n, p, p, 0) for p in primes[0:p_len]]
 
 
-def get_split(primes, e):
-    return [[get_vec(primes, 1+x) for x in [y, e-y]] for y in xrange(0, e+1)]
+def get_split(p_len, primes, e):
+    return [[get_vec(p_len, primes, 1+x) for x in [y, e-y]] for y in xrange(0, e+1)]
 
 
 def pop_trailing(exps, val):
@@ -47,17 +47,54 @@ def nCr(n, k):
     return fact(n) / fact(k) / fact(n-k)
 
 
-def calc_C(fact_n):
-    primes = [x for x in xrange(2, fact_n+1)
-              if len([y for y in xrange(2, 1+int(math.sqrt(x)))
-                      if x % y == 0]) == 0]
+cdef recurse(int depth, int sums[100], int e_len, int exps_diffs[100][100][100], lookup, int rd[100][100], int e_lens[100], int ep_len):
+    if depth == e_len:
+        key = (sums[0], sums[1])
+        return lookup[key] if (key in lookup) else 0
+    cdef long long ret
+    ret = 0
+    cdef int * d
+    d = rd[depth+1]
+    cdef int new[100]
+    cdef int num_runs
+    cdef int edd[100][100]
+    cdef int edde[100]
+    edd = exps_diffs[depth]
+    num_runs = 0
+    for ei in xrange(0, e_lens[depth]):
+        edde = edd[ei]
+        ok = True
+        for i in xrange(0, ep_len):
+            new[i] = sums[i] + edde[i]
+            if abs(new[i]) > d[i]:
+                ok = False
+                break
+        if ok:
+            ret += recurse(depth+1, new, e_len, exps_diffs, lookup, rd, e_lens, ep_len)
+        if depth == 0:
+            num_runs += 1
+            print("Flutter depth=%d %d / %d" %
+                  (depth, num_runs, e_lens[depth]))
+
+    return ret
+
+
+def calc_C(int fact_n):
+    cdef int primes[100]
+    cdef int p_len
+    p_len = 0
+    for x in xrange(2, fact_n+1):
+        if len([y for y in xrange(2, 1+int(math.sqrt(x))) if x % y == 0]) == 0:
+            primes[p_len] = x
+            p_len += 1
     print(primes)
-    exps = [find_exp(fact_n, p, p) for p in primes]
+    exps = [find_exp(fact_n, p, p) for p in primes[0:p_len]]
     print(exps)
     # 1 is {2^1, 2^-1}
     num_1s = pop_trailing(exps, 1)
     # 2 is {3^1, 3^0, 3^-1}
     num_2s = pop_trailing(exps, 2)
+    # p_len -= num_1s + num_2s
 
     m2 = 0
     m3 = 0
@@ -83,28 +120,39 @@ def calc_C(fact_n):
 
     print("lookup = ", lookup)
 
-    exps_splits = [get_split(primes, e) for e in exps]
+    exps_splits = [get_split(p_len, primes, e) for e in exps]
     print(exps_splits)
-    exps_diffs = [[[x-y for (x, y) in zip(a[0], a[1])] for a in b]
+    cdef int e_lens[100]
+    cdef int exps_diffs[100][100][100]
+    cdef int e_len, ep_len
+    py_exps_diffs = [[[x-y for (x, y) in zip(a[0], a[1])] for a in b]
                   for b in exps_splits]
-    print(exps_diffs)
+    e_len = len(exps_splits)
+    ep_len = p_len
+    for bi in xrange(0, len(exps_splits)):
+        e_lens[bi] = len(exps_splits[bi])
+        for ai in xrange(0, e_lens[bi]):
+            for xi in xrange(0, ep_len):
+                t1 = exps_splits[bi][ai]
+                # exps_diffs[bi][ai][xi] = t1[0][xi] - t1[1][xi]
+    # print(exps_diffs)
 
     g_found = True
     while g_found:
         g_found = False
         new_exp = []
-        for g_i, l in enumerate(exps_diffs):
+        for g_i, l in enumerate(py_exps_diffs):
             new_l = []
             for d in l:
                 found = False
                 for i, x_ in enumerate(d):
                     # We skip 2 and 3 which are indexed 0 and 1
                     if i >= 2:
-                        s = 0
-                        for ii, ll in enumerate(exps_diffs):
+                        mysum = 0
+                        for ii, ll in enumerate(py_exps_diffs):
                             if ii != g_i:
-                                s += max([dd[i] for dd in ll])
-                        if abs(x_) > s:
+                                mysum += max([dd[i] for dd in ll])
+                        if abs(x_) > mysum:
                             found = True
                             break
                 if not found:
@@ -112,53 +160,56 @@ def calc_C(fact_n):
                 else:
                     g_found = True
             new_exp.append(new_l)
-        exps_diffs = new_exp
+        py_exps_diffs = new_exp
+        e_len = len(new_exp)
+        for i in xrange(0, e_len):
+            e_lens[i] = len(new_exp[i])
 
-    while all(all(l[-1] == 0 for l in x) for x in exps_diffs):
-        for x in exps_diffs:
-            for l in x:
-                l.pop()
+    while all(all(l[ep_len-1] == 0 for l in py_exps_diffs[ei][0:e_lens[ei]]) for ei in xrange(0, e_len)):
+        ep_len -= 1
+        for x in py_exps_diffs:
+            for y in x:
+                y.pop()
 
-    exps_counts = [len(x) for x in exps_diffs]
+    exps_counts = [len(x) for x in py_exps_diffs]
     prod = long(1)
     for x in exps_counts:
         prod *= x
-    print(exps_diffs)
+    # print(exps_diffs)
+    print("Appl");
 
+    # cdef int run_sums[100][100]
+    cdef int rd[100][100]
     run_sums = []
-    sums = [0 for x in exps_diffs[0][0]]
+    sums = [0 for x in xrange(0,ep_len)]
     run_sums.append([x for x in sums])
-    for g_i, l in enumerate(exps_diffs):
+    for g_i, l in enumerate(py_exps_diffs):
+        print('g_i', g_i)
         print("=== %d" % primes[g_i])
         for d in l:
             print("      %s" % ('  '.join(["%2d" % x for x in d])))
         for i in xrange(0, len(l[0])):
+            print('i<bread>=', i, 'ep_len=', ep_len, )
             sums[i] += max([d[i] for d in l])
         run_sums.append([x for x in sums])
-    s = [x for x in run_sums[-1]]
+    cdef int s[100]
+    for (i,x) in enumerate(run_sums[-1]):
+        s[i] = x
     s[0] += m2
     s[1] += m3
-    rd = [[ss-x for (ss, x) in zip(s, y)] for y in run_sums]
+    for yi, y in enumerate(run_sums):
+        for (si, (ss, x)) in enumerate(zip(s,y)):
+            rd[yi][si] = ss-x
     num_runs = [0]
+    cdef int rs0[100]
+    for i in xrange(0, ep_len):
+        rs0[i] = run_sums[0][i]
 
-    def recurse(depth, sums):
-        if depth == len(exps_diffs):
-            key = (sums[0], sums[1])
-            return lookup[key] if (key in lookup) else 0
-        ret = 0
-        d = rd[depth+1]
-        for l in exps_diffs[depth]:
-            new = [x+y for (x, y) in zip(sums, l)]
-            if all(abs(n) <= dd for (n, dd) in zip(new, d)):
-                ret += recurse(depth+1, new)
-            if depth == 0:
-                num_runs[0] += 1
-                print("Flutter %d / %d" %
-                      (num_runs[0], len(exps_diffs[depth])))
-
-        return ret
-
-    ret = recurse(0, run_sums[0])
+    for bi in xrange(0, ep_len):
+        for ai in xrange(0, e_lens[bi]):
+            for xi in xrange(0, ep_len):
+                exps_diffs[bi][ai][xi] = py_exps_diffs[bi][ai][xi]
+    ret = recurse(0, rs0, e_len, exps_diffs, lookup, rd, e_lens, ep_len)
 
     print("prod=%d ; num_1s=%d ; num_2s=%d ; ret= %d"
           % (prod, num_1s, num_2s, ret))
