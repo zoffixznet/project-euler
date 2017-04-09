@@ -53,20 +53,30 @@ def calc_C(fact_n):
                   for b in exps_splits]
     print(exps_diffs)
 
-    l = exps_diffs[0]
-    new_l = []
-    for d in l:
-        found = False
-        for i, x_ in enumerate(d):
-            s = 0
-            for ll in exps_diffs[1:]:
-                s += max([dd[i] for dd in ll])
-            if abs(x_) > s:
-                found = True
-                break
-        if not found:
-            new_l.append(d)
-    exps_diffs[0] = new_l
+    g_found = True
+    while g_found:
+        g_found = False
+        new_exp = []
+        for g_i, l in enumerate(exps_diffs):
+            new_l = []
+            for d in l:
+                found = False
+                for i, x_ in enumerate(d):
+                    # We skip 2 and 3 which are indexed 0 and 1
+                    if i >= 2:
+                        s = 0
+                        for ii, ll in enumerate(exps_diffs):
+                            if ii != g_i:
+                                s += max([dd[i] for dd in ll])
+                        if abs(x_) > s:
+                            found = True
+                            break
+                if not found:
+                    new_l.append(d)
+                else:
+                    g_found = True
+            new_exp.append(new_l)
+        exps_diffs = new_exp
 
     while all(all(l[-1] == 0 for l in x) for x in exps_diffs):
         for x in exps_diffs:
