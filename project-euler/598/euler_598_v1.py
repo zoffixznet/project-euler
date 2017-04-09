@@ -139,6 +139,7 @@ def calc_C(fact_n):
     s[0] += m2
     s[1] += m3
     rd = [[s[i]-x for (i, x) in enumerate(y)] for y in run_sums]
+    num_runs = [0]
 
     def recurse(depth, sums):
         if depth == len(exps_diffs):
@@ -151,7 +152,9 @@ def calc_C(fact_n):
             if all(abs(n) <= dd for (n, dd) in zip(new, d)):
                 ret += recurse(depth+1, new)
             if depth == 0:
-                print("Flutter")
+                num_runs[0] += 1
+                print("Flutter %d / %d" %
+                      (num_runs[0], len(exps_diffs[depth])))
 
         return ret
 
@@ -159,7 +162,7 @@ def calc_C(fact_n):
 
     print("prod=%d ; num_1s=%d ; num_2s=%d ; ret= %d"
           % (prod, num_1s, num_2s, ret))
-    return ret
+    return (ret >> 1)
 
 
 def print_C(n):
