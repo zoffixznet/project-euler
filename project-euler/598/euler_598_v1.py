@@ -50,12 +50,10 @@ def calc_C(fact_n):
     for d in l:
         found = False
         for i, x_ in enumerate(d):
-            x = abs(x_)
             s = 0
             for ll in exps_diffs[1:]:
-                m = max([dd[i] for dd in ll])
-                s += m
-            if x > s:
+                s += max([dd[i] for dd in ll])
+            if abs(x_) > s:
                 found = True
                 break
         if not found:
