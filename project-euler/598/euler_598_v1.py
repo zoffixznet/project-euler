@@ -44,10 +44,31 @@ def calc_C(fact_n):
     exps_diffs = [[[x-y for (x, y) in zip(a[0], a[1])] for a in b]
                   for b in exps_splits]
     print(exps_diffs)
+
+    l = exps_diffs[0]
+    new_l = []
+    for d in l:
+        found = False
+        for i, x_ in enumerate(d):
+            x = abs(x_)
+            s = 0
+            for ll in exps_diffs[1:]:
+                m = max([dd[i] for dd in ll])
+                s += m
+            if x > s:
+                found = True
+                break
+        if not found:
+            new_l.append(d)
+
+    exps_diffs[0] = new_l
+
     exps_counts = [len(x) for x in exps_diffs]
     prod = long(1)
     for x in exps_counts:
         prod *= x
+    print(exps_diffs)
+
     print("prod=%d" % prod)
 
     return 200
