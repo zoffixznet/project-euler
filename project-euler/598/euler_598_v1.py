@@ -88,6 +88,10 @@ def calc_C(fact_n):
     for x in exps_counts:
         prod *= x
     print(exps_diffs)
+    for g_i, l in enumerate(exps_diffs):
+        print("=== %d" % primes[g_i])
+        for d in l:
+            print("      %s" % ('  '.join(["%2d" % x for x in d])))
 
     print("prod=%d ; num_1s=%d ; num_2s=%d" % (prod, num_1s, num_2s))
 
