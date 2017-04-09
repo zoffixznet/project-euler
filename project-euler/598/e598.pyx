@@ -194,12 +194,10 @@ def calc_C(int fact_n):
     sums = [0 for x in xrange(0,ep_len)]
     run_sums.append([x for x in sums])
     for g_i, l in enumerate(py_exps_diffs):
-        print('g_i', g_i)
         print("=== %d" % primes[g_i])
         for d in l:
             print("      %s" % ('  '.join(["%2d" % x for x in d])))
         for i in xrange(0, len(l[0])):
-            print('i<bread>=', i, 'ep_len=', ep_len, )
             sums[i] += max([d[i] for d in l])
         run_sums.append([x for x in sums])
     cdef int s[100]
