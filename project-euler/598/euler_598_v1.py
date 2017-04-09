@@ -88,13 +88,38 @@ def calc_C(fact_n):
     for x in exps_counts:
         prod *= x
     print(exps_diffs)
+
+    run_sums = []
+    sums = [0 for x in exps_diffs[0][0]]
+    run_sums.append([x for x in sums])
     for g_i, l in enumerate(exps_diffs):
         print("=== %d" % primes[g_i])
         for d in l:
             print("      %s" % ('  '.join(["%2d" % x for x in d])))
+        for i in xrange(0, len(l[0])):
+            sums[i] += max([d[i] for d in l])
+        run_sums.append([x for x in sums])
+    s = run_sums[-1]
+    rd = [[s[i]-x for (i, x) in enumerate(y)] for y in run_sums]
 
-    print("prod=%d ; num_1s=%d ; num_2s=%d" % (prod, num_1s, num_2s))
+    def recurse(depth, sums):
+        if depth == len(exps_diffs):
+            return 1
+        ret = 0
+        d = rd[depth+1]
+        for l in exps_diffs[depth]:
+            new = [x+y for (x, y) in zip(sums, l)]
+            if all(abs(new[i]) <= d[i] for i in xrange(2, len(l))):
+                ret += recurse(depth+1, new)
+            if depth == 0:
+                print("Flutter")
 
+        return ret
+
+    ret = recurse(0, run_sums[0])
+
+    print("prod=%d ; num_1s=%d ; num_2s=%d ; ret= %d"
+          % (prod, num_1s, num_2s, ret))
     return 200
 
 
