@@ -35,8 +35,20 @@ def calc_C(fact_n):
     print(primes)
     exps = [find_exp(fact_n, p, p) for p in primes]
     print(exps)
+    num_1s = 0
+    while exps[-1] == 1:
+        exps.pop()
+        num_1s += 1
     exps_splits = [get_split(primes, e) for e in exps]
     print(exps_splits)
+    exps_diffs = [[[x-y for (x, y) in zip(a[0], a[1])] for a in b]
+                  for b in exps_splits]
+    print(exps_diffs)
+    exps_counts = [len(x) for x in exps_diffs]
+    prod = long(1)
+    for x in exps_counts:
+        prod *= x
+    print("prod=%d" % prod)
 
     return 200
 
