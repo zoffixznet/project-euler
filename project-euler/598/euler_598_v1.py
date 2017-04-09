@@ -28,6 +28,14 @@ def get_split(primes, e):
     return [[get_vec(primes, 1+x) for x in [y, e-y]] for y in xrange(0, e+1)]
 
 
+def pop_trailing(exps, val):
+    ret = 0
+    while exps[-1] == val:
+        exps.pop()
+        ret += 1
+    return ret
+
+
 def calc_C(fact_n):
     primes = [x for x in xrange(2, fact_n+1)
               if len([y for y in xrange(2, 1+int(math.sqrt(x)))
@@ -35,10 +43,10 @@ def calc_C(fact_n):
     print(primes)
     exps = [find_exp(fact_n, p, p) for p in primes]
     print(exps)
-    num_1s = 0
-    while exps[-1] == 1:
-        exps.pop()
-        num_1s += 1
+    # 1 is {2^1, 2^-1}
+    num_1s = pop_trailing(exps, 1)
+    # 2 is {3^1, 3^0, 3^-1}
+    num_2s = pop_trailing(exps, 2)
     exps_splits = [get_split(primes, e) for e in exps]
     print(exps_splits)
     exps_diffs = [[[x-y for (x, y) in zip(a[0], a[1])] for a in b]
@@ -67,7 +75,7 @@ def calc_C(fact_n):
         prod *= x
     print(exps_diffs)
 
-    print("prod=%d" % prod)
+    print("prod=%d ; num_1s=%d ; num_2s=%d" % (prod, num_1s, num_2s))
 
     return 200
 
