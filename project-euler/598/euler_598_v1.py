@@ -68,11 +68,10 @@ def calc_C(fact_n):
             new_l.append(d)
     exps_diffs[0] = new_l
 
-    for pos in xrange(len(primes)-1, -1, -1):
-        if all(all(l[-1] == 0 for l in x) for x in exps_diffs):
-            for x in exps_diffs:
-                for l in x:
-                    l.pop()
+    while all(all(l[-1] == 0 for l in x) for x in exps_diffs):
+        for x in exps_diffs:
+            for l in x:
+                l.pop()
 
     exps_counts = [len(x) for x in exps_diffs]
     prod = long(1)
