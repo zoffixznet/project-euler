@@ -138,7 +138,7 @@ def calc_C(fact_n):
     s = [x for x in run_sums[-1]]
     s[0] += m2
     s[1] += m3
-    rd = [[s[i]-x for (i, x) in enumerate(y)] for y in run_sums]
+    rd = [[ss-x for (ss, x) in zip(s, y)] for y in run_sums]
     num_runs = [0]
 
     def recurse(depth, sums):
