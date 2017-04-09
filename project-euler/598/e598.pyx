@@ -47,7 +47,7 @@ def nCr(n, k):
     return fact(n) / fact(k) / fact(n-k)
 
 
-cdef recurse(int depth, int sums[100], int e_len, int exps_diffs[100][100][100], lookup, int rd[100][100], int e_lens[100], int ep_len):
+cdef long long recurse(int depth, int sums[100], int e_len, int exps_diffs[100][100][100], lookup, int rd[100][100], int e_lens[100], int ep_len):
     if depth == e_len:
         key = (sums[0], sums[1])
         return lookup[key] if (key in lookup) else 0
@@ -61,10 +61,11 @@ cdef recurse(int depth, int sums[100], int e_len, int exps_diffs[100][100][100],
     cdef int edde[100]
     edd = exps_diffs[depth]
     num_runs = 0
-    for ei in xrange(0, e_lens[depth]):
+    cdef int ei, i
+    for ei in range(e_lens[depth]):
         edde = edd[ei]
         ok = True
-        for i in xrange(0, ep_len):
+        for i in range(ep_len):
             new[i] = sums[i] + edde[i]
             if abs(new[i]) > d[i]:
                 ok = False
