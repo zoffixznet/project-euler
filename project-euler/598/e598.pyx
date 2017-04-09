@@ -52,8 +52,9 @@ cdef int exps_diffs[100][100][100]
 cdef long long lookup0[100]
 cdef long long lookup1[100]
 cdef int rd[100][100]
+cdef int e_lens[100]
 
-cdef long long recurse(int depth, int sums[100], int e_lens[100]):
+cdef long long recurse(int depth, int sums[100]):
     if depth == e_len:
         return lookup0[abs(sums[0])] * lookup1[abs(sums[1])]
     cdef long long ret
@@ -76,7 +77,7 @@ cdef long long recurse(int depth, int sums[100], int e_lens[100]):
                 ok = False
                 break
         if ok:
-            ret += recurse(depth+1, new, e_lens)
+            ret += recurse(depth+1, new)
         if depth == 0:
             num_runs += 1
             print("Flutter depth=%d %d / %d" %
@@ -131,7 +132,6 @@ def calc_C(int fact_n):
 
     exps_splits = [get_split(p_len, primes, e) for e in exps]
     print(exps_splits)
-    cdef int e_lens[100]
     global exps_diffs
     py_exps_diffs = [[[x-y for (x, y) in zip(a[0], a[1])] for a in b]
                   for b in exps_splits]
@@ -139,6 +139,7 @@ def calc_C(int fact_n):
     e_len = len(exps_splits)
     global ep_len
     ep_len = p_len
+    global e_lens
     for bi in xrange(0, len(exps_splits)):
         e_lens[bi] = len(exps_splits[bi])
         for ai in xrange(0, e_lens[bi]):
@@ -219,7 +220,7 @@ def calc_C(int fact_n):
         for ai in xrange(0, e_lens[bi]):
             for xi in xrange(0, ep_len):
                 exps_diffs[bi][ai][xi] = py_exps_diffs[bi][ai][xi]
-    ret = recurse(0, rs0, e_lens)
+    ret = recurse(0, rs0)
 
     print("prod=%d ; num_1s=%d ; num_2s=%d ; ret= %d"
           % (prod, num_1s, num_2s, ret))
