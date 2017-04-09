@@ -48,8 +48,8 @@ def nCr(n, k):
 
 
 cdef int e_len, ep_len
-
-cdef long long recurse(int depth, int sums[100], int exps_diffs[100][100][100], long long lookup0[100], long long lookup1[100], int rd[100][100], int e_lens[100], int ep_len):
+cdef int exps_diffs[100][100][100]
+cdef long long recurse(int depth, int sums[100], long long lookup0[100], long long lookup1[100], int rd[100][100], int e_lens[100], int ep_len):
     if depth == e_len:
         return lookup0[abs(sums[0])] * lookup1[abs(sums[1])]
     cdef long long ret
@@ -72,7 +72,7 @@ cdef long long recurse(int depth, int sums[100], int exps_diffs[100][100][100], 
                 ok = False
                 break
         if ok:
-            ret += recurse(depth+1, new, exps_diffs, lookup0, lookup1, rd, e_lens, ep_len)
+            ret += recurse(depth+1, new, lookup0, lookup1, rd, e_lens, ep_len)
         if depth == 0:
             num_runs += 1
             print("Flutter depth=%d %d / %d" %
@@ -128,7 +128,7 @@ def calc_C(int fact_n):
     exps_splits = [get_split(p_len, primes, e) for e in exps]
     print(exps_splits)
     cdef int e_lens[100]
-    cdef int exps_diffs[100][100][100]
+    global exps_diffs
     py_exps_diffs = [[[x-y for (x, y) in zip(a[0], a[1])] for a in b]
                   for b in exps_splits]
     global e_len
@@ -214,7 +214,7 @@ def calc_C(int fact_n):
         for ai in xrange(0, e_lens[bi]):
             for xi in xrange(0, ep_len):
                 exps_diffs[bi][ai][xi] = py_exps_diffs[bi][ai][xi]
-    ret = recurse(0, rs0, exps_diffs, lookup0, lookup1, rd, e_lens, ep_len)
+    ret = recurse(0, rs0, lookup0, lookup1, rd, e_lens, ep_len)
 
     print("prod=%d ; num_1s=%d ; num_2s=%d ; ret= %d"
           % (prod, num_1s, num_2s, ret))
