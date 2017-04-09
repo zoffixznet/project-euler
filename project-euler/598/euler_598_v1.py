@@ -36,6 +36,17 @@ def pop_trailing(exps, val):
     return ret
 
 
+def fact(n):
+    ret = long(1)
+    for i in xrange(2, n+1):
+        ret *= i
+    return ret
+
+
+def nCr(n, k):
+    return fact(n) / fact(k) / fact(n-k)
+
+
 def calc_C(fact_n):
     primes = [x for x in xrange(2, fact_n+1)
               if len([y for y in xrange(2, 1+int(math.sqrt(x)))
@@ -47,6 +58,31 @@ def calc_C(fact_n):
     num_1s = pop_trailing(exps, 1)
     # 2 is {3^1, 3^0, 3^-1}
     num_2s = pop_trailing(exps, 2)
+
+    m2 = 0
+    m3 = 0
+    lookup = {}
+    for n1p in xrange(0, num_1s+1):
+        n1neg = num_1s-n1p
+        num2 = n1p-n1neg
+        if num2 > m2:
+            m2 = num2
+        cnt = nCr(num_1s, n1p)
+        for n2zero in xrange(0, num_2s+1):
+            remain = num_2s-n2zero
+            for n2p in xrange(0, remain+1):
+                n2neg = remain-n2p
+                num3 = n2p-n2neg
+                if num3 > m3:
+                    m3 = num3
+                key = (num2, num3)
+                if key not in lookup:
+                    lookup[key] = 0
+                lookup[key] += cnt * fact(num_2s) / fact(n2zero) \
+                    / fact(n2p) / fact(n2neg)
+
+    print("lookup = ", lookup)
+
     exps_splits = [get_split(primes, e) for e in exps]
     print(exps_splits)
     exps_diffs = [[[x-y for (x, y) in zip(a[0], a[1])] for a in b]
@@ -99,17 +135,20 @@ def calc_C(fact_n):
         for i in xrange(0, len(l[0])):
             sums[i] += max([d[i] for d in l])
         run_sums.append([x for x in sums])
-    s = run_sums[-1]
+    s = [x for x in run_sums[-1]]
+    s[0] += m2
+    s[1] += m3
     rd = [[s[i]-x for (i, x) in enumerate(y)] for y in run_sums]
 
     def recurse(depth, sums):
         if depth == len(exps_diffs):
-            return 1
+            key = (sums[0], sums[1])
+            return lookup[key] if (key in lookup) else 0
         ret = 0
         d = rd[depth+1]
         for l in exps_diffs[depth]:
             new = [x+y for (x, y) in zip(sums, l)]
-            if all(abs(new[i]) <= d[i] for i in xrange(2, len(l))):
+            if all(abs(n) <= dd for (n, dd) in zip(new, d)):
                 ret += recurse(depth+1, new)
             if depth == 0:
                 print("Flutter")
@@ -120,7 +159,7 @@ def calc_C(fact_n):
 
     print("prod=%d ; num_1s=%d ; num_2s=%d ; ret= %d"
           % (prod, num_1s, num_2s, ret))
-    return 200
+    return ret
 
 
 def print_C(n):
