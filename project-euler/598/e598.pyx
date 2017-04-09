@@ -63,8 +63,8 @@ cdef long long recurse(int depth, int sums[100]):
     d = rd[depth+1]
     cdef int new[100]
     cdef int num_runs
-    cdef int edd[100][100]
-    cdef int edde[100]
+    cdef int[100] * edd
+    cdef int * edde
     edd = exps_diffs[depth]
     num_runs = 0
     cdef int ei, i
