@@ -54,32 +54,33 @@ def calc_C(fact_n):
     print(primes)
     sys.stdout.flush()
     exps = [find_exp(fact_n, p, p) for p in primes]
-    # 1 is {2^1, 2^-1}
-    num_1s = pop_trailing(exps, 1)
-    # 2 is {3^1, 3^0, 3^-1}
-    num_2s = pop_trailing(exps, 2)
+    # 1 is {2^1, 2^-1} which affects position 0.
+    num_0s = pop_trailing(exps, 1)
+    # 2 is {3^1, 3^0, 3^-1} which affects position 1.
+    num_1s = pop_trailing(exps, 2)
 
-    m2 = 0
-    m3 = 0
-    lookup = {}
-    for n1p in xrange(num_1s+1):
-        n1neg = num_1s-n1p
-        num2 = n1p-n1neg
-        if num2 > m2:
-            m2 = num2
-        cnt = nCr(num_1s, n1p)
-        for n2zero in xrange(num_2s+1):
-            remain = num_2s-n2zero
-            for n2p in xrange(remain+1):
-                n2neg = remain-n2p
-                num3 = n2p-n2neg
-                if num3 > m3:
-                    m3 = num3
-                key = (num2, num3)
-                if key not in lookup:
-                    lookup[key] = 0
-                lookup[key] += cnt * fact(num_2s) / fact(n2zero) \
-                    / fact(n2p) / fact(n2neg)
+    max_0s = 0
+    max_1s = 0
+    lookup0 = [0 for x in primes + [0]]
+    lookup1 = [0 for x in primes + [0]]
+    for n0p in xrange(num_0s+1):
+        n0neg = num_0s-n0p
+        num0 = n0p-n0neg
+        if num0 > max_0s:
+            max_0s = num0
+        cnt = nCr(num_0s, n0p)
+        if num0 >= 0:
+            lookup0[num0] += cnt
+    for n1zero in xrange(num_1s+1):
+        remain = num_1s-n1zero
+        for n1p in xrange(remain+1):
+            n1neg = remain-n1p
+            num1 = n1p-n1neg
+            if num1 > max_1s:
+                max_1s = num1
+            if num1 >= 0:
+                lookup1[num1] += fact(num_1s) / fact(n1zero) \
+                / fact(n1p) / fact(n1neg)
 
     exps_splits = [get_split(primes, e) for e in exps]
     exps_diffs = [[[x-y for (x, y) in zip(a[0], a[1])] for a in b]
@@ -133,15 +134,14 @@ def calc_C(fact_n):
             sums[i] += max([d[i] for d in l])
         run_sums.append([x for x in sums])
     s = [x for x in run_sums[-1]]
-    s[0] += m2
-    s[1] += m3
+    s[0] += max_0s
+    s[1] += max_1s
     rd = [[ss-x for (ss, x) in zip(s, y)] for y in run_sums]
     num_runs = [0]
 
     def recurse(depth, sums):
         if depth == len(exps_diffs):
-            key = (sums[0], sums[1])
-            return lookup[key] if (key in lookup) else 0
+            return lookup0[abs(sums[0])] * lookup1[abs(sums[1])]
         ret = 0
         d = rd[depth+1]
         for l in exps_diffs[depth]:
@@ -158,8 +158,8 @@ def calc_C(fact_n):
 
     ret = recurse(0, run_sums[0])
 
-    print("prod=%d ; num_1s=%d ; num_2s=%d ; ret= %d"
-          % (prod, num_1s, num_2s, ret))
+    print("prod=%d ; num_0s=%d ; num_1s=%d ; ret= %d"
+          % (prod, num_0s, num_1s, ret))
     sys.stdout.flush()
     return (ret >> 1)
 

@@ -94,35 +94,35 @@ def calc_C(int fact_n):
     print(primes)
     sys.stdout.flush()
     exps = [find_exp(fact_n, p, p) for p in primes]
-    # 1 is {2^1, 2^-1}
-    num_1s = pop_trailing(exps, 1)
-    # 2 is {3^1, 3^0, 3^-1}
-    num_2s = pop_trailing(exps, 2)
+    # 1 is {2^1, 2^-1} which affects position 0.
+    num_0s = pop_trailing(exps, 1)
+    # 2 is {3^1, 3^0, 3^-1} which affects position 1.
+    num_1s = pop_trailing(exps, 2)
 
-    m2 = 0
-    m3 = 0
+    max_0s = 0
+    max_1s = 0
     global lookup0
     global lookup1
     lookup0 = [0 for x in xrange(100)]
     lookup1 = [0 for x in xrange(100)]
-    for n1p in xrange(num_1s+1):
-        n1neg = num_1s-n1p
-        num2 = n1p-n1neg
-        if num2 > m2:
-            m2 = num2
-        cnt = nCr(num_1s, n1p)
-        if num2 >= 0:
-            lookup0[num2] += cnt
-    for n2zero in xrange(num_2s+1):
-        remain = num_2s-n2zero
-        for n2p in xrange(remain+1):
-            n2neg = remain-n2p
-            num3 = n2p-n2neg
-            if num3 > m3:
-                m3 = num3
-            if num3 >= 0:
-                lookup1[num3] += fact(num_2s) / fact(n2zero) \
-                / fact(n2p) / fact(n2neg)
+    for n0p in xrange(num_0s+1):
+        n0neg = num_0s-n0p
+        num0 = n0p-n0neg
+        if num0 > max_0s:
+            max_0s = num0
+        cnt = nCr(num_0s, n0p)
+        if num0 >= 0:
+            lookup0[num0] += cnt
+    for n1zero in xrange(num_1s+1):
+        remain = num_1s-n1zero
+        for n1p in xrange(remain+1):
+            n1neg = remain-n1p
+            num1 = n1p-n1neg
+            if num1 > max_1s:
+                max_1s = num1
+            if num1 >= 0:
+                lookup1[num1] += fact(num_1s) / fact(n1zero) \
+                / fact(n1p) / fact(n1neg)
 
     exps_splits = [get_split(primes, e) for e in exps]
     global exps_diffs
@@ -195,8 +195,8 @@ def calc_C(int fact_n):
     cdef int s[100]
     for (i,x) in enumerate(run_sums[-1]):
         s[i] = x
-    s[0] += m2
-    s[1] += m3
+    s[0] += max_0s
+    s[1] += max_1s
     global rd
     for yi, y in enumerate(run_sums):
         for (si, (ss, x)) in enumerate(zip(s,y)):
@@ -212,8 +212,8 @@ def calc_C(int fact_n):
                 exps_diffs[bi][ai][xi] = py_exps_diffs[bi][ai][xi]
     ret = recurse(0, rs0)
 
-    print("prod=%d ; num_1s=%d ; num_2s=%d ; ret= %d"
-          % (prod, num_1s, num_2s, ret))
+    print("prod=%d ; num_0s=%d ; num_1s=%d ; ret= %d"
+          % (prod, num_0s, num_1s, ret))
     sys.stdout.flush()
     return (ret >> 1)
 
