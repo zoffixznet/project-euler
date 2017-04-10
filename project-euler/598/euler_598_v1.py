@@ -52,8 +52,8 @@ def calc_C(fact_n):
               if len([y for y in xrange(2, 1+int(math.sqrt(x)))
                       if x % y == 0]) == 0]
     print(primes)
+    sys.stdout.flush()
     exps = [find_exp(fact_n, p, p) for p in primes]
-    print(exps)
     # 1 is {2^1, 2^-1}
     num_1s = pop_trailing(exps, 1)
     # 2 is {3^1, 3^0, 3^-1}
@@ -81,13 +81,9 @@ def calc_C(fact_n):
                 lookup[key] += cnt * fact(num_2s) / fact(n2zero) \
                     / fact(n2p) / fact(n2neg)
 
-    print("lookup = ", lookup)
-
     exps_splits = [get_split(primes, e) for e in exps]
-    print(exps_splits)
     exps_diffs = [[[x-y for (x, y) in zip(a[0], a[1])] for a in b]
                   for b in exps_splits]
-    print(exps_diffs)
 
     g_found = True
     while g_found:
@@ -123,15 +119,16 @@ def calc_C(fact_n):
     prod = long(1)
     for x in exps_counts:
         prod *= x
-    print(exps_diffs)
 
     run_sums = []
     sums = [0 for x in exps_diffs[0][0]]
     run_sums.append([x for x in sums])
     for g_i, l in enumerate(exps_diffs):
         print("=== %d" % primes[g_i])
+        sys.stdout.flush()
         for d in l:
             print("      %s" % ('  '.join(["%2d" % x for x in d])))
+            sys.stdout.flush()
         for i in xrange(len(l[0])):
             sums[i] += max([d[i] for d in l])
         run_sums.append([x for x in sums])
@@ -153,8 +150,9 @@ def calc_C(fact_n):
                 ret += recurse(depth+1, new)
             if depth == 0:
                 num_runs[0] += 1
-                print("Flutter %d / %d" %
-                      (num_runs[0], len(exps_diffs[depth])))
+                print("Flutter depth=%d %d / %d" %
+                      (depth, num_runs[0], len(exps_diffs[depth])))
+                sys.stdout.flush()
 
         return ret
 
@@ -162,11 +160,13 @@ def calc_C(fact_n):
 
     print("prod=%d ; num_1s=%d ; num_2s=%d ; ret= %d"
           % (prod, num_1s, num_2s, ret))
+    sys.stdout.flush()
     return (ret >> 1)
 
 
 def print_C(n):
     print("C(%d!) = %d" % (n, calc_C(n)))
+    sys.stdout.flush()
 
 
 def main():

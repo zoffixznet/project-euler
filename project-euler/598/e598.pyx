@@ -82,6 +82,7 @@ cdef long long recurse(int depth, int sums[100]):
             num_runs += 1
             print("Flutter depth=%d %d / %d" %
                   (depth, num_runs, e_lens[depth]))
+            sys.stdout.flush()
 
     return ret
 
@@ -94,9 +95,9 @@ def calc_C(int fact_n):
         if len([y for y in xrange(2, 1+int(math.sqrt(x))) if x % y == 0]) == 0:
             primes[p_len] = x
             p_len += 1
-    print(primes)
+    print([x for x in primes[0:p_len]])
+    sys.stdout.flush()
     exps = [find_exp(fact_n, p, p) for p in primes[0:p_len]]
-    print(exps)
     # 1 is {2^1, 2^-1}
     num_1s = pop_trailing(exps, 1)
     # 2 is {3^1, 3^0, 3^-1}
@@ -128,10 +129,7 @@ def calc_C(int fact_n):
                 lookup1[num3] += fact(num_2s) / fact(n2zero) \
                 / fact(n2p) / fact(n2neg)
 
-    print("lookup1 = ", lookup1)
-
     exps_splits = [get_split(p_len, primes, e) for e in exps]
-    print(exps_splits)
     global exps_diffs
     py_exps_diffs = [[[x-y for (x, y) in zip(a[0], a[1])] for a in b]
                   for b in exps_splits]
@@ -146,7 +144,6 @@ def calc_C(int fact_n):
             for xi in xrange(ep_len):
                 t1 = exps_splits[bi][ai]
                 # exps_diffs[bi][ai][xi] = t1[0][xi] - t1[1][xi]
-    # print(exps_diffs)
 
     g_found = True
     while g_found:
@@ -186,8 +183,6 @@ def calc_C(int fact_n):
     prod = long(1)
     for x in exps_counts:
         prod *= x
-    # print(exps_diffs)
-    print("Appl");
 
     # cdef int run_sums[100][100]
     run_sums = []
@@ -195,8 +190,10 @@ def calc_C(int fact_n):
     run_sums.append([x for x in sums])
     for g_i, l in enumerate(py_exps_diffs):
         print("=== %d" % primes[g_i])
+        sys.stdout.flush()
         for d in l:
             print("      %s" % ('  '.join(["%2d" % x for x in d])))
+            sys.stdout.flush()
         for i in xrange(len(l[0])):
             sums[i] += max([d[i] for d in l])
         run_sums.append([x for x in sums])
@@ -222,11 +219,13 @@ def calc_C(int fact_n):
 
     print("prod=%d ; num_1s=%d ; num_2s=%d ; ret= %d"
           % (prod, num_1s, num_2s, ret))
+    sys.stdout.flush()
     return (ret >> 1)
 
 
 def print_C(n):
     print("C(%d!) = %d" % (n, calc_C(n)))
+    sys.stdout.flush()
 
 
 def main():
