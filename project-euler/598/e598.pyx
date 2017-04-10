@@ -128,18 +128,9 @@ def calc_C(int fact_n):
     global exps_diffs
     py_exps_diffs = [[[x-y for (x, y) in zip(a[0], a[1])] for a in b]
                   for b in exps_splits]
-    global e_len
-    e_len = len(exps_splits)
     global ep_len
     ep_len = len(primes)
     global e_lens
-    for bi in xrange(len(exps_splits)):
-        e_lens[bi] = len(exps_splits[bi])
-        for ai in xrange(e_lens[bi]):
-            for xi in xrange(ep_len):
-                t1 = exps_splits[bi][ai]
-                # exps_diffs[bi][ai][xi] = t1[0][xi] - t1[1][xi]
-
     g_found = True
     while g_found:
         g_found = False
@@ -164,15 +155,17 @@ def calc_C(int fact_n):
                     g_found = True
             new_exp.append(new_l)
         py_exps_diffs = new_exp
-        e_len = len(new_exp)
-        for i in xrange(e_len):
-            e_lens[i] = len(new_exp[i])
 
-    while all(all(l[ep_len-1] == 0 for l in py_exps_diffs[ei][0:e_lens[ei]]) for ei in xrange(e_len)):
+    global e_len
+    e_len = len(py_exps_diffs)
+
+    for i in xrange(e_len):
+        e_lens[i] = len(py_exps_diffs[i])
+    while all(all(l[-1] == 0 for l in x) for x in py_exps_diffs):
         ep_len -= 1
         for x in py_exps_diffs:
-            for y in x:
-                y.pop()
+            for l in x:
+                l.pop()
 
     exps_counts = [len(x) for x in py_exps_diffs]
     prod = long(1)
