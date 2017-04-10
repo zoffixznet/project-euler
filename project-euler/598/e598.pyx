@@ -48,22 +48,22 @@ def nCr(n, k):
 
 
 cdef int e_len, ep_len
-cdef int exps_diffs[100][100][100]
-cdef long long lookup0[100]
-cdef long long lookup1[100]
-cdef int rd[100][100]
-cdef int e_lens[100]
+cdef int exps_diffs[128][128][128]
+cdef long long lookup0[128]
+cdef long long lookup1[128]
+cdef int rd[128][128]
+cdef int e_lens[128]
 
-cdef long long recurse(int depth, int sums[100]):
+cdef long long recurse(int depth, int sums[128]):
     if depth == e_len:
         return lookup0[abs(sums[0])] * lookup1[abs(sums[1])]
     cdef long long ret
     ret = 0
     cdef int * d
     d = rd[depth+1]
-    cdef int new[100]
+    cdef int new[128]
     cdef int num_runs
-    cdef int[100] * edd
+    cdef int[128] * edd
     cdef int * edde
     edd = exps_diffs[depth]
     num_runs = 0
@@ -103,8 +103,8 @@ def calc_C(int fact_n):
     max_1s = 0
     global lookup0
     global lookup1
-    lookup0 = [0 for x in xrange(100)]
-    lookup1 = [0 for x in xrange(100)]
+    lookup0 = [0 for x in xrange(128)]
+    lookup1 = [0 for x in xrange(128)]
     for n0p in xrange(num_0s+1):
         n0neg = num_0s-n0p
         num0 = n0p-n0neg
@@ -191,7 +191,7 @@ def calc_C(int fact_n):
     for yi, y in enumerate(run_sums):
         for (si, (ss, x)) in enumerate(zip(s,y)):
             rd[yi][si] = ss-x
-    cdef int rs0[100]
+    cdef int rs0[128]
     for i in xrange(ep_len):
         rs0[i] = run_sums[0][i]
 
