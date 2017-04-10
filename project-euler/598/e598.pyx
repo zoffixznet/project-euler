@@ -172,7 +172,6 @@ def calc_C(int fact_n):
     for x in exps_counts:
         prod *= x
 
-    # cdef int run_sums[100][100]
     run_sums = []
     sums = [0 for x in xrange(ep_len)]
     run_sums.append([x for x in sums])
@@ -185,9 +184,7 @@ def calc_C(int fact_n):
         for i in xrange(len(l[0])):
             sums[i] += max([d[i] for d in l])
         run_sums.append([x for x in sums])
-    cdef int s[100]
-    for (i,x) in enumerate(run_sums[-1]):
-        s[i] = x
+    s = [x for x in run_sums[-1]]
     s[0] += max_0s
     s[1] += max_1s
     global rd
