@@ -43,7 +43,7 @@ for j in xrange(1, m+1):
             n.append(t)
     n.append({'i': i, 'S': S})
     a = sorted(n, key=lambda t: t['i'])
-    for t in xrange(0, len(a)):
+    for t in xrange(len(a)):
         bottom = (1 if t == 0 else a[t]['i'])
         top = (j if t == len(a)-1 else a[t+1]['i']-1)
         val = (a[t]['S'] if t < len(a) else S)

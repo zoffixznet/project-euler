@@ -34,7 +34,7 @@ class BaseNum(object):
         return BaseNum(self.b, _from_digits(self.b, digits), digits)
 
     def _gen_min(self, pad):
-        min_ = [1, 0] + ([0] * pad) + range(2, self.b)
+        min_ = [1, 0] + ([0] * pad) + xrange(2, self.b)
         return self._new_from_digits(min_[::-1])
 
     def next_pan(self):
@@ -50,7 +50,7 @@ class BaseNum(object):
             if all_b_m_1:
                 return self._gen_min(len(self.digits) - self.b + 1)
             count_found = 0
-            counts = [{'d': [0 for x in xrange(0, self.b)],
+            counts = [{'d': [0 for x in xrange(self.b)],
                        'count_found': count_found}]
             for d in self.digits[::-1]:
                 new_c = [x for x in counts[-1]['d']]
@@ -64,7 +64,7 @@ class BaseNum(object):
             for c in counts[::-1]:
                 if num_so_far >= self.b - c['count_found']:
                     # Let's rock-and-roll.
-                    zero_digs = [x for x in xrange(0, len(c['d']))
+                    zero_digs = [x for x in xrange(len(c['d']))
                                  if (c['d'][x] == 0)]
                     assert len(zero_digs) == num_so_far
                     digs = []
@@ -119,7 +119,7 @@ class FindSuperPans(object):
 
     def sum_lowest_nums(self, count, verbose):
         ret = 0
-        for idx in xrange(0, count):
+        for idx in xrange(count):
             found_num = self.find_next()
             ret += found_num
             if verbose:

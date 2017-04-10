@@ -5,6 +5,7 @@ from subprocess import Popen, PIPE
 
 if sys.version_info > (3,):
     long = int
+    xrange = range
 
 BASE = 1004535809
 
@@ -15,7 +16,7 @@ pipe = Popen("primes 2", shell=True, stdout=PIPE).stdout
 
 last = 1
 counts = []
-for i in range(0, 20001):
+for i in xrange(20001):
     n = int(pipe.readline())
     counts.append(n-last)
     last = n
@@ -29,8 +30,8 @@ def next_row(k, p):
     if k == 0:
         return counts
     return [
-            sum([counts[i] * p[n-i] for i in range(0, n+1)]) % BASE
-            for n in range(0, MAX+1)
+            sum([counts[i] * p[n-i] for i in xrange(n+1)]) % BASE
+            for n in xrange(MAX+1)
             ]
 
 

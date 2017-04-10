@@ -30,8 +30,8 @@ ins(a_n, d_s, idx)
 
 NUM_DIGITS = 30
 
-cache = [[{} for number_of_invariant_digits in xrange(0, NUM_DIGITS+1)]
-         for digits_sum in xrange(0, NUM_DIGITS*9+1)]
+cache = [[{} for number_of_invariant_digits in xrange(NUM_DIGITS+1)]
+         for digits_sum in xrange(NUM_DIGITS*9+1)]
 
 
 def calc_next():
@@ -50,7 +50,7 @@ def _format(s):
 
 
 def _common_len(s, e):
-    for i in xrange(0, NUM_DIGITS):
+    for i in xrange(NUM_DIGITS):
         if s[i] != e[i]:
             return i-1
     raise Exception

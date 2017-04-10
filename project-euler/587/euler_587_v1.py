@@ -3,7 +3,6 @@ from bigfloat import precision, BigFloat, const_pi, sqrt, asin
 
 if sys.version_info > (3,):
     long = int
-    xrange = range
 
 with precision(100):
     L_sect_area = (1 - BigFloat(const_pi())/4)

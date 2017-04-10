@@ -1,4 +1,8 @@
 from math import sqrt
+import sys
+
+if sys.version_info > (3,):
+    xrange = range
 
 
 def pent(x):
@@ -14,10 +18,10 @@ def is_pent(x):
 
 
 flag = False
-for i in range(1, 3000):
+for i in xrange(1, 3000):
     if i % 100 == 0:
         print('i = %d' % (i))
-    for j in range(i+1, 3000):
+    for j in xrange(i+1, 3000):
         if is_pent(pent(j) - pent(i)) and is_pent(pent(j) + pent(i)):
             print('answer = %d' % (pent(j) - pent(i)))
             flag = True

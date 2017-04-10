@@ -4,6 +4,7 @@ from subprocess import check_output
 
 if sys.version_info > (3,):
     long = int
+    xrange = range
 
 
 def count_primes_up_to(n):
@@ -20,7 +21,7 @@ def brute_force_calc_s(n):
         h1[x] = True
     s = len(h1.keys())
     h = h1
-    for k in range(2, n):
+    for k in xrange(2, n):
         next_h = {}
         for num in h.keys():
             for p in primes:
@@ -93,4 +94,4 @@ check_print_s(100)
 check_print_s(11)
 check_print_s(21)
 check_print_s(101)
-print("Result = %d" % (sum([calc_s(fibs[k]) for k in range(3, 45)])))
+print("Result = %d" % (sum([calc_s(fibs[k]) for k in xrange(3, 45)])))

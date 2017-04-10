@@ -16,7 +16,7 @@ with open('mod_groups.txt') as f:
         nums = [long(i) for i in l.rstrip('\n').split(' ')]
         count = nums.pop(0)
         for n in nums:
-            for i in xrange(0, count):
+            for i in xrange(count):
                 mods.append(n)
 
 l = len(mods)

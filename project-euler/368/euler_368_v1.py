@@ -6,7 +6,6 @@ from bigfloat import precision
 
 if sys.version_info > (3,):
     long = int
-    xrange = range
 
 with precision(60):
     r = re.compile('(000|111|222|333|444|555|666|777|888|999)')

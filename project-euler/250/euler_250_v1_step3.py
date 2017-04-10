@@ -27,7 +27,7 @@ with open('mod_groups.txt') as f:
         groups[count] = nums
 
 # Total
-tot = [long(0) for x in xrange(0, MOD)]
+tot = [long(0) for x in xrange(MOD)]
 tot[0] = 1
 trace_count = 0
 for count in ([ones_group] + [x for x in groups.keys() if x != ones_group]):
@@ -45,14 +45,14 @@ for count in ([ones_group] + [x for x in groups.keys() if x != ones_group]):
         print(("Doing %d [count %d]") % (n, trace_count))
         sys.stdout.flush()
         trace_count += 1
-        mods = [long(0) for x in xrange(0, MOD)]
+        mods = [long(0) for x in xrange(MOD)]
         i = 0
         for d in indiv_counts:
             i += n
             if i >= MOD:
                 i -= MOD
             mods[i] += d
-        # new = [long(0) for x in xrange(0, MOD)]
+        # new = [long(0) for x in xrange(MOD)]
         # Removing out because it seems wrong.
         # new[0] = 1
         new = [x for x in tot]

@@ -22,8 +22,8 @@ for e in [2, 3]:
     while powers[e][-1] < 1000000:
         powers[e].append(powers[e][-1]*e)
 
-p = [[powers[3][i3]*powers[2][i2] for i3 in xrange(0, len(powers[3]))]
-     for i2 in xrange(0, len(powers[2]))]
+p = [[powers[3][i3]*powers[2][i2] for i3 in xrange(len(powers[3]))]
+     for i2 in xrange(len(powers[2]))]
 
 
 def rec(x, start_y, mysum):

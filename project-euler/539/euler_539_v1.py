@@ -158,7 +158,7 @@ if False:
 
 reset()
 if True:
-    for i in xrange(0, 15):
+    for i in xrange(15):
         expected = S((1 << (1+i))-1) - S((1 << (i))-1)
         got = S_from_2power_to_next(i)
         print(("i=%d got = %d expected = %d") % (i, got, expected))

@@ -43,7 +43,7 @@ def real_calc_num_chains(sig):
             return 0 if all_zeros else calc_num_chains(sorted(so_far))
         ret = 0
         n = sig[x]
-        for c in xrange(0, n+1):
+        for c in xrange(n+1):
             ret += helper(so_far + [n - c] if c < n else so_far,
                           x+1,
                           (all_zeros and (c == 0)))

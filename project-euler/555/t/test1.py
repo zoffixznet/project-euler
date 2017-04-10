@@ -6,7 +6,6 @@ from euler555 import M_func, S_func
 
 if sys.version_info > (3,):
     long = int
-    xrange = range
 
 plan(6)
 

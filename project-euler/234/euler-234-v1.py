@@ -4,6 +4,9 @@ import subprocess
 import sys
 import math
 
+if sys.version_info > (3,):
+    xrange = range
+
 MAX = int(sys.argv[1])
 
 SQ = int(math.sqrt(float(MAX)))
@@ -23,7 +26,7 @@ def debug_n(n):
 
 
 def debug():
-    for g in range(bottom+1, top):
+    for g in xrange(bottom+1, top):
         debug_n(g*top)
         debug_n(g*bottom)
 
@@ -46,7 +49,7 @@ while before_s < s:
             # debug_n(r)
             s += r
             r += bottom
-    # for g in range(bottom+1,top):
+    # for g in xrange(bottom+1,top):
     #    s += g*top
     #    s += g*bottom
     r = (bottom-1) * top

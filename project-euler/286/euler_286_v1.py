@@ -12,7 +12,7 @@ def calc(q):
     for x in xrange(1, 51):
         p = 1 - x / q
         new_probs = []
-        for i in xrange(0, x+1):
+        for i in xrange(x+1):
             # print("%d %d" % (i,x))
             new_probs.append((0 if (i == x) else probs[i] * (1-p)) +
                              (0 if (i == 0) else (p * probs[i-1])))

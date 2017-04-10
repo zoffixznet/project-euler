@@ -8,12 +8,12 @@ if sys.version_info > (3,):
 
 def transform(s, l):
     with precision(100):
-        ret = [BigFloat(0) for x in xrange(0, (1 + s * (len(l)-1)))]
+        ret = [BigFloat(0) for x in xrange(1 + s * (len(l)-1))]
         prev = [1]
         for i, v in enumerate(l):
             if i > 0:
                 f = BigFloat(1) / (BigFloat(s) ** i)
-                new = [BigFloat(0) for x in xrange(0, (1 + s * i))]
+                new = [BigFloat(0) for x in xrange(1 + s * i)]
                 for faceval in xrange(1, s+1):
                     for idx, val in enumerate(prev):
                         new[idx+faceval] += val
@@ -86,7 +86,7 @@ def both(x12):
 
 def transform_brute(s, l):
     with precision(100):
-        ret = [BigFloat(0) for x in xrange(0, (1 + s * (len(l)-1)))]
+        ret = [BigFloat(0) for x in xrange(1 + s * (len(l)-1))]
         for i, v in enumerate(l):
             if i == 0:
                 continue

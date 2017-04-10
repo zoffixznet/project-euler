@@ -48,7 +48,7 @@ def f(n):
 
 def calc(new_k, n):
     _reset(new_k)
-    for i in range(0, n):
+    for i in xrange(n):
         f(i)
     return f(n)
 
@@ -65,5 +65,5 @@ is_good(5, 10, 18)
 is_good(7, 100, 1003)
 is_good(2, 1000, long('264830889564'))
 
-for i in range(0, 1000):
+for i in xrange(1000):
     print(("f(%d) = %d") % (i, f(i)))

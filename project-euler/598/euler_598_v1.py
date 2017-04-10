@@ -25,7 +25,7 @@ def get_vec(primes, n):
 
 
 def get_split(primes, e):
-    return [[get_vec(primes, 1+x) for x in [y, e-y]] for y in xrange(0, e+1)]
+    return [[get_vec(primes, 1+x) for x in [y, e-y]] for y in xrange(e+1)]
 
 
 def pop_trailing(exps, val):
@@ -62,15 +62,15 @@ def calc_C(fact_n):
     m2 = 0
     m3 = 0
     lookup = {}
-    for n1p in xrange(0, num_1s+1):
+    for n1p in xrange(num_1s+1):
         n1neg = num_1s-n1p
         num2 = n1p-n1neg
         if num2 > m2:
             m2 = num2
         cnt = nCr(num_1s, n1p)
-        for n2zero in xrange(0, num_2s+1):
+        for n2zero in xrange(num_2s+1):
             remain = num_2s-n2zero
-            for n2p in xrange(0, remain+1):
+            for n2p in xrange(remain+1):
                 n2neg = remain-n2p
                 num3 = n2p-n2neg
                 if num3 > m3:
@@ -132,7 +132,7 @@ def calc_C(fact_n):
         print("=== %d" % primes[g_i])
         for d in l:
             print("      %s" % ('  '.join(["%2d" % x for x in d])))
-        for i in xrange(0, len(l[0])):
+        for i in xrange(len(l[0])):
             sums[i] += max([d[i] for d in l])
         run_sums.append([x for x in sums])
     s = [x for x in run_sums[-1]]

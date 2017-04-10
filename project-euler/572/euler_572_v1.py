@@ -13,7 +13,7 @@ def main(n):
     two_cells_prod = {}
     for b in xrange(-n, n+1):
         print("b=%d" % (b))
-        for d in xrange(0, n+1):
+        for d in xrange(n+1):
             prod = b*d
             if prod not in two_cells_prod:
                 two_cells_prod[prod] = []

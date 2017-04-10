@@ -12,7 +12,7 @@ with precision(20000):
     N_tosses = 1000
     h_probs = [math.factorial(N_tosses) /
                (math.factorial(x) * math.factorial(N_tosses-x)) *
-               (BigFloat('0.5') ** N_tosses) for x in xrange(0, N_tosses+1)]
+               (BigFloat('0.5') ** N_tosses) for x in xrange(N_tosses+1)]
     s = 0
     h_sums = [0]
     for x in h_probs:
@@ -28,7 +28,7 @@ with precision(20000):
         h += 1
         return h
 
-    for f_base in xrange(0, 101):
+    for f_base in xrange(101):
         h = calc_prob(f_base * BigFloat('0.01'), h_sums)
         print("f=%d%% h=%d prob = %.16f" %
               (f_base, h, h_sums[N_tosses + 1 - h]))

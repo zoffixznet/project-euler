@@ -9,7 +9,7 @@ if sys.version_info > (3,):
 def calc_lim2_ret(lim2):
     ret = 0
     max_ = int(math.sqrt(lim2))
-    for z in xrange(0, 1+max_):
+    for z in xrange(1+max_):
         # print("z=%d l-z=%d" % (z, lim2 - z*z))
         ret += int(math.sqrt(lim2 - z*z))
     return ret
@@ -55,7 +55,7 @@ def assert_T(r, want):
 
 
 def main():
-    for lim2 in xrange(0, 10000):
+    for lim2 in xrange(10000):
         print("lim2_ret(%d) = %d" % (lim2, calc_lim2_ret(lim2)))
     assert_T(2, 89)
     assert_T(5, 3121)

@@ -27,7 +27,7 @@ while True:
         if (sum_ % MOD == 0):
             prod = nn
             while prod <= MAX:
-                for i in range(1, n):
+                for i in xrange(1, n):
                     if prod <= MAX:
                         print(prod)
                     else:

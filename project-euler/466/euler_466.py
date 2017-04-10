@@ -43,7 +43,7 @@ def ndiv_coprime(N, L, i):
     if i == 0 or N < L[i-1]:
         return N
     res = N
-    for j in range(i):
+    for j in xrange(i):
         res -= ndiv_coprime(N//L[j], L, j)
     return res
 
@@ -89,10 +89,10 @@ def ndiv(m, S):
 def P466(n, m):
     assert 2*max(Primes) >= n
     res = 0
-    for i in range(1, n+1):
+    for i in xrange(1, n+1):
         # Count the number of integers i, 2*i, ... m*i, which are not
         # divisible by an integer in the range i+1 .. n
-        L = set(j // gcd(i, j) for j in range(i+1, n+1))
+        L = set(j // gcd(i, j) for j in xrange(i+1, n+1))
         C = ndiv(m, L)
         res += C
     return res

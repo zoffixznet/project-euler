@@ -4,6 +4,7 @@ import sys
 
 if sys.version_info > (3,):
     long = int
+    xrange = range
 
 MOD = 1000000007
 
@@ -17,7 +18,7 @@ def pascal_sum(n, p):
     b = n
     l = long(1)
     C = E[b] * l
-    for k in range(p):
+    for k in xrange(p):
         b -= 1
         l = l * (n-1-k) / (k+1)
         C += E[b] * l
@@ -43,8 +44,8 @@ if __name__ == "__main__":
     # PS = 1000
     PS = 1
     pa = PS
-    # for n in range(1,50+1):
-    for n in range(1, 50000000 + 1):
+    # for n in xrange(1,50+1):
+    for n in xrange(1, 50000000 + 1):
         if primes[0] == n:
             primes.pop(0)
             pi += 1
