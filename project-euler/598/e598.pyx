@@ -20,12 +20,12 @@ def get_vec_exp(n, p, m, e):
         return e
 
 
-def get_vec(p_len, primes, n):
-    return [get_vec_exp(n, p, p, 0) for p in primes[0:p_len]]
+def get_vec(primes, n):
+    return [get_vec_exp(n, p, p, 0) for p in primes]
 
 
-def get_split(p_len, primes, e):
-    return [[get_vec(p_len, primes, 1+x) for x in [y, e-y]] for y in xrange(e+1)]
+def get_split(primes, e):
+    return [[get_vec(primes, 1+x) for x in [y, e-y]] for y in xrange(e+1)]
 
 
 def pop_trailing(exps, val):
@@ -88,21 +88,16 @@ cdef long long recurse(int depth, int sums[100]):
 
 
 def calc_C(int fact_n):
-    cdef int primes[100]
-    cdef int p_len
-    p_len = 0
-    for x in xrange(2, fact_n+1):
-        if len([y for y in xrange(2, 1+int(math.sqrt(x))) if x % y == 0]) == 0:
-            primes[p_len] = x
-            p_len += 1
-    print([x for x in primes[0:p_len]])
+    primes = [x for x in xrange(2, fact_n+1)
+              if len([y for y in xrange(2, 1+int(math.sqrt(x)))
+                      if x % y == 0]) == 0]
+    print(primes)
     sys.stdout.flush()
-    exps = [find_exp(fact_n, p, p) for p in primes[0:p_len]]
+    exps = [find_exp(fact_n, p, p) for p in primes]
     # 1 is {2^1, 2^-1}
     num_1s = pop_trailing(exps, 1)
     # 2 is {3^1, 3^0, 3^-1}
     num_2s = pop_trailing(exps, 2)
-    # p_len -= num_1s + num_2s
 
     m2 = 0
     m3 = 0
@@ -129,14 +124,14 @@ def calc_C(int fact_n):
                 lookup1[num3] += fact(num_2s) / fact(n2zero) \
                 / fact(n2p) / fact(n2neg)
 
-    exps_splits = [get_split(p_len, primes, e) for e in exps]
+    exps_splits = [get_split(primes, e) for e in exps]
     global exps_diffs
     py_exps_diffs = [[[x-y for (x, y) in zip(a[0], a[1])] for a in b]
                   for b in exps_splits]
     global e_len
     e_len = len(exps_splits)
     global ep_len
-    ep_len = p_len
+    ep_len = len(primes)
     global e_lens
     for bi in xrange(len(exps_splits)):
         e_lens[bi] = len(exps_splits[bi])
