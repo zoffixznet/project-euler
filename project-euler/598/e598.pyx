@@ -25,7 +25,7 @@ def get_vec(p_len, primes, n):
 
 
 def get_split(p_len, primes, e):
-    return [[get_vec(p_len, primes, 1+x) for x in [y, e-y]] for y in xrange(0, e+1)]
+    return [[get_vec(p_len, primes, 1+x) for x in [y, e-y]] for y in xrange(e+1)]
 
 
 def pop_trailing(exps, val):
@@ -109,7 +109,7 @@ def calc_C(int fact_n):
     global lookup1
     lookup0 = [0 for x in xrange(100)]
     lookup1 = [0 for x in xrange(100)]
-    for n1p in xrange(0, num_1s+1):
+    for n1p in xrange(num_1s+1):
         n1neg = num_1s-n1p
         num2 = n1p-n1neg
         if num2 > m2:
@@ -117,9 +117,9 @@ def calc_C(int fact_n):
         cnt = nCr(num_1s, n1p)
         if num2 >= 0:
             lookup0[num2] += cnt
-    for n2zero in xrange(0, num_2s+1):
+    for n2zero in xrange(num_2s+1):
         remain = num_2s-n2zero
-        for n2p in xrange(0, remain+1):
+        for n2p in xrange(remain+1):
             n2neg = remain-n2p
             num3 = n2p-n2neg
             if num3 > m3:
@@ -140,10 +140,10 @@ def calc_C(int fact_n):
     global ep_len
     ep_len = p_len
     global e_lens
-    for bi in xrange(0, len(exps_splits)):
+    for bi in xrange(len(exps_splits)):
         e_lens[bi] = len(exps_splits[bi])
-        for ai in xrange(0, e_lens[bi]):
-            for xi in xrange(0, ep_len):
+        for ai in xrange(e_lens[bi]):
+            for xi in xrange(ep_len):
                 t1 = exps_splits[bi][ai]
                 # exps_diffs[bi][ai][xi] = t1[0][xi] - t1[1][xi]
     # print(exps_diffs)
@@ -173,10 +173,10 @@ def calc_C(int fact_n):
             new_exp.append(new_l)
         py_exps_diffs = new_exp
         e_len = len(new_exp)
-        for i in xrange(0, e_len):
+        for i in xrange(e_len):
             e_lens[i] = len(new_exp[i])
 
-    while all(all(l[ep_len-1] == 0 for l in py_exps_diffs[ei][0:e_lens[ei]]) for ei in xrange(0, e_len)):
+    while all(all(l[ep_len-1] == 0 for l in py_exps_diffs[ei][0:e_lens[ei]]) for ei in xrange(e_len)):
         ep_len -= 1
         for x in py_exps_diffs:
             for y in x:
@@ -191,13 +191,13 @@ def calc_C(int fact_n):
 
     # cdef int run_sums[100][100]
     run_sums = []
-    sums = [0 for x in xrange(0,ep_len)]
+    sums = [0 for x in xrange(ep_len)]
     run_sums.append([x for x in sums])
     for g_i, l in enumerate(py_exps_diffs):
         print("=== %d" % primes[g_i])
         for d in l:
             print("      %s" % ('  '.join(["%2d" % x for x in d])))
-        for i in xrange(0, len(l[0])):
+        for i in xrange(len(l[0])):
             sums[i] += max([d[i] for d in l])
         run_sums.append([x for x in sums])
     cdef int s[100]
@@ -211,12 +211,12 @@ def calc_C(int fact_n):
             rd[yi][si] = ss-x
     num_runs = [0]
     cdef int rs0[100]
-    for i in xrange(0, ep_len):
+    for i in xrange(ep_len):
         rs0[i] = run_sums[0][i]
 
-    for bi in xrange(0, ep_len):
-        for ai in xrange(0, e_lens[bi]):
-            for xi in xrange(0, ep_len):
+    for bi in xrange(ep_len):
+        for ai in xrange(e_lens[bi]):
+            for xi in xrange(ep_len):
                 exps_diffs[bi][ai][xi] = py_exps_diffs[bi][ai][xi]
     ret = recurse(0, rs0)
 
