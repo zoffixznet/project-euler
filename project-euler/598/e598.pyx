@@ -191,7 +191,6 @@ def calc_C(int fact_n):
     for yi, y in enumerate(run_sums):
         for (si, (ss, x)) in enumerate(zip(s,y)):
             rd[yi][si] = ss-x
-    num_runs = [0]
     cdef int rs0[100]
     for i in xrange(ep_len):
         rs0[i] = run_sums[0][i]
