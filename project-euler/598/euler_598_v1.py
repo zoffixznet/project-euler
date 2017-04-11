@@ -80,7 +80,7 @@ def calc_C(fact_n):
                 max_1s = num1
             if num1 >= 0:
                 lookup1[num1] += fact(num_1s) / fact(n1zero) \
-                / fact(n1p) / fact(n1neg)
+                    / fact(n1p) / fact(n1neg)
 
     exps_splits = [get_split(primes, e) for e in exps]
     exps_diffs = [[[x-y for (x, y) in zip(a[0], a[1])] for a in b]
