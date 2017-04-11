@@ -1,4 +1,5 @@
 *.pyc
+project-euler/.tidyall.d
 project-euler/10/c_mine_half
 project-euler/127/rad-cache.txt
 project-euler/141/141-2-debug.exe
