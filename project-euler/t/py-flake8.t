@@ -3,13 +3,11 @@
 use strict;
 use warnings;
 
-use Test::More;
+use Test::More tests => 1;
 use Test::Differences qw( eq_or_diff );
 
-use File::Which qw( which );
 use String::ShellQuote qw/ shell_quote /;
 
-plan tests => 1;
 my $cmd = shell_quote( 'flake8', '.' );
 
 # TEST
