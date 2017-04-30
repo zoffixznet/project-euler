@@ -1,0 +1,50 @@
+import sys
+from functools import reduce
+from six import print_
+
+if sys.version_info > (3,):
+    long = int
+    xrange = range
+
+
+def gcd(*numbers):
+    from fractions import gcd
+    return reduce(gcd, numbers)
+
+
+def lcm(*numbers):
+    return reduce((lambda a, b: (a*b) // gcd(a, b)), numbers, 1)
+
+
+def calc_P(s, N):
+    l = lcm(*list(range(1, s+1)))
+    i = l
+    ret = 0
+    while i < 1:
+        i += l
+    t = s + 1
+    while i < N:
+        if (((i+t) % t) != 0):
+            ret += 1
+        i += l
+    return ret
+
+
+def print_P(s, N):
+    ret = calc_P(s, N)
+    print_("calc_P(s=%d, N=%d) = %d" % (s, N, ret))
+    return ret
+
+
+def main():
+    print_P(3, 14)
+    print_P(6, 10**6)
+    print_P(2, 4**2)
+    mysum = 0
+    for i in xrange(1, 32):
+        mysum += print_P(i, 4**i)
+        print_("mysum(%d) = %d" % (i, mysum))
+
+
+if __name__ == "__main__":
+    main()
