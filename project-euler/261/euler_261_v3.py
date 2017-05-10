@@ -16,14 +16,16 @@ def find_pivots():
     d = 8
     STEP = 10000000
     c = STEP
+    ldm = (((k-1) << 1) - 1)
     while k <= LIM:
         if k == c:
             print("Reached %d" % k)
             sys.stdout.flush()
             c += STEP
         n = long(math.sqrt(s_k))
-        s_n = n*n
-        n_m = n
+        sm = s_n = n*n
+        ldm += 2
+        dm = ((n << 1) - 1)
         ss_k = s_k
         dk = kdk
         kddk += 2
@@ -31,10 +33,11 @@ def find_pivots():
         kdk += kddk
         for m in xrange(2, k+1):
             while s_n > ss_k:
-                n_m -= 1
-                s_n += n_m*n_m-n*n
+                sm -= dm
+                dm -= 2
+                s_n += sm-n*n
                 n -= 1
-            if n_m <= k:
+            if dm <= ldm:
                 break
             if s_n == ss_k:
                 print("Found %d" % k)
