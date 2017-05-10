@@ -1,4 +1,3 @@
-import math
 import sys
 
 if sys.version_info > (3,):
@@ -17,13 +16,20 @@ def find_pivots():
     STEP = 10000000
     c = STEP
     ldm = (((k-1) << 1) - 1)
+    kn = 2
+    ksn = 2*2
+    dksn = 5
     while k <= LIM:
         if k == c:
             print("Reached %d" % k)
             sys.stdout.flush()
             c += STEP
-        n = long(math.sqrt(s_k))
-        sm = s_n = n*n
+        while ksn < s_k:
+            kn += 1
+            ksn += dksn
+            dksn += 2
+        n = kn
+        sm = s_n = ksn
         ldm += 2
         dm = ((n << 1) - 1)
         ss_k = s_k
@@ -55,7 +61,7 @@ def find_pivots():
 
 def main():
     find_pivots()
-    # print("Result = %d" % calc_G((n*n*n for n in xrange(1, 1000000))))
+    # print("Result = %d" % calc_G((kn*n*n for n in xrange(1, 1000000))))
 
 
 if __name__ == "__main__":
