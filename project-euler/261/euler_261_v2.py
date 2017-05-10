@@ -24,7 +24,7 @@ def find_pivots():
         n_m = n
         ss_k = s_k
         k_mm = k_m
-        for m in xrange(2,k+1):
+        for m in xrange(2, k+1):
             while s_n > ss_k:
                 n_m -= 1
                 s_n += n_m*n_m-n*n
