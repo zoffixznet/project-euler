@@ -18,7 +18,7 @@ def find_pivots():
     ldm = (((k-1) << 1) - 1)
     kn = 2
     ksn = 2*2
-    dksn = 5
+    dksn = 3
     while k <= LIM:
         if k == c:
             print("Reached %d" % k)
@@ -26,12 +26,12 @@ def find_pivots():
             c += STEP
         while ksn < s_k:
             kn += 1
-            ksn += dksn
             dksn += 2
-        n = kn
-        sm = s_n = ksn
+            ksn += dksn
+        sm = s_n = nsq = ksn
         ldm += 2
-        dm = ((n << 1) - 1)
+        dm = dnsq = dksn
+        dnsq += 2
         ss_k = s_k
         dk = kdk
         kddk += 2
@@ -41,8 +41,9 @@ def find_pivots():
             while s_n > ss_k:
                 sm -= dm
                 dm -= 2
-                s_n += sm-n*n
-                n -= 1
+                s_n += sm - nsq
+                dnsq -= 2
+                nsq -= dnsq
             if dm <= ldm:
                 break
             if s_n == ss_k:
@@ -52,8 +53,9 @@ def find_pivots():
             ddk -= 2
             dk -= ddk
             ss_k += dk
-            n += 1
-            s_n += n*n
+            nsq += dnsq
+            dnsq += 2
+            s_n += nsq
         s_k += d
         k += 1
         d += 4
@@ -61,7 +63,6 @@ def find_pivots():
 
 def main():
     find_pivots()
-    # print("Result = %d" % calc_G((kn*n*n for n in xrange(1, 1000000))))
 
 
 if __name__ == "__main__":
