@@ -8,18 +8,18 @@ LIM = 10000000000
 
 
 def find_pivots():
-    k = 2
+    initial_k = 2
     s_k = 1*1+2*2
     kdk = 1
     kddk = 1
     d = 8
     STEP = 10000000
     c = STEP
-    ldm = (((k-1) << 1) - 1)
+    ldm = (((initial_k-1) << 1) - 1)
     kn = 2
     ksn = 2*2
     dksn = 3
-    while k <= LIM:
+    for k in xrange(initial_k, LIM+1):
         if k == c:
             print("Reached %d" % k)
             sys.stdout.flush()
@@ -57,7 +57,6 @@ def find_pivots():
             dnsq += 2
             s_n += nsq
         s_k += d
-        k += 1
         d += 4
 
 
