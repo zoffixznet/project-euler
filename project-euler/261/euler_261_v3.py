@@ -16,7 +16,6 @@ def find_pivots():
     STEP = 10000000
     c = STEP
     ldm = (((initial_k-1) << 1) - 1)
-    kn = 2
     ksn = 2*2
     dksn = 3
     for k in xrange(initial_k, LIM+1):
@@ -25,7 +24,6 @@ def find_pivots():
             sys.stdout.flush()
             c += STEP
         while ksn < s_k:
-            kn += 1
             dksn += 2
             ksn += dksn
         sm = s_n = nsq = ksn
