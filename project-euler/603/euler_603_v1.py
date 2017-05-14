@@ -30,9 +30,22 @@ def smart_S(n_num):
     return r
 
 
+def smart2_S(n_num):
+    r = long(0)
+    n = str(n_num)
+    i = len(n)
+    e = 1
+    for d in n[::-1]:
+        r += i*int(d)*e
+        r %= MOD
+        i -= 1
+        e = ((1 + e * 10) % MOD)
+    return r
+
+
 def compare_S(n):
     want = brute_S(n)
-    have = smart_S(n)
+    have = smart2_S(n)
     print_("in = %d ; brute = %d ; smart = %d" % (n, want, have))
     if want != have:
         raise BaseException('foo')
