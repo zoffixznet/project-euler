@@ -46,6 +46,8 @@ def find_pivots():
                 break
             if s_n == ss_k:
                 print("Found %d" % k)
+                print(">>> S[ %d .. %d ; %d] = S[ %d .. %d ; %d]" %
+                      (k-m+1, k, m, ((dm + 1) >> 1), ((dnsq - 1) >> 1), m-1))
                 sys.stdout.flush()
                 break
             ddk -= 2
