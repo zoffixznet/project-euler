@@ -1,4 +1,5 @@
 import sys
+import os
 from six import print_
 import numpy as np
 
@@ -86,6 +87,16 @@ def compare_S(n):
         raise BaseException('foo')
 
 
+def mat_exp_mod(m1, e):
+    if e == 1:
+        return m1
+    sub = mat_exp_mod(m1, (e >> 1))
+    ret = ((sub * sub) % MOD)
+    if ((e & 1) == 1):
+        ret *= m1
+    return ret % MOD
+
+
 def main():
     compare_S(20)
     compare_S(21)
@@ -138,6 +149,15 @@ def main():
         for d in str(byte):
             m1 = (digits[str(d)] * m1) % MOD
     print_(m1)
+    k = long('1000000000000')
+    n = os.path.getsize('P_1M.txt')
+    m_result = mat_exp_mod(m1, k)
+    r = long(0)
+    i = ((k * n) % MOD)
+    e = 1
+    vec = np.array([[r], [i], [e], [i*e], [1]], np.int64)
+    print_("Result = %d" % (((m_result * vec) % MOD).item(0, 0)))
+
     if False:
         for n in xrange(1, 1000000):
             compare_S(n)
