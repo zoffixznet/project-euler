@@ -108,7 +108,37 @@ def main():
     compare_S(10000)
     compare_S(10001)
     compare_S(1000000)
-    if True:
+    m1 = None
+    i = 0
+    ns = {}
+    for x in xrange(0, 10000):
+        ds = []
+        x2 = x
+        for j in xrange(0, 4):
+            ds.append(x2 % 10)
+            x2 //= 10
+        m = None
+        for d in ds:
+            if m is None:
+                m = digits[str(d)]
+            else:
+                m = (digits[str(d)] * m) % MOD
+        ns[''.join([str(x) for x in ds])] = m
+    with open("P_1M.txt", "rb") as f:
+        byte = f.read(1)
+        m1 = digits[str(byte)]
+        byte = f.read(4)
+        while len(byte) == 4:
+            m1 = (ns[str(byte)] * m1) % MOD
+            # Do stuff with byte.
+            byte = f.read(4)
+            i += 4
+            if i % 10000 == 0:
+                print_("i=%d" % (i))
+        for d in str(byte):
+            m1 = (digits[str(d)] * m1) % MOD
+    print_(m1)
+    if False:
         for n in xrange(1, 1000000):
             compare_S(n)
 
