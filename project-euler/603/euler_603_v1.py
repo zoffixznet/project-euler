@@ -1,5 +1,6 @@
 import sys
 from six import print_
+import numpy as np
 
 if sys.version_info > (3,):
     long = int
@@ -43,9 +44,43 @@ def smart2_S(n_num):
     return r
 
 
+def gen_digit_matrices():
+    """
+    so the vector is always [r ; i ; e ; i*e ; 1]
+    """
+    ret = {}
+    for d in xrange(0, 10):
+        ret[str(d)] = np.matrix(
+            [[1, 0, 0, d, 0],
+             [0, 1, 0, 0, -1],
+             [0, 0, 10, 0, 1],
+             # (10e+1)(i-1) = 10ei + i - 10e - 1
+             [0, 1, -10, 10, -1],
+             [0, 0, 0, 0, 1]], np.int64)
+    return ret
+
+
+digits = gen_digit_matrices()
+
+
+def matrix_S(n_num):
+    m = None
+    r = long(0)
+    n = str(n_num)
+    i = len(n)
+    e = 1
+    vec = np.array([[r], [i], [e], [i*e], [1]], np.int64)
+    for d in n[::-1]:
+        if m is None:
+            m = digits[d]
+        else:
+            m = (digits[d] * m) % MOD
+    return ((m * vec) % MOD).item(0, 0)
+
+
 def compare_S(n):
     want = brute_S(n)
-    have = smart2_S(n)
+    have = matrix_S(n)
     print_("in = %d ; brute = %d ; smart = %d" % (n, want, have))
     if want != have:
         raise BaseException('foo')
@@ -73,7 +108,7 @@ def main():
     compare_S(10000)
     compare_S(10001)
     compare_S(1000000)
-    if False:
+    if True:
         for n in xrange(1, 1000000):
             compare_S(n)
 
