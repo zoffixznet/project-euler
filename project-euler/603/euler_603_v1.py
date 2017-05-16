@@ -135,7 +135,10 @@ def main():
             else:
                 m = (digits[str(d)] * m) % MOD
         ns[''.join([str(x) for x in ds])] = m
-    with open("P_1M.txt", "rb") as f:
+    fn = 'P_1M.txt'
+    if not os.path.isfile(fn):
+        os.system('gmake')
+    with open(fn, "rb") as f:
         byte = f.read(1)
         m1 = digits[str(byte)]
         byte = f.read(4)
@@ -150,7 +153,7 @@ def main():
             m1 = (digits[str(d)] * m1) % MOD
     print_(m1)
     k = long('1000000000000')
-    n = os.path.getsize('P_1M.txt')
+    n = os.path.getsize(fn)
     m_result = mat_exp_mod(m1, k)
     r = long(0)
     i = ((k * n) % MOD)
