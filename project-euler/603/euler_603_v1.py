@@ -137,7 +137,7 @@ def main():
         ns[''.join([str(x) for x in ds])] = m
     fn = 'P_1M.txt'
     if not os.path.isfile(fn):
-        os.system('gmake')
+        os.system('python euler_603_v1_step0.py')
     with open(fn, "rb") as f:
         byte = f.read(1)
         m1 = digits[str(byte)]
