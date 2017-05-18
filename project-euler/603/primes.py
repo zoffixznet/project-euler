@@ -7,7 +7,7 @@ if sys.version_info > (3,):
 
 
 def main():
-    ret = '2'
+    ret = ['2']
     cnt = 1
     n = 3
     GOAL = 200000
@@ -19,10 +19,11 @@ def main():
                 break
         if is_prime:
             cnt += 1
-            ret += str(n)
+            ret.append(str(n))
             if cnt % 1000 == 0:
                 print_('Reached %d out of %d' % (cnt, GOAL))
         n += 2
+    mystr = ''.join(ret)
     print_('Finished')
 
 
