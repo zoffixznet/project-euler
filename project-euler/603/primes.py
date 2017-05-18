@@ -8,7 +8,6 @@ if sys.version_info > (3,):
 
 def main():
     ret = '2'
-    fn = 'P_1M.txt'
     cnt = 1
     n = 3
     GOAL = 200000
@@ -24,11 +23,7 @@ def main():
             if cnt % 1000 == 0:
                 print_('Reached %d out of %d' % (cnt, GOAL))
         n += 2
-    print_('Writing')
-    with open(fn, 'wb') as fh:
-        for c in ret[::-1]:
-            fh.write(c)
-    print_('Finished writing')
+    print_('Finished')
 
 
 if __name__ == "__main__":
