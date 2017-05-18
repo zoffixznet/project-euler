@@ -23,7 +23,7 @@ def main():
             if cnt % 1000 == 0:
                 print_('Reached %d out of %d' % (cnt, GOAL))
         n += 2
-    mystr = ''.join(ret)
+    # mystr = ''.join(ret)
     print_('Finished')
 
 
