@@ -17,19 +17,22 @@ ll calc_SIGMA2_mod(const ll MOD, const ll n)
             ll t = 0;
             while (jdiv > 1)
             {
-                t += jdiv;
+                t = ((t + jdiv) % MOD);
                 j += MOD;
                 jdiv = n / j;
             }
-            r = ((r + sq * (t + ((j <= n) ? (1 + (n - j) / MOD) : 0)))
+            r = ((r + sq * (t + ((j <= n) ? ((1 + (n - j) / MOD) % MOD) : 0)))
                  % MOD);
         }
         sq = ((sq+d) % MOD);
         d += 2;
-        printf("Reached i=%lld ret=%lld\n", i, r);
-#if 0
-        fflush(stdout);
+        if (i % 1000 == 0)
+        {
+            printf("Reached i=%lld ret=%lld\n", i, r);
+#if 1
+            fflush(stdout);
 #endif
+        }
     }
     return r;
 }
