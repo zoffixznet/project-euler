@@ -1,0 +1,18 @@
+One can see that T[n] is the parity of the binary digits of n.
+
+Any n which contains 3-or-more consecutive "0" or "1" bits cannot be in A[n]
+because for {X}00 != {X}01 [maybe ==] {X}10 != X11. Now the question is if all
+other numbers, m, are in A[n].
+
+We can choose a T[n] based on the smallest bit of such an m by either adding
+a high enough most-significant 1 to the n or not. It also can be seen that:
+
+X000 X001 => 01/10
+X001 X010 => 00/11
+X010 X011 => 01/10
+X011 X100 => 01/10
+X100 X101 => 01/10
+X101 X110 => 00/11
+X110 X111 => 01/10
+X111 {X+1}000 => All
+
