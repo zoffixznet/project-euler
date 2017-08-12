@@ -7,6 +7,7 @@ use Test::More tests => 15;
 
 use Test::Differences (qw( eq_or_diff ));
 
+use lib '.';
 use Euler480;
 
 {

@@ -3,6 +3,8 @@
 use strict;
 use warnings;
 
+use lib '.';
+
 use Euler480;
 
 print Euler480::calc_P('aaaaaacd'), "\n";

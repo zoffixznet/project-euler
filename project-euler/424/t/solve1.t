@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use Test::More tests => 1;
+use lib '.';
 
 use Euler424_v1;
 use IO::All qw / io /;

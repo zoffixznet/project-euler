@@ -2,6 +2,7 @@
 
 use strict;
 use warnings;
+use lib '.';
 
 use Euler424_v1;
 use IO::All qw / io /;

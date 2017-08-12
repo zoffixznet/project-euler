@@ -15,8 +15,8 @@ def dice(num_faces, n, prev):
                     ret[i+j] ^= v
         ret = [prev[0]]
         for j in xrange(1, len(prev)+num_faces-1):
-            ret.append(ret[-1] ^ (prev[j] if j < len(prev) else 0)
-                       ^ (prev[j-num_faces] if j >= num_faces else 0))
+            ret.append(ret[-1] ^ (prev[j] if j < len(prev) else 0) ^
+                       (prev[j-num_faces] if j >= num_faces else 0))
         return ret
 
 

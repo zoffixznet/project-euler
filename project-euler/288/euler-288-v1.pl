@@ -11,6 +11,7 @@ use List::MoreUtils qw();
 
 STDOUT->autoflush(1);
 
+use lib '.';
 use Euler288 qw(factorial_factor_exp);
 use Math::BigInt lib => "GMP";
 

@@ -37,8 +37,8 @@ def calc_rev_func_ret(prefix, num_digs):
                 for c in np[::-1]:
                     subp = str(c) + subp
                     filtered += [x for x in powers_str
-                                 if ((len(x) <= tnumd - len(subp) + len(np))
-                                     and x.startswith(subp))]
+                                 if ((len(x) <= tnumd - len(subp) +
+                                     len(np)) and x.startswith(subp))]
                 if len(filtered) == 0:
                     if num_digs == 1:
                         ret += 1
