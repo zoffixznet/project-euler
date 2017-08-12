@@ -6,6 +6,7 @@ use autodie;
 
 use Test::More tests => 18;
 
+use lib '.';
 use Row;
 
 # TEST

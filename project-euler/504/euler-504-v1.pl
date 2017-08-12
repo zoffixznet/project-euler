@@ -3,6 +3,7 @@
 use strict;
 use warnings;
 
+use lib '.';
 use Euler504;
 
 Euler504::set_M(100);
