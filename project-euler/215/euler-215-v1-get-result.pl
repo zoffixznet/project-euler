@@ -3,6 +3,7 @@
 use strict;
 use warnings;
 
+use lib '.';
 use Euler215;
 
 my ( $len, $num_layers ) = ( 32, 10 );

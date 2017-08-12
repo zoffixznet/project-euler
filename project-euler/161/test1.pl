@@ -2,6 +2,7 @@
 
 use strict;
 use warnings;
+use lib '.';
 
 use Euler161;
 
