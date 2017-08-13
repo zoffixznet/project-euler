@@ -10,6 +10,7 @@ use List::MoreUtils qw();
 
 use Test::More tests => 9015;
 
+use lib '.';
 use Euler156_V2 qw(calc_f_delta_for_leading_digits calc_f_delta f_d_n);
 
 # TEST

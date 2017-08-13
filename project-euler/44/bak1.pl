@@ -5,6 +5,7 @@ use warnings;
 
 use Math::BigInt ":constant", lib => "GMP";
 
+use lib '.';
 use Pentagonal;
 
 use IO::Handle;

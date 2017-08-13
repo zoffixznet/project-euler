@@ -3,6 +3,7 @@
 use strict;
 use warnings;
 
+use lib '.';
 use Pentagonal;
 
 use IO::Handle;

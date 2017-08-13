@@ -9,6 +9,7 @@ use Math::BigInt lib => 'GMP', ':constant';
 use List::Util qw(sum);
 use List::MoreUtils qw();
 
+use lib '.';
 use Euler156_V2 qw(calc_f_delta_for_leading_digits calc_f_delta f_d_n);
 
 my @found = ( map { +{} } 0 .. 9 );
