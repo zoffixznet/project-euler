@@ -1,0 +1,16 @@
+One can see that if p1 and p2 are two consecutive primes then all numbers
+between p1 + 1 and p2 - 1 inclusive add the same deltas to the p(n,k)s.
+
+Bumping the delta:
+==================
+
+if u0 is prime, then:
+    if u1 is prime:
+        dp(u0) = dp(u1) + {0}
+    if u1 is not prime:
+        dp(u0) = dp(u1) + {1}
+if u0 is not prime:
+    if u1 is prime:
+       dp(u0) = {1} + map {$_+1} dp(u1)
+    if u1 is not prime:
+       dp(u0) = {2} + map {$_+1} dp(u1)
