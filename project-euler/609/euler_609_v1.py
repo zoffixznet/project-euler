@@ -61,6 +61,7 @@ def P(n, primes):
             ret *= v
     return ret
 
+
 if __name__ == "__main__":
     s_n = 0
 
