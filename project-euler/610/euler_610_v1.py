@@ -50,7 +50,7 @@ with precision(1000):
             if sub in node['next']:
                 tot += 14
         mult = BigFloat('100')/tot
-        ret_thousands = BigFloat('0.02') * mult
+        ret_thousands = r * BigFloat('0.02') * mult
         ret_v = node['val'] * ret_thousands
         sub_r = r * R * mult
         for sub in node['next'].values():
