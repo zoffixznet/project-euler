@@ -36,6 +36,8 @@ def solve_for(n):
         if this != last:
             if count == 1:
                 ret += 1
+                if ret % 1000 == 0:
+                    print_("Reached %d" % (this))
             count = 0
             last = this
         count ^= 1
@@ -56,5 +58,6 @@ def main():
     p(100)
     p(1000)
     p(1000000)
+    p(1000000000000)
 
 main()
