@@ -28,15 +28,15 @@ def solve_for(n):
     count = 0
     ret = 0
     pivot_sq, pivot_d = next(gen)
+    while pivot_sq <= n:
+        heapq.heappush(pq, (pivot_sq, pivot_d))
+        pivot_sq, pivot_d = next(gen)
     while len(pq) > 0:
-        while pivot_sq <= n and pivot_sq <= pq[0][0]:
-            heapq.heappush(pq, (pivot_sq, pivot_d))
-            pivot_sq, pivot_d = next(gen)
         this, d = heapq.heappop(pq)
         if this != last:
             if count == 1:
                 ret += 1
-                if ret % 1000 == 0:
+                if ((ret & 0x3FFFF) == 0):
                     print_("Reached %d" % (this))
             count = 0
             last = this
