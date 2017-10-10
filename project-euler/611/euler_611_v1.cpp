@@ -37,7 +37,7 @@ ll solve_for(const ll n)
             {
                 if (((++ret) & 0x3FFFF) == 0)
                 {
-                    std::cout << "Reached " << this_ << std::endl;
+                    std::cout << "Reached " << this_ << " d = " << d << " ret = " << ret << std::endl << std::flush;
                 }
             }
             count = false;
