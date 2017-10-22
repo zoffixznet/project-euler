@@ -143,6 +143,7 @@ def solve_brute(l):
                 ret += 1
     return ret
 
+
 print_("s = %d" % (solve_brute(2)))
 
 
@@ -196,6 +197,7 @@ def comps(l):
     print_("For[s] l = %d : %d vs %d" % (l, want, have))
     if have != want:
         raise BaseException("solve mismatch")
+
 
 comps(2)
 comps(1)
