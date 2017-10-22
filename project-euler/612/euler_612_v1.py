@@ -43,7 +43,14 @@ def calc_count(l, w_zero, num_nat_digits):
             return ret
         return rec([], 0)
     else:
-        raise BaseException("unimplemented")
+        m = num_nat_digits
+        ret = 0
+        # Choose a pivot for the first place and go for it
+        for cnt in xrange(0, l-1):
+            ret += FACTS[l-1]/FACTS[cnt]/FACTS[l-1-cnt] * \
+                   calc_count(l-1-cnt, False, num_nat_digits)
+        return ret * m
+        # raise BaseException("unimplemented")
 
 
 def calc_count_brute(l, w_zero, num_nat_digits):
@@ -73,6 +80,16 @@ def comp(l, num_nat_digits):
     if have != want:
         raise BaseException("mismatch")
 
+
+def comp0(l, num_nat_digits):
+    want = calc_count_brute(l, True, num_nat_digits)
+    have = calc_count(l, True, num_nat_digits)
+    print_("For[0] l = %d and n = %d : %d vs %d" %
+           (l, num_nat_digits, want, have))
+    if have != want:
+        raise BaseException("mismatch")
+
+
 comp(1, 1)
 comp(2, 1)
 comp(3, 1)
@@ -86,4 +103,22 @@ comp(4, 4)
 if False:
     for l in xrange(1, 9):
         for n in xrange(1, l+1):
+            comp(l, n)
+
+comp0(2, 0)
+comp0(2, 1)
+comp0(2, 2)
+comp0(3, 0)
+comp0(3, 1)
+comp0(3, 2)
+comp0(3, 3)
+comp0(4, 0)
+comp0(4, 1)
+comp0(4, 2)
+comp0(4, 3)
+comp0(4, 4)
+if False:
+    for l in xrange(1, 9):
+        for n in xrange(0, l+1):
+            # comp0(l, n)
             comp(l, n)
