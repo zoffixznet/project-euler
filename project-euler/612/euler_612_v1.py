@@ -122,3 +122,86 @@ if False:
         for n in xrange(0, l+1):
             # comp0(l, n)
             comp(l, n)
+
+
+def bitmask(n):
+    if n == 0:
+        return 0
+    else:
+        return ((1 << (n % 10)) | bitmask(n // 10))
+
+
+def solve_brute(l):
+    MAX = 10 ** l
+    ret = long(0)
+    s = [bitmask(q) for q in xrange(0, MAX)]
+    for p in xrange(1, MAX):
+        print_("p = ", p)
+        m = s[p]
+        for q in xrange(p+1, MAX):
+            if ((m & s[q]) != 0):
+                ret += 1
+    return ret
+
+print_("s = %d" % (solve_brute(2)))
+
+
+def solve(myl):
+    counts = {}
+    for z in [False, True]:
+        for n in xrange(0, 9+1):
+            v = sum([calc_count(l, z, n) for l in xrange(0, myl+1)])
+            if v > 0:
+                counts[(z, n)] = v
+    print_(counts)
+    keys1 = counts.keys()
+    ret = long(0)
+    for ik in xrange(0, len(keys1)):
+        ki = keys1[ik]
+        for jk in xrange(ik, len(keys1)):
+            zi, ni = ki
+            kj = keys1[jk]
+            zj, nj = kj
+            for num_common in xrange(0, 1+min(ni, nj)):
+                if num_common == 0 and (not zi or not zj):
+                    continue
+                i_num_diff = ni - num_common
+                j_num_diff = nj - num_common
+                digs = num_common + i_num_diff + j_num_diff
+                if digs > 9:
+                    continue
+                i_ret = (counts[ki]*counts[kj]) * FACTS[9] / \
+                    FACTS[num_common] / FACTS[i_num_diff] / \
+                    FACTS[j_num_diff] / FACTS[9 - digs]
+                r = i_ret
+                if ik == jk:
+                    if num_common == ni:
+                        r -= (counts[ki]) * FACTS[9] / FACTS[ni] \
+                            / FACTS[9 - ni]
+                else:
+                    r *= 2
+
+                print_("num_common=", num_common, "i=", ki, "j=", kj,
+                       "i_ret=", i_ret, "r=", r)
+                ret += r
+    return ret >> 1
+
+
+print_("s[fast] = %d" % (solve(2)))
+
+
+def comps(l):
+    want = solve_brute(l)
+    have = solve(l)
+    print_("For[s] l = %d : %d vs %d" % (l, want, have))
+    if have != want:
+        raise BaseException("solve mismatch")
+
+comps(2)
+comps(1)
+comps(3)
+comps(4)
+# comps(5)
+
+my_solution = solve(18)
+print_("solution = %d ( MOD = %d )" % (my_solution, my_solution % 1000267129))
