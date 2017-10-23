@@ -163,16 +163,14 @@ def solve(myl):
                 j_num_diff = nj - num_common
                 if num_common + i_num_diff + j_num_diff > 9:
                     continue
-                i_ret = (vi*vj) * nCr(9, [num_common, i_num_diff, j_num_diff])
-                r = i_ret
+                r = (vi*vj) * nCr(9, [num_common, i_num_diff, j_num_diff])
                 if i == j:
                     if num_common == ni:
                         r -= vi * nCr(9, [ni])
                 else:
                     r *= 2
 
-                print_("num_common=", num_common, "i=", i, "j=", j,
-                       "i_ret=", i_ret, "r=", r)
+                print_("num_common=", num_common, "i=", i, "j=", j, "r=", r)
                 ret += r
     return ret >> 1
 
