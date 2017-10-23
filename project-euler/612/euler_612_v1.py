@@ -46,7 +46,7 @@ def calc_count(l, w_zero, num_nat_digits):
         m = num_nat_digits
         ret = 0
         # Choose a pivot for the first place and go for it
-        for cnt in xrange(0, l-1):
+        for cnt in xrange(l-1):
             ret += FACTS[l-1]/FACTS[cnt]/FACTS[l-1-cnt] * \
                    calc_count(l-1-cnt, False, num_nat_digits)
         return ret * m
@@ -119,7 +119,7 @@ comp0(4, 3)
 comp0(4, 4)
 if False:
     for l in xrange(1, 9):
-        for n in xrange(0, l+1):
+        for n in xrange(l+1):
             # comp0(l, n)
             comp(l, n)
 
@@ -134,7 +134,7 @@ def bitmask(n):
 def solve_brute(l):
     MAX = 10 ** l
     ret = long(0)
-    s = [bitmask(q) for q in xrange(0, MAX)]
+    s = [bitmask(q) for q in xrange(MAX)]
     for p in xrange(1, MAX):
         print_("p = ", p)
         m = s[p]
@@ -150,8 +150,8 @@ print_("s = %d" % (solve_brute(2)))
 def solve(myl):
     counts = []
     for z in [False, True]:
-        for n in xrange(0, 9+1):
-            v = sum([calc_count(l, z, n) for l in xrange(0, myl+1)])
+        for n in xrange(9+1):
+            v = sum([calc_count(l, z, n) for l in xrange(myl+1)])
             if v > 0:
                 counts.append((z, n, v))
     print_(counts)
@@ -160,7 +160,7 @@ def solve(myl):
         zi, ni, vi = counts[i]
         for j in xrange(i, len(counts)):
             zj, nj, vj = counts[j]
-            for num_common in xrange(0, 1+min(ni, nj)):
+            for num_common in xrange(1+min(ni, nj)):
                 if num_common == 0 and (not zi or not zj):
                     continue
                 i_num_diff = ni - num_common
