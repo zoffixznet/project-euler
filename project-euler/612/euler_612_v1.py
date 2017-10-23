@@ -161,8 +161,7 @@ def solve(myl):
                     continue
                 i_num_diff = ni - num_common
                 j_num_diff = nj - num_common
-                digs = num_common + i_num_diff + j_num_diff
-                if digs > 9:
+                if num_common + i_num_diff + j_num_diff > 9:
                     continue
                 i_ret = (vi*vj) * nCr(9, [num_common, i_num_diff, j_num_diff])
                 r = i_ret
