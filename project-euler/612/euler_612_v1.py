@@ -148,21 +148,18 @@ print_("s = %d" % (solve_brute(2)))
 
 
 def solve(myl):
-    counts = {}
+    counts = []
     for z in [False, True]:
         for n in xrange(0, 9+1):
             v = sum([calc_count(l, z, n) for l in xrange(0, myl+1)])
             if v > 0:
-                counts[(z, n)] = v
+                counts.append((z, n, v))
     print_(counts)
-    keys1 = counts.keys()
     ret = long(0)
-    for i in xrange(0, len(keys1)):
-        ki = keys1[i]
-        for j in xrange(i, len(keys1)):
-            zi, ni = ki
-            kj = keys1[j]
-            zj, nj = kj
+    for i in xrange(len(counts)):
+        zi, ni, vi = counts[i]
+        for j in xrange(i, len(counts)):
+            zj, nj, vj = counts[j]
             for num_common in xrange(0, 1+min(ni, nj)):
                 if num_common == 0 and (not zi or not zj):
                     continue
@@ -171,18 +168,18 @@ def solve(myl):
                 digs = num_common + i_num_diff + j_num_diff
                 if digs > 9:
                     continue
-                i_ret = (counts[ki]*counts[kj]) * FACTS[9] / \
+                i_ret = (vi*vj) * FACTS[9] / \
                     FACTS[num_common] / FACTS[i_num_diff] / \
                     FACTS[j_num_diff] / FACTS[9 - digs]
                 r = i_ret
                 if i == j:
                     if num_common == ni:
-                        r -= (counts[ki]) * FACTS[9] / FACTS[ni] \
+                        r -= vi * FACTS[9] / FACTS[ni] \
                             / FACTS[9 - ni]
                 else:
                     r *= 2
 
-                print_("num_common=", num_common, "i=", ki, "j=", kj,
+                print_("num_common=", num_common, "i=", i, "j=", j,
                        "i_ret=", i_ret, "r=", r)
                 ret += r
     return ret >> 1
