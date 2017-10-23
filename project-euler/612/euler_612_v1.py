@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import sys
+from collections import Counter
 from six import print_
 
 if sys.version_info > (3,):
@@ -39,15 +40,7 @@ def calc_count(l, w_zero, num_nat_digits):
         if len(counts) == num_digits:
             if s != l:
                 return 0
-            ret = nCr(l, counts) * FACTS[num_digits]
-            repeats = {}
-            for x in counts:
-                if x not in repeats:
-                    repeats[x] = 0
-                repeats[x] += 1
-            for v in repeats.values():
-                ret /= FACTS[v]
-            return ret
+            return nCr(l, counts) * nCr(num_digits, Counter(counts).values())
         ret = 0
         for nxt in xrange(1, (counts[-1]+1 if len(counts)
                               else l-num_digits+1+1)):
