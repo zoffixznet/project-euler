@@ -8,9 +8,9 @@ with precision(100):
     L_sect_area = (1 - BigFloat(const_pi())/4)
 
     def calc_ratio(n):
-        l = BigFloat(0)
+        low = BigFloat(0)
         h = BigFloat(1)
-        m = (l + h)*0.5
+        m = (low + h)*0.5
 
         def calc_y1(x):
             return x/n
@@ -21,10 +21,10 @@ with precision(100):
         DIFF = BigFloat('1e-20')
         while abs(m_d) > DIFF:
             if m_d < 0:
-                l = m
+                low = m
             else:
                 h = m
-            m = (l + h)*0.5
+            m = (low + h)*0.5
             m_d = diff(m)
         x = x1 = m
         y1 = calc_y1(x)
@@ -38,22 +38,22 @@ with precision(100):
         return ret
 
     def find_first_less_than_ratio(want):
-        l = 1
+        low = 1
         h = 2
         have = calc_ratio(h)
         while have >= want:
-            l = h
+            low = h
             h <<= 1
             have = print_ratio(h)
-        m = (l+h) >> 1
+        m = (low+h) >> 1
         have = print_ratio(m)
         prev_have = calc_ratio(m-1)
         while have >= want or prev_have < want:
             if prev_have < want:
                 h = m
             else:
-                l = m
-            m = (l+h) >> 1
+                low = m
+            m = (low+h) >> 1
             have = print_ratio(m)
             prev_have = calc_ratio(m-1)
         return m

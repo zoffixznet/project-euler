@@ -13,10 +13,9 @@ cache = {'': long(1)}
 
 def factor_sig(n):
     pipe = Popen(['factor', str(n)], shell=False, stdout=PIPE).stdout
-    l = pipe.readline()
+    factors_s = re.sub('^[^:]*:', '', pipe.readline())
     pipe.close()
     sig = {}
-    factors_s = re.sub('^[^:]*:', '', l)
     for x in re.findall('[0-9]+', factors_s):
         if x not in sig:
             sig[x] = 0

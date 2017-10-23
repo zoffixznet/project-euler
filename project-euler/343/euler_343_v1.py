@@ -20,16 +20,16 @@ def factor(n):
         n >>= 1
     if f:
         ret.append(2)
-    l = int(math.sqrt(n))
+    limit = int(math.sqrt(n))
     d = 3
-    while d <= l:
+    while d <= limit:
         f = False
         while n % d == 0:
             f = True
             n //= d
         if f:
             ret.append(d)
-            l = int(math.sqrt(n))
+            limit = int(math.sqrt(n))
         d += 2
     if n > 1:
         ret.append(n)

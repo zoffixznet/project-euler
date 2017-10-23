@@ -36,8 +36,7 @@ before_s = -1
 s = 0
 while before_s < s:
     before_s = s
-    l = pipe.stdout.readline()
-    top = int(l.rstrip())
+    top = int(pipe.stdout.readline().rstrip())
     print("top = ", top)
     t_sq = top * top
     if top <= SQ:
@@ -60,8 +59,8 @@ while before_s < s:
         s += r
         r -= top
     r = bottom * (top + 1)
-    l = min(t_sq-1, MAX)
-    while r <= l:
+    low = min(t_sq-1, MAX)
+    while r <= low:
         # debug_n(r)
         s += r
         r += bottom

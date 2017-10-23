@@ -5,30 +5,30 @@ if sys.version_info > (3,):
     xrange = range
 
 
-def P_list__old(l, is_left):
-    if l == 1:
+def P_list__old(my_int, is_left):
+    if my_int == 1:
         return 0
-    return ((1 if (is_left or ((l & 0x1) != 0)) else 0) +
+    return ((1 if (is_left or ((my_int & 0x1) != 0)) else 0) +
             (
                 (
-                    P_list((l >> 1), (not is_left))
+                    P_list((my_int >> 1), (not is_left))
                 ) << 1
             ))
 
 
-def P_list(l, is_left):
-    if l == 1:
+def P_list(my_int, is_left):
+    if my_int == 1:
         return 0
-    return ((l & 0x1) | is_left |
+    return ((my_int & 0x1) | is_left |
             (
                 (
-                    P_list((l >> 1), (is_left ^ 0x1))
+                    P_list((my_int >> 1), (is_left ^ 0x1))
                 ) << 1
             ))
 
 
-def P_l2(l):
-    return P_list(l, 1)
+def P_l2(my_int):
+    return P_list(my_int, 1)
 
 
 ar = []
@@ -66,11 +66,11 @@ def reset():
 reset()
 
 
-def P_l(l):
+def P_l(my_int):
     global t, h, o
-    while (l >= t):
+    while (my_int >= t):
         extract()
-    return ((l & h) | o)
+    return ((my_int & h) | o)
 
 
 def P(n):

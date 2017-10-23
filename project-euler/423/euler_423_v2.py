@@ -16,12 +16,12 @@ while len(E) < 3001136:
 def pascal_sum(n, p):
     global MOD
     b = n
-    l = long(1)
-    C = E[b] * l
+    l_int = long(1)
+    C = E[b] * l_int
     for k in xrange(p):
         b -= 1
-        l = l * (n-1-k) / (k+1)
-        C += E[b] * l
+        l_int = l_int * (n-1-k) / (k+1)
+        C += E[b] * l_int
     return int(C % MOD)
 
 

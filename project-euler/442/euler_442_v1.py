@@ -75,16 +75,16 @@ def rev_func_ret(prefix, num_digs):
 def n_rev_func(n):
     s = str(n)
     ret = 0
-    l = len(s)
+    my_len = len(s)
     ns = ''
     for i, c in enumerate(s):
         lns = ns + str(c)
-        for d in xrange((0 if i > l-1 or l > 0 else 1), 10):
+        for d in xrange((0 if i > my_len-1 or my_len > 0 else 1), 10):
             nns = ns + str(d)
             if nns == lns:
                 break
             # print "nns=", nns
-            d = rev_func_ret(nns, l-len(nns))
+            d = rev_func_ret(nns, my_len-len(nns))
             # print "d=", d
             ret += d
         ns = lns

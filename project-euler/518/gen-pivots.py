@@ -11,8 +11,8 @@ def main():
     l_re = re.compile(r'^[0-9]+: ([0-9 ]+)$')
     with open('./factored.txt') as fh:
         for line in fh:
-            l = line.rstrip('\n')
-            m = l_re.match(l)
+            line_stripped = line.rstrip('\n')
+            m = l_re.match(line_stripped)
             if not m:
                 raise BaseException
             factors = m.group(1).split(' ')
@@ -23,17 +23,17 @@ def main():
             pivot = factors[-1]
             if pivot not in by_pivots:
                 by_pivots[pivot] = []
-            by_pivots[pivot].append(l)
+            by_pivots[pivot].append(line_stripped)
     for pivot, numbers in by_pivots.iteritems():
         filtered = []
-        for l in numbers:
+        for line in numbers:
             if all(factor_counts[x] > 2 for x
-                   in l_re.match(l).group(1).split(' ')):
-                filtered.append(l)
+                   in l_re.match(line).group(1).split(' ')):
+                filtered.append(line)
         if len(filtered) > 0:
             with open('./by-pivot-factor/%s.txt' % (pivot), 'w') as o:
-                for l in filtered:
-                    o.write(l + "\n")
+                for line in filtered:
+                    o.write(line + "\n")
     return
 
 

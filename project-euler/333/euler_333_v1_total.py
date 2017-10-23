@@ -10,10 +10,10 @@ if sys.version_info > (3,):
 pipe = subprocess.Popen(['primes', '2', '1000000'], shell=False,
                         stdout=subprocess.PIPE)
 primes = {}
-l = pipe.stdout.readline()
-while l:
-    primes[int(l.rstrip())] = 0
-    l = pipe.stdout.readline()
+line = pipe.stdout.readline()
+while line:
+    primes[int(line.rstrip())] = 0
+    line = pipe.stdout.readline()
 
 L = int(sys.argv.pop(1))
 powers = {2: [1], 3: [1]}

@@ -56,12 +56,11 @@ class MyIter:
 f = MyIter()
 # STEP
 S = 1000000
-# limit
-l = S
+limit = S
 # What we want.
 w = 100000000000000
 while f.n < w:
-    while f.n < l:
+    while f.n < limit:
         f.add(10)
-    l += S
+    limit += S
     print("f(%d) = %d" % (f.n, f.f))

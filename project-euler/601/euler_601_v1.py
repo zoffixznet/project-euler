@@ -17,16 +17,16 @@ def lcm(*numbers):
 
 
 def calc_P(s, N):
-    l = lcm(*list(range(1, s+1)))
-    i = l
+    my_lcm = lcm(*list(range(1, s+1)))
+    i = my_lcm
     ret = 0
     while i < 1:
-        i += l
+        i += my_lcm
     t = s + 1
     while i < N-1:
         if (((i+t) % t) != 0):
             ret += 1
-        i += l
+        i += my_lcm
     return ret
 
 

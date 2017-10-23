@@ -6,8 +6,7 @@ if sys.version_info > (3,):
 
 
 def fact_F(n, d):
-    l = len(str(d))
-    M = int('1' + '0' * l)
+    M = int('1' + '0' * len(str(d)))
     RM = 10000000000000000 + 61
     old = [0 for i in xrange(M)]
     old[1] = 1

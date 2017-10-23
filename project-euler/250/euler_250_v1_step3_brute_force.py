@@ -12,19 +12,19 @@ MOD = int(os.environ["MOD"])
 mods = []
 
 with open('mod_groups.txt') as f:
-    for l in f:
-        nums = [long(i) for i in l.rstrip('\n').split(' ')]
+    for line in f:
+        nums = [long(i) for i in line.rstrip('\n').split(' ')]
         count = nums.pop(0)
         for n in nums:
             for i in xrange(count):
                 mods.append(n)
 
-l = len(mods)
+my_len = len(mods)
 ret = 0
 
 
 def rec(depth, m, stack):
-    if depth == l:
+    if depth == my_len:
         if m == 0:
             global ret
             print(stack)

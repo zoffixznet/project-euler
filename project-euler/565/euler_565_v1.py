@@ -17,10 +17,10 @@ root = int(math.sqrt(MAX))
 p1 = subprocess.Popen(["primes", "2", str(root)], stdout=subprocess.PIPE)
 
 while True:
-    l = p1.stdout.readline()
-    if l == '':
+    line = p1.stdout.readline()
+    if line == '':
         break
-    n = int(l)
+    n = int(line)
     nn = n
     sum_ = 1 + nn
     while nn <= MAX:

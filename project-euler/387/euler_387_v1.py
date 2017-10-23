@@ -9,8 +9,7 @@ if sys.version_info > (3,):
 def is_prime(n):
     if n == 1 or ((n & 1) == 0 and n != 2):
         return False
-    l = int(math.sqrt(n))
-    for d in xrange(3, l+2, 2):
+    for d in xrange(3, int(math.sqrt(n))+2, 2):
         if n % d == 0:
             return False
     return True

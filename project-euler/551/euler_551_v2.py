@@ -64,10 +64,8 @@ def cache_delta():
     e = calced_arr[my_i+1]
     s_digits = _format(s)
     e_digits = _format(e)
-    l = _common_len(s_digits, e_digits)
-    for i in xrange(1, l+1):
+    for i in xrange(1, _common_len(s_digits, e_digits)+1):
         cache[s['s']][i][s_digits[i:]] = my_i
-    return
 
 
 calc_next()

@@ -20,16 +20,16 @@ def calc(q):
     return probs[20]
 
 
-l = float(50)
-h = float(100000)
+low = float(50)
+high = float(100000)
 
 while True:
-    m = ((l + h) / 2)
+    m = ((low + high) / 2)
     v_m = calc(m)
     print("%.40f = %.40f" % (m, v_m))
     if v_m > 0.02:
-        l = m
+        low = m
     elif v_m < 0.02:
-        h = m
+        high = m
     else:
         break
