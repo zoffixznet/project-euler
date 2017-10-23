@@ -39,10 +39,9 @@ def calc_count(l, w_zero, num_nat_digits):
         if len(counts) == num_digits:
             if s != l:
                 return 0
-            ret = FACTS[l] * FACTS[num_digits]
+            ret = nCr(l, counts) * FACTS[num_digits]
             repeats = {}
             for x in counts:
-                ret /= FACTS[x]
                 if x not in repeats:
                     repeats[x] = 0
                 repeats[x] += 1
