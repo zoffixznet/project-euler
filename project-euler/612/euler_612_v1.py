@@ -19,38 +19,36 @@ def calc_count(l, w_zero, num_nat_digits):
     num_digits = num_nat_digits + n_zero
     if num_digits > l:
         return 0
-    if not w_zero:
-        def rec(counts, s):
-            if s > l:
-                return 0
-            if len(counts) == num_digits:
-                if s != l:
-                    return 0
-                ret = FACTS[l] * FACTS[num_digits]
-                repeats = {}
-                for x in counts:
-                    ret /= FACTS[x]
-                    if x not in repeats:
-                        repeats[x] = 0
-                    repeats[x] += 1
-                for v in repeats.values():
-                    ret /= FACTS[v]
-                return ret
-            ret = 0
-            for nxt in xrange(1, (counts[-1]+1 if len(counts)
-                                  else l-num_digits+1+1)):
-                ret += rec(counts + [nxt], s + nxt)
-            return ret
-        return rec([], 0)
-    else:
-        m = num_nat_digits
+    if w_zero:
         ret = 0
         # Choose a pivot for the first place and go for it
         for cnt in xrange(l-1):
             ret += FACTS[l-1]/FACTS[cnt]/FACTS[l-1-cnt] * \
                    calc_count(l-1-cnt, False, num_nat_digits)
-        return ret * m
-        # raise BaseException("unimplemented")
+        return ret * num_nat_digits
+
+    def rec(counts, s):
+        if s > l:
+            return 0
+        if len(counts) == num_digits:
+            if s != l:
+                return 0
+            ret = FACTS[l] * FACTS[num_digits]
+            repeats = {}
+            for x in counts:
+                ret /= FACTS[x]
+                if x not in repeats:
+                    repeats[x] = 0
+                repeats[x] += 1
+            for v in repeats.values():
+                ret /= FACTS[v]
+            return ret
+        ret = 0
+        for nxt in xrange(1, (counts[-1]+1 if len(counts)
+                              else l-num_digits+1+1)):
+            ret += rec(counts + [nxt], s + nxt)
+        return ret
+    return rec([], 0)
 
 
 def calc_count_brute(l, w_zero, num_nat_digits):
