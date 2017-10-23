@@ -14,6 +14,13 @@ for n in xrange(1, 100):
 print_(FACTS[10])
 
 
+def nCr(n, k_s):
+    d = 1
+    for x in k_s + [n - sum(k_s)]:
+        d *= FACTS[x]
+    return FACTS[n] / d
+
+
 def calc_count(l, w_zero, num_nat_digits):
     n_zero = 1 if w_zero else 0
     num_digits = num_nat_digits + n_zero
@@ -23,8 +30,7 @@ def calc_count(l, w_zero, num_nat_digits):
         ret = 0
         # Choose a pivot for the first place and go for it
         for cnt in xrange(l-1):
-            ret += FACTS[l-1]/FACTS[cnt]/FACTS[l-1-cnt] * \
-                   calc_count(l-1-cnt, False, num_nat_digits)
+            ret += nCr(l-1, [cnt]) * calc_count(l-1-cnt, False, num_nat_digits)
         return ret * num_nat_digits
 
     def rec(counts, s):
@@ -166,14 +172,11 @@ def solve(myl):
                 digs = num_common + i_num_diff + j_num_diff
                 if digs > 9:
                     continue
-                i_ret = (vi*vj) * FACTS[9] / \
-                    FACTS[num_common] / FACTS[i_num_diff] / \
-                    FACTS[j_num_diff] / FACTS[9 - digs]
+                i_ret = (vi*vj) * nCr(9, [num_common, i_num_diff, j_num_diff])
                 r = i_ret
                 if i == j:
                     if num_common == ni:
-                        r -= vi * FACTS[9] / FACTS[ni] \
-                            / FACTS[9 - ni]
+                        r -= vi * nCr(9, [ni])
                 else:
                     r *= 2
 
