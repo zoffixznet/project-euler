@@ -157,11 +157,11 @@ def solve(myl):
     print_(counts)
     keys1 = counts.keys()
     ret = long(0)
-    for ik in xrange(0, len(keys1)):
-        ki = keys1[ik]
-        for jk in xrange(ik, len(keys1)):
+    for i in xrange(0, len(keys1)):
+        ki = keys1[i]
+        for j in xrange(i, len(keys1)):
             zi, ni = ki
-            kj = keys1[jk]
+            kj = keys1[j]
             zj, nj = kj
             for num_common in xrange(0, 1+min(ni, nj)):
                 if num_common == 0 and (not zi or not zj):
@@ -175,7 +175,7 @@ def solve(myl):
                     FACTS[num_common] / FACTS[i_num_diff] / \
                     FACTS[j_num_diff] / FACTS[9 - digs]
                 r = i_ret
-                if ik == jk:
+                if i == j:
                     if num_common == ni:
                         r -= (counts[ki]) * FACTS[9] / FACTS[ni] \
                             / FACTS[9 - ni]
