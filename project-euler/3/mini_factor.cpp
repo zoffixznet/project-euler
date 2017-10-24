@@ -24,20 +24,23 @@ SOFTWARE.
 
 #include <iostream>
 
-int main()
+int main(int argc, char * argv[])
 {
-    long long number = 600851475143LL;
-    long long maxPrimeNumber = 0LL;
+    if (argc < 2)
+    {
+        std::cerr << "You must supply a numeric argument!" << std::endl;
+        return -1;
+    }
+    long long number = std::stoll(argv[1]);
+    std::cout << number << ':';
     for (long long i = 2; i <= number; i++)
     {
         while (number % i == 0)
         {
             number /= i;
-            std::cout << i << " ";
-            maxPrimeNumber = i;
+            std::cout << ' ' << i;
         }
     }
-    std::cout << std::endl
-              << "Max prime factor is: " << maxPrimeNumber << std::endl;
+    std::cout << std::endl;
     return 0;
 }
