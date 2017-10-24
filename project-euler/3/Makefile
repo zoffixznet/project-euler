@@ -8,5 +8,5 @@ mini_factor-debug.exe: mini_factor.cpp
 mini_factor-prod.exe: mini_factor.cpp
 	g++ $(GCC_FLAGS) -O3 -flto -fwhole-program -fvisibility=hidden -fomit-frame-pointer -march=native -o $@ $< -lm
 
-test:
+test: all
 	prove t/*.t
