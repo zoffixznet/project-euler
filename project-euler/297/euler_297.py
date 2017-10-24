@@ -17,8 +17,8 @@ z_sum[2] = {'up_to': long(3)}
 while len(z_sum) < len(fibs):
     my_len = 1 + len(z_sum)
     z_sum.append({
-        'up_to': (z_sum[-1]['up_to'] + z_sum[-2]['up_to']
-                  + fibs[my_len-3] - 1),
+        'up_to': (z_sum[-1]['up_to'] + z_sum[-2]['up_to'] +
+                  fibs[my_len-3] - 1),
         })
 
 
