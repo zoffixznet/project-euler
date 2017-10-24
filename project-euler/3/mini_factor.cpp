@@ -32,6 +32,11 @@ int main(int argc, char * argv[])
         return -1;
     }
     long long number = std::stoll(argv[1]);
+    if (number < 0)
+    {
+        std::cerr << "The argument must be non-negative!" << std::endl;
+        return -1;
+    }
     std::cout << number << ':';
     for (long long i = 2; i <= number; i++)
     {
