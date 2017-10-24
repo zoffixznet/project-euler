@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#include <cmath>
 #include <iostream>
 
 int main(int argc, char * argv[])
@@ -38,13 +39,24 @@ int main(int argc, char * argv[])
         return -1;
     }
     std::cout << number << ':';
-    for (long long i = 2; i <= number; i++)
+    long long limit = 1 + sqrtl(number);
+    for (long long i = 2; i <= limit; i++)
     {
+        bool entered = false;
         while (number % i == 0)
         {
+            entered = true;
             number /= i;
             std::cout << ' ' << i;
         }
+        if (entered)
+        {
+            limit = 1 + sqrtl(number);
+        }
+    }
+    if (number > 1)
+    {
+        std::cout << ' ' << number;
     }
     std::cout << std::endl;
     return 0;
