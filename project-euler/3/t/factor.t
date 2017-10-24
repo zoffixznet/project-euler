@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 1000;
+use Test::More tests => 1001;
 
 sub _check
 {
@@ -23,5 +23,8 @@ sub _check
     {
         _check($n);
     }
+
+    # TEST
+    _check(90000038937199);
 }
 
