@@ -1,5 +1,6 @@
 #include <iostream>
 #include <map>
+#include <set>
 #include <string>
 #include <sstream>
 #include <string.h>
@@ -35,7 +36,7 @@ struct Rec_cmp
 
 FILE * fh;
 
-std::map<Rec *, bool, Rec_cmp> T;
+std::set<Rec *, Rec_cmp> T;
 
 std::queue<Rec *> Q;
 
@@ -59,18 +60,18 @@ static inline void add(void)
 
     while (ls >> i)
     {
-        f[i]++;
+        ++f[i];
     }
-    for (auto x: f)
+    for (const auto x: f)
     {
         val *= (1 + x.second);
     }
 
     if (val >= TH)
     {
-        Rec * rec = new Rec(n, val);
+        Rec * const rec = new Rec(n, val);
         Q.push(rec);
-        T[rec] = true;
+        T.insert(rec);
     }
 
     return;
@@ -79,7 +80,7 @@ static inline void add(void)
 template <typename T>
 inline const typename T::key_type& last_key(const T& pMap)
 {
-    return pMap.rbegin()->first;
+    return *(pMap.rbegin());
 }
 
 ll sum = 0;
@@ -105,15 +106,14 @@ int main(int argc, char * argv[])
     fh = popen(buf, "r");
 
 
-    for (ll i = 1 ; i <= STEP; i++)
+    for (ll i = 1 ; i <= STEP; ++i)
     {
         add();
     }
 
     update();
-    for (ll n = STEP+1 ; n <= MAX; n++)
+    for (ll n = STEP+1, l = 1 ; n <= MAX; ++n, ++l)
     {
-        auto l = n - STEP;
         while (!Q.empty() && Q.front()->n <= l)
         {
             auto r = Q.front();
