@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 1001;
+use Test::More tests => 1002;
 
 sub _check
 {
@@ -13,7 +13,7 @@ sub _check
     return is(
         scalar `./mini_factor-prod.exe "$n"`,
         scalar `factor "$n"`,
-        "Checking $n"
+        "Checking '$n'"
     );
 }
 
@@ -23,6 +23,9 @@ sub _check
     {
         _check($n);
     }
+
+    # TEST
+    _check(0);
 
     # TEST
     _check(90000038937199);
