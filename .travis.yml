@@ -12,5 +12,5 @@ perl:
 python:
     - "3.5"
 script:
-    - bash -c "mkdir b ; cd b ; cmake ../project-euler && make"
+    - bash -c "mkdir b ; cd b ; cmake ../project-euler && make && cd .. && rm -fr b"
     - cd project-euler/ && prove t/*.t
