@@ -23,3 +23,4 @@ project-euler/423/primes.txt
 project-euler/455/RESULTS/*.result
 project-euler/466/_Inline
 project-euler/75/euler-75
+project-euler/cmake/Shlomif_Common.cmake
