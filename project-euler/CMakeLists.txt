@@ -50,6 +50,13 @@ ENDFUNCTION()
 
 exe("235" "v1" "235/euler_235_v1.cpp")
 exe("238" "v1" "238/euler_238_v1.cpp")
+exe("261" "v1" "261/euler_261_v1.cpp")
 exe("401" "v2" "401/euler_401_v2.cpp")
+exe("423" "v1" "423/euler_423_v1.cpp")
 exe("485" "v1" "485/euler_485_v1.cpp")
+exe("551" "v1" "551/euler_551_v1.cpp")
+exe("551" "v2" "551/euler_551_v2.cpp")
 exe("75" "v1" "75/75.c")
+
+# requires https://github.com/fjtapia/countertree_2.0
+# exe("593" "F" "593/F.cpp")
