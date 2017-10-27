@@ -2,7 +2,8 @@
 #include <assert.h>
 #include <string.h>
 
-#include "bit_counts.h"
+static const int NUM_BITS = 8;
+static int zero_bitcounts[1 << NUM_BITS];
 
 typedef long long ll;
 
@@ -22,6 +23,20 @@ ll primes_squares[NUM_PRIMES];
 
 int main()
 {
+    for (size_t i = 0; i < (1 << NUM_BITS); ++i)
+    {
+        auto j = i;
+        int ret = 0;
+        for (size_t qq = 0; qq < NUM_BITS; ++qq)
+        {
+            if (!(j & 1))
+            {
+                ++ret;
+            }
+            j >>= 1;
+        }
+        zero_bitcounts[i] = ret;
+    }
     char cmd[1000];
     printf ("%s\n", "Reading primes.");
     snprintf(cmd, sizeof(cmd), "primes 3 %lld", sqrt_limit);
