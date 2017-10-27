@@ -41,12 +41,15 @@ SET(CPACK_SOURCE_IGNORE_FILES
     "^${PROJECT_SOURCE_DIR}/patsolve-shlomif/patsolve/(CMakeLists\\\\.txt|COPYING|Manifest|Parameters|check_layout|config\\\\.h\\\\.in|convert_[a-z]+|fc-solve\\\\.ico|dondorf-king\\\\.bmp|threaded_main\\\\.c|patmain\\\\.c|run-tests\\\\.pl|read_layout\\\\.h|print_layout\\\\.h)$"
 )
 
+FIND_LIBM()
 FUNCTION(exe prob_id suffix src)
-    ADD_EXECUTABLE(
-        "euler-${prob_id}-${suffix}.exe"
-        "${src}"
-    )
+    SET(_name "euler-${prob_id}-${suffix}.exe")
+    ADD_EXECUTABLE( "${_name}" "${src}" )
+    TARGET_LINK_LIBRARIES("${_name}" ${MATH_LIB_LIST})
 ENDFUNCTION()
 
+exe("235" "v1" "235/euler_235_v1.cpp")
 exe("238" "v1" "238/euler_238_v1.cpp")
 exe("401" "v2" "401/euler_401_v2.cpp")
+exe("485" "v1" "485/euler_485_v1.cpp")
+exe("75" "v1" "75/75.c")
