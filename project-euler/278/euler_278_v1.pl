@@ -57,7 +57,7 @@ my @p = `primesieve -p1 2 5000`;
 chomp @p;
 say $_ for @p;
 my $ret = 0;
-foreach my $pi ( keys @p )
+foreach my $pi ( 50 .. $#p )
 {
     my $p = int $p[$pi];
     foreach my $qi ( $pi + 1 .. $#p )
@@ -66,8 +66,13 @@ foreach my $pi ( keys @p )
         foreach my $ri ( $qi + 1 .. $#p )
         {
             my $r = int $p[$ri];
-            $ret += f( $p * $q, $p * $r, $q * $r );
-            say "Reached [$p,$q,$r] = $ret";
+            my $res = f( $p * $q, $p * $r, $q * $r );
+            $ret += $res;
+            say "Reached [$p,$q,$r] = $res [ sum = $ret]";
+            if ($res >= 2*$p*$q*$r)
+            {
+                die "foo!";
+            }
         }
     }
 }
