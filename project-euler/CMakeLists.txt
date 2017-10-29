@@ -125,6 +125,7 @@ exe("67" "v1" "67/euler_67_v1.cpp")
 exe("75" "v1" "75/euler_75_v1.c")
 
 gmp_exe("266" "muke" "266/euler_266.cpp")
+gmp_exe("284" "v1" "284/euler_284_v1.cpp")
 gmp_exe("320" "v1" "320/euler_320_v1.cpp")
 
 # requires https://github.com/fjtapia/countertree_2.0
