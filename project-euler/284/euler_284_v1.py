@@ -45,6 +45,7 @@ def rec(n, sq, is_z, digits_sum):
         s.append([sq+MP[len(s)-1][d], (d == 0), digits_sum+d, 0])
     return ret
 
+
 print_(rec(0, long(0), True, 0))
 MAX = 10000
 print_(rec(0, long(0), True, 0))

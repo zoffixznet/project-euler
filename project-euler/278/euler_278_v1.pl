@@ -69,7 +69,7 @@ foreach my $pi ( 50 .. $#p )
             my $res = f( $p * $q, $p * $r, $q * $r );
             $ret += $res;
             say "Reached [$p,$q,$r] = $res [ sum = $ret]";
-            if ($res >= 2*$p*$q*$r)
+            if ( $res >= 2 * $p * $q * $r )
             {
                 die "foo!";
             }
