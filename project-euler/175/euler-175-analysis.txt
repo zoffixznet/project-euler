@@ -1,4 +1,4 @@
-For a whole power of 2 - 2^n there are n+1 ways:
+For a whole power of two ( 2^n ) there are n+1 ways:
 
 2^n ; 2^(n-1) + 2^(n-1) ; 2^(n-1) + 2^(n-2) + 2^(n-2) ...
     ; 2^(n-1) + 2^(n-2) .... + 2 + 1 + 1
