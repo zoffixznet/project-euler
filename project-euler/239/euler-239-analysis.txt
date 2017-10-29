@@ -7,6 +7,9 @@ positions. Moreover, 25-$i primes are in primes' positions. Furthermore, $i
 composite numbers are in primes positions. And 75-$i composite numbers are in
 composites' positions.
 
+Let's say that $j = the number of composites that are found in the right place.
+We can see that $j <= 75 - $i .
+
 If $i = 0 :
 -----------
 
