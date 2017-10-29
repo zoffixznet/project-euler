@@ -10,7 +10,7 @@ if sys.version_info > (3,):
 
 BASE = 14
 powers = [long(1)]
-for n in xrange(1, 20000):
+for n in xrange(1, 10001):
     powers.append(powers[-1] * BASE)
 
 MP = [[p * d for d in xrange(0, BASE)] for p in powers]
@@ -20,7 +20,8 @@ MAX = 9
 
 def rec(n, sq, is_z, digits_sum):
     # print_('sq =', sq)
-    print_('n =', n)
+    if n & 0xFF == 0:
+        print_('n =', n)
     if n > MAX:
         return 0
     if (((sq*sq) % powers[n]) != sq):
