@@ -3,14 +3,13 @@
 import sys
 from six import print_
 
-sys.setrecursionlimit(10019)
 if sys.version_info > (3,):
     long = int
     xrange = range
 
 BASE = 14
 powers = [long(1)]
-for n in xrange(1, 20000):
+for n in xrange(1, 10001):
     powers.append(powers[-1] * BASE)
 
 MP = [[p * d for d in xrange(0, BASE)] for p in powers]
@@ -23,8 +22,8 @@ def rec(n, sq, is_z, digits_sum):
     s = [[sq, is_z, digits_sum, 0]]
     ret = 0
     while len(s):
-        if len(s) & 0xFF == 0:
-            print_('n =', len(s))
+        # if len(s) & 0xFF == 0:
+        #     print_('n =', len(s))
         if len(s) > MAX+1:
             s.pop()
             continue
@@ -46,6 +45,6 @@ def rec(n, sq, is_z, digits_sum):
     return ret
 
 
-print_(rec(0, long(0), True, 0))
+# print_(rec(0, long(0), True, 0))
 MAX = 10000
 print_(rec(0, long(0), True, 0))
