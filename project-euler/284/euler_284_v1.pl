@@ -11,7 +11,11 @@ my $MAX  = 10000;
 
 # $MAX = 9;
 
-my @MP;
+my @MP = ( [ map { Math::GMP->new($_) } 0 .. $BASE - 1 ] );
+for my $n ( 1 .. $MAX + 1 )
+{
+    push @MP, [ map { $MP[-1][1] * $_ * $BASE } 0 .. $BASE - 1 ];
+}
 
 my $ret = Math::GMP->new(0);
 
@@ -19,16 +23,10 @@ sub rec
 {
     my ( $n, $sq, $is_z, $digits_sum ) = @_;
 
-    if ( $n > $MAX )
-    {
-        return;
-    }
     my $M = $MP[$n];
-    if ( ( ( $sq * $sq ) % $M->[1] ) != $sq )
-    {
-        return;
-    }
-    if ( $sq == 0 and $n > 3 )
+    if (   $n > $MAX
+        or ( $sq == 0 and $n > 0 )
+        or ( ( ( $sq * $sq ) % $M->[1] ) != $sq ) )
     {
         return;
     }
@@ -43,11 +41,6 @@ sub rec
     return;
 }
 
-push @MP, [ map { Math::GMP->new($_) } 0 .. $BASE - 1 ];
-for my $n ( 1 .. $MAX + 1 )
-{
-    push @MP, [ map { $MP[-1][1] * $_ * $BASE } 0 .. $BASE - 1 ];
-}
 rec( 0, 0, 1, 0 );
 
 sub base14
