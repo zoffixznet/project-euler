@@ -33,9 +33,56 @@ class FooTestCase(unittest.TestCase):
         self.assertEqual(C(10000, 13 ** 8), 617720485)
 
 
+f = {}
+n = 1
+
+
+def proc(arg):
+    global f, n
+    if arg in f:
+        print_('found n = ', n, ' prev = ', f[arg])
+        raise BaseException('f')
+    f[arg] = n
+    n += 1
+
+
+MOD = 13 ** 8
+
+
+def step(pd):
+    p, d = pd
+    m = ((p*d) << 1)
+    return ((m * p) % MOD, (m * d) % MOD)
+
+
 def main():
-    unittest.main()
-    print_('Foo')
+    # unittest.main()
+    pd = (1, 1)
+    pd = (2, 3)
+    # init_pd = pd = step(pd)
+    init_pd = pd
+    global n
+    # n = 3
+    n = 2
+    if False:
+        while True:
+            pd = step(pd)
+            n += 1
+            if init_pd == pd:
+                print_('Found ', n)
+
+    # C(2) % 13 ** 8 = C(28960856)
+    global MOD
+    MOD = 28960856 - 2
+    if False:
+        init_pd = pd = step(pd)
+        n += 1
+        while True:
+            pd = step(pd)
+            n += 1
+            if init_pd == pd:
+                print_('Found ', n)
+    # C(3) % 28960854 = C(171369) % 28960854
 
 
 main()
