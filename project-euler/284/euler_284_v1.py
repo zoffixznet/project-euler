@@ -2,13 +2,14 @@
 
 import sys
 from six import print_
+from gmpy2 import mpz
 
 if sys.version_info > (3,):
     long = int
     xrange = range
 
 BASE = 14
-powers = [long(1)]
+powers = [mpz(1)]
 for n in xrange(1, 10001):
     powers.append(powers[-1] * BASE)
 
@@ -47,4 +48,4 @@ def rec(n, sq, is_z, digits_sum):
 
 # print_(rec(0, long(0), True, 0))
 MAX = 10000
-print_(rec(0, long(0), True, 0))
+print_(rec(0, mpz(0), True, 0))
