@@ -35,7 +35,8 @@ class FooTestCase(unittest.TestCase):
         self.assertEqual(C(10000, 10 ** 8), 37652224)
 
 
-def step((p, d), MOD):
+def step(pd, MOD):
+    p, d = pd
     m = ((p*d) << 1)
     return ((m * p) % MOD, (m * d) % MOD)
 
