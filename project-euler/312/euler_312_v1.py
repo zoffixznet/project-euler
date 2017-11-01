@@ -42,12 +42,8 @@ def step((p, d), MOD):
 
 def main():
     # unittest.main()
-    pd = (1, 1)
-    pd = (2, 3)
-    # init_pd = pd = step(pd, MOD)
     MOD = 13 ** 8
-    init_pd = pd
-    # n = 3
+    init_pd = pd = (2, 3)
     n = 2
     if True:
         while True:
@@ -71,14 +67,10 @@ def main():
                 print_('Found ', n)
                 break
 
-    def off_C(offset, n, MOD):
-        # return C(n, MOD)
-        offset = 0
-        return offset + C(n - offset, MOD)
     # C(3) % 28960854 = C(171369) % 28960854
-    C1 = off_C(3, 10000, 171369-3)
+    C1 = C(10000, 171369-3)
     print_(C1)
-    C2 = off_C(2, C1, 28960854)
+    C2 = C(C1, 28960854)
     print_(C2)
     C3 = C(C2, 13 ** 8)
     print_(C3)
