@@ -2,6 +2,7 @@
 
 import sys
 from six import print_
+from gmpy2 import mpz
 
 sys.setrecursionlimit(10019)
 if sys.version_info > (3,):
@@ -9,7 +10,7 @@ if sys.version_info > (3,):
     xrange = range
 
 BASE = 14
-powers = [long(1)]
+powers = [mpz(1)]
 for n in xrange(1, 10001):
     powers.append(powers[-1] * BASE)
 
@@ -22,13 +23,7 @@ ret = 0
 def rec(n, sq, is_z, digits_sum):
     global ret
     # print_('sq =', sq)
-    if n & 0xFF == 0:
-        print_('n =', n)
-    if n > MAX:
-        return
-    if (((sq*sq) % powers[n]) != sq):
-        return
-    if sq == 0 and n > 3:
+    if n > MAX or (((sq*sq) % powers[n]) != sq) or (sq == 0 and n > 1):
         return
     if not is_z:
         ret += digits_sum
@@ -41,7 +36,7 @@ def wrap(max_):
     global MAX, ret
     ret = 0
     MAX = max_
-    rec(0, long(0), True, 0)
+    rec(0, mpz(0), True, 0)
     return ret
 
 
