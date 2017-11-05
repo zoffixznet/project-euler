@@ -10,6 +10,7 @@ if sys.version_info > (3,):
 
 FROM_RAD = 1/(2*acos(-1))
 
+
 def calc(num_steps, H, W):
     H2 = H*H
     ret = 0.0
@@ -23,6 +24,7 @@ def calc(num_steps, H, W):
 
         xx += WSTEP
     return ret * FROM_RAD / count / H
+
 
 log = 1
 num_steps = 2
