@@ -1,0 +1,3 @@
+We need to calculate the double integral:
+
+    \int_{x=0}^{30} \left( \int_{y=0}^{4x/3}(arctan(y/x))dy \right)dx
