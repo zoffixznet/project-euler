@@ -146,9 +146,13 @@ sub solve
     my $p2 = intersect( { m => $m1, b => 0 }, { m => $m0, b => $b1 } );
 
     my $distance = 0;
-    $distance += dist( $p, $p2 ) / $v1;
-    $svg->line( @$p, @$p2, 'cyan' );
-
+    my $add_dist = sub {
+        my ( $p, $p2, $v, $color ) = @_;
+        $distance += dist( $p, $p2 ) / $v;
+        $svg->line( @$p, @$p2, $color );
+        return;
+    };
+    $add_dist->( $p, $p2, $v1, 'cyan' );
     my $b = $b1 + 0;
 
     my $iter = sub {
@@ -164,8 +168,7 @@ sub solve
         my $p3 = intersect( { m => $m2, b => ( $p2->[1] - $m2 * $p2->[0] ) },
             { m => $m0, b => $b } );
 
-        $svg->line( @$p2, @$p3, shift @colors );
-        $distance += dist( $p2, $p3 ) / $new_v;
+        $add_dist->( $p2, $p3, $new_v, shift @colors );
         return { p => $p3, deg => $deg2 };
     };
 
@@ -181,9 +184,7 @@ sub solve
         { m => $m1, b => ( $exit_p->[1] - $m1 * $exit_p->[0] ) },
         { m => $m0, b => ( 0 - $m0 * $DEST_X ) },
     );
-
-    $distance += dist( $dest_p, $exit_p ) / 10;
-    $svg->line( @$dest_p, @$exit_p, 'pink' );
+    $add_dist->( $dest_p, $exit_p, 10, 'pink' );
 
     my @ret = ( $distance, $dest_p->[1], $svg );
     return @ret;
