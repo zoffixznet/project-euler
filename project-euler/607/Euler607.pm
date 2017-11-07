@@ -11,106 +11,126 @@ our $TYPE_X_ONLY = 0;
 our $TYPE_XY     = 1;
 
 our @EXPORT_OK =
-  qw($TYPE_X_ONLY $TYPE_XY compile_segment intersect intersect_x);
+    qw($TYPE_X_ONLY $TYPE_XY compile_segment intersect intersect_x);
 
-sub gcd {
+sub gcd
+{
     my ( $n, $m ) = @_;
 
-    if ( $m > $n ) {
+    if ( $m > $n )
+    {
         ( $n, $m ) = ( $m, $n );
     }
 
-    while ( $m > 0 ) {
+    while ( $m > 0 )
+    {
         ( $n, $m ) = ( $m, $n % $m );
     }
 
     return $n;
 }
 
-sub signed_gcd {
+sub signed_gcd
+{
     my ( $n, $m ) = @_;
 
     return gcd( abs($n), abs($m) );
 }
 
-sub _reduce {
+sub _reduce
+{
     my ( $n, $d ) = @_;
 
     my $g = signed_gcd( $n, $d );
 
     my @ret = ( $n / $g, $d / $g );
 
-    if ( $ret[0] == 0 ) {
+    if ( $ret[0] == 0 )
+    {
         return ( 0, 1 );
     }
-    elsif ( $ret[1] < 0 ) {
+    elsif ( $ret[1] < 0 )
+    {
         return map { -$_ } @ret;
     }
-    else {
+    else
+    {
         return @ret;
     }
 }
 
-sub _mul {
+sub _mul
+{
     my ( $x, $y ) = @_;
 
     return $x * $y;
 }
 
-sub _div {
+sub _div
+{
     my ( $x, $y ) = @_;
 
     return _mul( $x, 1 / $y );
 }
 
-sub _add {
+sub _add
+{
     my ( $x, $y ) = @_;
 
     return $x + $y;
 }
 
-sub _subtract {
+sub _subtract
+{
     my ( $x, $y ) = @_;
 
     return _add( $x, -$y );
 }
 
-sub _lt {
+sub _lt
+{
     my ( $x, $y ) = @_;
 
     return ( $x->[0] * $y->[1] < $x->[1] * $y->[0] );
 }
 
-sub _lt2 {
+sub _lt2
+{
     my ( $f, $x ) = @_;
 
     return ( $f->[0] < $x * $f->[1] );
 }
 
-sub _lt3 {
+sub _lt3
+{
     my ( $x, $f ) = @_;
 
     return ( $f->[0] > $x * $f->[1] );
 }
 
-sub _eq {
+sub _eq
+{
     my ( $x, $y ) = @_;
 
     return ( $x == $y );
 }
 
-sub _f {
+sub _f
+{
     return [ shift, 1 ];
 }
 
-sub compile_segment {
+sub compile_segment
+{
     my ($L) = @_;
 
     my ( $x1, $y1, $x2, $y2 ) = @$L;
     my @y_s = sort { $a <=> $b } ( $y1, $y2 );
 
-    if ( $x1 == $x2 ) {
-        if ( $y1 == $y2 ) {
+    if ( $x1 == $x2 )
+    {
+        if ( $y1 == $y2 )
+        {
             die "Duplicate point in segment [@$L].";
         }
         return {
@@ -121,7 +141,8 @@ sub compile_segment {
             y2 => $y_s[-1],
         };
     }
-    else {
+    else
+    {
         my $m = [ _reduce( $y2 - $y1, $x2 - $x1 ) ];
         my $bb = _subtract( _f($y1), _mul( $m, _f($x1) ) );
         my @x_s = sort { $a <=> $b } ( $x1, $x2 );
@@ -137,7 +158,8 @@ sub compile_segment {
     }
 }
 
-sub intersect_x {
+sub intersect_x
+{
     my ( $s1, $s2 ) = @_;
     my ( $X,  $x )  = @$s1{qw(X x)};
 
@@ -146,14 +168,17 @@ sub intersect_x {
     return [ $X, $y ];
 }
 
-sub intersect {
+sub intersect
+{
     my ( $s1, $s2 ) = @_;
 
     # Both are y = f(x) so m1x+b1 == m2x+b2 ==> x
-    if ( _eq( $s1->{'m'}, $s2->{'m'} ) ) {
+    if ( _eq( $s1->{'m'}, $s2->{'m'} ) )
+    {
         return;
     }
-    else {
+    else
+    {
         my $x = _div(
             _subtract( $s2->{'b'}, $s1->{'b'} ),
             _subtract( $s1->{'m'}, $s2->{'m'} )
@@ -171,7 +196,8 @@ use IO::All qw/ io /;
 
 has svg => ( is => 'rw' );
 
-sub BUILD {
+sub BUILD
+{
     my ($self) = @_;
 
     $self->svg( SVG->new( width => 400, height => 400 ) );
@@ -186,7 +212,8 @@ sub BUILD {
     $self->circle( 0,   0 );
     $self->circle( 100, 0 );
 
-    foreach my $i ( 0 .. 5 ) {
+    foreach my $i ( 0 .. 5 )
+    {
         my $x = 50 - ( $i - 2.5 ) * sqrt(2) * 10;
         my $y = 0;
         $self->line( $x - 200, $y - 200, $x + 200, $y + 200, 'black' );
@@ -194,7 +221,8 @@ sub BUILD {
     return;
 }
 
-sub display {
+sub display
+{
     my ($self) = @_;
 
     my $fn = './e607.svg';
@@ -206,7 +234,8 @@ sub display {
     return;
 }
 
-sub line {
+sub line
+{
     my ( $self, $x1, $y1, $x2, $y2, $color ) = @_;
 
     $self->svg->line(
@@ -220,19 +249,22 @@ sub line {
     return;
 }
 
-sub trans_x {
+sub trans_x
+{
     my ( $self, $x ) = @_;
 
     return $x + 200;
 }
 
-sub trans_y {
+sub trans_y
+{
     my ( $self, $y ) = @_;
 
     return 200 - $y;
 }
 
-sub circle {
+sub circle
+{
     my ( $self, $x, $y ) = @_;
 
     $self->svg->circle(
@@ -254,13 +286,15 @@ use 5.016;
 
 use Math::Trig;
 
-sub dist {
+sub dist
+{
     my ( $p1, $p2 ) = @_;
 
     return sqrt( ( $p1->[0] - $p2->[0] )**2 + ( $p1->[1] - $p2->[1] )**2 );
 }
 
-sub snell {
+sub snell
+{
     my ( $deg, $v1, $v2 ) = @_;
     my $sin1 = sin( $deg + pi / 4 );
     my $sin2 = $v2 / $v1 * $sin1;
@@ -269,7 +303,8 @@ sub snell {
     return $deg2;
 }
 
-sub solve {
+sub solve
+{
     my ( $deg, $svg ) = @_;
     my @colors = ( 'green', 'red', 'yellow', 'purple', 'blue', 'brown' );
 
@@ -281,7 +316,8 @@ sub solve {
     my $m0 = 1;
     my $b1 = -( 100 - 50 * sqrt(2) ) / 2;
     my $p2 =
-      Euler607::Seg::intersect( { m => $m1, b => 0 }, { m => $m0, b => $b1 } );
+        Euler607::Seg::intersect( { m => $m1, b => 0 },
+        { m => $m0, b => $b1 } );
 
     # say "@$p2";
 
@@ -306,7 +342,8 @@ sub solve {
             { m => $m0, b => $b } );
 
         # say "@$p3";
-        if ($to_add) {
+        if ($to_add)
+        {
             $svg->line( @$p2, @$p3, shift @colors );
             $distance += dist( $p2, $p3 ) / $new_v;
         }
@@ -344,7 +381,8 @@ my $low = -pi() / 4;
 my $high = pi() / 8;
 
 my $N = 1_000;
-foreach my $i ( 0 .. $N ) {
+foreach my $i ( 0 .. $N )
+{
     my $svg = MySvg->new;
     say "$i ", ( solve( $low + ( $high - $low ) / $N * $i, $svg ) )[1];
 
@@ -353,20 +391,25 @@ foreach my $i ( 0 .. $N ) {
 
 my ( $mid, @sol );
 
-sub recalc {
+sub recalc
+{
     $mid = ( ( $low + $high ) / 2 );
     @sol = solve( $mid, MySvg->new );
     return;
 }
 recalc;
-while ( abs( $sol[1] ) > 1e-14 ) {
-    if ( $sol[1] > 0 ) {
+while ( abs( $sol[1] ) > 1e-14 )
+{
+    if ( $sol[1] > 0 )
+    {
         $high = $mid;
     }
-    else {
+    else
+    {
         $low = $mid;
     }
     recalc;
 }
+
 # $sol[2]->display;
 printf "sol = %.10f\n", $sol[0];
