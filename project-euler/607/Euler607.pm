@@ -343,16 +343,16 @@ sub solve
             $svg->line( @$p2, @$p3, shift @colors );
             $distance += dist( $p2, $p3 ) / $new_v;
         }
-        return { p => $p3, m => $m2, deg => $deg2 };
+        return { p => $p3, deg => $deg2 };
     };
 
-    my $c6 = { deg => $deg, p => $p2 };
+    my $ctx = { deg => $deg, p => $p2 };
     for my $v ( [ 10, 9 ], [ 9, 8 ], [ 8, 7 ], [ 7, 6 ], [ 6, 5 ] )
     {
-        $c6 = $iter->( @$v, $c6 );
+        $ctx = $iter->( @$v, $ctx );
     }
 
-    my $p6     = $c6->{p};
+    my $p6     = $ctx->{p};
     my $x8     = 100;
     my $dest_p = Euler607::Seg::intersect(
         { m => $m1, b => ( $p6->[1] - $m1 * $p6->[0] ) },
