@@ -308,8 +308,6 @@ sub solve
     my ( $deg, $svg ) = @_;
     my @colors = ( 'green', 'red', 'yellow', 'purple', 'blue', 'brown' );
 
-    # say "Deg=$deg";
-
     my $p  = [ 0, 0 ];
     my $v1 = 10;
     my $m1 = tan($deg);
@@ -318,8 +316,6 @@ sub solve
     my $p2 =
         Euler607::Seg::intersect( { m => $m1, b => 0 },
         { m => $m0, b => $b1 } );
-
-    # say "@$p2";
 
     my $distance = 0;
     $distance += dist( $p, $p2 ) / $v1;
@@ -331,17 +327,14 @@ sub solve
     my $iter   = sub {
         my ( $old_v, $new_v, $old_deg, $p2 ) = @_;
 
-        # say "old_deg = ", $old_deg * 180 / pi;
         my $deg2 = snell( $old_deg, $old_v, $new_v );
 
-        # say "deg2 = ", $deg2 * 180 / pi;
         my $m2 = tan($deg2);
         $b -= 10 * sqrt(2);
         my $p3 = Euler607::Seg::intersect(
             { m => $m2, b => ( $p2->[1] - $m2 * $p2->[0] ) },
             { m => $m0, b => $b } );
 
-        # say "@$p3";
         if ($to_add)
         {
             $svg->line( @$p2, @$p3, shift @colors );
@@ -356,8 +349,6 @@ sub solve
     my ( $p5, $m5, $deg4 ) = $iter->( 7, 6, $deg3, $p4 );
     my ( $p7, $m7, $deg5 ) = $iter->( 6, 5, $deg4, $p5 );
 
-    # my ( $p7, $m7, $deg6 ) = $iter->( 5, 10, $deg5, $p6 );
-
     my $x8     = 100;
     my $dest_p = Euler607::Seg::intersect(
         { m => $m1, b => ( $p7->[1] - $m1 * $p7->[0] ) },
@@ -367,17 +358,11 @@ sub solve
     $distance += dist( $dest_p, $p7 ) / 10;
     $svg->line( @$dest_p, @$p7, 'pink' );
 
-    # say "@$dest_p";
     my @ret = ( $distance, $dest_p->[1], $svg );
-
-    # say "Ret=@ret";
-    # say '==========';
     return @ret;
 }
 
-my $low = -pi() / 4;
-
-# solve($low);
+my $low  = -pi() / 4;
 my $high = pi() / 8;
 
 my $N = 1_000;
@@ -385,8 +370,6 @@ foreach my $i ( 0 .. $N )
 {
     my $svg = MySvg->new;
     say "$i ", ( solve( $low + ( $high - $low ) / $N * $i, $svg ) )[1];
-
-    # $svg->display if $i == 500;
 }
 
 my ( $mid, @sol );
@@ -397,6 +380,7 @@ sub recalc
     @sol = solve( $mid, MySvg->new );
     return;
 }
+
 recalc;
 while ( abs( $sol[1] ) > 1e-14 )
 {
@@ -411,5 +395,4 @@ while ( abs( $sol[1] ) > 1e-14 )
     recalc;
 }
 
-# $sol[2]->display;
 printf "sol = %.10f\n", $sol[0];
