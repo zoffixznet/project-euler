@@ -125,12 +125,8 @@ sub intersect
     {
         return;
     }
-    else
-    {
-        my $x = ( ( $s2->{'b'} - $s1->{'b'} ) / ( $s1->{'m'} - $s2->{'m'} ) );
-
-        return [ $x, $s2->{'b'} + $s2->{'m'} * $x ];
-    }
+    my $x = ( ( $s2->{'b'} - $s1->{'b'} ) / ( $s1->{'m'} - $s2->{'m'} ) );
+    return [ $x, $s2->{'b'} + $s2->{'m'} * $x ];
 }
 
 sub solve
