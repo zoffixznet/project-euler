@@ -346,11 +346,11 @@ sub solve
         return { p => $p3, m => $m2, deg => $deg2 };
     };
 
-    my $c1 = $iter->( 10, 9, { deg => $deg, p => $p2 } );
-    my $c3 = $iter->( 9, 8, $c1 );
-    my $c4 = $iter->( 8, 7, $c3 );
-    my $c5 = $iter->( 7, 6, $c4 );
-    my $c6 = $iter->( 6, 5, $c5 );
+    my $c6 = { deg => $deg, p => $p2 };
+    for my $v ( [ 10, 9 ], [ 9, 8 ], [ 8, 7 ], [ 7, 6 ], [ 6, 5 ] )
+    {
+        $c6 = $iter->( @$v, $c6 );
+    }
 
     my $p6     = $c6->{p};
     my $x8     = 100;
