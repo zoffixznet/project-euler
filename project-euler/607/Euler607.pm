@@ -325,7 +325,10 @@ sub solve
 
     my $to_add = 1;
     my $iter   = sub {
-        my ( $old_v, $new_v, $old_deg, $p2 ) = @_;
+        my ( $old_v, $new_v, $ctx ) = @_;
+
+        my $old_deg = $ctx->{deg};
+        my $p2      = $ctx->{p};
 
         my $deg2 = snell( $old_deg, $old_v, $new_v );
 
@@ -340,23 +343,24 @@ sub solve
             $svg->line( @$p2, @$p3, shift @colors );
             $distance += dist( $p2, $p3 ) / $new_v;
         }
-        return ( $p3, $m2, $deg2 );
+        return { p => $p3, m => $m2, deg => $deg2 };
     };
 
-    ( $p2, undef, my $deg1 ) = $iter->( 10, 9, $deg, $p2 );
-    my ( $p3, $m2, $deg2 ) = $iter->( 9, 8, $deg1, $p2 );
-    my ( $p4, $m3, $deg3 ) = $iter->( 8, 7, $deg2, $p3 );
-    my ( $p5, $m5, $deg4 ) = $iter->( 7, 6, $deg3, $p4 );
-    my ( $p7, $m7, $deg5 ) = $iter->( 6, 5, $deg4, $p5 );
+    my $c1 = $iter->( 10, 9, { deg => $deg, p => $p2 } );
+    my $c3 = $iter->( 9, 8, $c1 );
+    my $c4 = $iter->( 8, 7, $c3 );
+    my $c5 = $iter->( 7, 6, $c4 );
+    my $c6 = $iter->( 6, 5, $c5 );
 
+    my $p6     = $c6->{p};
     my $x8     = 100;
     my $dest_p = Euler607::Seg::intersect(
-        { m => $m1, b => ( $p7->[1] - $m1 * $p7->[0] ) },
+        { m => $m1, b => ( $p6->[1] - $m1 * $p6->[0] ) },
         { m => $m0, b => ( 0 - $m0 * $x8 ) },
     );
 
-    $distance += dist( $dest_p, $p7 ) / 10;
-    $svg->line( @$dest_p, @$p7, 'pink' );
+    $distance += dist( $dest_p, $p6 ) / 10;
+    $svg->line( @$dest_p, @$p6, 'pink' );
 
     my @ret = ( $distance, $dest_p->[1], $svg );
     return @ret;
