@@ -175,15 +175,15 @@ sub solve
         $ctx = $iter->( @$v, $ctx );
     }
 
-    my $p6     = $ctx->{p};
-    my $x8     = 100;
+    my $exit_p = $ctx->{p};
+    my $DEST_X = 100;
     my $dest_p = intersect(
-        { m => $m1, b => ( $p6->[1] - $m1 * $p6->[0] ) },
-        { m => $m0, b => ( 0 - $m0 * $x8 ) },
+        { m => $m1, b => ( $exit_p->[1] - $m1 * $exit_p->[0] ) },
+        { m => $m0, b => ( 0 - $m0 * $DEST_X ) },
     );
 
-    $distance += dist( $dest_p, $p6 ) / 10;
-    $svg->line( @$dest_p, @$p6, 'pink' );
+    $distance += dist( $dest_p, $exit_p ) / 10;
+    $svg->line( @$dest_p, @$exit_p, 'pink' );
 
     my @ret = ( $distance, $dest_p->[1], $svg );
     return @ret;
