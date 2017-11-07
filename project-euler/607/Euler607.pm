@@ -163,6 +163,88 @@ sub intersect {
     }
 }
 
+package MySvg;
+
+use MooX qw/ late /;
+use SVG;
+use IO::All qw/ io /;
+
+has svg => ( is => 'rw' );
+
+sub BUILD {
+    my ($self) = @_;
+
+    $self->svg( SVG->new( width => 400, height => 400 ) );
+    $self->svg->rect(
+        x      => 0,
+        y      => 0,
+        width  => 400,
+        height => 400,
+        style  => { fill => 'white' }
+    );
+
+    $self->circle( 0,   0 );
+    $self->circle( 100, 0 );
+
+    foreach my $i ( 0 .. 5 ) {
+        my $x = 50 - ( $i - 2.5 ) * sqrt(2) * 10;
+        my $y = 0;
+        $self->line( $x - 200, $y - 200, $x + 200, $y + 200, 'black' );
+    }
+    return;
+}
+
+sub display {
+    my ($self) = @_;
+
+    my $fn = './e607.svg';
+
+    io->file($fn)->utf8->print( $self->svg->xmlify );
+
+    system( "gwenview", $fn );
+
+    return;
+}
+
+sub line {
+    my ( $self, $x1, $y1, $x2, $y2, $color ) = @_;
+
+    $self->svg->line(
+        x1    => $self->trans_x($x1),
+        x2    => $self->trans_x($x2),
+        y1    => $self->trans_y($y1),
+        y2    => $self->trans_y($y2),
+        style => { stroke => $color, 'stroke-width' => 2 },
+    );
+
+    return;
+}
+
+sub trans_x {
+    my ( $self, $x ) = @_;
+
+    return $x + 200;
+}
+
+sub trans_y {
+    my ( $self, $y ) = @_;
+
+    return 200 - $y;
+}
+
+sub circle {
+    my ( $self, $x, $y ) = @_;
+
+    $self->svg->circle(
+        cx    => $self->trans_x($x),
+        cy    => $self->trans_y($y),
+        r     => 5,
+        style => { fill => 'black' }
+    );
+
+    return;
+}
+
 package main;
 
 use strict;
@@ -188,7 +270,8 @@ sub snell {
 }
 
 sub solve {
-    my ($deg) = @_;
+    my ( $deg, $svg ) = @_;
+    my @colors = ( 'green', 'red', 'yellow', 'purple', 'blue', 'brown' );
 
     # say "Deg=$deg";
 
@@ -204,6 +287,7 @@ sub solve {
 
     my $distance = 0;
     $distance += dist( $p, $p2 ) / $v1;
+    $svg->line( @$p, @$p2, 'cyan' );
 
     my $b = $b1 + 0;
 
@@ -223,7 +307,8 @@ sub solve {
 
         # say "@$p3";
         if ($to_add) {
-            $distance += dist( $p2, $p3 ) / $old_v;
+            $svg->line( @$p2, @$p3, shift @colors );
+            $distance += dist( $p2, $p3 ) / $new_v;
         }
         return ( $p3, $m2, $deg2 );
     };
@@ -238,14 +323,15 @@ sub solve {
 
     my $x8     = 100;
     my $dest_p = Euler607::Seg::intersect(
-        { m => $m7, b => ( $p7->[1] - $m7 * $p7->[0] ) },
+        { m => $m1, b => ( $p7->[1] - $m1 * $p7->[0] ) },
         { m => $m0, b => ( 0 - $m0 * $x8 ) },
     );
 
     $distance += dist( $dest_p, $p7 ) / 10;
+    $svg->line( @$dest_p, @$p7, 'pink' );
 
     # say "@$dest_p";
-    my @ret = ( $distance, $dest_p->[1] );
+    my @ret = ( $distance, $dest_p->[1], $svg );
 
     # say "Ret=@ret";
     # say '==========';
@@ -253,19 +339,23 @@ sub solve {
 }
 
 my $low = -pi() / 4;
-solve($low);
+
+# solve($low);
 my $high = pi() / 8;
 
 my $N = 1_000;
 foreach my $i ( 0 .. $N ) {
-    say "$i ", ( solve( $low + ( $high - $low ) / $N * $i ) )[1];
+    my $svg = MySvg->new;
+    say "$i ", ( solve( $low + ( $high - $low ) / $N * $i, $svg ) )[1];
+
+    # $svg->display if $i == 500;
 }
 
 my ( $mid, @sol );
 
 sub recalc {
     $mid = ( ( $low + $high ) / 2 );
-    @sol = solve($mid);
+    @sol = solve( $mid, MySvg->new );
     return;
 }
 recalc;
@@ -278,4 +368,5 @@ while ( abs( $sol[1] ) > 1e-14 ) {
     }
     recalc;
 }
+# $sol[2]->display;
 printf "sol = %.10f\n", $sol[0];
