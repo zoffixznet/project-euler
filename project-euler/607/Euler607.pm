@@ -323,8 +323,7 @@ sub solve
 
     my $b = $b1 + 0;
 
-    my $to_add = 1;
-    my $iter   = sub {
+    my $iter = sub {
         my ( $old_v, $new_v, $ctx ) = @_;
 
         my $old_deg = $ctx->{deg};
@@ -338,11 +337,8 @@ sub solve
             { m => $m2, b => ( $p2->[1] - $m2 * $p2->[0] ) },
             { m => $m0, b => $b } );
 
-        if ($to_add)
-        {
-            $svg->line( @$p2, @$p3, shift @colors );
-            $distance += dist( $p2, $p3 ) / $new_v;
-        }
+        $svg->line( @$p2, @$p3, shift @colors );
+        $distance += dist( $p2, $p3 ) / $new_v;
         return { p => $p3, deg => $deg2 };
     };
 
