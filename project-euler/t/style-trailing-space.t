@@ -10,9 +10,10 @@ foreach my $path ('..')
 {
     my $finder = Test::TrailingSpace->new(
         {
-            root              => $path,
-            filename_regex    => qr/./,
-            abs_path_prune_re => qr#CMakeFiles|_Inline|(?:\.(?:xcf|patch)\z)#,
+            root           => $path,
+            filename_regex => qr/./,
+            abs_path_prune_re =>
+                qr#CMakeFiles|_Inline|(?:\.(?:exe|xcf|patch)\z)#,
         }
     );
 
