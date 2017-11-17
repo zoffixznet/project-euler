@@ -35,14 +35,26 @@ def main():
 
         for len_m in xrange(2, n):
             len_ = n+1-len_m
-            state = deque([n])
             s = n
-            for pos in xrange(2, len_+1):
-                state.append(s * nm % MOD)
-                s = ((s * n) % MOD)
-            for pos in xrange(len_+1, n+1):
-                state.append(s * nm % MOD)
-                s = ((s * n - state.popleft()) % MOD)
+            if (((len_-1) << 1) > n):
+                low_s = s * nm % MOD
+                s = s * expmod(n, len_) % MOD
+                s = (s - n) % MOD
+                e = n-len_-1
+                if e > 0:
+                    s = (s * expmod(n, e) - low_s * e * expmod(n, e-1)) % MOD
+            else:
+                state = deque([n])
+                for pos in xrange(2, len_+1):
+                    t = s
+                    s *= nm
+                    state.append(s % MOD)
+                    s = ((s + t) % MOD)
+                for pos in xrange(len_+1, n+1):
+                    t = s
+                    s *= nm
+                    state.append(s % MOD)
+                    s = ((s + t - state.popleft()) % MOD)
                 # print_('p = %d ; pos_ = %d' % (len_, pos))
             at_most[len_] = s
             print_('p = %d ; ret = %d' % (len_, at_most[len_]))
