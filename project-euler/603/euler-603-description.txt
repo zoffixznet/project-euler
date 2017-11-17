@@ -19,5 +19,5 @@ be the integer formed by concatenating k copies of P(n) together. For example, C
 
 .
 
-Evaluate S(C(106,1012))
-mod (109+7).
+Evaluate S(C(10^6,10^12))
+mod (10^9+7).
