@@ -45,6 +45,7 @@ def S(n):
         mods = [0, 1]
         for m in xrange(1, x):
             mods.append(mods[-1] + 1 + E(x, m))
+        print_("x = %d ; m1 = %d ; m0 = %d" % (x, mods[-1], mods[-1]-x))
         max_ = n - n % x
         t = max_ // x - 1
         delta = t*((mods[-1] << 1))+((mods[n-max_+1]-1) << 1)+n-x
