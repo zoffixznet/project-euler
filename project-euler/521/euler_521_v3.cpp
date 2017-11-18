@@ -8,7 +8,11 @@ const ll first_primes[9] = {2,3,5,7,11,13,17,19,23};
 const ll SIZ = 2*3*5*7*11*13*17*19*23;
 
 const ll aft_first_p = 29;
+#if 0
 const ll LIMIT = 1000000000000LL;
+#else
+const ll LIMIT = 100LL;
+#endif
 const ll SQUARE_ROOT_LIMIT = 1000000LL;
 const ll MOD = 1000000000LL;
 
@@ -74,6 +78,10 @@ int main()
     memset(cache, '\0', sizeof(cache));
 
     sum = (LIMIT-1)*(LIMIT+2)/2;
+        {
+        std::string s = ll2s(sum);
+        printf("StrReached %lld sum = %s\n", 0LL, s.c_str());
+        }
     for (size_t p_idx = 0 ; p_idx < sizeof(first_primes)/sizeof(first_primes[0]) ; p_idx++)
     {
         auto p = first_primes[p_idx];
@@ -86,8 +94,20 @@ int main()
             {
                 cache[i] = true;
                 const ll e1 = ((LIMIT / SIZ) * SIZ + i);
+                if (e1 > LIMIT && e1 < SIZ)
+                {
+                }
+                else
+                {
                 const ll e2 = e1 > LIMIT ? e1-SIZ : e1;
                 sum += ((e2-i) / SIZ + 1) * p - ((e2-i)/SIZ + 1)*(e2+i)/2;
+                }
+#if 0
+        {
+        std::string s = ll2s(sum);
+        printf("FloReached %lld sum = %s\n", (long long)i, s.c_str());
+        }
+#endif
             }
             i += i_delta;
         }
