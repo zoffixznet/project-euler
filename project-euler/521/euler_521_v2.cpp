@@ -12,7 +12,7 @@ const ll SQUARE_ROOT_LIMIT = 1000000LL;
 const ll MOD = 1000000000LL;
 
 const int NUM_PRIMES = 78500;
-unsigned char cache[SIZ];
+bool cache[SIZ];
 
 struct aft_prime_t
 {
@@ -36,6 +36,7 @@ int main(int argc, char * argv[])
     pclose(f);
 
     memset(cache, '\0', sizeof(cache));
+    unsigned __int128 sum = 0;
 
     for (size_t p_idx = 0 ; p_idx < sizeof(first_primes)/sizeof(first_primes[0]) ; p_idx++)
     {
@@ -48,7 +49,11 @@ int main(int argc, char * argv[])
         {
             if (! cache[i])
             {
-                cache[i] = p_to_assign;
+                cache[i] = true;
+                const ll e1 = ((LIMIT / SIZ) * SIZ + i);
+                const ll e2 = e1 > LIMIT ? e1-SIZ : e1;
+                sum += ((e2-i) / SIZ + 1) * p_to_assign;
+                sum %= MOD;
             }
             i += i_delta;
         }
@@ -59,8 +64,8 @@ int main(int argc, char * argv[])
     ll end = start + SIZ;
 
     ll n = start + offset;
+    --offset;
 
-    ll sum = 0;
 
     size_t max_p_idx = 0;
 
@@ -80,9 +85,9 @@ int main(int argc, char * argv[])
             {
                 goto my_end;
             }
-            ll smpf = cache[offset];
-            if (! smpf)
+            if (! cache[++offset])
             {
+                ll smpf = 0;
                 for (size_t p_idx = 0 ; p_idx < max_p_idx ; p_idx++)
                 {
                     auto & p = aft_primes[p_idx];
@@ -96,24 +101,23 @@ int main(int argc, char * argv[])
                         break;
                     }
                 }
-            }
-            if (! smpf)
-            {
-                smpf = n;
-            }
+                if (! smpf)
+                {
+                    smpf = n;
+                }
 
-            sum = ((sum + smpf) % MOD);
-            offset++;
+                sum += smpf;
+            }
             n++;
         }
         start = end;
         end += SIZ;
-        offset = 0;
-        printf("Reached %lld sum=%lld\n", start, sum);
+        offset = -1;
+        printf("Reached %lld sum=%lld\n", start, (ll)(sum % MOD));
     }
 
 my_end:
-    printf("FinalReached %lld sum=%lld\n", start, sum);
+    printf("FinalReached %lld sum=%lld\n", start, (ll)(sum % MOD));
 
     return 0;
 }
