@@ -11,7 +11,7 @@ const ll aft_first_p = 29;
 #if 0
 const ll LIMIT = 1000000000000LL;
 #else
-const ll LIMIT = 100LL;
+const ll LIMIT = 30000000LL;
 #endif
 const ll SQUARE_ROOT_LIMIT = 1000000LL;
 const ll MOD = 1000000000LL;
@@ -19,10 +19,7 @@ const ll MOD = 1000000000LL;
 const int NUM_PRIMES = 78500;
 bool cache[SIZ];
 
-struct aft_prime_t
-{
-    ll p, product;
-};
+typedef ll aft_prime_t;
 
 aft_prime_t aft_primes[NUM_PRIMES];
 unsigned __int128 sum;
@@ -37,10 +34,9 @@ static bool update(const size_t i, const ll smpf, const ll prod)
     printf("U=%lld\n", (long long)prod);
 #endif
     sum += smpf - prod;
-    update(i, smpf, prod*aft_primes[i].p);
-    for (size_t j=i+1;j<NUM_PRIMES;j++)
+    for (size_t j=i;j<NUM_PRIMES;j++)
     {
-        if (! update(j, smpf, prod*aft_primes[j].p))
+        if (! update(j, smpf, prod*aft_primes[j]))
         {
             break;
         }
@@ -70,8 +66,7 @@ int main()
     {
         long long p;
         fscanf(f, "%lld", &p);
-        aft_primes[i].p = p;
-        aft_primes[i].product = aft_primes[i].p;
+        aft_primes[i] = p;
     }
     pclose(f);
 
@@ -118,7 +113,7 @@ int main()
         std::string s = ll2s(sum);
         printf("BefReached %lld sum = %s\n", (long long)p_idx, s.c_str());
         }
-        update(p_idx, aft_primes[p_idx].p, aft_primes[p_idx].p);
+        update(p_idx, aft_primes[p_idx], aft_primes[p_idx]);
         std::string s = ll2s(sum);
         printf("AftReached %lld sum = %s\n", (long long)p_idx, s.c_str());
     }
