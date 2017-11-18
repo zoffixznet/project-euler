@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <string>
 
 typedef unsigned __int128 ll;
 
@@ -28,6 +29,9 @@ static bool update(const size_t i, const ll smpf, const ll prod)
     {
         return false;
     }
+#if 0
+    printf("U=%lld\n", (long long)prod);
+#endif
     sum += smpf - prod;
     update(i, smpf, prod*aft_primes[i].p);
     for (size_t j=i+1;j<NUM_PRIMES;j++)
@@ -39,6 +43,18 @@ static bool update(const size_t i, const ll smpf, const ll prod)
     }
     return true;
 }
+
+std::string ll2s(const ll n)
+{
+    char s[2] = {0,0};
+    if (n == 0)
+    {
+        return std::string("");
+    }
+    s[0] = '0' + n % 10;
+    return ll2s(n / 10) + std::string(s);
+}
+
 int main()
 {
     char cmd[100];
@@ -62,7 +78,6 @@ int main()
     {
         auto p = first_primes[p_idx];
         size_t i_delta = (size_t)p;
-        unsigned char p_to_assign = (unsigned char)p;
 
         size_t i = p;
         while (i < SIZ)
@@ -72,18 +87,23 @@ int main()
                 cache[i] = true;
                 const ll e1 = ((LIMIT / SIZ) * SIZ + i);
                 const ll e2 = e1 > LIMIT ? e1-SIZ : e1;
-                sum += ((e2-i) / SIZ + 1) * p_to_assign - ((e2-i)/SIZ + 1)*(e2+i)/2;
+                sum += ((e2-i) / SIZ + 1) * p - ((e2-i)/SIZ + 1)*(e2+i)/2;
             }
             i += i_delta;
         }
     }
     for (size_t p_idx = 0 ; p_idx < sizeof(aft_primes)/sizeof(aft_primes[0]) ; p_idx++)
     {
+        {
+        std::string s = ll2s(sum);
+        printf("BefReached %lld sum = %s\n", (long long)p_idx, s.c_str());
+        }
         update(p_idx, aft_primes[p_idx].p, aft_primes[p_idx].p);
-        printf("Reached %lld sum=%lld\n", (long long)p_idx, (long long)(sum % MOD));
+        std::string s = ll2s(sum);
+        printf("AftReached %lld sum = %s\n", (long long)p_idx, s.c_str());
     }
 
-    printf("FinalReached %lld sum=%lld\n", 0LL, (long long)(sum % MOD));
+    printf("FinalReached %lld sum = %lld\n", 0LL, (long long)(sum % MOD));
 
     return 0;
 }
