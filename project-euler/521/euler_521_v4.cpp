@@ -14,11 +14,8 @@ const ll MOD = 1000000000LL;
 
 const int NUM_PRIMES = 78500;
 bool cache[SIZ];
-
-typedef ll aft_prime_t;
-
-aft_prime_t aft_primes[NUM_PRIMES];
-unsigned __int128 sum;
+ll aft_primes[NUM_PRIMES];
+ll sum;
 
 struct div_count
 {
