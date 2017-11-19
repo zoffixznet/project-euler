@@ -11,7 +11,7 @@ const ll aft_first_p = 29;
 #if 0
 const ll LIMIT = 1000000000000LL;
 #else
-const ll LIMIT = 30000000LL;
+const ll LIMIT = 29004959LL;
 #endif
 const ll SQUARE_ROOT_LIMIT = 1000000LL;
 const ll MOD = 1000000000LL;
@@ -75,47 +75,50 @@ int main()
     sum = (LIMIT-1)*(LIMIT+2)/2;
         {
         std::string s = ll2s(sum);
-        printf("StrReached %lld sum = %s\n", 0LL, s.c_str());
+        printf("StrReached %lld sum = %s\n", (long long)SIZ, s.c_str());
         }
     for (size_t p_idx = 0 ; p_idx < sizeof(first_primes)/sizeof(first_primes[0]) ; p_idx++)
     {
-        auto p = first_primes[p_idx];
-        size_t i_delta = (size_t)p;
+        const auto p = first_primes[p_idx];
+        const size_t i_delta = (size_t)p;
 
-        size_t i = p;
+        size_t i = 0;
         while (i < SIZ)
         {
             if (! cache[i])
             {
                 cache[i] = true;
                 const ll e1 = ((LIMIT / SIZ) * SIZ + i);
-                if (e1 > LIMIT && e1 < SIZ)
                 {
+                    const ll e2 = e1 > LIMIT ? ( e1<SIZ ? i : e1-SIZ ): e1;
+                    if (e2 <= LIMIT)
+                    {
+                    const ll s = i == 0 ? i+SIZ : i;
+                    if (s <= LIMIT)
+                    {
+                    sum += ((e2-s) / SIZ + 1) * p - ((e2-s)/SIZ + 1)*(e2+s)/2;
+                    }
+                    }
                 }
-                else
-                {
-                const ll e2 = e1 > LIMIT ? e1-SIZ : e1;
-                sum += ((e2-i) / SIZ + 1) * p - ((e2-i)/SIZ + 1)*(e2+i)/2;
-                }
-#if 0
-        {
-        std::string s = ll2s(sum);
-        printf("FloReached %lld sum = %s\n", (long long)i, s.c_str());
-        }
-#endif
             }
             i += i_delta;
         }
+#if 1
+                {
+                    std::string s = ll2s(sum);
+                    printf("FloReached %lld sum = %s\n", (long long)p, s.c_str());
+                }
+#endif
     }
     for (size_t p_idx = 0 ; p_idx < sizeof(aft_primes)/sizeof(aft_primes[0]) ; p_idx++)
     {
         {
         std::string s = ll2s(sum);
-        printf("BefReached %lld sum = %s\n", (long long)p_idx, s.c_str());
+        printf("BefReached %lld sum = %s\n", (long long)aft_primes[p_idx], s.c_str());
         }
         update(p_idx, aft_primes[p_idx], aft_primes[p_idx]);
         std::string s = ll2s(sum);
-        printf("AftReached %lld sum = %s\n", (long long)p_idx, s.c_str());
+        printf("AftReached %lld sum = %s\n", (long long)aft_primes[p_idx], s.c_str());
     }
 
     printf("FinalReached %lld sum = %lld\n", 0LL, (long long)(sum % MOD));
