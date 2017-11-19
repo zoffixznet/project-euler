@@ -24,6 +24,14 @@ typedef ll aft_prime_t;
 aft_prime_t aft_primes[NUM_PRIMES];
 unsigned __int128 sum;
 
+struct div_count
+{
+    ll count, sum;
+};
+
+const size_t MAX_DIV = 1000000;
+div_count divs[MAX_DIV + 1];
+
 static bool update(const size_t i, const ll smpf, const ll prod)
 {
     if (prod > LIMIT)
@@ -41,6 +49,12 @@ static bool update(const size_t i, const ll smpf, const ll prod)
             return true;
         }
     }
+    if (prod <= MAX_DIV)
+    {
+        const auto & d = divs[prod];
+        sum += d.count * smpf - d.sum * prod;
+    }
+#if 0
     char cmd[100];
     snprintf(cmd, sizeof(cmd), "primesieve -p %lld %lld", (long long)aft_primes[NUM_PRIMES-1]+1, (long long)(LIMIT));
     FILE * f = popen(cmd, "r");
@@ -56,6 +70,7 @@ static bool update(const size_t i, const ll smpf, const ll prod)
         sum += smpf - new_;
     }
     pclose(f);
+#endif
     return true;
 }
 
@@ -69,6 +84,16 @@ std::string ll2s(const ll n)
     s[0] = '0' + n % 10;
     return ll2s(n / 10) + std::string(s);
 }
+
+ll s2ll(const char * s, const ll ret)
+{
+    if (*s == 0)
+    {
+        return ret;
+    }
+    return s2ll(s+1, ret*10+(s[0]-'0'));
+}
+
 
 int main()
 {
@@ -84,6 +109,21 @@ int main()
         aft_primes[i] = p;
     }
     pclose(f);
+
+    f = fopen("db4", "rt");
+    {
+        unsigned long long count;
+        char sum[80];
+        int d;
+        while (fscanf(f, "d = %d count = %llu sum = %79s\n", &d, &count, sum) == 3)
+        {
+            divs[d].sum = s2ll(sum, 0);
+            divs[d].count = count;
+            printf("d = %d count = %llu sum = %s\n", (int)d, count, ll2s(divs[d].sum).c_str());
+        }
+        fclose(f);
+    }
+
 
     memset(cache, '\0', sizeof(cache));
 
