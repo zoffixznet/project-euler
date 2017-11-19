@@ -4,7 +4,7 @@
 
 typedef unsigned __int128 ll;
 
-std::string ll2s(const ll n)
+std::string ll2s_(const ll n)
 {
     char s[2] = {0,0};
     if (n == 0)
@@ -12,9 +12,17 @@ std::string ll2s(const ll n)
         return std::string("");
     }
     s[0] = '0' + n % 10;
-    return ll2s(n / 10) + std::string(s);
+    return ll2s_(n / 10) + std::string(s);
 }
 
+std::string ll2s(const ll n)
+{
+    if (n == 0)
+    {
+        return std::string("0");
+    }
+    return ll2s_(n);
+}
 const ll MAX = 1000000000000LL;
 
 int main()
