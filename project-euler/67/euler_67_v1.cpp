@@ -29,6 +29,7 @@ int main(int argc, char * argv[])
         lines.push_back(r);
         row++;
     }
+    fclose(in);
 
     std::vector< std::vector<long> > total_lines;
     total_lines.push_back(lines[0]);
