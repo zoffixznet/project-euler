@@ -39,7 +39,7 @@ int main(int argc, char * argv[])
     //
     const int max_n = 1000000;
     const int min_n = 2;
-    const int vec_size = (max_n+1) >> 3;
+    const int vec_size = ((max_n+1) >> 3)+2;
     char n_s_bit_vec[vec_size];
 
     memset(n_s_bit_vec, '\0', vec_size);

@@ -56,7 +56,13 @@ ll solve(unsigned int n)
         if (max_size > v_size)
         {
             const long new_v_size = max_size + GROW_BY;
-            v = (unsigned char *)realloc(v, new_v_size+1);
+            auto new_v = (unsigned char *)realloc(v, new_v_size+1);
+            if (! new_v)
+            {
+                free (v);
+                return -1;
+            }
+            v = new_v;
             memset(v+v_size+1, '\0',new_v_size-v_size);
             v_size = new_v_size;
         }

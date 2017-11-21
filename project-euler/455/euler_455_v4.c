@@ -90,6 +90,7 @@ int main(int argc, char * argv[])
             }
             rainbow_table[mod] = rainbow_val;
         }
+        fclose(fh);
     }
 
     myint_t sum = 0;

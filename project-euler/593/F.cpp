@@ -30,6 +30,8 @@ int main(int argc, char * argv[])
         const auto it = myset.find(read_int(remove));
         myset.erase(it);
     }
+    fclose(remove);
+    fclose(in);
     std::cout << "Sum = " << (sum >> 1) << (((sum&0x1) == 0) ? ".0" : ".5") <<
         std::endl;
     return 0;
