@@ -43,6 +43,12 @@ def main():
                 e = n-len_-1
                 if e > 0:
                     s = (s * expmod(n, e) - low_s * e * expmod(n, e-1)) % MOD
+                # state[0] = n
+                # state[i] = nm * n ** i for i <= len_
+                # state[e+len_-1] = s * n ** e - low_s * e * n ** (e-1)
+                #           for e <= len_-1
+                # state[2l-2+1] =
+
             else:
                 state = deque([n])
                 for pos in xrange(2, len_+1):
