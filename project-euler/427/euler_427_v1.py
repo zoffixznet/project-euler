@@ -9,12 +9,6 @@ if sys.version_info > (3,):
     xrange = range
 
 
-def count(n, p):
-    if p > n:
-        return 0
-    return n // p + count(n // p, p)
-
-
 def main():
     MOD = 1000000009
 
