@@ -13,12 +13,13 @@ const ll MOD = 1000000009;
 ll expmod(const ll b, const ll e)
 {
     if (e == 0)
+    {
         return 1;
-    ll r = 1;
-    if ((e & 1) == 1)
-        r *= b;
+    }
+    const ll r = ((e & 1) ? b : 1);
     const auto rec = expmod(b, e >> 1);
-    return ((r * rec * rec) % MOD);
+    const auto rec_seq = rec * rec % MOD;
+    return ((r * rec_seq) % MOD);
 }
 
 inline ll f(const ll n, const ll start, const ll end)
@@ -36,11 +37,7 @@ inline ll f(const ll n, const ll start, const ll end)
     for (ll len_=start;len_<=end;++len_)
     {
         ll s = n;
-#if 0
         if (((len_-1) << 1) > n)
-#else
-        if (false)
-#endif
         {
             const auto low_s = s * nm % MOD;
             s = s * expmod(n, len_) % MOD;
@@ -48,7 +45,7 @@ inline ll f(const ll n, const ll start, const ll end)
             const auto e = n-len_-1;
             if (e > 0)
             {
-                s = (s * expmod(n, e) - low_s * e % MOD * expmod(n, e-1)) % MOD;
+                s = (s * expmod(n, e) - low_s * e * expmod(n, e-1)) % MOD;
             }
         }
         else
