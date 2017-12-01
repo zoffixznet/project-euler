@@ -36,7 +36,11 @@ inline ll f(const ll n, const ll start, const ll end)
     for (ll len_=start;len_<=end;++len_)
     {
         ll s = n;
+#if 0
         if (((len_-1) << 1) > n)
+#else
+        if (false)
+#endif
         {
             const auto low_s = s * nm % MOD;
             s = s * expmod(n, len_) % MOD;
