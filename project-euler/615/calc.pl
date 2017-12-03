@@ -30,4 +30,4 @@ sub exp_mod
 }
 
 my $MOD = 123454321;
-print( ( exp_mod( 2, 999999, $MOD ) * 17 * 18617 % $MOD ), "\n" );
+print( ( exp_mod( 2, 999999, $MOD ) * 5 * 11 * 47 * 67 % $MOD ), "\n" );
