@@ -7,20 +7,6 @@ if sys.version_info > (3,):
     xrange = range
 
 
-def calc(n, d):
-    if n < d:
-        return 0
-    m = n // d
-    return m + calc(m, d)
-
-
-def expmod(b, e, M):
-    if e == 0:
-        return 1
-    rec = expmod(b, e >> 1, M)
-    return (((b if ((e & 1) == 1) else 1) * rec * rec) % M)
-
-
 # These routines were taken from
 # http://rosettacode.org/wiki/Chinese_remainder_theorem#Python - thanks!
 def chinese_remainder(n, a):
