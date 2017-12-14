@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-open my $primes_fh, "primes 2|";
+open my $primes_fh, '-|', 'primesieve', '-p1', '2', '1' . '0' x 18;
 my $count = 0;
 my $total = 1;
 my $n     = 1;
