@@ -54,16 +54,24 @@ def calc(i):
 h = []
 n = 1
 heapq.heappush(h, calc(MyIter([], 0, 1)))
-depth = 1
-depthy = calc(MyIter([0], 1, -1))
+depth = 0
+depthy = None
+
+
+def inc_depth():
+    global depth, depthy
+    depth += 1
+    depthy = calc(MyIter([0] * depth, depth, -depth))
+
+
+inc_depth()
 # while n < 5:
 while n < 1000000:
     if n & (1024-1) == 0:
         print_(n)
     while depthy[0] < h[0][0]:
         heapq.heappush(h, depthy)
-        depth += 1
-        depthy = calc(MyIter([0] * depth, depth, -depth))
+        inc_depth()
     item = heapq.heappop(h)
     # print_(item[1].signature())
     for x in item[1].next_():
