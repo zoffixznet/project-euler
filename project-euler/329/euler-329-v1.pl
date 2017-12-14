@@ -29,7 +29,7 @@ my @init_probab = ( 0, ( ( Math::BigRat->new('1/500') ) x 500 ), 0 );
 
 my @up_step_probab   = ( 0, 1, ( ( Math::BigRat->new('1/2') ) x 498 ), 0, 0 );
 my @down_step_probab = ( 0, 0, ( ( Math::BigRat->new('1/2') ) x 498 ), 1, 0 );
-my $s = 'PPPPNNPPPNPPNPN';
+my $s                = 'PPPPNNPPPNPPNPN';
 
 my @probab = @init_probab;
 my $T_frac = Math::BigRat->new('2/3');
@@ -69,4 +69,3 @@ foreach my $x (@probab)
 }
 
 print $sum, "\n";
-

@@ -82,7 +82,7 @@ for my $num_digits ( 2 .. 47 )
         my $count_true = $sum->[1]->[0] // 0;
         my $sum_true   = $sum->[1]->[1] // 0;
         my $count_both = $count_true + ( $sum->[0]->[0] // 0 );
-        my $sum_both   = $sum_true +   ( $sum->[0]->[1] // 0 );
+        my $sum_both   = $sum_true + ( $sum->[0]->[1] // 0 );
         $result +=
             ( $sum_true * $count_both * ( 10**( $half + $parity ) ) +
                 $sum_both * $count_true ) * ( $parity ? 10 : 1 ) +
@@ -97,4 +97,3 @@ for my $num_digits ( 2 .. 47 )
 print "T(2) = ", $T[2], "\n";
 print "T(5) = ", $T[5], "\n";
 print "T(47) mod 3**15 = ", ( $T[47] % ( 3**15 ) ), "\n";
-
