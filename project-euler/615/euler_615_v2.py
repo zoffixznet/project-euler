@@ -41,14 +41,10 @@ class MyIter:
         ret = 1
         for x in self.coords:
             ret *= primes[x]
-        return float(ret) * float(2) ** self.two_exp
+        return (float(ret) * float(2) ** self.two_exp, self)
 
     def signature(self):
         return {'two': self.two_exp, 'p': [primes[x] for x in self.coords]}
-
-
-def calc(i):
-    return (i.calc(), i)
 
 
 h = []
@@ -60,7 +56,7 @@ depthy = None
 def inc_depth():
     global depth, depthy
     depth += 1
-    depthy = calc(MyIter([0] * depth, depth, -depth))
+    depthy = MyIter([0] * depth, depth, -depth).calc()
 
 
 def push_(item):
@@ -69,7 +65,7 @@ def push_(item):
 
 
 inc_depth()
-push_(calc(MyIter([], 0, 1)))
+push_(MyIter([], 0, 1).calc())
 # while n < 5:
 while n < 1000000:
     if n & (1024-1) == 0:
@@ -80,7 +76,7 @@ while n < 1000000:
     item = heapq.heappop(h)
     # print_(item[1].signature())
     for x in item[1].next_():
-        push_(calc(x))
+        push_(x.calc())
     n += 1
 
 print_(item)
