@@ -55,15 +55,15 @@ h = []
 n = 1
 heapq.heappush(h, calc(MyIter([], 0, 1)))
 depth = 1
-depthes = [0, calc(MyIter([0], 1, -1))]
+depthy = calc(MyIter([0], 1, -1))
 # while n < 5:
 while n < 1000000:
     if n & (1024-1) == 0:
         print_(n)
-    while depthes[depth][0] < h[0][0]:
-        heapq.heappush(h, depthes[depth])
+    while depthy[0] < h[0][0]:
+        heapq.heappush(h, depthy)
         depth += 1
-        depthes.append(calc(MyIter([0] * depth, depth, -depth)))
+        depthy = calc(MyIter([0] * depth, depth, -depth))
     item = heapq.heappop(h)
     # print_(item[1].signature())
     for x in item[1].next_():
