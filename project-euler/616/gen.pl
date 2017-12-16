@@ -6,17 +6,19 @@ use warnings;
 use Path::Tiny qw/ path /;
 
 my @db = path("factor.db")->lines_raw;
-chomp @db;
+foreach my $i ( @db[ 2 .. $#db ] )
+{
+    $i = [ map { int $_ } $i =~ s#[^:]*:##r =~ /([0-9]+)/g ];
+}
 
 for my $base ( 2 .. 1_000_000 )
 {
-    my $exp     = 2;
-    my $n       = $base * $base;
-    my @factors = $db[$base] =~ s#[^:]*:##r =~ /([0-9]+)/g;
+    my $exp          = 2;
+    my $n            = $base * $base;
+    my $base_factors = $db[$base];
     while ( $n <= 1000000000000 )
     {
-        my @exp_factors = $db[$exp] =~ s#[^:]*:##r =~ /([0-9]+)/g;
-        my @tot = sort { $a <=> $b } @factors, @exp_factors;
+        my @tot = sort { $a <=> $b } @$base_factors, @{ $db[$exp] };
         if ( @tot >= 4 or ( @tot == 3 and $tot[-1] > 2 ) )
         {
             print "$n\n";
