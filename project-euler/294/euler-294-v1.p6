@@ -121,3 +121,4 @@ my $SOUGHT_EXPR = '11 ** 12';
 my $SOUGHT = EVAL( $SOUGHT_EXPR );
 
 print "Result[$SOUGHT_EXPR] = {lookup($SOUGHT)}\n";
+
