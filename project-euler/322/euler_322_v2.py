@@ -198,7 +198,7 @@ if __name__ == "__main__":
     main()
 
 
-# Expat License
+# The Expat License
 #
 # Copyright (c) 2017, Shlomi Fish
 #
