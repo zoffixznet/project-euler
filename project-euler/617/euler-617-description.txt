@@ -1,0 +1,21 @@
+Mirror Power Sequence
+
+For two integers n,e>1
+, we define a (n,e)-MPS (Mirror Power Sequence) to be an infinite sequence of integers (ai)i≥0 such that for all i≥0, ai+1=min(aei,n−aei) and ai>1.
+An example of such sequence is the (18,2)-MPS sequence made of alternating 2 and 4
+
+.
+
+Note that even though such a sequence is uniquely determined by n,e
+and a0, for most values such a sequence does not exist. For example, no (n,e)-MPS exists for n<6
+
+.
+
+Define C(n)
+to be the number of (n,e)-MPS for some e, and D(N)=∑n=2NC(n).
+You are given that D(10)=2, D(100)=21, D(1000)=69, D(106)=1303 and D(1012)=1014800
+
+.
+
+Find D(1018)
+.
