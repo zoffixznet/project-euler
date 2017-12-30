@@ -26,7 +26,7 @@ has 'sig' => ( is => 'lazy' );
 
 sub _build_sig
 {
-    return pack_( shift->data );
+    return $coder->encode( shift->data );
 }
 
 package DataObj;
@@ -37,6 +37,13 @@ has 'd' => ( is => 'ro', required => 1 );
 
 # The values.
 has 'records' => ( is => 'rw', required => 1 );
+
+sub count
+{
+    my $self = shift;
+
+    return scalar keys %{ $self->records };
+}
 
 sub place_in
 {
@@ -79,14 +86,16 @@ sub insert
 
     my @fcc;
 
-    push @fcc, [0];
+    my $trans = sub { my $i = shift; return [ $i, [ @{ $squares->[$i] } ] ]; };
+
+    push @fcc, [ $trans->(0) ];
     for my $i ( 1 .. 3 )
     {
         if ( none { $_ == $UP } @{ $squares->[$i] } )
         {
             push @fcc, [];
         }
-        push @{ $fcc[-1] }, $i;
+        push @{ $fcc[-1] }, $trans->($i);
     }
     if ( !@{ $fcc[-1] } )
     {
@@ -196,6 +205,9 @@ my %mid;
 
 my %C;
 
+my @RET_NODES = qw(l0 l1 l2 l3 r4 r5 r6 r7);
+my %RET_NODES_LOOKUP = ( map { $RET_NODES[$_] => $_ } keys @RET_NODES );
+
 sub calc_ret_fcc
 {
     my ( $left_fcc_sig, $right_fcc_sig, $left_r_sig, $right_l_sig ) = @_;
@@ -205,27 +217,23 @@ sub calc_ret_fcc
         sub {
             my %fcc;
 
-            if ( ++$::mytrace % 10_000 == 0 )
+            # if ( ++$::mytrace % 10_000 == 0 )
+            if ( ++$::mytrace )
             {
                 print "Trace " . ($::mytrace) . "\n";
             }
-            foreach my $f ( @{ $left_fcc_sig->data } )
+            foreach my $REC ( [ 'l', $left_fcc_sig ], [ 'r', $right_fcc_sig ] )
             {
-                for my $i ( 0 .. $#$f )
+                my ( $p, $sig ) = @$REC;
+                foreach my $f ( @{ $sig->data } )
                 {
-                    for my $j ( 0 .. $#$f )
+                    my $sub = sub { return $p . $f->[shift]; };
+                    for my $i ( 0 .. $#$f )
                     {
-                        $fcc{"l$i"}{"l$j"} = 1;
-                    }
-                }
-            }
-            foreach my $f ( @{ $right_fcc_sig->data } )
-            {
-                for my $i ( 0 .. $#$f )
-                {
-                    for my $j ( 0 .. $#$f )
-                    {
-                        $fcc{"r$i"}{"r$j"} = 1;
+                        for my $j ( 0 .. $#$f )
+                        {
+                            $fcc{ $sub->($i) }{ $sub->($j) } = 1;
+                        }
                     }
                 }
             }
@@ -239,6 +247,7 @@ sub calc_ret_fcc
                     my $r_bool = any { $_ == $LEFT } @{ $r->[$i] };
                     if ( $l_bool xor $r_bool )
                     {
+                        print "discord ret " . ($::mytrace) . "\n";
                         return 0;
                     }
                     if ($l_bool)
@@ -252,6 +261,7 @@ sub calc_ret_fcc
 
             my @nodes = ( map { ; "l$_", "r$_" } 0 .. 7 );
             my %found = ( map { $_ => +{ $_ => 1 } } @nodes );
+            print "Flutter " . ($::mytrace) . "\n";
 
         FIND:
             while (1)
@@ -279,32 +289,28 @@ sub calc_ret_fcc
                     last FIND;
                 }
             }
+            print "PINK " . ($::mytrace) . "\n";
 
             my @ret_fcc;
-            my @ret_nodes = qw(l0 l1 l2 l3 r4 r5 r6 r7);
-            my %ret_nodes_lookup =
-                ( map { $ret_nodes[$_] => $_ } keys @ret_nodes );
-            foreach my $node (@ret_nodes)
+            foreach my $node (@RET_NODES)
             {
                 if ( exists( $found{$node} ) )
                 {
                     my @links = keys( %{ $found{$node} } );
                     push @ret_fcc,
                         [ sort { $a <=> $b }
-                            @ret_nodes_lookup{
-                            grep { exists( $ret_nodes_lookup{$_} ) } @links
+                            @RET_NODES_LOOKUP{
+                            grep { exists( $RET_NODES_LOOKUP{$_} ) } @links
                             } ];
 
-                    foreach my $link (@links)
-                    {
-                        delete( $found{$link} );
-                    }
+                    delete @found{@links};
                 }
             }
             if ( scalar keys %found )
             {
                 return 0;
             }
+            print "ApleJ " . ($::mytrace) . "\n";
 
             return SigData->new( { data => \@ret_fcc } );
 
@@ -352,8 +358,9 @@ sub merge_middle
         );
     };
 
-    my $sum = $left_l + $right_l;
+    my $sum     = $left_l + $right_l;
     my $sum_mid = $mid{$sum} = {};
+    my $total   = Math::BigInt->new('0');
 
     $iter3->(
         $mid{$left_l},
@@ -369,6 +376,7 @@ sub merge_middle
                         $left_r_obj->d,   $right_l_obj->d,
                     );
 
+                    print "twil " . ($::mytrace) . "\n";
                     if ( not $ret_fcc )
                     {
                         return;
@@ -380,7 +388,10 @@ sub merge_middle
                     my $count =
                         DataObj->place_in( $h3, $ret_fcc,
                         Math::BigInt->new('0') );
-                    $count += $left_fcc_obj->records * $right_fcc_obj->records;
+                    my $delta = $left_fcc_obj->count * $right_fcc_obj->count;
+                    $count += $delta;
+                    $total += $delta;
+                    print "crad " . ($::mytrace) . " total = $total\n";
                 }
             );
         }
