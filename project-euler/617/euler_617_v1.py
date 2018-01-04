@@ -40,13 +40,16 @@ def calc_C(N, LOG):
                 return ret
             found = {a0: True}
             a = min(an, N-an)
+            so_far = [a0, a]
             while a > 1:
                 if a in found:
                     ret += 1
+                    print_("N = %d ; e = %d ;" % (N, e), so_far)
                     break
                 found[a] = True
                 an = a ** e
                 a = min(an, N-an)
+                so_far.append(a)
         assert False
     ret = 0
     for e in xrange(2, LOG):
