@@ -61,18 +61,54 @@ def calc_D(N):
     ret = 0
     for e_base in xrange(2, N):
         to_break = False
+        L = {}
         for fact in xrange(1, N):
-            e = e_base**fact
-            for sub_fact in xrange(1, fact+1):
+            e2 = e_base**fact
+            for sub_fact in xrange(0, fact):
+                sub_e = e_base ** sub_fact
+                e = e2
                 max_a = long(N ** (1.0/e))
-                sub_a = max_a ** sub_fact
+                sub_a = max_a ** sub_e
                 while max_a ** e + sub_a > N:
                     max_a -= 1
-                    sub_a = max_a ** sub_fact
+                    sub_a = max_a ** sub_e
                 if max_a <= 1:
-                    to_break = (sub_fact == 1)
+                    to_break = (sub_fact == 0)
                     break
-                r = (fact-sub_fact+1)*(max_a-1)
+                r = 0
+                if e == 2:
+                    print_("Foo")
+                    r += max_a - 1
+                else:
+                    for base_a in xrange(2, max_a+1):
+                        for sf in xrange(0, fact):
+                            se = e_base ** sf
+                            a0 = base_a ** se
+                            n = base_a ** e + base_a ** sub_e
+                            if e_base == 2 and a0 * a0 + a0 == n:
+                                continue
+                            key = (n, a0)
+                            if key in L:
+                                continue
+                            if True:
+                                L[key] = True
+                            a = a0
+                            so_far = [a0]
+                            an = a ** e_base
+                            a = min(an, n-an)
+                            while a not in so_far:
+                                if a < 2:
+                                    raise ValueError("foo")
+                                so_far.append(a)
+                                an = a ** e_base
+                                a = min(an, n-an)
+                            so_far.append(a)
+                            if a == so_far[0]:
+                                # r += len(so_far)-1
+                                r += 1
+                            else:
+                                r += 1
+                            # print_("N = %d ; e = %d ;" % (n, e_base), so_far)
                 print_("count(N=%d, e=%d, factor=%d, sub_fact=%d) = %d" %
                        (N, e_base, fact, sub_fact, r))
                 ret += r
@@ -92,10 +128,11 @@ NL = 1 << L
 
 
 def main():
-    calc_D(10)
-    calc_D(100)
     calc_D(1000)
-    calc_D(1000000)
+    if False:
+        calc_D(10)
+        calc_D(100)
+        calc_D(1000000)
     calc_D(1000000000000)
     calc_D(1000000000000000000)
 
