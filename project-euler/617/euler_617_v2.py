@@ -90,25 +90,8 @@ def calc_D(N):
                             key = (n, a0)
                             if key in L:
                                 continue
-                            if True:
-                                L[key] = True
-                            a = a0
-                            so_far = [a0]
-                            an = a ** e_base
-                            a = min(an, n-an)
-                            while a not in so_far:
-                                if a < 2:
-                                    raise ValueError("foo")
-                                so_far.append(a)
-                                an = a ** e_base
-                                a = min(an, n-an)
-                            so_far.append(a)
-                            if a == so_far[0]:
-                                # r += len(so_far)-1
-                                r += 1
-                            else:
-                                r += 1
-                            # print_("N = %d ; e = %d ;" % (n, e_base), so_far)
+                            L[key] = True
+                            r += 1
                 print_("count(N=%d, e=%d, factor=%d, sub_fact=%d) = %d" %
                        (N, e_base, fact, sub_fact, r))
                 ret += r
