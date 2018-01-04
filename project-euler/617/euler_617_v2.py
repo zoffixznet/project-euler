@@ -59,14 +59,28 @@ def calc_C(N, LOG):
 
 def calc_D(N):
     ret = 0
-    for e in xrange(2, N):
-        max_a = long(N ** (1.0/e))
-        while max_a ** e + max_a > N:
-            max_a -= 1
-        if max_a <= 1:
+    for e_base in xrange(2, N):
+        to_break = False
+        for fact in xrange(1, N):
+            e = e_base**fact
+            for sub_fact in xrange(1, fact+1):
+                max_a = long(N ** (1.0/e))
+                sub_a = max_a ** sub_fact
+                while max_a ** e + sub_a > N:
+                    max_a -= 1
+                    sub_a = max_a ** sub_fact
+                if max_a <= 1:
+                    to_break = (sub_fact == 1)
+                    break
+                r = (fact-sub_fact+1)*(max_a-1)
+                print_("count(N=%d, e=%d, factor=%d, sub_fact=%d) = %d" %
+                       (N, e_base, fact, sub_fact, r))
+                ret += r
+            if to_break:
+                to_break = (fact == 1)
+                break
+        if to_break:
             break
-        print_("count(N=%d, e=%d) = %d" % (N, e, max_a-1))
-        ret += max_a - 1
     print_("D(N=%d) = %d" % (N, ret))
     return ret
 
