@@ -13,7 +13,7 @@ sub run
     my @table = (
         map {
             [ map { int } $_ =~ /([0-9]+)/g ]
-            } split /\r?\n/,
+        } split /\r?\n/,
         $input
     );
 
