@@ -9,21 +9,21 @@ STDOUT->autoflush(1);
 STDERR->autoflush(1);
 
 use Math::MPFR qw(:mpfr);
-Rmpfr_set_default_prec(10000);
+Rmpfr_set_default_prec(30000);
 
 # Math::MPFR->precision(50);
 # Math::MPFR->accuracy(50);
 # my $sum = Math::MPFR->new('0');
-my $eps       = Math::MPFR->new('1e-300');
-my $base      = Math::MPFR->new('1e8');
-my $log_base  = log($base);
+my $eps  = Math::MPFR->new('1e-700');
+my $base = Math::MPFR->new('1e8');
+
+# my $log_base  = log($base);
 my $total_sum = 0;
 for my $n ( 1 .. 30 )
 {
     print STDERR "Evaulating $n\n";
     my $top_pivot = Math::MPFR->new(2)**$n;
     my $exp2      = $top_pivot;
-    my $delta     = Math::MPFR->new('0.00000001');
 
     my $calc = sub {
         my ($x) = @_;
@@ -31,6 +31,14 @@ for my $n ( 1 .. 30 )
         return +( $x**2 ) * ( $x - $exp2 ) + $n;
     };
 
+    my $A = 3;
+    my $B = -2 * $exp2;
+    my $C = 0;
+
+    my $discr        = $B * $B;
+    my $bottom_pivot = -2 * $B / 2 / $A;
+
+=begin foo
     my $bottom_pivot = $top_pivot - $delta;
     my $bottom_val   = $calc->($bottom_pivot);
     while ( $bottom_val > 0 )
@@ -39,6 +47,9 @@ for my $n ( 1 .. 30 )
         $bottom_pivot = $top_pivot - $delta;
         $bottom_val   = $calc->($bottom_pivot);
     }
+
+=end foo
+=cut
 
     my $mid     = ( $top_pivot + $bottom_pivot ) / 2;
     my $mid_val = $calc->($mid);
@@ -57,21 +68,39 @@ for my $n ( 1 .. 30 )
         $mid_val = $calc->($mid);
     }
 
-    my $mid_log   = log($mid) / $log_base;
-    my $log_times = $mid_log * 987654321;
+    my $exp_mod;
 
-    my $val = Rmpfr_init();
-    Rmpfr_floor( $val, $log_times );
+    $exp_mod = sub {
+        my ( $BASE, $EXP, $MOD ) = @_;
 
-    my $diff = $log_times - $val;
+        if ( $EXP == 0 )
+        {
+            return 1;
+        }
+        if ( $EXP == 1 )
+        {
+            return $BASE;
+        }
+        my $rec = $exp_mod->( $BASE, $EXP >> 1, $MOD );
+        my $ret = $rec * $rec;
+        if ( $EXP & 1 )
+        {
+            $ret *= $BASE;
+        }
+        my $R = $ret - int( $ret / $MOD ) * $MOD;
+        if ( $R < 0 )
+        {
+            die "$BASE $EXP $MOD negative!";
+        }
+        return $R;
+    };
 
-    my $modulo = $base**$diff;
-
-    $val = Rmpfr_init();
-    Rmpfr_floor( $val, $modulo );
+    print "mid = $mid\n";
+    my $mid_exp = $exp_mod->( $mid, 987654321, 1e8 );
+    print "mid_exp = $mid_exp\n";
 
     # print "Found f($n) = $val\n";
-    my $as_int = Rmpfr_integer_string( $val, 10, 0 );
+    my $as_int = Rmpfr_integer_string( $mid_exp, 10, 0 );
     print "Found f($n) = $as_int\n";
 
     # print "S($n) = $sum\n";
