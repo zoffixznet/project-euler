@@ -55,17 +55,31 @@ test( [ 14, 22, 77 ], 195 );
 
 my @p = `primesieve -p1 2 5000`;
 chomp @p;
+@p = map { int $_ } @p;
 say $_ for @p;
 my $ret = 0;
 foreach my $pi ( 0 .. $#p )
 {
-    my $p = int $p[$pi];
+    my $p = $p[$pi];
     foreach my $qi ( $pi + 1 .. $#p )
     {
-        my $q = int $p[$qi];
+        my $q        = $p[$qi];
+        my $want_res = $p * $q - $p - $q;
+        my $res      = f( $p, $q );
+        say "f( $p , $q ) = $res ; $want_res";
+        if ( $want_res != $res )
+        {
+            die "Foo";
+        }
+        if ( $qi - $pi > 50 )
+        {
+            last;
+        }
+        next;
+
         foreach my $ri ( $qi + 1 .. $#p )
         {
-            my $r = int $p[$ri];
+            my $r = $p[$ri];
             my $res = f( $p * $q, $p * $r, $q * $r );
             $ret += $res;
             say "Reached [$p,$q,$r] = $res [ sum = $ret ]";
