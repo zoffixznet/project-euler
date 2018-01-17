@@ -9,8 +9,8 @@ sub f
 {
     my @x = @_;
 
-    my $b = '';
-    vec( $b, 0, 1 ) = 1;
+    my $v = '';
+    vec( $v, 0, 1 ) = 1;
 
     my $n      = 0;
     my $last   = 0;
@@ -19,11 +19,11 @@ sub f
 
     while ( $n < $target )
     {
-        if ( vec( $b, $n, 1 ) )
+        if ( vec( $v, $n, 1 ) )
         {
             foreach my $x (@x)
             {
-                vec( $b, $n + $x, 1 ) = 1;
+                vec( $v, $n + $x, 1 ) = 1;
             }
         }
         else
@@ -57,7 +57,7 @@ my @p = `primesieve -p1 2 5000`;
 chomp @p;
 say $_ for @p;
 my $ret = 0;
-foreach my $pi ( 50 .. $#p )
+foreach my $pi ( 0 .. $#p )
 {
     my $p = int $p[$pi];
     foreach my $qi ( $pi + 1 .. $#p )
@@ -68,7 +68,7 @@ foreach my $pi ( 50 .. $#p )
             my $r = int $p[$ri];
             my $res = f( $p * $q, $p * $r, $q * $r );
             $ret += $res;
-            say "Reached [$p,$q,$r] = $res [ sum = $ret]";
+            say "Reached [$p,$q,$r] = $res [ sum = $ret ]";
             if ( $res >= 2 * $p * $q * $r )
             {
                 die "foo!";
@@ -77,3 +77,33 @@ foreach my $pi ( 50 .. $#p )
     }
 }
 say "Result = $ret";
+
+=head1 COPYRIGHT & LICENSE
+
+Copyright 2018 by Shlomi Fish
+
+This program is distributed under the MIT / Expat License:
+L<http://www.opensource.org/licenses/mit-license.php>
+
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+
+=cut
