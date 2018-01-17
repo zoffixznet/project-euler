@@ -63,26 +63,35 @@ foreach my $pi ( 0 .. $#p )
     my $p = $p[$pi];
     foreach my $qi ( $pi + 1 .. $#p )
     {
-        my $q        = $p[$qi];
-        my $want_res = $p * $q - $p - $q;
-        my $res      = f( $p, $q );
-        say "f( $p , $q ) = $res ; $want_res";
-        if ( $want_res != $res )
+        my $q = $p[$qi];
+        if (0)
         {
-            die "Foo";
+            my $want_res = $p * $q - $p - $q;
+            my $res = f( $p, $q );
+            say "f( $p , $q ) = $res ; $want_res";
+            if ( $want_res != $res )
+            {
+                die "Foo";
+            }
+            if ( $qi - $pi > 50 )
+            {
+                last;
+            }
+
+            # next;
         }
-        if ( $qi - $pi > 50 )
-        {
-            last;
-        }
-        next;
 
         foreach my $ri ( $qi + 1 .. $#p )
         {
-            my $r = $p[$ri];
-            my $res = f( $p * $q, $p * $r, $q * $r );
+            my $r        = $p[$ri];
+            my $want_res = $p * $q * $r - $p * ( $q + $r );
+            my $res      = f( $p * $q, $p * $r, $q * $r );
             $ret += $res;
-            say "Reached [$p,$q,$r] = $res [ sum = $ret ]";
+            say "Reached [$p,$q,$r] = $res ; $want_res [ sum = $ret ]";
+            if ( $want_res > $res )
+            {
+                die "Flut";
+            }
             if ( $res >= 2 * $p * $q * $r )
             {
                 die "foo!";
