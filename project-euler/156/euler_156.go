@@ -2,22 +2,35 @@ package main
 
 /*
 
-http://projecteuler.net/problem=174
+http://projecteuler.net/problem=156
 
-[QUOTE]
+=head1 COPYRIGHT & LICENSE
 
-We shall define a square lamina to be a square outline with a square "hole" so that the shape possesses vertical and horizontal symmetry.
+Copyright 2017 by Shlomi Fish
 
-Given eight tiles it is possible to form a lamina in only one way: 3x3 square with a 1x1 hole in the middle. However, using thirty-two tiles it is possible to form two distinct laminae.
+This program is distributed under the MIT / Expat License:
+L<http://www.opensource.org/licenses/mit-license.php>
 
-If t represents the number of tiles used, we shall say that t = 8 is type L(1) and t = 32 is type L(2).
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions:
 
-Let N(n) be the number of t ≤ 1000000 such that t is type L(n); for example, N(15) = 832.
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
 
-What is ∑ N(n) for 1 ≤ n ≤ 10?
-
-[/QUOTE]
-
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
 */
 
 import (
