@@ -1,3 +1,5 @@
+# Copyright by Shlomi Fish, 2018 under the Expat licence
+# https://opensource.org/licenses/mit-license.php
 all: 423.exe 423-debug.exe primes.txt
 
 423.exe: euler_423_v1.cpp

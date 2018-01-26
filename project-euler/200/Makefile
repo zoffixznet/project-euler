@@ -1,4 +1,6 @@
+# Copyright by Shlomi Fish, 2018 under the Expat licence
+# https://opensource.org/licenses/mit-license.php
 all: primes.txt
 
 primes.txt:
-	primes 2 4294967295 > $@
+	primesieve -p1 2 4294967295 > $@

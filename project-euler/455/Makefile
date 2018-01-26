@@ -1,3 +1,5 @@
+# Copyright by Shlomi Fish, 2018 under the Expat licence
+# https://opensource.org/licenses/mit-license.php
 all: rainbow_table.txt 455.exe 455-v2.exe 455-v3.exe 455-v4.exe
 
 rainbow_table.txt: euler-455-v4-rainbow-tables-test.pl

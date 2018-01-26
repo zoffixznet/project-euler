@@ -1,3 +1,5 @@
+# Copyright by Shlomi Fish, 2018 under the Expat licence
+# https://opensource.org/licenses/mit-license.php
 all: 154.exe 154.clang.exe 154-debug.clang.exe
 
 154.exe: euler_154_v1.c

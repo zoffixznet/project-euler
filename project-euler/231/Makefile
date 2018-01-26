@@ -1,3 +1,5 @@
+# Copyright by Shlomi Fish, 2018 under the Expat licence
+# https://opensource.org/licenses/mit-license.php
 all: factors-2-to-5M.txt factors-15M-to-20M.txt
 
 factors-2-to-5M.txt:

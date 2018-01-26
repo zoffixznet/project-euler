@@ -1,3 +1,5 @@
+# Copyright by Shlomi Fish, 2018 under the Expat licence
+# https://opensource.org/licenses/mit-license.php
 TARGETS = haskell_mine haskell_zeroth c_mine c_mine_micro_opt c_mine_half
 
 all: $(TARGETS)

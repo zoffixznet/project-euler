@@ -1,3 +1,5 @@
+# Copyright by Shlomi Fish, 2018 under the Expat licence
+# https://opensource.org/licenses/mit-license.php
 all: 141.exe 141-2.exe 141-2-debug.exe factors.txt
 
 141.exe: euler_141_v1.c

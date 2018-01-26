@@ -1,3 +1,5 @@
+# Copyright by Shlomi Fish, 2018 under the Expat licence
+# https://opensource.org/licenses/mit-license.php
 all: euler_578_v1.exe euler_578_v1-debug.exe
 
 CPPFLAGS = -std=gnu++11

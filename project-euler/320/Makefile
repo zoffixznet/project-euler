@@ -1,3 +1,5 @@
+# Copyright by Shlomi Fish, 2018 under the Expat licence
+# https://opensource.org/licenses/mit-license.php
 FFILE = factors-2-to-1000000.txt
 
 all: $(FFILE) e320-debug.exe e320-prod.exe

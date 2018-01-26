@@ -1,3 +1,5 @@
+# Copyright by Shlomi Fish, 2018 under the Expat licence
+# https://opensource.org/licenses/mit-license.php
 all: e305-debug.exe e305-prod.exe buf.txt
 
 buf.txt:

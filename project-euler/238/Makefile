@@ -1,3 +1,5 @@
+# Copyright by Shlomi Fish, 2018 under the Expat licence
+# https://opensource.org/licenses/mit-license.php
 all: input.txt euler_238_v1.exe euler_238_v1-debug.exe
 
 SOURCES = euler_238_v1.cpp

@@ -1,3 +1,5 @@
+# Copyright by Shlomi Fish, 2018 under the Expat licence
+# https://opensource.org/licenses/mit-license.php
 all: e521-debug.exe e521-prod.exe e521-v3-prod.exe e521-v4-prod.exe genp.exe
 
 e521-debug.exe: euler_521_v2.cpp

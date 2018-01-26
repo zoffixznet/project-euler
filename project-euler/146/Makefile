@@ -1,3 +1,6 @@
+# Copyright by Shlomi Fish, 2018 under the Expat licence
+# https://opensource.org/licenses/mit-license.php
+
 all: db.txt db-c.txt primes-c.txt 146-v1.exe 146-v1-debug.exe 146-v2.exe
 
 db.txt: euler-146-analysis-1.pl

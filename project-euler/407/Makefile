@@ -1,3 +1,6 @@
+# Copyright by Shlomi Fish, 2018 under the Expat licence
+# https://opensource.org/licenses/mit-license.php
+
 all: e407-debug.exe e407-prod.exe
 
 e407-debug.exe: euler_407_v1.cpp

@@ -1,3 +1,6 @@
+# Copyright by Shlomi Fish, 2018 under the Expat licence
+# https://opensource.org/licenses/mit-license.php
+
 all: euler_581_v2.exe euler_581_v2-debug.exe
 
 SOURCES = euler_581_v2.cpp

@@ -1,3 +1,5 @@
+# Copyright by Shlomi Fish, 2018 under the Expat licence
+# https://opensource.org/licenses/mit-license.php
 all: e485-debug.exe e485-prod.exe
 
 e485-debug.exe: euler_485_v1.cpp
