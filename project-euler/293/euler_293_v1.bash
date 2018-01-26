@@ -1,4 +1,8 @@
 #!/bin/bash
+
+# Copyright by Shlomi Fish, 2018 under the Expat licence
+# https://opensource.org/licenses/mit-license.php
+
 # primes 2 | perl -nalE 'BEGIN {$p = 1;}; say "$_ ", (1_000_000_000 - ($p *= $_));'
 export PRIMES="$(primes 2 23)"
 

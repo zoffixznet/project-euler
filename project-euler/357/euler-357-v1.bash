@@ -1,4 +1,8 @@
 #!/bin/bash
+
+# Copyright by Shlomi Fish, 2018 under the Expat licence
+# https://opensource.org/licenses/mit-license.php
+
 MAX="$(perl -E 'print 100_000_000')"
 if ! test -e factors.txt ; then
     primes 2 "$MAX" | tee primes.txt | perl -lane 'print $_ - 1' | xargs factor > factors.txt

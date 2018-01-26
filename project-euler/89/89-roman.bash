@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Copyright by Shlomi Fish, 2018 under the Expat licence
+# https://opensource.org/licenses/mit-license.php
+
 count()
 {
     perl -0777 -ln -E '$count = tr/[A-Z]//d; say $count'

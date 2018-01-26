@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Copyright by Shlomi Fish, 2018 under the Expat licence
+# https://opensource.org/licenses/mit-license.php
+
 summarize()
 {
     perl -lan -Mbigint -E '$s += $_; END{ say $s; }'
