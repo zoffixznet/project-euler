@@ -1,3 +1,6 @@
+# Copyright by Shlomi Fish, 2018 under the Expat licence
+# https://opensource.org/licenses/mit-license.php
+
 Cache = { 1 => 0 }
 
 def num_distinct_factors_helper(n, start_from)
@@ -26,4 +29,3 @@ for n in 14 .. 100_000 do
         exit
     end
 end
-

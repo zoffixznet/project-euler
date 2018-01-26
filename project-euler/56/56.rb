@@ -1,3 +1,6 @@
+# Copyright by Shlomi Fish, 2018 under the Expat licence
+# https://opensource.org/licenses/mit-license.php
+
 class Integer
     def digit_sum
         return self.to_s.split(//s).reduce(0) {|a,b| a + b.to_i}
