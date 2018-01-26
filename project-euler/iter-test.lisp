@@ -1,5 +1,7 @@
-; This aims to be a solution for:
-; http://projecteuler.net/index.php?section=problems&id=5
+; Copyright by Shlomi Fish, 2018 under the Expat licence
+; https://opensource.org/licenses/mit-license.php
+
+; This aims to test iterate
 (asdf:oos 'asdf:load-op :iterate)
 (use-package :iterate)
 

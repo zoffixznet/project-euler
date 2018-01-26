@@ -1,3 +1,6 @@
+; Copyright by Shlomi Fish, 2018 under the Expat licence
+; https://opensource.org/licenses/mit-license.php
+
 ; This aims to be a solution for:
 ; http://projecteuler.net/problem=23
 (asdf:oos 'asdf:load-op :iterate)

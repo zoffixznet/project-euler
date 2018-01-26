@@ -1,3 +1,6 @@
+; Copyright by Shlomi Fish, 2018 under the Expat licence
+; https://opensource.org/licenses/mit-license.php
+
 ;;; n*(3*n-1) /2 = 1.5n^2 - 0.5n - P = 0
 ;;;                 3n^2 - n - 2*P = 0
 ;;; n = [ 1 +/- sqrt(1-
@@ -46,4 +49,3 @@
       (let ((Hn (* n (1- (* n 2)))))
            (if (and (is-pentagonal Hn) (is-triangle Hn))
              (format t "Number = ~A~%" Hn))))
-

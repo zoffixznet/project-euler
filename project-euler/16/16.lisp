@@ -1,3 +1,6 @@
+; Copyright by Shlomi Fish, 2018 under the Expat licence
+; https://opensource.org/licenses/mit-license.php
+
 (asdf:oos 'asdf:load-op :iterate)
 (use-package :iterate)
 
@@ -11,4 +14,3 @@
 
 (defun myfind ()
   (digits-sum (expt 2 1000)))
-
