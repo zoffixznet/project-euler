@@ -1,3 +1,6 @@
+-- Copyright by Shlomi Fish, 2018 under the Expat licence
+-- https://opensource.org/licenses/mit-license.php
+
 digits_sum 0 = 0
 digits_sum n = (n `mod` 10) + (digits_sum (n `div` 10))
 
