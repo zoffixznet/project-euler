@@ -41,12 +41,14 @@ def it(p, n, c, last):
         global s
         s += 1000000000000000000000000000000 / n
         return
+    r = p - 1
+    D = P[p]
     for d in xrange(last):
-        it(p-1, n+P[p][d], True, d)
+        it(r, n+D[d], True, d)
     if c:
-        it(p-1, n+P[p][last], False, last)
+        it(r, n+D[last], False, last)
     for d in xrange(last+1, 10):
-        it(p-1, n+P[p][d], True, d)
+        it(r, n+D[d], True, d)
 
 
 def main():
