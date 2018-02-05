@@ -33,31 +33,28 @@ P = [[x for x in xrange(10)]]
 for x in range(1000):
     P.append([x * P[-1][1] * 10 for x in xrange(10)])
 
+s = 0
+
 
 def it(L, p, n, cnt, last):
     if p == -1:
-        yield n
+        global s
+        s += 1000000000000000000000000000000 / n
         return
     for d in xrange(last):
-        for x in it(L, p-1, n+P[p][d], 1, d):
-            yield x
+        it(L, p-1, n+P[p][d], 1, d)
     if cnt < 2:
-        for x in it(L, p-1, n+P[p][last], cnt + 1, last):
-            yield x
+        it(L, p-1, n+P[p][last], cnt + 1, last)
     for d in xrange(last+1, 10):
-        for x in it(L, p-1, n+P[p][d], 1, d):
-            yield x
+        it(L, p-1, n+P[p][d], 1, d)
 
 
 def main():
-    n = 1
     # total = BigFloat('0')
-    s = 0
     L = 1
     while True:
         for d in xrange(1, 10):
-            for n in it(L, L-2, P[L-1][d], 1, d):
-                s += 1000000000000000000000000000000 / n
+            it(L, L-2, P[L-1][d], 1, d)
             print(("n=%030d t = %d") % (L, s))
             sys.stdout.flush()
         L += 1
