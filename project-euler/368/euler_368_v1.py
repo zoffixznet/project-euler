@@ -31,6 +31,9 @@ if sys.version_info > (3,):
 
 
 def main():
+    P = [1]
+    for x in range(40):
+        P.append(P[-1] * 10)
     r = re.compile('(000|111|222|333|444|555|666|777|888|999)')
     n = 1
     # total = BigFloat('0')
@@ -41,7 +44,7 @@ def main():
         n_s = str(n)
         m = r.search(n_s)
         if m:
-            n += 10 ** (len(n_s) - m.end(1))
+            n += P[len(n_s) - m.end(1)]
         else:
             # total += BigFloat('1') / n
             total += 1000000000000000000000000000000 / n
