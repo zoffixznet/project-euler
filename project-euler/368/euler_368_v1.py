@@ -36,17 +36,17 @@ for x in range(1000):
 s = 0
 
 
-def it(L, p, n, cnt, last):
+def it(L, p, n, c, last):
     if p == -1:
         global s
         s += 1000000000000000000000000000000 / n
         return
     for d in xrange(last):
-        it(L, p-1, n+P[p][d], 1, d)
-    if cnt < 2:
-        it(L, p-1, n+P[p][last], cnt + 1, last)
+        it(L, p-1, n+P[p][d], True, d)
+    if c:
+        it(L, p-1, n+P[p][last], False, last)
     for d in xrange(last+1, 10):
-        it(L, p-1, n+P[p][d], 1, d)
+        it(L, p-1, n+P[p][d], True, d)
 
 
 def main():
@@ -54,7 +54,7 @@ def main():
     L = 1
     while True:
         for d in xrange(1, 10):
-            it(L, L-2, P[L-1][d], 1, d)
+            it(L, L-2, P[L-1][d], True, d)
             print(("n=%030d t = %d") % (L, s))
             sys.stdout.flush()
         L += 1
