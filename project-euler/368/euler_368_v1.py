@@ -24,35 +24,43 @@
 
 
 import sys
-import re
 
 if sys.version_info > (3,):
     long = int
+    xrange = range
+
+P = [[x for x in xrange(10)]]
+for x in range(1000):
+    P.append([x * P[-1][1] * 10 for x in xrange(10)])
+
+
+def it(L, p, n, cnt, last):
+    if p == -1:
+        yield n
+        return
+    for d in xrange(last):
+        for x in it(L, p-1, n+P[p][d], 1, d):
+            yield x
+    if cnt < 2:
+        for x in it(L, p-1, n+P[p][last], cnt + 1, last):
+            yield x
+    for d in xrange(last+1, 10):
+        for x in it(L, p-1, n+P[p][d], 1, d):
+            yield x
 
 
 def main():
-    P = [1]
-    for x in range(40):
-        P.append(P[-1] * 10)
-    r = re.compile('(000|111|222|333|444|555|666|777|888|999)')
     n = 1
     # total = BigFloat('0')
-    total = 0
-    step = 100000
-    checkpoint = step
+    s = 0
+    L = 1
     while True:
-        n_s = str(n)
-        m = r.search(n_s)
-        if m:
-            n += P[len(n_s) - m.end(1)]
-        else:
-            # total += BigFloat('1') / n
-            total += 1000000000000000000000000000000 / n
-            while n > checkpoint:
-                print(("n=%030d t = %d") % (n, total))
-                sys.stdout.flush()
-                checkpoint += step
-            n += 1
+        for d in xrange(1, 10):
+            for n in it(L, L-2, P[L-1][d], 1, d):
+                s += 1000000000000000000000000000000 / n
+            print(("n=%030d t = %d") % (L, s))
+            sys.stdout.flush()
+        L += 1
 
 
 main()
