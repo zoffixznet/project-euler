@@ -37,21 +37,19 @@ def calc_S(n, token='foo'):
     if len(primes) == 0:
         return 0
 
-    pd = []
+    d = []
     r = 1
     for m in range(n+1):
         if m & 1 == 0:
-            pd.append(r)
+            d.append(r)
             r = ((r << 1) % BASE)
         else:
-            pd.append(0)
+            d.append(0)
     for p in primes[1:]:
         print_(token, p)
-        d = []
-        for m, r in enumerate(pd):
-            d.append(r if m < p else ((r + p * d[m-p]) % BASE))
-        pd = d
-    return pd
+        for m in range(p, n+1):
+            d[m] = ((d[m] + p * d[m-p]) % BASE)
+    return d
 
 
 def main():
