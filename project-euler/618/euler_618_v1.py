@@ -32,22 +32,23 @@ def calc_S(n):
     out = check_output(["primesieve", str(n), "-p1"])
     primes = [int(x) for x in out.decode('ascii').split("\n") if len(x)]
 
-    def rec(i, mysum, myprod):
+    def rec(i, mysum):
         p = primes[i]
         if i == 0:
             if mysum % p == 0:
-                r = myprod * (p ** (mysum // p))
+                r = (p ** (mysum // p))
                 print_(r)
                 return r
             return 0
         else:
             ret = 0
+            mult = 1
             while mysum >= 0:
-                ret += rec(i-1, mysum, myprod)
+                ret += mult * rec(i-1, mysum)
                 mysum -= p
-                myprod *= p
+                mult *= p
             return ret
-    return rec(len(primes)-1, n, 1)
+    return rec(len(primes)-1, n)
 
 
 def main():
