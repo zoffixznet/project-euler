@@ -44,13 +44,14 @@ def calc_S(n):
                 return r
             return 0
         else:
-            ret = 0
-            mult = 1
-            while mysum >= 0:
-                ret += mult * rec(i-1, mysum)
-                mysum -= p
-                mult *= p
-            return ret
+            prev_ret = ret = 0
+            sub = mysum % p
+            while sub <= mysum:
+                ret += rec(i-1, sub)
+                prev_ret = ret
+                ret *= p
+                sub += p
+            return prev_ret
     return rec(len(primes)-1, n)
 
 
