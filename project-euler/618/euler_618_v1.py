@@ -50,11 +50,10 @@ def calc_S(n, token='foo'):
         print_(token, i, p)
         d = []
         for m in range(n+1):
-            ret = pd[m]
+            r = pd[m]
             if m >= p:
-                ret += p * d[m-p]
-            ret %= BASE
-            d.append(ret)
+                r = ((r + p * d[m-p]) % BASE)
+            d.append(r)
         pd = d
     return pd
 
