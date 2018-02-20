@@ -35,6 +35,8 @@ def calc_S(n):
     if len(primes) == 0:
         return 0
 
+    caches = [{} for _ in primes]
+
     def rec(i, mysum):
         p = primes[i]
         if i == 0:
@@ -44,6 +46,10 @@ def calc_S(n):
                 return r
             return 0
         else:
+            d = caches[i]
+            if mysum in d:
+                return d[mysum]
+
             prev_ret = ret = 0
             sub = mysum % p
             while sub <= mysum:
@@ -51,6 +57,7 @@ def calc_S(n):
                 prev_ret = ret
                 ret *= p
                 sub += p
+            d[mysum] = prev_ret
             return prev_ret
     return rec(len(primes)-1, n)
 
