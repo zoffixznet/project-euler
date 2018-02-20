@@ -23,15 +23,13 @@
 # SOFTWARE.
 
 
-import sys
 from six import print_
 from subprocess import check_output
 from six.moves import range
 
-sys.setrecursionlimit(100000)
 BASE = 1000000000
 
-caches = [{} for _ in range(10000)]
+caches = [[] for _ in range(10000)]
 
 
 def calc_S(n, token='foo'):
@@ -44,26 +42,25 @@ def calc_S(n, token='foo'):
     for i in range(len(primes)):
         print_(token, i)
         d = caches[i]
+        j = i-1
         if i == 0:
             r = 1
             for m in range(n+1):
                 if m & 1 == 0:
-                    d[m] = r
+                    d.append(r)
                     r = ((r << 1) % BASE)
                 else:
-                    d[m] = 0
+                    d.append(0)
         else:
-            pd = caches[i-1]
+            pd = caches[j]
             p = primes[i]
             for m in range(n+1):
                 ret = pd[m]
                 if m >= p:
                     ret += p * d[m-p]
                 ret %= BASE
-                d[m] = ret
-        j = i-1
-        if j >= 0:
-            caches[j] = {}
+                d.append(ret)
+            caches[j] = []
     return caches[len(primes)-1]
 
 
