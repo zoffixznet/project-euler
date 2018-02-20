@@ -49,11 +49,8 @@ def calc_S(n, token='foo'):
         p = primes[i]
         print_(token, i, p)
         d = []
-        for m in range(n+1):
-            r = pd[m]
-            if m >= p:
-                r = ((r + p * d[m-p]) % BASE)
-            d.append(r)
+        for m, r in enumerate(pd):
+            d.append(r if m < p else ((r + p * d[m-p]) % BASE))
         pd = d
     return pd
 
