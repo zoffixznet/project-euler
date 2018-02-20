@@ -72,7 +72,7 @@ def calc_S(n, token='foo'):
         else:
             for m in range(n+1):
                 rec(i, m)
-        j = i-2
+        j = i-1
         if j >= 0:
             caches[j] = {}
     return rec(len(primes)-1, n)
