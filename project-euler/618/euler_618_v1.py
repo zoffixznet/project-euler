@@ -58,8 +58,10 @@ def calc_S(n, token='foo'):
 def main():
     ret = 0
     a, b = 1, 1
+    Fk = []
     for k in range(2, 24+1):
         # ret += calc_S(b, str(k))
+        Fk.append(b)
         a, b = b, a+b
     ret = calc_S(a, str(a))
     assert ret[8] == 49
@@ -67,7 +69,8 @@ def main():
     assert ret[2] == 2
     assert ret[3] == 3
     assert ret[5] == 11
-    print_("ret = %d ; %09d" % (ret[a], ret[a] % BASE))
+    r = sum(ret[x] for x in Fk)
+    print_("ret = %d ; %09d" % (r, r % BASE))
 
 
 main()
