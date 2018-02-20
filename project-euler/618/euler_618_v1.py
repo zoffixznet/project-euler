@@ -34,6 +34,7 @@ def calc_S(n):
 
     if len(primes) == 0:
         return 0
+
     def rec(i, mysum):
         p = primes[i]
         if i == 0:
