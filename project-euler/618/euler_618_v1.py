@@ -64,24 +64,22 @@ def calc_S(n, token='foo'):
         j = i-1
         if j >= 0:
             caches[j] = {}
-    return caches[len(primes)-1][n]
+    return caches[len(primes)-1]
 
 
 def main():
-    assert calc_S(8) == 49
-    assert calc_S(1) == 0
-    assert calc_S(2) == 2
-    assert calc_S(3) == 3
-    assert calc_S(5) == 11
-    print_(calc_S(8))
-
     ret = 0
     a, b = 1, 1
     for k in range(2, 24+1):
-        ret += calc_S(b, str(k))
+        # ret += calc_S(b, str(k))
         a, b = b, a+b
-
-    print_("ret = %d ; %09d" % (ret, ret % BASE))
+    ret = calc_S(a, str(a))
+    assert ret[8] == 49
+    assert ret[1] == 0
+    assert ret[2] == 2
+    assert ret[3] == 3
+    assert ret[5] == 11
+    print_("ret = %d ; %09d" % (ret[a], ret[a] % BASE))
 
 
 main()
