@@ -23,42 +23,44 @@
 # SOFTWARE.
 
 
+import sys
 from six import print_
 from subprocess import check_output
-# from six.moves import range
+from six.moves import range
+
+sys.setrecursionlimit(100000)
+BASE = 1000000000
+
+caches = [{} for _ in range(10000)]
 
 
-def calc_S(n):
+def calc_S(n, token='foo'):
     out = check_output(["primesieve", str(n), "-p1"])
     primes = [int(x) for x in out.decode('ascii').split("\n") if len(x)]
 
     if len(primes) == 0:
         return 0
 
-    caches = [{} for _ in primes]
-
     def rec(i, mysum):
+        if mysum == 0:
+            return 1
         p = primes[i]
         if i == 0:
             if mysum % p == 0:
-                r = (p ** (mysum // p))
-                print_(r)
+                r = (p ** (mysum // p)) % BASE
+                print_(token, r)
                 return r
             return 0
         else:
             d = caches[i]
             if mysum in d:
                 return d[mysum]
-
-            prev_ret = ret = 0
-            sub = mysum % p
-            while sub <= mysum:
-                ret += rec(i-1, sub)
-                prev_ret = ret
-                ret *= p
-                sub += p
-            d[mysum] = prev_ret
-            return prev_ret
+            ret = rec(i-1, mysum)
+            if mysum >= p:
+                ret += p * rec(i, mysum-p)
+            ret %= BASE
+            d[mysum] = ret
+            return ret
     return rec(len(primes)-1, n)
 
 
@@ -69,6 +71,14 @@ def main():
     assert calc_S(3) == 3
     assert calc_S(5) == 11
     print_(calc_S(8))
+
+    ret = 0
+    a, b = 1, 1
+    for k in range(2, 24+1):
+        ret += calc_S(b, str(k))
+        a, b = b, a+b
+
+    print_("ret = %d ; %09d" % (ret, ret % BASE))
 
 
 main()
