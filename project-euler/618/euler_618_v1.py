@@ -23,18 +23,14 @@
 # SOFTWARE.
 
 
-import sys
 from six import print_
 from subprocess import check_output
 # from six.moves import range
 
-if sys.version_info > (3,):
-    long = int
-
 
 def calc_S(n):
     out = check_output(["primesieve", str(n), "-p1"])
-    primes = [long(x) for x in out.decode('ascii').split("\n") if len(x)]
+    primes = [int(x) for x in out.decode('ascii').split("\n") if len(x)]
 
     def rec(i, mysum, myprod):
         p = primes[i]

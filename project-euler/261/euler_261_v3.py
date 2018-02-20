@@ -58,19 +58,19 @@ def find_pivots():
         ddk = kddk
         kdk += kddk
         for m in xrange(2, k+1):
-            while s_n > ss_k:
+            while s_n > ss_k and dm > ldm:
                 sm -= dm
                 dm -= 2
                 s_n += sm - nsq
                 dnsq -= 2
                 nsq -= dnsq
-            if dm <= ldm:
-                break
             if s_n == ss_k:
                 print("Found %d" % k)
-                print(">>> S[ %d .. %d ; %d] = S[ %d .. %d ; %d]" %
-                      (k-m+1, k, m, ((dm + 1) >> 1), ((dnsq - 1) >> 1), m-1))
+                print(">>> S[ %d .. %d ; %d] = S[ %d .. %d ; %d] ( %d )" %
+                      (k-m+1, k, m, ((dm + 1) >> 1), ((dnsq - 1) >> 1), m-1,
+                       ((dm + 1) >> 1) - k))
                 sys.stdout.flush()
+            if dm <= ldm:
                 break
             ddk -= 2
             dk -= ddk
