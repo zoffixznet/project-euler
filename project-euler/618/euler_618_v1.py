@@ -32,6 +32,8 @@ def calc_S(n):
     out = check_output(["primesieve", str(n), "-p1"])
     primes = [int(x) for x in out.decode('ascii').split("\n") if len(x)]
 
+    if len(primes) == 0:
+        return 0
     def rec(i, mysum):
         p = primes[i]
         if i == 0:
@@ -52,6 +54,11 @@ def calc_S(n):
 
 
 def main():
+    assert calc_S(8) == 49
+    assert calc_S(1) == 0
+    assert calc_S(2) == 2
+    assert calc_S(3) == 3
+    assert calc_S(5) == 11
     print_(calc_S(8))
 
 
