@@ -38,27 +38,25 @@ def calc_S(n, token='foo'):
         return 0
 
     pd = []
-    for i in range(len(primes)):
+    r = 1
+    for m in range(n+1):
+        if m & 1 == 0:
+            pd.append(r)
+            r = ((r << 1) % BASE)
+        else:
+            pd.append(0)
+    for i in range(1, len(primes)):
         p = primes[i]
         print_(token, i, p)
         d = []
-        if i == 0:
-            r = 1
-            for m in range(n+1):
-                if m & 1 == 0:
-                    d.append(r)
-                    r = ((r << 1) % BASE)
-                else:
-                    d.append(0)
-        else:
-            for m in range(n+1):
-                ret = pd[m]
-                if m >= p:
-                    ret += p * d[m-p]
-                ret %= BASE
-                d.append(ret)
+        for m in range(n+1):
+            ret = pd[m]
+            if m >= p:
+                ret += p * d[m-p]
+            ret %= BASE
+            d.append(ret)
         pd = d
-    return d
+    return pd
 
 
 def main():
