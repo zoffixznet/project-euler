@@ -39,7 +39,8 @@ def calc_S(n, token='foo'):
 
     pd = []
     for i in range(len(primes)):
-        print_(token, i)
+        p = primes[i]
+        print_(token, i, p)
         d = []
         if i == 0:
             r = 1
@@ -50,7 +51,6 @@ def calc_S(n, token='foo'):
                 else:
                     d.append(0)
         else:
-            p = primes[i]
             for m in range(n+1):
                 ret = pd[m]
                 if m >= p:
