@@ -41,41 +41,30 @@ def calc_S(n, token='foo'):
     if len(primes) == 0:
         return 0
 
-    def rec(i, mysum):
-        if mysum == 0:
-            return 1
-        p = primes[i]
-        if i == 0:
-            r = caches[i][mysum]
-            print_(token, r)
-            return r
-        else:
-            d = caches[i]
-            if mysum in d:
-                return d[mysum]
-            ret = rec(i-1, mysum)
-            if mysum >= p:
-                ret += p * rec(i, mysum-p)
-            ret %= BASE
-            d[mysum] = ret
-            return ret
-
     for i in range(len(primes)):
+        print_(token, i)
+        d = caches[i]
         if i == 0:
             r = 1
             for m in range(n+1):
                 if m & 1 == 0:
-                    caches[i][m] = r
+                    d[m] = r
                     r = ((r << 1) % BASE)
                 else:
-                    caches[i][m] = 0
+                    d[m] = 0
         else:
+            pd = caches[i-1]
+            p = primes[i]
             for m in range(n+1):
-                rec(i, m)
+                ret = pd[m]
+                if m >= p:
+                    ret += p * d[m-p]
+                ret %= BASE
+                d[m] = ret
         j = i-1
         if j >= 0:
             caches[j] = {}
-    return rec(len(primes)-1, n)
+    return caches[len(primes)-1][n]
 
 
 def main():
