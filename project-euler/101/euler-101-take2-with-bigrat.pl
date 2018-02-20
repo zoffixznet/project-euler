@@ -86,7 +86,7 @@ sub eye
                                         $_ == $r
                                         ? Math::BigRat->new(1)
                                         : Math::BigRat->new(0)
-                                    )
+                                        )
                                 } ( 0 .. $size - 1 )
                             ]
                         }
