@@ -559,7 +559,7 @@ sub calc_S
     my $r = 1;
     for my $m ( 0 .. $n )
     {
-        if ( $m & 1 == 0 )
+        if ( ( $m & 1 ) == 0 )
         {
             push @d, $r;
             $r = ( ( $r << 1 ) % $BASE );
