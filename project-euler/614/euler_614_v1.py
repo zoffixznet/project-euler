@@ -29,16 +29,20 @@ import struct
 
 BASE = 1000000000 + 7
 
-
+C = {}
 def lookup_pp(n, k):
-    with open("./cache/%d" % n) as f:
-        f.seek(k*4, 0)
-        return struct.unpack('i', f.read(4))[0]
+    s = n + k
+    return C[s][(n - k) >> 1]
 
 
 def dump_pp(n, vals):
-    with open("./cache/%d" % n, 'w') as f:
-        f.write(''.join(struct.pack('i', x) for x in vals))
+    for k, v in enumerate(vals):
+        s = n + k
+        if s not in C:
+            C[s] = []
+        # print_(s, n, k, len(C[s].keys()))
+        C[s].append(v)
+        # C[s][k] = v
 
 
 def calc_Ps(max_):
@@ -64,6 +68,7 @@ def calc_Ps(max_):
             delta = 1
         pp.append((pp[-1] + delta) % BASE)
         dump_pp(n, pp)
+        del C[n-1]
         ret.append(pp[-1])
     return ret
 
