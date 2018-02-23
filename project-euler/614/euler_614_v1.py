@@ -25,6 +25,7 @@
 
 from six import print_
 from six.moves import range
+import struct
 
 BASE = 1000000000 + 7
 
@@ -40,9 +41,10 @@ def dump_pp(n, vals):
     for k, v in enumerate(vals):
         s = n + k
         if s not in C:
-            C[s] = []
+            C[s] = ''
         # print_(s, n, k, len(C[s].keys()))
-        C[s].append(v)
+        # C[s].append(v)
+        C[s] += struct.pack('i', v)
         # C[s][k] = v
 
 
@@ -61,7 +63,9 @@ def calc_Ps(max_):
         del C[n - 1]
         t = ((n+1) >> 1) - 1
         for k in range(1, lim):
-            pp.append((pp[-1] + (0 if ((k & 3) == 2) else q[t])) % BASE)
+            pp.append((pp[-1] +
+                       (0 if ((k & 3) == 2)
+                        else struct.unpack('i', q[t*4:t*4+4])[0])) % BASE)
             t -= 1
         for k in range(lim, n):
             pp.append((pp[-1] + (0 if ((k & 3) == 2) else ret[n-k])) % BASE)
