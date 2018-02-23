@@ -67,12 +67,12 @@ def calc_Ps(max_):
         del C[n - 1]
         t = ((n+1) >> 1) - 1
         for k in range(1, lim):
-            pp.append((pp[-1] +
-                       (0 if ((k & 3) == 2)
-                           else q[t])) % BASE)
+            pp.append((pp[-1] + (0 if ((k & 3) == 2) else q[t])) % BASE)
             t -= 1
+        t = n - lim
         for k in range(lim, n):
-            pp.append((pp[-1] + (0 if ((k & 3) == 2) else ret[n-k])) % BASE)
+            pp.append((pp[-1] + (0 if ((k & 3) == 2) else ret[t])) % BASE)
+            t -= 1
         if ((n & 3) == 2):
             delta = 0
         else:
