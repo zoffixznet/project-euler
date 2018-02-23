@@ -39,6 +39,8 @@ def lookup_pp(n, k):
 
 
 def dump_pp(n, kk, v):
+    if v == 0:
+        return
     s = n + kk
     if s not in C:
         C[s] = np.zeros((s >> 1)+2, dtype=np.int32)
@@ -46,27 +48,39 @@ def dump_pp(n, kk, v):
     # C[s].append(v)
     # C[s] += struct.pack('I', v)
     t = (1 + kk)
-    C[s][t] = (0 if ((t & 3) == 2) else v)
+    if ((t & 3) != 2):
+        C[s][t] = v
 
 
 def calc_Ps(max_):
     ret = [0, 1]
-    dump_pp(0, 0, 0)
-    dump_pp(1, 0, 0)
+    # dump_pp(0, 0, 0)
+    # dump_pp(1, 0, 0)
     dump_pp(1, 1, 1)
+    # dump_pp(2, 1, 0)
+    start = 2
+    m = 2
     for n in range(2, max_+1):
+        if n == m:
+            start += 1
+            m += start
         print_('n =', n)
         pp = 0
         # dump_pp(n, 0, pp)
-        dump_pp(n, 1, pp)
+        # dump_pp(n, 1, pp)
         # s = n - k <= k - 1
         # 2k >= n+1
         # k >= (n+1)/2
         lim = (n+2) >> 1
-        q = C[n - 1]
-        del C[n - 1]
-        for k in range(2, lim):
+        key = n - 1
+        if key in C:
+            q = C[key]
+            del C[key]
+        else:
+            q = np.zeros(lim, dtype=np.int32)
+        for k in range(start, lim):
             pp = ((pp + q[k]) % BASE)
+            # print_(n, k, pp)
             dump_pp(n, k, pp)
         t = n - lim
         for k in range(lim, n):
