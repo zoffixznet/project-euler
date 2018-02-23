@@ -42,12 +42,12 @@ def dump_pp(n, kk, v):
     k = n - kk
     s = n + kk
     if s not in C:
-        C[s] = np.zeros((s >> 1)+1, dtype=np.int32)
+        C[s] = np.zeros((s >> 1)+2, dtype=np.int32)
     # print_(s, n, k, len(C[s].keys()))
     # C[s].append(v)
     # C[s] += struct.pack('I', v)
     t = (1 + (s >> 1) - (k >> 1))
-    C[s][k >> 1] = (0 if ((t & 3) == 2) else v)
+    C[s][t] = (0 if ((t & 3) == 2) else v)
 
 
 def calc_Ps(max_):
@@ -65,11 +65,9 @@ def calc_Ps(max_):
         lim = (n+2) >> 1
         q = C[n - 1]
         del C[n - 1]
-        t = ((n+1) >> 1) - 1
         for k in range(1, lim):
-            pp = ((pp + q[t]) % BASE)
+            pp = ((pp + q[k]) % BASE)
             dump_pp(n, k, pp)
-            t -= 1
         t = n - lim
         for k in range(lim, n):
             pp = ((pp + (0 if ((k & 3) == 2) else ret[t])) % BASE)
