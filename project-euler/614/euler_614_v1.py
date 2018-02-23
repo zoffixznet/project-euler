@@ -39,15 +39,17 @@ def lookup_pp(n, k):
 
 
 def dump_pp(n, vals):
-    for k, v in enumerate(vals):
-        s = n + k
+    s = k = n
+    for v in vals:
         if s not in C:
             C[s] = np.zeros((s >> 1)+1, dtype=np.int32)
         # print_(s, n, k, len(C[s].keys()))
         # C[s].append(v)
         # C[s] += struct.pack('I', v)
-        C[s][(n - k) >> 1] = v
+        C[s][k >> 1] = v
         # C[s][k] = v
+        s += 1
+        k -= 1
 
 
 def calc_Ps(max_):
