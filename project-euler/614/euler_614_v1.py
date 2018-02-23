@@ -25,11 +25,12 @@
 
 from six import print_
 from six.moves import range
-import struct
 
 BASE = 1000000000 + 7
 
 C = {}
+
+
 def lookup_pp(n, k):
     s = n + k
     return C[s][(n - k) >> 1]
@@ -56,10 +57,12 @@ def calc_Ps(max_):
         # 2k >= n+1
         # k >= (n+1)/2
         lim = (n+2) >> 1
+        q = C[n - 1]
+        del C[n - 1]
+        t = ((n+1) >> 1) - 1
         for k in range(1, lim):
-            pp.append((pp[-1] +
-                       (0 if ((k & 3) == 2) else lookup_pp(n - k, k-1))
-                       ) % BASE)
+            pp.append((pp[-1] + (0 if ((k & 3) == 2) else q[t])) % BASE)
+            t -= 1
         for k in range(lim, n):
             pp.append((pp[-1] + (0 if ((k & 3) == 2) else ret[n-k])) % BASE)
         if ((n & 3) == 2):
@@ -68,7 +71,6 @@ def calc_Ps(max_):
             delta = 1
         pp.append((pp[-1] + delta) % BASE)
         dump_pp(n, pp)
-        del C[n-1]
         ret.append(pp[-1])
     return ret
 
