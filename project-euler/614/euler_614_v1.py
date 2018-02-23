@@ -45,7 +45,7 @@ def dump_pp(n, kk, v):
     # print_(s, n, k, len(C[s].keys()))
     # C[s].append(v)
     # C[s] += struct.pack('I', v)
-    t = (1 + (s >> 1) - ((n - kk) >> 1))
+    t = (1 + kk)
     C[s][t] = (0 if ((t & 3) == 2) else v)
 
 
