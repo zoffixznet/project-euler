@@ -51,19 +51,13 @@ def calc_Ps(max_):
         # s = n - k <= k - 1
         # 2k >= n+1
         # k >= (n+1)/2
-        l = (n+2) >> 1
-        for k in range(1, l):
-            if ((k & 3) == 2):
-                delta = 0
-            else:
-                delta = lookup_pp(n - k, k-1)
-            pp.append((pp[-1] + delta) % BASE)
-        for k in range(l, n):
-            if ((k & 3) == 2):
-                delta = 0
-            else:
-                delta = ret[n - k]
-            pp.append((pp[-1] + delta) % BASE)
+        lim = (n+2) >> 1
+        for k in range(1, lim):
+            pp.append((pp[-1] +
+                       (0 if ((k & 3) == 2) else lookup_pp(n - k, k-1))
+                       ) % BASE)
+        for k in range(lim, n):
+            pp.append((pp[-1] + (0 if ((k & 3) == 2) else ret[n-k])) % BASE)
         if ((n & 3) == 2):
             delta = 0
         else:
