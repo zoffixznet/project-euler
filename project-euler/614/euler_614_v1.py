@@ -39,14 +39,13 @@ def lookup_pp(n, k):
 
 
 def dump_pp(n, kk, v):
-    k = n - kk
     s = n + kk
     if s not in C:
         C[s] = np.zeros((s >> 1)+2, dtype=np.int32)
     # print_(s, n, k, len(C[s].keys()))
     # C[s].append(v)
     # C[s] += struct.pack('I', v)
-    t = (1 + (s >> 1) - (k >> 1))
+    t = (1 + (s >> 1) - ((n - kk) >> 1))
     C[s][t] = (0 if ((t & 3) == 2) else v)
 
 
