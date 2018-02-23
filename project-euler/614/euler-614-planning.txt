@@ -1,0 +1,5 @@
+We will keep two caches:
+
+    - P[i] - the value of P(i) modulo the base.
+    - pp[i][k] - the mod number of partitions for total sum i where the largest
+    summand is <= k.
