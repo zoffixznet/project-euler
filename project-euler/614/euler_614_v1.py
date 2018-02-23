@@ -57,14 +57,15 @@ def calc_Ps(max_):
     for n in range(2, max_+1):
         print_('n =', n)
         pp = 0
-        dump_pp(n, 0, pp)
+        # dump_pp(n, 0, pp)
+        dump_pp(n, 1, pp)
         # s = n - k <= k - 1
         # 2k >= n+1
         # k >= (n+1)/2
         lim = (n+2) >> 1
         q = C[n - 1]
         del C[n - 1]
-        for k in range(1, lim):
+        for k in range(2, lim):
             pp = ((pp + q[k]) % BASE)
             dump_pp(n, k, pp)
         t = n - lim
