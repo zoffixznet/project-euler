@@ -25,6 +25,7 @@
 
 from six import print_
 from six.moves import range
+from collections import deque
 # import struct
 # import numpy as np
 
@@ -49,8 +50,12 @@ def dump_pp(n, kk, v):
     t = (1 + kk)
     if ((t & 3) != 2):
         if t not in D:
-            D[t] = {}
-        D[t][s] = v
+            D[t] = [s, deque([])]
+        d = D[t]
+        while s != d[0]+len(d[1]):
+            # print_('flut')
+            d[1].append(0)
+        d[1].append(v)
 
 
 def calc_Ps(max_):
@@ -77,8 +82,20 @@ def calc_Ps(max_):
         lim = (n+2) >> 1
         key = n - 1
         for k in range(start, lim):
-            v = (D[k][key] if k in D and key in D[k] else 0)
-            # print_(v, q[k])
+            v = 0
+            if k in D:
+                d = D[k]
+                # print_('ro', key, d)
+                if d[0] <= key:
+                    # print_('ba')
+                    ll = len(d[1])
+                    if ll and d[0]+ll > key:
+                        while d[0] < key:
+                            d[1].popleft()
+                            d[0] += 1
+                        v = d[1].popleft()
+                        d[0] += 1
+            # print_(v)
             # assert v == q[k]
             pp = ((pp + v) % BASE)
             # print_(n, k, pp)
@@ -107,6 +124,8 @@ def main():
     assert ret[10] == 3
     assert ret[100] == 37076
     assert ret[1000] == (3699177285485660336 % BASE)
+    global D
+    D = {}
     ret = calc_Ps(10000000)
     r = sum(ret)
     print_("ret = %d ; %d" % (r, r % BASE))
