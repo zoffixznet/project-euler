@@ -25,7 +25,7 @@
 
 from six import print_
 from six.moves import range
-import struct
+# import struct
 import numpy as np
 
 BASE = 1000000000 + 7
