@@ -28,6 +28,7 @@ from subprocess import check_output
 from six import print_
 from six.moves import range
 # import heapq
+from BitVector import BitVector
 
 if sys.version_info > (3,):
     long = int
@@ -48,14 +49,50 @@ for p in primes:
         rec = expmod(b, e >> 1)
         return ((r * rec * rec) % p)
 
-    r = 0
-    for n in range(1, p):
-        mod = expmod(n, 10000)
-        mult = MAX - n
-        min_mult = MAX % n
-        sum_mult = ((mult + min_mult) * ((mult - min_mult) // n + 1)) >> 1
-        r += mod * sum_mult
-        print_(p, mod, 'n=', n)
-    r %= p
-    ret_sum += r
+    r = [MAX]
+    bv = BitVector(size=p)
+    for nn in range(2, p):
+        C = {0: 1}
+        b = 0
+
+        def cem(e):
+            if e not in C:
+                r = 1
+                if ((e & 1) == 1):
+                    r = b * cem(e ^ 1)
+                else:
+                    i = cem(e >> 1)
+                    r = i * i
+                C[e] = r % p
+            return C[e]
+        if bv[nn]:
+            continue
+        b = modbase = expmod(nn, 10000)
+
+        def handle(n, mod):
+            mult = MAX - n
+            min_mult = MAX % n
+            sum_mult = ((mult + min_mult) * ((mult - min_mult) // n + 1)) >> 1
+            r[0] += mod * sum_mult
+        handle(nn, modbase)
+        step = 2 if nn > 2 else 1
+        n = nn*nn
+        li = 1
+        mod = modbase
+        i = nn
+        ns = step*nn
+        while n < p:
+            if not bv[n]:
+                # print_('pn = ', n)
+                bv[n] = 1
+                mod *= cem(i-li)
+                mod %= p
+                handle(n, mod)
+                li = i
+            n += ns
+            i += step
+        print_(p, modbase, 'n=', nn)
+        sys.stdout.flush()
+    r[0] %= p
+    ret_sum += r[0]
     print_(p, r, ret_sum)
