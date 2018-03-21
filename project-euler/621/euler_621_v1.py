@@ -122,13 +122,20 @@ class IterSumTwo:
         self.q = new
 
 
-def my_find(preM):
+PARTS = 10000
+
+
+def my_find(preM, part):
     M = preM << 1
     m = math.floor(math.sqrt(M))
+    high_m = min(m * (part+1) // PARTS - 1, m)
+    low_m = m * part // PARTS
+    m = high_m
     i = ((m * (m+1)))
     tgt = M-i
     it = IterSumTwo()
-    while m >= 0:
+    print_("== Solving %d->%d | %d / %d" % (low_m, high_m, part, PARTS))
+    while m >= low_m:
         sys.stderr.write(str(('i =', i, m, tgt)) + "\n")
         it.skip(tgt)
         while True:
@@ -140,20 +147,16 @@ def my_find(preM):
                 continue
             n *= n+1
             j *= j+1
-            print_(n, j, i)
-            print_(j, n, i)
-            print_(i, j, n)
-            print_(i, n, j)
-            print_(n, i, j)
-            print_(j, i, n)
+            print_("::", sorted([n, j, i]))
         i -= (m << 1)
         tgt += (m << 1)
         m -= 1
+    print_("== Finished %d->%d | %d / %d" % (low_m, high_m, part, PARTS))
 
 
 # my_find(1000)
-# my_find(1000000)
-my_find(17526 * 1000000000)
+# my_find(1000000, int(sys.argv[1]))
+my_find(17526 * 1000000000, int(sys.argv[1]))
 
 
 def test_func():
