@@ -129,7 +129,7 @@ def my_find(preM):
     tgt = M-i
     it = IterSumTwo()
     while m >= 0:
-        # print_('i =', i, m, tgt)
+        sys.stderr.write(str(('i =', i, m, tgt)) + "\n")
         it.skip(tgt)
         while True:
             s, n, j = it.next()
@@ -152,13 +152,16 @@ def my_find(preM):
 
 
 # my_find(1000)
-my_find(1000000)
-it = IterSumTwo()
-c = 0
-while c < 128000:
-    c += 1
-    if True:  # 0 == c & (128 * 1024 - 1):
-        # print_(it.next())
-        pass
-    else:
-        it.next()
+# my_find(1000000)
+my_find(17526 * 1000000000)
+
+
+def test_func():
+    it = IterSumTwo()
+    c = 0
+    while c < 128000:
+        c += 1
+        if True:  # 0 == c & (128 * 1024 - 1):
+            print_(it.next())
+        else:
+            it.next()
