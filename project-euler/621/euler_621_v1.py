@@ -136,7 +136,7 @@ def my_find(preM, part):
     it = IterSumTwo()
     print_("== Solving %d->%d | %d / %d" % (low_m, high_m, part, PARTS))
     while m >= low_m:
-        sys.stderr.write(str(('i =', i, m, tgt)) + "\n")
+        sys.stderr.write(str(('i =', i, m, low_m, tgt)) + "\n")
         it.skip(tgt)
         while True:
             s, n, j = it.next()
