@@ -27,6 +27,7 @@ import sys
 # from subprocess import check_output
 from six import print_
 import heapq
+import math
 
 if sys.version_info > (3,):
     long = int
@@ -36,7 +37,7 @@ if sys.version_info > (3,):
 class MyIter1:
     def __init__(self, n):
         self.n = n
-        self.s = (n*(n+1)) >> 1
+        self.s = (n*(n+1))
 
     def adv(self):
         self.n += 1
@@ -46,19 +47,32 @@ class MyIter1:
 class MyIter2:
     def __init__(self, n, s, m=0):
         self.n = n
-        self.s = s
+        self.s = self.init_s = s
         self.m = m
+        self.max = s + ((n*(n+1)-m*(m+1)))
+
+    def skip(self, tgt):
+        if tgt > self.max:
+            return False
+        if tgt < self.s:
+            return True
+        m = math.floor(math.sqrt(tgt-self.init_s))
+        self.m = m
+        self.s = self.init_s + ((m*(m+1)))
+        return True
 
     def adv(self):
         if self.m == self.n:
             return False
         self.m += 1
-        self.s += self.m
+        self.s += (self.m << 1)
         return True
 
     def n_inc(self):
         self.n += 1
-        self.s += self.n
+        self.s += self.n << 1
+        self.init_s = self.s
+        self.max += (self.n << 2)
 
     def clone(self):
         return MyIter2(self.n, self.s, self.m)
@@ -72,7 +86,6 @@ class IterSumTwo:
     def __init__(self):
         self.q = []
         self.n = 0
-        self.last = -1
         self.it = MyIter2(0, 0)
         heapq.heappush(self.q, self.i())
 
@@ -82,18 +95,70 @@ class IterSumTwo:
             self.n += 1
             self.it.n_inc()
             heapq.heappush(self.q, self.i())
-        self.last = s
         m = i.m
         if i.adv():
             heapq.heappush(self.q, (i.s, n, i))
         return s, n, m
 
+    def skip(self, tgt):
+        new = []
+        maxn = 0
+        for x in self.q:
+            s, n, i = x
+            if i.skip(tgt):
+                new.append((i.s, n, i))
+                if maxn < n:
+                    maxn = n
+        while self.it.max < tgt:
+            self.it.n_inc()
+        while self.it.s <= tgt:
+            if maxn != self.it.n:
+                s, n, i = self.i()
+                i.skip(tgt)
+                new.append((i.s, n, i))
+            self.it.n_inc()
+        # print_(cnt)
+        heapq.heapify(new)
+        self.q = new
 
+
+def my_find(preM):
+    M = preM << 1
+    m = math.floor(math.sqrt(M))
+    i = ((m * (m+1)))
+    tgt = M-i
+    it = IterSumTwo()
+    while m >= 0:
+        # print_('i =', i, m, tgt)
+        it.skip(tgt)
+        while True:
+            s, n, j = it.next()
+            if s > tgt:
+                # print_('ss = ', s, tgt)
+                break
+            elif s < tgt:
+                continue
+            n *= n+1
+            j *= j+1
+            print_(n, j, i)
+            print_(j, n, i)
+            print_(i, j, n)
+            print_(i, n, j)
+            print_(n, i, j)
+            print_(j, i, n)
+        i -= (m << 1)
+        tgt += (m << 1)
+        m -= 1
+
+
+# my_find(1000)
+my_find(1000000)
 it = IterSumTwo()
 c = 0
-while True:
+while c < 128000:
     c += 1
-    if 0 == c & (128 * 1024 - 1):
-        print_(it.next())
+    if True:  # 0 == c & (128 * 1024 - 1):
+        # print_(it.next())
+        pass
     else:
         it.next()
