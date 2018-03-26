@@ -57,11 +57,15 @@ sub t_div
     return +{ map { $_ => 1 } divisors( scalar `factor "$n"` ) };
 }
 
-my $N = ( 1 << 60 ) - 1;
-my @S = map { ( 1 << $_ ) - 1 } grep { 60 % $_ == 0 } 1 .. 59;
+sub pow_div
+{
+    return t_div( ( 1 << shift ) - 1 );
+}
 
-my $NN = t_div($N);
-foreach my $h ( map { t_div($_) } @S )
+my $n = 60;
+
+my $NN = pow_div($n);
+foreach my $h ( map { pow_div($_) } grep { $n % $_ == 0 } 1 .. $n - 1 )
 {
     delete @{$NN}{ keys %$h };
 }
