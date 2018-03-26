@@ -61,12 +61,28 @@ sub multi
     return;
 }
 
+my $N = (1 << 60) - 1;
+my @S = map { (1 << $_) - 1 } grep { 60 % $_ == 0 } 1 .. 59;
+sub multi2
+{
+    my $half = shift;
+    my $MOD = ( ( $half << 1 ) - 1 );
+
+    if ($N % $MOD == 0 and !grep { $_ % $MOD == 0 } @S)
+    {
+        my $n = ( $half << 1 );
+        $sum += $n;
+        print "60 = $n ( $sum )\n";
+    }
+    return;
+}
+
 STDOUT->autoflush(1);
 my $n = 0;
 while (1)
 {
     # print "n=$n\n";
-    multi( ++$n );
+    multi2( ++$n );
 }
 
 =head1 COPYRIGHT & LICENSE
