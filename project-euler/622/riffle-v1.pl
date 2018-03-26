@@ -61,14 +61,15 @@ sub multi
     return;
 }
 
-my $N = (1 << 60) - 1;
-my @S = map { (1 << $_) - 1 } grep { 60 % $_ == 0 } 1 .. 59;
+my $N = ( 1 << 60 ) - 1;
+my @S = map { ( 1 << $_ ) - 1 } grep { 60 % $_ == 0 } 1 .. 59;
+
 sub multi2
 {
     my $half = shift;
     my $MOD = ( ( $half << 1 ) - 1 );
 
-    if ($N % $MOD == 0 and !grep { $_ % $MOD == 0 } @S)
+    if ( $N % $MOD == 0 and !grep { $_ % $MOD == 0 } @S )
     {
         my $n = ( $half << 1 );
         $sum += $n;
