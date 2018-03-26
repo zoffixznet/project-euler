@@ -64,14 +64,14 @@ sub pow_div
 
 my $n = 60;
 
-my $NN = pow_div($n);
+my $divs = pow_div($n);
 foreach my $h ( map { pow_div($_) } grep { $n % $_ == 0 } 1 .. $n - 1 )
 {
-    delete @{$NN}{ keys %$h };
+    delete @{$divs}{ keys %$h };
 }
 
 my $sum = 0;
-foreach my $k ( keys %$NN )
+foreach my $k ( keys %$divs )
 {
     $sum += $k + 1;
 }
