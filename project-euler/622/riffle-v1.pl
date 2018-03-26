@@ -3,6 +3,13 @@
 use strict;
 use warnings;
 
+sub riff
+{
+    my ( $p, $half ) = @_;
+
+    return ( ( ( $p % $half ) << 1 ) + ( $p >= $half ) );
+}
+
 sub riffle
 {
     my $in = shift;
@@ -21,21 +28,17 @@ my $sum = 0;
 
 sub multi
 {
-    my $n = shift;
-
-    my $start = [ 0 .. $n - 1 ];
-    my $WANT  = ( join ',', @$start );
-    my $x     = riffle($start);
+    my $n     = shift;
+    my $half  = ( $n >> 1 );
+    my $start = 1;
+    my $WANT  = 1;
+    my $x     = riff( $start, $half );
     my $i     = 1;
-    while ( ( join ',', @$x ) ne $WANT )
+    while ( $x != $WANT )
     {
-        if ( $x->[1] == 1 )
-        {
-            die "Disproven for $n!";
-        }
-
         # print map { "$_: $x->[$_]\n" } keys @$x;
-        $x = riffle($x);
+        # print "n=$n x1=$x\n";
+        $x = riff( $x, $half );
         if ( ++$i > 60 )
         {
             return;
@@ -53,6 +56,7 @@ STDOUT->autoflush(1);
 my $n = 0;
 while (1)
 {
+    # print "n=$n\n";
     multi( $n += 2 );
 }
 
