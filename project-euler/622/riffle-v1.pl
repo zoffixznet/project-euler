@@ -7,7 +7,7 @@ sub riff
 {
     my ( $p, $half ) = @_;
 
-    return ( ( ( $p % $half ) << 1 ) + ( $p >= $half ) );
+    return ( ( ( $p % $half ) << 1 ) | ( $p >= $half ) );
 }
 
 sub riffle
@@ -28,11 +28,9 @@ my $sum = 0;
 
 sub multi
 {
-    my $n     = shift;
-    my $half  = ( $n >> 1 );
-    my $start = 1;
+    my $half     = shift;
     my $WANT  = 1;
-    my $x     = riff( $start, $half );
+    my $x     = riff( $WANT, $half );
     my $i     = 1;
     while ( $x != $WANT )
     {
@@ -46,6 +44,7 @@ sub multi
     }
     if ( $i == 60 )
     {
+        my $n = ($half << 1);
         $sum += $n;
         print "$i = $n ( $sum )\n";
     }
@@ -57,7 +56,7 @@ my $n = 0;
 while (1)
 {
     # print "n=$n\n";
-    multi( $n += 2 );
+    multi( ++$n );
 }
 
 =head1 COPYRIGHT & LICENSE
