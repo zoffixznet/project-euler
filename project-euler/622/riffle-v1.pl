@@ -29,6 +29,11 @@ sub multi
     my $i     = 1;
     while ( ( join ',', @$x ) ne $WANT )
     {
+        if ( $x->[1] == 1 )
+        {
+            die "Disproven for $n!";
+        }
+
         # print map { "$_: $x->[$_]\n" } keys @$x;
         $x = riffle($x);
         if ( ++$i > 60 )
