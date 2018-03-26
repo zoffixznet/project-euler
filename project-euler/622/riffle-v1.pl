@@ -2,12 +2,21 @@
 
 use strict;
 use warnings;
+use integer;
 
 sub riff
 {
     my ( $p, $half ) = @_;
 
-    return ( ( ( $p % $half ) << 1 ) | ( $p >= $half ) );
+    my $ret = $p << 1;
+    my $MOD = ( ( $half << 1 ) - 1 );
+
+    return $ret % $MOD;
+
+    # return (
+    #    ( $ret >= ( $half << 1 ) ) ? $ret - ( ( $half << 1 ) - 1 ) : $ret );
+
+    # return ( ( ( $p % $half ) << 1 ) | ( $p >= $half ) );
 }
 
 sub riffle
@@ -35,10 +44,11 @@ sub multi
     while ( $x != $WANT )
     {
         # print map { "$_: $x->[$_]\n" } keys @$x;
-        # print "n=$n x1=$x\n";
+        # print "n=$half x1=$x\n";
         $x = riff( $x, $half );
         if ( ++$i > 60 )
         {
+            # print STDERR "Flut\n";
             return;
         }
     }
