@@ -28,10 +28,10 @@ my $sum = 0;
 
 sub multi
 {
-    my $half     = shift;
-    my $WANT  = 1;
-    my $x     = riff( $WANT, $half );
-    my $i     = 1;
+    my $half = shift;
+    my $WANT = 1;
+    my $x    = riff( $WANT, $half );
+    my $i    = 1;
     while ( $x != $WANT )
     {
         # print map { "$_: $x->[$_]\n" } keys @$x;
@@ -44,7 +44,7 @@ sub multi
     }
     if ( $i == 60 )
     {
-        my $n = ($half << 1);
+        my $n = ( $half << 1 );
         $sum += $n;
         print "$i = $n ( $sum )\n";
     }
