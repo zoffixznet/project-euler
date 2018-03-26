@@ -63,10 +63,7 @@ my @S = map { ( 1 << $_ ) - 1 } grep { 60 % $_ == 0 } 1 .. 59;
 my $NN = t_div($N);
 foreach my $h ( map { t_div($_) } @S )
 {
-    foreach my $k ( keys %$h )
-    {
-        delete $NN->{$k};
-    }
+    delete @{$NN}{ keys %$h };
 }
 
 my $sum2 = 0;
