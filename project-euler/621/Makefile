@@ -1,13 +1,13 @@
 all: exes
 
-R = $(shell seq 0 9)
+R = $(shell seq 0 9999)
 
 P = $(patsubst %,parts/%.t,$(R))
 
 exes: e.exe
 
 e.exe: euler_621_v1.cpp
-	g++ -Wall -Wextra -g -o $@ $< -lm
+	g++ -Wall -Wextra -O3 -march=native -flto -fwhole-program -o $@ $< -lm
 
 dummy: $(P)
 

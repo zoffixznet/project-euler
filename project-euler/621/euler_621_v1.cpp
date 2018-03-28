@@ -171,8 +171,8 @@ class IterSumTwo
 };
 
 
-// const ll PARTS = 10000;
-const ll PARTS = 10;
+const ll PARTS = 10000;
+//const ll PARTS = 10;
 
 
 void my_find(const ll preM, const ll part)
@@ -212,7 +212,7 @@ void my_find(const ll preM, const ll part)
 int main(int, char * argv[])
 {
 // my_find(1000)
-my_find(1000000, std::stoll(argv[1]));
-//my_find(17526 * 1000000000, int(sys.argv[1]))
+// my_find(1000000, std::stoll(argv[1]));
+   my_find(17526LL * 1000000000LL, std::stoll(argv[1]));
 return 0;
 }
