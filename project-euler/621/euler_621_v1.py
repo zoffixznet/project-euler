@@ -54,11 +54,14 @@ class MyIter2:
     def skip(self, tgt):
         if tgt > self.max:
             return False
-        if tgt < self.s:
+        if tgt == self.s:
             return True
         m = math.floor(math.sqrt(tgt-self.init_s))
         self.m = m
         self.s = self.init_s + ((m*(m+1)))
+        if self.s < tgt:
+            self.m += 1
+            self.s += (m + 1) << 1
         return True
 
     def adv(self):
@@ -143,8 +146,6 @@ def my_find(preM, part):
             if s > tgt:
                 # print_('ss = ', s, tgt)
                 break
-            elif s < tgt:
-                continue
             n *= n+1
             j *= j+1
             print_("::", sorted([n, j, i]))
