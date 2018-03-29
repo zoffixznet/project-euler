@@ -105,49 +105,41 @@ class IterSumTwo
 {
     public:
     MyIter2 it;
-    MyVec q;
+    MyVec q, to_flush;
 
     MyIter2 i()
     {
         return it.clone();
     }
 
-    IterSumTwo() : it(0,0,0), q()
+    IterSumTwo() : it(0,0,0), q(), to_flush()
     {
         q.push_back(i());
     }
 
-    Result next()
+    ll maxn;
+
+    void examine(const ll tgt, MyIter2 x, MyVec & new_, MyVec & new_f)
     {
-        std::pop_heap(q.begin(), q.end(), greater1());
-        auto iti = q.back();
-        q.pop_back();
-        const Result ret(iti.s, iti.n, iti.m);
-        if (ret.n == it.n) {
-            it.n_inc();
-            q.push_back(i());
-            std::push_heap(q.begin(), q.end(), greater1());
+        const auto n = x.n;
+        if (x.skip(tgt)) {
+            (x.s == tgt ? new_f : new_).push_back(x);
+            if (maxn < n)
+                maxn = n;
         }
-        if (iti.adv())
-        {
-            q.push_back(iti);
-            std::push_heap(q.begin(), q.end(), greater1());
-        }
-        return ret;
     }
 
     void skip(const ll tgt)
     {
-        MyVec new_;
-        ll maxn = 0;
+        MyVec new_, new_f;
+        maxn = 0;
         for (auto x: q)
         {
-            const auto n = x.n;
-            if (x.skip(tgt)) {
-                new_.push_back(x);
-                if (maxn < n)
-                    maxn = n;
-            }
+            examine(tgt, x, new_, new_f);
+        }
+        for (auto x: to_flush)
+        {
+            examine(tgt, x, new_, new_f);
         }
         while (it.max < tgt)
             it.n_inc();
@@ -163,6 +155,7 @@ class IterSumTwo
         }
         std::make_heap(new_.begin(), new_.end(), greater1());
         q = new_;
+        to_flush = new_f;
     }
 };
 
@@ -188,11 +181,9 @@ void my_find(const ll preM, const ll part)
     {
         fprintf(stderr, "i = %lld %lld %lld %lld\n", i, m, low_m, tgt);
         it.skip(tgt);
-        while (true)
+        for (auto iti: it.to_flush)
         {
-            Result snj = it.next();
-            if (snj.s > tgt)
-                break;
+            Result snj(iti.s, iti.n, iti.m);
             snj.n *= snj.n+1;
             snj.m *= snj.m+1;
             const ll min_ = std::min(snj.n, std::min(snj.m, i));
