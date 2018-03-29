@@ -122,20 +122,18 @@ class IterSumTwo
         std::pop_heap(q.begin(), q.end(), greater1());
         auto iti = q.back();
         q.pop_back();
-        const auto s = iti.s;
-        const auto n = iti.n;
-        if (n == it.n) {
+        const Result ret(iti.s, iti.n, iti.m);
+        if (ret.n == it.n) {
             it.n_inc();
             q.push_back(i());
             std::push_heap(q.begin(), q.end(), greater1());
         }
-        const auto m = iti.m;
         if (iti.adv())
         {
             q.push_back(iti);
             std::push_heap(q.begin(), q.end(), greater1());
         }
-        return Result(s, n, m);
+        return ret;
     }
 
     void skip(const ll tgt)
