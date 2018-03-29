@@ -147,6 +147,7 @@ class IterSumTwo
     }
 };
 
+#define PROD
 
 #ifdef PROD
 const ll PARTS = 10000;

@@ -1,7 +1,7 @@
 all: exes
 
 R = $(shell seq 0 9999)
-R = $(shell seq 0 9)
+# R = $(shell seq 0 9)
 
 P = $(patsubst %,parts/%.t,$(R))
 
@@ -12,7 +12,7 @@ e.exe: euler_621_v1.cpp
 
 dummy: $(P)
 
-$(P): %: ./e.exe
+$(P): %:
 	./e.exe $(patsubst parts/%.t,%,$@) | tee -a $@
 
 summary:
