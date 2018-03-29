@@ -52,7 +52,7 @@ class MyIter2
             return false;
         if (s >= tgt)
             return true;
-        m = floor(sqrt(tgt-init_s));
+        m = sqrt(tgt-init_s);
         s = init_s + ((m*(m+1)));
         if (s < tgt)
         {
@@ -158,7 +158,7 @@ const ll PARTS = 10;
 void my_find(const ll preM, const ll part)
 {
     const ll M = preM << 1;
-    ll m = floor(sqrt(M));
+    ll m = sqrt(M);
     const ll high_m = std::min(m * (part+1) / PARTS - 1, m);
     const ll low_m = m * part / PARTS;
     m = high_m;
