@@ -89,16 +89,6 @@ struct greater1{
     }
 };
 
-struct Result
-{
-    ll s, n, m;
-    Result(const ll ss, const ll nn, const ll mm)
-    {
-        s = ss;
-        n = nn;
-        m = mm;
-    }
-};
 typedef std::vector<MyIter2> MyVec;
 
 class IterSumTwo
@@ -183,12 +173,13 @@ void my_find(const ll preM, const ll part)
         it.skip(tgt);
         for (auto iti: it.to_flush)
         {
-            Result snj(iti.s, iti.n, iti.m);
-            snj.n *= snj.n+1;
-            snj.m *= snj.m+1;
-            const ll min_ = std::min(snj.n, std::min(snj.m, i));
-            const ll max_ = std::max(snj.n, std::max(snj.m, i));
-            printf(":: [%lld, %lld, %lld]\n", min_, snj.n+snj.m+i-min_-max_, max_);
+            auto n = iti.n;
+            auto m = iti.m;
+            n *= n+1;
+            m *= m+1;
+            const ll min_ = std::min(n, std::min(m, i));
+            const ll max_ = std::max(n, std::max(m, i));
+            printf(":: [%lld, %lld, %lld]\n", min_, n+m+i-min_-max_, max_);
         }
         i -= (m << 1);
         tgt += (m << 1);
