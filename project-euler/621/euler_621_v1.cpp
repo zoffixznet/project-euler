@@ -168,7 +168,10 @@ void my_find(const ll preM, const ll part)
     printf("== Solving %lld->%lld | %lld / %lld\n", low_m, high_m, part, PARTS);
     while (m >= low_m)
     {
-        fprintf(stderr, "i = %lld %lld %lld %lld\n", i, m, low_m, tgt);
+        if ((m & (32-1)) == 0)
+        {
+            fprintf(stderr, "i = %lld %lld %lld %lld\n", i, m, low_m, tgt);
+        }
         it.skip(tgt);
         for (auto iti: it.to_flush)
         {
