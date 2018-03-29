@@ -38,12 +38,12 @@ class MyIter2
 
     ll init_s, n, s, m, max;
 
-    MyIter2(const ll nn, const ll ss, const ll mm)
+    MyIter2(const ll nn, const ll ss)
     {
         n = nn;
         s = init_s = ss;
-        m = mm;
-        max = s + ((n*(n+1)-m*(m+1)));
+        m = 0;
+        max = (s << 1);
     }
 
     bool skip(const ll tgt)
@@ -77,7 +77,7 @@ class MyIter2
 
     MyIter2 clone() const
     {
-        return MyIter2(n, s, m);
+        return MyIter2(n, s);
     }
 };
 
@@ -102,7 +102,7 @@ class IterSumTwo
         return it.clone();
     }
 
-    IterSumTwo() : it(0,0,0), q(), to_flush()
+    IterSumTwo() : it(0,0), q(), to_flush()
     {
         q.push_back(i());
     }
