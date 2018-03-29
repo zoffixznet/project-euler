@@ -50,7 +50,7 @@ class MyIter2
     {
         if (tgt > max)
             return false;
-        if (tgt == s)
+        if (s >= tgt)
             return true;
         m = floor(sqrt(tgt-init_s));
         s = init_s + ((m*(m+1)));
