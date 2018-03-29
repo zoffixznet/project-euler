@@ -133,17 +133,15 @@ class IterSumTwo
         }
         while (it.max < tgt)
             it.n_inc();
+        const ll mymax = maxn;
         while (it.s <= tgt)
         {
-            if (maxn != it.n)
+            if (mymax != it.n)
             {
-                auto iti = i();
-                iti.skip(tgt);
-                new_.push_back(iti);
+                examine(tgt, i(), new_, new_f);
             }
             it.n_inc();
         }
-        std::make_heap(new_.begin(), new_.end(), greater1());
         q = new_;
         to_flush = new_f;
     }
