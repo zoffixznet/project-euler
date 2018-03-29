@@ -172,12 +172,12 @@ void my_find(const ll preM, const ll part)
         for (auto iti: it.to_flush)
         {
             auto n = iti.n;
-            auto m = iti.m;
+            auto j = iti.m;
             n *= n+1;
-            m *= m+1;
-            const ll min_ = std::min(n, std::min(m, i));
-            const ll max_ = std::max(n, std::max(m, i));
-            printf(":: [%lld, %lld, %lld]\n", min_, n+m+i-min_-max_, max_);
+            j *= j+1;
+            const ll min_ = std::min(n, std::min(j, i));
+            const ll max_ = std::max(n, std::max(j, i));
+            printf(":: [%lld, %lld, %lld]\n", min_, n+j+i-min_-max_, max_);
         }
         i -= (m << 1);
         tgt += (m << 1);
