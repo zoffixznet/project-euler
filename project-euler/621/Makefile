@@ -1,6 +1,7 @@
 all: exes
 
 R = $(shell seq 0 9999)
+R = $(shell seq 0 9)
 
 P = $(patsubst %,parts/%.t,$(R))
 

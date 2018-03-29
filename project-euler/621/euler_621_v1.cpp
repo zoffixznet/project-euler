@@ -105,49 +105,48 @@ class IterSumTwo
 {
     public:
     MyIter2 it;
-    MyVec * q;
+    MyVec q;
 
     MyIter2 i()
     {
         return it.clone();
     }
 
-    IterSumTwo() : it(0,0,0)
+    IterSumTwo() : it(0,0,0), q()
     {
-        q = new MyVec;
-        q->push_back(i());
+        q.push_back(i());
     }
 
     Result next()
     {
-        std::pop_heap(q->begin(), q->end(), greater1());
-        auto iti = q->back();
-        q->pop_back();
+        std::pop_heap(q.begin(), q.end(), greater1());
+        auto iti = q.back();
+        q.pop_back();
         const auto s = iti.s;
         const auto n = iti.n;
         if (n == it.n) {
             it.n_inc();
-            q->push_back(i());
-            std::push_heap(q->begin(), q->end(), greater1());
+            q.push_back(i());
+            std::push_heap(q.begin(), q.end(), greater1());
         }
         const auto m = iti.m;
         if (iti.adv())
         {
-            q->push_back(iti);
-            std::push_heap(q->begin(), q->end(), greater1());
+            q.push_back(iti);
+            std::push_heap(q.begin(), q.end(), greater1());
         }
         return Result(s, n, m);
     }
 
     void skip(const ll tgt)
     {
-        MyVec * new_ = new MyVec;
+        MyVec new_;
         ll maxn = 0;
-        for (auto x: *q)
+        for (auto x: q)
         {
             const auto n = x.n;
             if (x.skip(tgt)) {
-                new_->push_back(x);
+                new_.push_back(x);
                 if (maxn < n)
                     maxn = n;
             }
@@ -160,20 +159,21 @@ class IterSumTwo
             {
                 auto iti = i();
                 iti.skip(tgt);
-                new_->push_back(iti);
+                new_.push_back(iti);
             }
             it.n_inc();
         }
-        std::make_heap(new_->begin(), new_->end(), greater1());
-        delete q;
+        std::make_heap(new_.begin(), new_.end(), greater1());
         q = new_;
     }
 };
 
 
+#ifdef PROD
 const ll PARTS = 10000;
-//const ll PARTS = 10;
-
+#else
+const ll PARTS = 10;
+#endif
 
 void my_find(const ll preM, const ll part)
 {
@@ -212,7 +212,10 @@ void my_find(const ll preM, const ll part)
 int main(int, char * argv[])
 {
 // my_find(1000)
-// my_find(1000000, std::stoll(argv[1]));
-   my_find(17526LL * 1000000000LL, std::stoll(argv[1]));
-return 0;
+#ifdef PROD
+    my_find(17526LL * 1000000000LL, std::stoll(argv[1]));
+#else
+    my_find(1000000, std::stoll(argv[1]));
+#endif
+    return 0;
 }
