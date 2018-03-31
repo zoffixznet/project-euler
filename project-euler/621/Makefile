@@ -16,4 +16,4 @@ $(P): %:
 	./e.exe $(patsubst parts/%.t,%,$@) >> $@
 
 summary:
-	cat parts/*.t | grep -E '^:' | sort -u | perl -lanE '@x=/([0-9]+)/g; $$s += ($$x[-1] == $$x[0] ? 1 : $$x[0] == $$x[1] ? 3 : $$x[1] == $$x[2] ? 3 : 6); END { print "s = $$s\n";}'
+	cat parts/*.t | perl -nlE 'tr/ //d;say $$1 if /^::\[([0-9,]+)\]$$/' | perl -lnE 'say unless $$h{$$_}++' | perl -lnE '@x=/([0-9]+)/g; $$s += ($$x[-1] == $$x[0] ? 1 : $$x[0] == $$x[1] ? 3 : $$x[1] == $$x[2] ? 3 : 6); END { print "s = $$s\n";}'
