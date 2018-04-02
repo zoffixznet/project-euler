@@ -12,4 +12,16 @@ Sum[n^2] = n*(n+1)*(2*n+1)/6
     = 1/6 * { 2m^3+6mn(n+m+1)+3m^2+m }
     = Sum[m^2] + mn(n+m+1)
 
+-----------------
 
+Given m > 0 integer and d >= 0 integer, what are all k so that
+S[k]-S[k-m-1] = S[k+d+m]-S[k+d]
+
+S[m+1] + (k-m-1)(m+1)(k+1) = S[m] + m(k+d)(k+d+m+1)
+(m+1)^2 + (k-m-1)(m+1)(k+1) = m(k+d)(k+d+m+1)
+m^2 + 2m + 1 + (k-m-1)(mk + k + m +1) = m(k+d)^2+m(m+1)(k+d)
+m^2 + 2m + 1 + mk^2+k^2+mk+k-m^2k-mk-m^2-m-mk-k-m-1= mk^2+2mkd+md^2+(m^2+m)(k+d)
+m^2 + 2m + 1 + mk^2+k^2+mk+k-m^2k-mk-m^2-m-mk-k-m-1= mk^2+2mkd+md^2+km^2+km+dm^2+dm
+2m + 1 + mk^2+k^2+mk+k-mk-m-mk-k-m-1= mk^2+2mkd+md^2+2km^2+km+dm^2+dm
+mk^2+k^2+mk+k-mk-mk-k= mk^2+2mkd+md^2+2km^2+km+dm^2+dm
+k^2= 2mkd+md^2+2km^2+2km+dm^2+dm
