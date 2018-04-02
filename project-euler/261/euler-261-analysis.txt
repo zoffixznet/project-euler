@@ -25,3 +25,10 @@ m^2 + 2m + 1 + mk^2+k^2+mk+k-m^2k-mk-m^2-m-mk-k-m-1= mk^2+2mkd+md^2+km^2+km+dm^2
 2m + 1 + mk^2+k^2+mk+k-mk-m-mk-k-m-1= mk^2+2mkd+md^2+2km^2+km+dm^2+dm
 mk^2+k^2+mk+k-mk-mk-k= mk^2+2mkd+md^2+2km^2+km+dm^2+dm
 k^2= 2mkd+md^2+2km^2+2km+dm^2+dm
+k^2 = k(2md+2m^2+2m) + dm(m+d+1) = k*2m(m+d+1) + dm(m+d+1)
+k^2 -k*2m(m+d+1) - dm(m+d+1) = 0
+
+r = m(m+d+1)
+
+k = (2r +/- sqrt[4r^2 + 4dr]) / 2 = (r +/- sqrt[r^2 + dr]) =
+    (r + sqrt[r^2 + dr])
