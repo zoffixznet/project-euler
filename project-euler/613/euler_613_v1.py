@@ -24,7 +24,7 @@
 
 
 import sys
-from math import acos, atan2, sqrt
+from math import acos, atan2, log, sqrt
 from six import print_
 
 if sys.version_info > (3,):
@@ -110,35 +110,52 @@ def calc2(H, W):
 
 def calc(H, W):
     H2 = H*H
+
     ret = 0.0
     count = 0
     num_steps = 2
     WSTEP = W / num_steps
     WS = WSTEP * 2
     count += 1
+    # See https://math.stackexchange.com/questions/390080/
+    a = 1
+    b1 = 0
+    c1 = H2
+
+    def P(x):
+        return x*x+c1
+
+    def integral(x):
+        return sqrt(a) / 2 * ((x + b1) * sqrt(P(x)) + c1 *
+                              log(b1+x+sqrt(P(x))))
+    div = (integral(W)-integral(0))/W
+
+    def h(xx):
+        return (atan2(xx, H) * sqrt(H2+xx*xx))
+        # return (atan2(H, xx) * sqrt(H2+xx*xx))
     xx = 0
     # ret += (atan2(H, xx) * sqrt(H2+xx*xx))
-    ret += (atan2(xx, H) * sqrt(H2+xx*xx))
+    ret += h(xx)
     count += 1
     xx = W
     # ret += (atan2(H, xx) * sqrt(H2+xx*xx))
-    ret += (atan2(xx, H) * sqrt(H2+xx*xx))
+    ret += h(xx)
     while True:
         # for y in xrange(1, num_steps+1):
         xx = WSTEP
         while xx < W:
             count += 1
-            ret += (atan2(H, xx) * sqrt(H2+xx*xx))
-            # ret += (atan2(xx, H) * sqrt(H2+xx*xx))
-
+            # ret += (atan2(H, xx) * sqrt(H2+xx*xx))
+            ret += h(xx)
             xx += WS
-        yield ret * FROM_RAD / count / H
+        # yield ret * FROM_RAD / count / H
+        yield ret * FROM_RAD / count / div
         num_steps <<= 1
         WSTEP *= 0.5
         WS = WSTEP * 2
 
 
-log = 1
+log2 = 1
 H = 30.0
 W = 40.0
 gens = [calc(H, W), calc(W, H)]
@@ -146,10 +163,10 @@ while True:
     r = list(reversed([next(x) for x in gens]))
     # r[1] = 0.25 - r[1]
     res = sum(r)
-    print_(("%8d[0] : " % log) + str(r))
-    print_("%8d[a] : %.50f" % (log, res))
-    print_("%8d[b] : %.50f" % (log, 1 - res))
-    print_("%8d[c] : %.50f" % (log, res+0.25))
-    print_("%8d[g] : %.50f" % (log, calc_brute(H, W, log*100)))
-    print_("%8d[t] : %.50f" % (log, calc_brute2_wrapper(H, W, log*100)))
-    log += 1
+    print_(("%8d[0] : " % log2) + str(r))
+    print_("%8d[a] : %.50f" % (log2, res))
+    print_("%8d[b] : %.50f" % (log2, 1 - res))
+    print_("%8d[c] : %.50f" % (log2, res+0.25))
+    print_("%8d[g] : %.50f" % (log2, calc_brute(H, W, log2*100)))
+    print_("%8d[t] : %.50f" % (log2, calc_brute2_wrapper(H, W, log2*100)))
+    log2 += 1
