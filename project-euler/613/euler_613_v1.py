@@ -132,6 +132,7 @@ def calc(H, W):
 
     def h(xx):
         return (atan2(xx, H) * sqrt(H2+xx*xx))
+        # return (atan2(xx, H) * H / cos(atan2(xx, H)))
         # return (atan2(H, xx) * sqrt(H2+xx*xx))
     xx = 0
     # ret += (atan2(H, xx) * sqrt(H2+xx*xx))
