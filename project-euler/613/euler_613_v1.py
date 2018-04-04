@@ -34,6 +34,58 @@ if sys.version_info > (3,):
 FROM_RAD = 1/(2*acos(-1))
 
 
+def calc_brute(H, W, divs):
+    H2 = H*H
+    ret = 0.0
+    count = 0
+    num_steps = divs
+    WSTEP = W / num_steps
+    WS = WSTEP * 2
+    xx = 0
+    yy = 0
+    HS = H / num_steps
+    for max_ in xrange(1, num_steps+1):
+        # for y in xrange(1, num_steps+1):
+        xx = 0
+        for i in xrange(max_+1):
+            ret += (atan2(W-xx,H-yy) + atan2(xx, yy))
+            # ret += atan2(xx, yy)
+            xx += WSTEP
+        count += max_+1
+        yy += HS
+    return ret * FROM_RAD / count + 0.25
+
+
+def calc2(H, W):
+    H2 = H*H
+    ret = 0.0
+    count = 0
+    num_steps = 2
+    WSTEP = W / num_steps
+    WS = WSTEP * 2
+    count += 1
+    xx = 0
+    # ret += (atan2(H, xx) * sqrt(H2+xx*xx))
+    ret += (atan2(xx, H) * sqrt(H2+xx*xx))
+    count += 1
+    xx = W
+    # ret += (atan2(H, xx) * sqrt(H2+xx*xx))
+    ret += (atan2(xx, H) * sqrt(H2+xx*xx))
+    while True:
+        # for y in xrange(1, num_steps+1):
+        xx = WSTEP
+        while xx < W:
+            count += 1
+            ret += (atan2(H-xx, xx) * sqrt(H2+xx*xx))
+            # ret += (atan2(xx, H) * sqrt(H2+xx*xx))
+
+            xx += WS
+        yield ret * FROM_RAD / count / H
+        num_steps <<= 1
+        WSTEP *= 0.5
+        WS = WSTEP * 2
+
+
 def calc(H, W):
     H2 = H*H
     ret = 0.0
@@ -43,16 +95,19 @@ def calc(H, W):
     WS = WSTEP * 2
     count += 1
     xx = 0
+    # ret += (atan2(H, xx) * sqrt(H2+xx*xx))
     ret += (atan2(xx, H) * sqrt(H2+xx*xx))
     count += 1
     xx = W
+    # ret += (atan2(H, xx) * sqrt(H2+xx*xx))
     ret += (atan2(xx, H) * sqrt(H2+xx*xx))
     while True:
         # for y in xrange(1, num_steps+1):
         xx = WSTEP
         while xx < W:
             count += 1
-            ret += (atan2(xx, H) * sqrt(H2+xx*xx))
+            ret += (atan2(H, xx) * sqrt(H2+xx*xx))
+            # ret += (atan2(xx, H) * sqrt(H2+xx*xx))
 
             xx += WS
         yield ret * FROM_RAD / count / H
@@ -66,7 +121,12 @@ H = 30.0
 W = 40.0
 gens = [calc(H, W), calc(W, H)]
 while True:
-    res = sum([next(x) for x in gens])
+    r = list(reversed([next(x) for x in gens]))
+    r[1] = 0.25 - r[1]
+    res = sum(r)
+    print_(("%8d[0] : " % log) + str(r))
     print_("%8d[a] : %.50f" % (log, res))
     print_("%8d[b] : %.50f" % (log, 1 - res))
+    print_("%8d[c] : %.50f" % (log, res+0.25))
+    print_("%8d[g] : %.50f" % (log, calc_brute(H, W, log*100)))
     log += 1
