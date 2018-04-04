@@ -42,7 +42,7 @@ def calc_brute(H, W, divs):
     xx = 0
     yy = 0
     HS = H / num_steps
-    for max_ in xrange(1, num_steps+1):
+    for max_ in xrange(num_steps+1):
         # for y in xrange(1, num_steps+1):
         xx = 0
         for i in xrange(max_+1):
@@ -62,7 +62,7 @@ def calc_brute2(H, W, divs):
     xx = 0
     yy = 0
     HS = H / num_steps
-    for max_ in xrange(1, num_steps+1):
+    for max_ in xrange(num_steps+1):
         # for y in xrange(1, num_steps+1):
         xx = 0
         for i in xrange(max_+1):
@@ -144,7 +144,7 @@ W = 40.0
 gens = [calc(H, W), calc(W, H)]
 while True:
     r = list(reversed([next(x) for x in gens]))
-    r[1] = 0.25 - r[1]
+    # r[1] = 0.25 - r[1]
     res = sum(r)
     print_(("%8d[0] : " % log) + str(r))
     print_("%8d[a] : %.50f" % (log, res))
