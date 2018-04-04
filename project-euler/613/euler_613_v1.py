@@ -35,12 +35,10 @@ FROM_RAD = 1/(2*acos(-1))
 
 
 def calc_brute(H, W, divs):
-    H2 = H*H
     ret = 0.0
     count = 0
     num_steps = divs
     WSTEP = W / num_steps
-    WS = WSTEP * 2
     xx = 0
     yy = 0
     HS = H / num_steps
@@ -48,12 +46,36 @@ def calc_brute(H, W, divs):
         # for y in xrange(1, num_steps+1):
         xx = 0
         for i in xrange(max_+1):
-            ret += (atan2(W-xx,H-yy) + atan2(xx, yy))
+            ret += (- atan2(W-xx, H-yy) + atan2(xx, yy))
             # ret += atan2(xx, yy)
             xx += WSTEP
         count += max_+1
         yy += HS
-    return ret * FROM_RAD / count + 0.25
+    return ret * FROM_RAD / count + 0.25*2
+
+
+def calc_brute2(H, W, divs):
+    ret = 0.0
+    count = 0
+    num_steps = divs
+    WSTEP = W / num_steps
+    xx = 0
+    yy = 0
+    HS = H / num_steps
+    for max_ in xrange(1, num_steps+1):
+        # for y in xrange(1, num_steps+1):
+        xx = 0
+        for i in xrange(max_+1):
+            ret += (atan2(xx, yy))
+            # ret += atan2(xx, yy)
+            xx += WSTEP
+        count += max_+1
+        yy += HS
+    return ret * FROM_RAD / count
+
+
+def calc_brute2_wrapper(H, W, divs):
+    return calc_brute2(H, W, divs) + calc_brute2(W, H, divs) + 0.25
 
 
 def calc2(H, W):
@@ -129,4 +151,5 @@ while True:
     print_("%8d[b] : %.50f" % (log, 1 - res))
     print_("%8d[c] : %.50f" % (log, res+0.25))
     print_("%8d[g] : %.50f" % (log, calc_brute(H, W, log*100)))
+    print_("%8d[t] : %.50f" % (log, calc_brute2_wrapper(H, W, log*100)))
     log += 1
