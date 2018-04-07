@@ -1,0 +1,23 @@
+euler-624-analysis.txt
+
+:Author: shlomif
+:Email: shlomif@telaviv1.shlomifish.org
+:Date: 2018-04-07 18:43
+
+Let's call f[T](n) and f[H](n) the probabilities that there are no HHs in
+the first n tosses and that the last toss is T and H.
+
+f[T](0) = 1
+f[H](0) = 0
+f[T](n+1) = (f[T](n) + f[H](n)) / 2
+f[H](n+1) = f[T](n) / 2
+
+T,  H
+1 , 0
+1 , 1
+2,  1
+3, 2
+5, 3
+8, 5
+
+Fibonacci!
