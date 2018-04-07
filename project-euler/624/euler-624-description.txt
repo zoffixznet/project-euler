@@ -1,0 +1,23 @@
+Two heads are better than one
+
+An unbiased coin is tossed repeatedly until two consecutive heads are obtained. Suppose these occur on the (M−1)
+th and Mth toss.
+Let P(n) be the probability that M is divisible by n. For example, the outcomes HH, HTHH, and THTTHH all count towards P(2)
+
+, but THH and HTTHH do not.
+
+You are given that P(2)=35
+and P(3)=931. Indeed, it can be shown that P(n)
+
+is always a rational number.
+
+For a prime p
+and a fully reduced fraction ab, define Q(ab,p) to be the smallest positive q for which a≡bq(modp).
+For example Q(P(2),109)=Q(35,109)=66, because 5⋅66=330≡3(mod109) and 66 is the smallest positive such number.
+Similarly Q(P(3),109)=46
+
+.
+
+Find Q(P(1018),1000000009)
+
+.
