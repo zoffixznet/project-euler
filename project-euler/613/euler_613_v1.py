@@ -79,7 +79,6 @@ def calc_brute2_wrapper(H, W, divs):
 
 
 def calc_brute3(H, W, num_steps):
-    ret = 0.0
     WSTEP = W / num_steps
     yy = 0
     HS = H / num_steps
@@ -89,12 +88,7 @@ def calc_brute3(H, W, num_steps):
         return x*atan(x)-0.5*log(1+x*x)
 
     VAL = integral_atan(WSTEP / HS)
-    for max_ in xrange(1, num_steps+1):
-        # for y in xrange(1, num_steps+1):
-        ret += VAL * yy
-        yy += HS
-    count = (num_steps * (num_steps+1)) >> 1
-    return ret / WSTEP * FROM_RAD / count
+    return VAL * HS / WSTEP * FROM_RAD
 
 
 def calc_brute3_wrapper(H, W, divs):
