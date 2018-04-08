@@ -78,19 +78,20 @@ def calc_brute2_wrapper(H, W, divs):
     return calc_brute2(H, W, divs) + calc_brute2(W, H, divs) + 0.25
 
 
-def calc_brute3(H, W, divs):
+def calc_brute3(H, W, num_steps):
     ret = 0.0
-    num_steps = divs
     WSTEP = W / num_steps
     yy = 0
     HS = H / num_steps
     yy += HS
 
-    def iatan(x):
+    def integral_atan(x):
         return x*atan(x)-0.5*log(1+x*x)
+
+    VAL = integral_atan(WSTEP / HS)
     for max_ in xrange(1, num_steps+1):
         # for y in xrange(1, num_steps+1):
-        ret += iatan(WSTEP*max_/yy)*yy
+        ret += VAL * yy
         yy += HS
     count = (num_steps * (num_steps+1)) >> 1
     return ret / WSTEP * FROM_RAD / count
