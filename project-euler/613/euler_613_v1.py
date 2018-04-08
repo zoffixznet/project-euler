@@ -78,7 +78,7 @@ def calc_brute2_wrapper(H, W, divs):
     return calc_brute2(H, W, divs) + calc_brute2(W, H, divs) + 0.25
 
 
-def calc_brute3(H, W, num_steps):
+def calc_integral(H, W):
     def integral_atan(x):
         return x*atan(x)-0.5*log(1+x*x)
 
@@ -86,8 +86,8 @@ def calc_brute3(H, W, num_steps):
     return VAL * H * FROM_RAD / W
 
 
-def calc_brute3_wrapper(H, W, divs):
-    return calc_brute3(H, W, divs) + calc_brute3(W, H, divs) + 0.25
+def calc_integral_wrapper(H, W):
+    return calc_integral(H, W) + calc_integral(W, H) + 0.25
 
 
 def calc2(H, W):
@@ -171,7 +171,7 @@ def calc(H, W):
 log2 = 1
 H = 30.0
 W = 40.0
-print_("%8d[d] : %.50f" % (log2, calc_brute3_wrapper(H, W, 10000000)))
+print_("%8d[d] : %.50f" % (log2, calc_integral_wrapper(H, W)))
 sys.exit()
 gens = [calc(H, W), calc(W, H)]
 while True:
@@ -184,5 +184,4 @@ while True:
     print_("%8d[c] : %.50f" % (log2, res+0.25))
     print_("%8d[g] : %.50f" % (log2, calc_brute(H, W, log2*100)))
     print_("%8d[t] : %.50f" % (log2, calc_brute2_wrapper(H, W, log2*100)))
-    print_("%8d[d] : %.50f" % (log2, calc_brute3_wrapper(H, W, log2*100)))
     log2 += 1
