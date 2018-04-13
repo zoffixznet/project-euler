@@ -127,6 +127,7 @@ exe("581" "v2" "581/euler_581_v2.cpp")
 exe("611" "v1" "611/euler_611_v1.cpp")
 exe("611" "v2" "611/euler_611_v2.cpp")
 exe("611" "v3" "611/euler_611_v3.cpp")
+exe("621" "v1" "621/euler_621_v1.cpp")
 exe("67" "v1" "67/euler_67_v1.cpp")
 exe("75" "v1" "75/euler_75_v1.c")
 
