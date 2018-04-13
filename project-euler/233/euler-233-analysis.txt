@@ -1,0 +1,9 @@
+euler-233-analysis.txt
+
+:Author: shlomif
+:Email: shlomif@cpan.org
+:Date: 2018-04-13 12:10
+
+The circle is defined by (x - N/2)**2 + (y - N/2)**2 = N**2 / 2 .
+
+If N is even, then n = N/2 and we get (x-n)**2+(y-n)**2 = 2 * n**2
