@@ -1,5 +1,5 @@
-let a=1000
-let b=1234
+let a=1000000 ; let b=1234567
+# let a=1000; let b=1234
 
 seq "$a" "$b" | factor | perl -lapE 's# ([0-9]+) \1\b##g' > db.txt
 grep -cP '^([0-9]+):$' db.txt
