@@ -23,7 +23,6 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <math.h>
 
 typedef unsigned long long ll;
 
@@ -45,7 +44,11 @@ int main(int argc, char * argv[])
     for (ll n = 5 ; n <= TARGET ; n++)
     {
         g += gcd(g, n);
+#if 0
         if ((n & ((1 << 20)-1)) == 0)
+#else
+        if (1)
+#endif
         {
             printf ("g[%lld] = %lld\n", (long long)n, (long long)g);
         }
