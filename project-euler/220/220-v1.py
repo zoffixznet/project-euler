@@ -69,11 +69,11 @@ dirs = [(0, 1), (1, 0), (0, -1), (-1, 0)]
 maxdepth = 10
 mn = 500
 STEP = 100000000
-nn = STEP
+printed = False
 
 
 def dragon(depth, seq):
-    global Cache, maxdepth, nn, s
+    global Cache, maxdepth, s
     init = s.dup()
     key = (depth, seq, (s.dir1 & 3))
     if key in Cache:
@@ -100,11 +100,11 @@ def dragon(depth, seq):
             raise BaseException("unknown")
         if s.n >= mn:
             if s.n == mn:
-                print_("cur = %d,%d" % (s.cur[0], s.cur[1]))
+                global printed
+                if not printed:
+                    print_("cur = %d,%d" % (s.cur[0], s.cur[1]))
+                    printed = True
             return
-        elif s.n == nn:
-            print_("Reached %d" % (nn))
-            nn += STEP
     Cache[key] = s.delta(init)
 
 
@@ -113,4 +113,5 @@ maxdepth = 50
 mn = 1000000000000
 s = State()
 Cache = {}
+printed = False
 dragon(0, 'Fa')
